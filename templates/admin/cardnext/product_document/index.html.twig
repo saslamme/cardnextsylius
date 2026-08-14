@@ -1,0 +1,85 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% set page_title = 'Produktdokumente' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">{{ product.name }}</div>
+                <h2 class="page-title">Produktdokumente</h2>
+            </div>
+            <div class="col-auto ms-auto d-flex gap-2">
+                <a class="btn" href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">Zum Produkt</a>
+                <a class="btn btn-primary" href="{{ path('cardnext_admin_product_document_create', {'id': product.id}) }}">
+                    Dokument hochladen
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead>
+                    <tr>
+                        <th>Titel</th>
+                        <th>Typ</th>
+                        <th>Sprache</th>
+                        <th>Datei</th>
+                        <th>Status</th>
+                        <th>Sortierung</th>
+                        <th class="w-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in documents %}
+                        <tr>
+                            <td><strong>{{ document.title }}</strong></td>
+                            <td>{{ document.typeLabel }}</td>
+                            <td>{{ document.locale ?: 'Alle' }}</td>
+                            <td>
+                                {% if document.filePath %}
+                                    <a href="{{ asset(document.filePath) }}" target="_blank" rel="noopener">
+                                        {{ document.originalFilename ?: 'PDF öffnen' }}
+                                    </a>
+                                    {% if document.formattedFileSize %}
+                                        <span class="text-secondary small">({{ document.formattedFileSize }})</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-secondary">Keine Datei</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {{ document.enabled ? 'bg-green-lt' : 'bg-secondary-lt' }}">
+                                    {{ document.enabled ? 'Aktiv' : 'Inaktiv' }}
+                                </span>
+                            </td>
+                            <td>{{ document.position }}</td>
+                            <td>
+                                <div class="btn-list flex-nowrap">
+                                    <a class="btn btn-sm" href="{{ path('cardnext_admin_product_document_update', {'id': document.id}) }}">
+                                        Bearbeiten
+                                    </a>
+                                    <form
+                                        method="post"
+                                        action="{{ path('cardnext_admin_product_document_delete', {'id': document.id}) }}"
+                                        onsubmit="return confirm('Dokument wirklich löschen?');"
+                                    >
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete-product-document-' ~ document.id) }}">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Löschen</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-secondary py-5">
+                                Für dieses Produkt sind noch keine Dokumente hinterlegt.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

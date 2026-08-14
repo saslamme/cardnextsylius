@@ -1,0 +1,11 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_admin.taxon.create.content.sections.form.translations':
+            cardnext_bottom_description:
+                template: 'admin/cardnext/taxon/translations/bottom_description.html.twig'
+                priority: -100
+
+        'sylius_admin.taxon.update.content.sections.form.translations':
+            cardnext_bottom_description:
+                template: 'admin/cardnext/taxon/translations/bottom_description.html.twig'
+                priority: -100

@@ -1,0 +1,356 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Cardnext</div>
+                <h2 class="page-title">B2B-Kunden</h2>
+                <div class="text-secondary mt-1">
+                    Firmen-, ERP- und Zahlungsdaten für bestehende Sylius-Kunden.
+                </div>
+            </div>
+
+            <div class="col-auto ms-auto">
+                <span class="badge bg-secondary-lt">{{ total }} B2B-Profil(e)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-xl-5">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">B2B-Profil anlegen</h3>
+                        <div class="text-secondary small">Der Sylius-Kunde muss bereits existieren.</div>
+                    </div>
+                </div>
+
+                <form method="post" action="{{ path('cardnext_admin_b2b_customer_create') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('create-b2b-customer') }}">
+
+                    <div class="card-body">
+                        <label class="form-label">Kunden-E-Mail</label>
+                        <div class="input-group">
+                            <input
+                                class="form-control"
+                                type="email"
+                                name="email"
+                                placeholder="einkauf@kunde.de"
+                                required
+                            >
+                            <button class="btn btn-primary" type="submit">Anlegen</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-7">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">B2B-Daten importieren</h3>
+                        <div class="text-secondary small">CSV aktualisiert nur bereits vorhandene Sylius-Kunden.</div>
+                    </div>
+                </div>
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                    action="{{ path('cardnext_admin_b2b_customer_import') }}"
+                >
+                    <input type="hidden" name="_token" value="{{ csrf_token('import-b2b-customers') }}">
+
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-12 col-md">
+                                <label class="form-label">CSV-Datei</label>
+                                <input class="form-control" type="file" name="csv_file" accept=".csv,text/csv" required>
+                            </div>
+
+                            <div class="col-12 col-md-auto">
+                                <label class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="dry_run" value="1" checked>
+                                    <span class="form-check-label">Nur prüfen (Dry-Run)</span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-auto">
+                                <button class="btn btn-outline-primary" type="submit">CSV verarbeiten</button>
+                            </div>
+                        </div>
+
+                        <div class="form-hint mt-2">
+                            Vorlage im Projekt: <code>var/import/cardnext/b2b-customers-template.csv</code>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{{ path('cardnext_admin_b2b_customer_index') }}">
+                <div class="row g-2 align-items-center">
+                    <div class="col">
+                        <input
+                            class="form-control"
+                            name="q"
+                            value="{{ query }}"
+                            placeholder="Firma, E-Mail, Kundennummer, ERP-Nummer oder USt-ID suchen"
+                        >
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" type="submit">Suchen</button>
+                    </div>
+                    {% if query %}
+                        <div class="col-auto">
+                            <a class="btn" href="{{ path('cardnext_admin_b2b_customer_index') }}">Zurücksetzen</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="d-grid gap-4">
+        {% for profile in profiles %}
+            {% set customer = profile.customer %}
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="flex-fill">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <h3 class="card-title mb-0">{{ profile.displayName }}</h3>
+
+                            {% if profile.enabled %}
+                                <span class="badge bg-green-lt">B2B aktiv</span>
+                            {% else %}
+                                <span class="badge bg-secondary-lt">Inaktiv</span>
+                            {% endif %}
+
+                            {% if profile.invoiceAllowed %}
+                                <span class="badge bg-blue-lt">Rechnung freigegeben</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-secondary small mt-1">
+                            {{ customer.email }}
+                            {% if profile.customerNumber %} · Kunde {{ profile.customerNumber }}{% endif %}
+                            {% if customer.group %} · Gruppe {{ customer.group.code }}{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-auto">
+                        <a
+                            class="btn btn-sm"
+                            href="{{ path('sylius_admin_customer_update', {'id': customer.id}) }}"
+                        >
+                            Sylius-Kunde
+                        </a>
+                    </div>
+                </div>
+
+                <form method="post" action="{{ path('cardnext_admin_b2b_customer_update', {'id': profile.id}) }}">
+                    <input
+                        type="hidden"
+                        name="_token"
+                        value="{{ csrf_token('update-b2b-customer-' ~ profile.id) }}"
+                    >
+
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label">Kundennummer</label>
+                                <input class="form-control" name="customer_number" value="{{ profile.customerNumber }}">
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label">Firma</label>
+                                <input class="form-control" name="company_name" value="{{ profile.companyName }}">
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label">USt-ID</label>
+                                <input class="form-control" name="vat_number" value="{{ profile.vatNumber }}">
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label">ERP-Kundennummer</label>
+                                <input class="form-control" name="erp_customer_number" value="{{ profile.erpCustomerNumber }}">
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label">Ansprechpartner</label>
+                                <input class="form-control" name="contact_person" value="{{ profile.contactPerson }}">
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label">Kundengruppe</label>
+                                <select class="form-select" name="customer_group_code">
+                                    <option value="">Keine Kundengruppe</option>
+                                    {% for group in customer_groups %}
+                                        <option
+                                            value="{{ group.code }}"
+                                            {{ customer.group and customer.group.code == group.code ? 'selected' : '' }}
+                                        >
+                                            {{ group.name }} · {{ group.code }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-6 col-md-3 col-xl-2">
+                                <label class="form-label">Zahlungsziel</label>
+                                <div class="input-group">
+                                    <input
+                                        class="form-control"
+                                        type="number"
+                                        min="0"
+                                        name="payment_term_days"
+                                        value="{{ profile.paymentTermDays }}"
+                                    >
+                                    <span class="input-group-text">Tage</span>
+                                </div>
+                            </div>
+
+                            <div class="col-6 col-md-3 col-xl-2">
+                                <label class="form-label">Kreditlimit</label>
+                                <input
+                                    class="form-control"
+                                    name="credit_limit"
+                                    inputmode="decimal"
+                                    value="{{ profile.creditLimit is not null ? (profile.creditLimit / 100)|number_format(2, ',', '.') : '' }}"
+                                    placeholder="0,00"
+                                >
+                            </div>
+
+                            <div class="col-6 col-md-3 col-xl-2">
+                                <label class="form-label">Währung</label>
+                                <input
+                                    class="form-control text-uppercase"
+                                    maxlength="3"
+                                    name="credit_limit_currency"
+                                    value="{{ profile.creditLimitCurrency }}"
+                                    placeholder="EUR"
+                                >
+                            </div>
+
+                            <div class="col-12 col-xl-6">
+                                <label class="form-label">Interne Notiz</label>
+                                <textarea class="form-control" name="notes" rows="3">{{ profile.notes }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-auto">
+                                <label class="form-check">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="enabled"
+                                        value="1"
+                                        {{ profile.enabled ? 'checked' : '' }}
+                                    >
+                                    <span class="form-check-label">B2B-Profil aktiv</span>
+                                </label>
+                            </div>
+
+                            <div class="col-auto">
+                                <label class="form-check">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="invoice_allowed"
+                                        value="1"
+                                        {{ profile.invoiceAllowed ? 'checked' : '' }}
+                                    >
+                                    <span class="form-check-label">Rechnungskauf freigegeben</span>
+                                </label>
+                            </div>
+
+                            <div class="col-auto">
+                                <label class="form-check">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="purchase_order_required"
+                                        value="1"
+                                        {{ profile.purchaseOrderRequired ? 'checked' : '' }}
+                                    >
+                                    <span class="form-check-label">Bestellnummer erforderlich</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between gap-2">
+                        <button
+                            class="btn btn-outline-danger"
+                            type="submit"
+                            form="delete-b2b-profile-{{ profile.id }}"
+                        >
+                            B2B-Profil entfernen
+                        </button>
+
+                        <button class="btn btn-primary" type="submit">Speichern</button>
+                    </div>
+                </form>
+
+                <form
+                    id="delete-b2b-profile-{{ profile.id }}"
+                    method="post"
+                    action="{{ path('cardnext_admin_b2b_customer_delete', {'id': profile.id}) }}"
+                    onsubmit="return confirm('B2B-Profil wirklich entfernen? Der Sylius-Kunde bleibt bestehen.');"
+                >
+                    <input
+                        type="hidden"
+                        name="_token"
+                        value="{{ csrf_token('delete-b2b-customer-' ~ profile.id) }}"
+                    >
+                </form>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-body text-center text-secondary py-5">
+                    {% if query %}
+                        Keine B2B-Kunden für „{{ query }}“ gefunden.
+                    {% else %}
+                        Noch keine B2B-Profile vorhanden.
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if pages > 1 %}
+        <nav class="mt-4" aria-label="B2B-Kunden Seiten">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {{ page <= 1 ? 'disabled' : '' }}">
+                    <a
+                        class="page-link"
+                        href="{{ path('cardnext_admin_b2b_customer_index', {'q': query, 'page': page - 1}) }}"
+                    >
+                        Zurück
+                    </a>
+                </li>
+
+                <li class="page-item disabled">
+                    <span class="page-link">Seite {{ page }} von {{ pages }}</span>
+                </li>
+
+                <li class="page-item {{ page >= pages ? 'disabled' : '' }}">
+                    <a
+                        class="page-link"
+                        href="{{ path('cardnext_admin_b2b_customer_index', {'q': query, 'page': page + 1}) }}"
+                    >
+                        Weiter
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock %}

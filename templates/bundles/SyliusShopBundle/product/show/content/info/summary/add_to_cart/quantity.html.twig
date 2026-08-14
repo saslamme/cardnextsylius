@@ -1,0 +1,11 @@
+{% set quantity = hookable_metadata.context.form.cartItem.quantity %}
+
+<div class="cn-product__quantity-field">
+    <label for="{{ quantity.vars.id }}">Menge</label>
+    <div class="cn-product__qty" data-cn-product-qty>
+        <button type="button" data-cn-qty-minus aria-label="Menge verringern">−</button>
+        {{ form_widget(quantity, sylius_test_form_attribute('quantity')|merge({'attr': {'min': 1}})) }}
+        <button type="button" data-cn-qty-plus aria-label="Menge erhöhen">+</button>
+    </div>
+    {{ form_errors(quantity) }}
+</div>

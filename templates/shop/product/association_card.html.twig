@@ -1,0 +1,18 @@
+<article class="cn-product-related" {{ sylius_test_html_attribute('product', product.code) }}>
+    <a class="cn-product-related__image" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">
+        {{ component('sylius_shop:main_image', { product: product, class: 'cn-product-related__img' }) }}
+    </a>
+    <div class="cn-product-related__body">
+        <small>{{ product.code }}</small>
+        <h4><a href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">{{ product.name }}</a></h4>
+        {% if variant %}
+            <div class="cn-product-related__price">
+                {{ component('sylius_shop:product:card:price', {
+                    variant: variant,
+                    template: '@SyliusShop/product/common/price.html.twig'
+                }) }}
+            </div>
+        {% endif %}
+        <a class="cn-product-related__link" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">Details <span>→</span></a>
+    </div>
+</article>

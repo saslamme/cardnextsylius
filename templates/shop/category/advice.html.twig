@@ -1,0 +1,26 @@
+<section class="cn-category__advice">
+    <div class="cardnext-container cn-category__advice-grid">
+        <div>
+            <span class="cn-category__smallcap">Kaufberatung</span>
+            {% if taxon.code == 'CARD_PRINTERS' %}
+                <h2>Welcher Kartendrucker ist der richtige?</h2>
+            {% else %}
+                <h2>{{ taxon.name }} passend zur Anwendung auswählen.</h2>
+            {% endif %}
+        </div>
+
+        <div class="cn-category__advice-copy">
+            {% if taxon.code == 'CARD_PRINTERS' %}
+                <p>Die passende Drucktechnologie hängt vor allem von Kartenmenge, gewünschter Druckqualität, Druckseiten und benötigten Kodieroptionen ab. Für klassische Mitarbeiterausweise sind Direct-to-Card-Systeme häufig die wirtschaftlichste Lösung. Bei randlosem Druck oder höheren Anforderungen an die Bildqualität bieten Retransfer-Systeme Vorteile.</p>
+                <p>Für den laufenden Betrieb sind außerdem die passenden Farbbänder, Reinigungskits und Karten entscheidend. Cardnext unterstützt dabei, Drucker und Verbrauchsmaterial zuverlässig aufeinander abzustimmen.</p>
+            {% else %}
+                <p>Entscheidend ist nicht nur das einzelne Produkt, sondern die Kompatibilität mit der vorhandenen Umgebung und dem geplanten Einsatz. Cardnext unterstützt bei Auswahl, Integration und dem passenden Zubehör.</p>
+            {% endif %}
+
+            <div class="cn-category__advice-links">
+                <a class="cn-category__text-link" href="{{ path('sylius_shop_contact_request') }}">Beratung anfragen <span>→</span></a>
+                <a class="cn-category__text-link" href="{{ path('sylius_shop_homepage') }}#products">Weitere Produktbereiche <span>→</span></a>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,20 @@
+/* ==========================================================================
+   Phase 18 v7a – Category width + non-sticky sidebar
+   ========================================================================== */
+
+/* Sidebar scrolls normally with the page. */
+.cn-category__sidebar {
+    position: static !important;
+    top: auto !important;
+    align-self: start;
+}
+
+/* Bottom category copy uses the complete catalog width again. */
+.cn-category__bottom-description {
+    width: 100%;
+    max-width: none;
+}
+
+.cn-category__bottom-description h2 {
+    max-width: none;
+}

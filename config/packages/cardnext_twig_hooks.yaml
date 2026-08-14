@@ -1,0 +1,17 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_shop.base.header':
+            top_bar:
+                template: 'shop/layout/header/top_bar.html.twig'
+                priority: 300
+            content:
+                template: 'shop/layout/header/content.html.twig'
+                priority: 200
+            navbar:
+                template: 'shop/layout/header/empty.html.twig'
+                priority: 100
+
+        'sylius_shop.base.footer':
+            content:
+                template: 'shop/layout/footer/content.html.twig'
+                priority: 0

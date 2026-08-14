@@ -1,0 +1,88 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+
+{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Katalog → Hersteller</div>
+                <h2 class="page-title">{{ page_title }}</h2>
+            </div>
+            <div class="col-auto ms-auto">
+                <a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_manufacturer_index') }}">
+                    Zurück
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        {{ form_errors(form) }}
+
+        <div class="row g-4">
+            <div class="col-12 col-xl-7">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Stammdaten</h3>
+                    </div>
+
+                    <div class="card-body">
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.code) }}
+                        {{ form_row(form.website) }}
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                {{ form_row(form.position) }}
+                            </div>
+                            <div class="col-12 col-md-6 d-flex align-items-end">
+                                <div class="w-100">
+                                    {{ form_row(form.enabled) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-5">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Darstellung</h3>
+                    </div>
+
+                    <div class="card-body">
+                        {{ form_row(form.description) }}
+
+                        {% if manufacturer.logoPath %}
+                            <div class="mb-4">
+                                <label class="form-label">Aktuelles Logo</label>
+                                <div class="border rounded bg-light d-flex align-items-center justify-content-center p-4" style="min-height:130px">
+                                    <img
+                                        src="{{ asset(manufacturer.logoPath) }}"
+                                        alt="{{ manufacturer.name }}"
+                                        style="max-width:260px;max-height:80px;object-fit:contain"
+                                    >
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {{ form_row(form.logo) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body d-flex justify-content-end gap-2">
+                <a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_manufacturer_index') }}">
+                    Abbrechen
+                </a>
+                <button class="btn btn-primary" type="submit">
+                    Speichern
+                </button>
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

@@ -11,4 +11,30 @@ use Sylius\Component\Core\Model\Customer as BaseCustomer;
 #[ORM\Table(name: 'sylius_customer')]
 class Customer extends BaseCustomer
 {
+    #[ORM\OneToOne(
+        mappedBy: 'customer',
+        targetEntity: CustomerB2BProfile::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
+    private ?CustomerB2BProfile $b2bProfile = null;
+
+    public function getB2bProfile(): ?CustomerB2BProfile
+    {
+        return $this->b2bProfile;
+    }
+
+    public function setB2bProfile(?CustomerB2BProfile $b2bProfile): void
+    {
+        $this->b2bProfile = $b2bProfile;
+
+        if ($b2bProfile !== null && $b2bProfile->getCustomer() !== $this) {
+            $b2bProfile->setCustomer($this);
+        }
+    }
+
+    public function isB2bCustomer(): bool
+    {
+        return $this->b2bProfile?->isEnabled() ?? false;
+    }
 }

@@ -1,0 +1,42 @@
+{% form_theme form '@SyliusShop/form/theme.html.twig' %}
+
+{% set choices_form = form.value is defined ? form.value : form %}
+
+{% set has_checked = false %}
+{% for choice in choices_form %}
+    {% if choice.vars.checked is defined and choice.vars.checked %}
+        {% set has_checked = true %}
+    {% endif %}
+{% endfor %}
+
+{% set option_count = choices_form|length %}
+{% set toggle_id = 'cn-filter-more-' ~ filter.name|replace({'_': '-'}) %}
+
+<details class="cn-filter-accordion" {{ has_checked or filter.name == 'manufacturer' ? 'open' : '' }}>
+    <summary>{{ filter.label }}</summary>
+
+    <div class="cn-filter-accordion__panel">
+        {% if option_count > 5 %}
+            <input
+                class="cn-filter-accordion__more-input"
+                id="{{ toggle_id }}"
+                type="checkbox"
+            >
+        {% endif %}
+
+        <div class="cn-filter-accordion__options">
+            {% for choice in choices_form %}
+                <div class="cn-filter-accordion__option{{ loop.index > 5 ? ' is-extra' : '' }}">
+                    {{ form_widget(choice) }}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if option_count > 5 %}
+            <label class="cn-filter-accordion__more-label" for="{{ toggle_id }}">
+                <span class="more">Mehr anzeigen ({{ option_count - 5 }})</span>
+                <span class="less">Weniger anzeigen</span>
+            </label>
+        {% endif %}
+    </div>
+</details>

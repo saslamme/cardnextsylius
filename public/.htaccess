@@ -71,3 +71,7 @@ DirectoryIndex index.php
     # Prevent clickjacking
     Header set X-Frame-Options SAMEORIGIN
 </IfModule>
+
+
+# Cardnext / Sylius
+php_value max_input_vars 5000

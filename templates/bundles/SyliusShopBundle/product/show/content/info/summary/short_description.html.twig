@@ -1,0 +1,7 @@
+{% set product = hookable_metadata.context.product %}
+
+{% if product.shortDescription %}
+    <div class="cn-product__short-description">
+        {{ product.shortDescription }}
+    </div>
+{% endif %}

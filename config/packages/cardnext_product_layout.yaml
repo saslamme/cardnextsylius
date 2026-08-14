@@ -1,0 +1,12 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_shop.product.show.content.info':
+            overview:
+                template: '@SyliusShop/product/show/content/info/overview.html.twig'
+                priority: 200
+            summary:
+                component: 'sylius_shop:product:summary'
+                props:
+                    product: '@=_context.product'
+                    template: '@SyliusShop/product/show/content/info/summary.html.twig'
+                priority: 100

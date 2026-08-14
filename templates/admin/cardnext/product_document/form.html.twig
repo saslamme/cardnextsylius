@@ -1,0 +1,97 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+
+{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">{{ product.name }}</div>
+                <h2 class="page-title">{{ page_title }}</h2>
+            </div>
+            <div class="col-auto ms-auto">
+                <a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_product_document_index', {'id': product.id}) }}">
+                    Zurück
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        {{ form_errors(form) }}
+
+        <div class="row g-4">
+            <div class="col-12 col-xl-7">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Dokumentdaten</h3>
+                    </div>
+
+                    <div class="card-body">
+                        {{ form_row(form.title) }}
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                {{ form_row(form.type) }}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                {{ form_row(form.locale) }}
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                {{ form_row(form.position) }}
+                            </div>
+                            <div class="col-12 col-md-6 d-flex align-items-end">
+                                <div class="w-100">
+                                    {{ form_row(form.enabled) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-5">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Datei</h3>
+                    </div>
+
+                    <div class="card-body">
+                        {% if document.filePath %}
+                            <div class="mb-4">
+                                <label class="form-label">Aktuelle Datei</label>
+                                <div class="border rounded bg-light p-3">
+                                    <a href="{{ asset(document.filePath) }}" target="_blank" rel="noopener">
+                                        {{ document.originalFilename ?: document.filePath }}
+                                    </a>
+
+                                    {% if document.formattedFileSize %}
+                                        <div class="text-secondary small mt-1">
+                                            {{ document.formattedFileSize }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {{ form_row(form.file) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body d-flex justify-content-end gap-2">
+                <a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_product_document_index', {'id': product.id}) }}">
+                    Abbrechen
+                </a>
+                <button class="btn btn-primary" type="submit">
+                    Speichern
+                </button>
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

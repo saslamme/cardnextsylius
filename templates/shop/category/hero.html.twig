@@ -1,0 +1,17 @@
+<section class="cn-category__hero">
+    <div class="cardnext-container">
+        <div class="cn-category__hero-copy">
+            {% if taxon.parent %}
+                <span class="cn-category__smallcap">{{ taxon.parent.name }}</span>
+            {% endif %}
+
+            <h1>{{ taxon.name }}</h1>
+
+            {% if taxon.description %}
+                <div class="cn-category__hero-description">
+                    {{ taxon.description|raw }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,132 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Internationalisierung</div>
+                <h2 class="page-title">Cardnext Märkte</h2>
+                <div class="text-secondary mt-1">
+                    13 Länder-Channels mit Domain, Sprache, Währung und kommerzieller Grundkonfiguration.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <strong>Phase 17B:</strong>
+        Versand- und Steuerzonen sind vorbereitet, Vorkasse wird den Channels zugeordnet.
+        Neue Versandarten bleiben mit Preis 0 deaktiviert, bis echte Versandkosten gepflegt sind.
+        Internationale Steuersätze werden bewusst noch nicht automatisch angelegt.
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead>
+                    <tr>
+                        <th>Markt</th>
+                        <th>Domain</th>
+                        <th>Locale</th>
+                        <th>Währung</th>
+                        <th>Core</th>
+                        <th>Versand</th>
+                        <th>Vorkasse</th>
+                        <th>Tax</th>
+                        <th>Channel</th>
+                        <th class="w-1"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in markets %}
+                        {% set definition = row.definition %}
+                        {% set channel = row.channel %}
+                        {% set shipping = row.shipping_method %}
+
+                        <tr>
+                            <td>
+                                <strong>{{ definition.name }}</strong>
+                                <div class="text-secondary small">{{ definition.channelCode }}</div>
+                            </td>
+
+                            <td>{{ channel ? channel.hostname : definition.hostname }}</td>
+                            <td>{{ channel and channel.defaultLocale ? channel.defaultLocale.code : definition.localeCode }}</td>
+                            <td>{{ channel and channel.baseCurrency ? channel.baseCurrency.code : definition.currencyCode }}</td>
+
+                            <td>
+                                {% if row.core_ready %}
+                                    <span class="badge bg-green-lt">OK</span>
+                                {% else %}
+                                    <span class="badge bg-yellow-lt">prüfen</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if row.shipping_zone and shipping %}
+                                    <div>{{ shipping.code }}</div>
+
+                                    {% if row.shipping_amount is same as(null) %}
+                                        <span class="badge bg-yellow-lt">Preis offen</span>
+                                    {% elseif row.shipping_amount == 0 %}
+                                        <span class="badge bg-yellow-lt">Preis 0 / offen</span>
+                                    {% else %}
+                                        <span class="badge bg-green-lt">Preis gepflegt</span>
+                                    {% endif %}
+
+                                    {% if shipping.enabled %}
+                                        <span class="badge bg-green-lt">aktiv</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary-lt">deaktiviert</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge bg-red-lt">fehlt</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if row.vorkasse_assigned %}
+                                    <span class="badge bg-green-lt">OK</span>
+                                {% else %}
+                                    <span class="badge bg-red-lt">fehlt</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if row.tax_zone %}
+                                    <div>{{ row.tax_zone.code }}</div>
+                                {% else %}
+                                    <span class="badge bg-red-lt">Zone fehlt</span>
+                                {% endif %}
+
+                                <div class="text-secondary small">
+                                    Default:
+                                    {{ channel and channel.defaultTaxZone ? channel.defaultTaxZone.code : 'offen' }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if channel and channel.enabled %}
+                                    <span class="badge bg-green-lt">aktiv</span>
+                                {% else %}
+                                    <span class="badge bg-secondary-lt">deaktiviert</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if channel %}
+                                    <a
+                                        class="btn btn-sm"
+                                        href="{{ path('sylius_admin_channel_update', {'id': channel.id}) }}"
+                                    >
+                                        Öffnen
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% import '@SyliusShop/shared/pagination/pagination.html.twig' as pagination %}
+
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% set prefixes = ['sylius_shop.product.index'] %}
+{% set route = app.request.attributes.get('_route') %}
+{% set route_parameters = app.request.attributes.all('_route_params')|merge(app.request.query.all) %}
+{% set current_sorting = app.request.query.all('sorting') %}
+{% set current_limit = app.request.query.get('limit', 9) %}
+{% set result_count = resources.data.nbResults %}
+
+{% block content %}
+    <main class="cn-category" id="main-content">
+        {{ component('sylius_shop:product:show:breadcrumbs', {
+            template: 'shop/category/breadcrumbs.html.twig'
+        }) }}
+
+        {{ component('sylius_shop:product:show:header', {
+            template: 'shop/category/hero.html.twig'
+        }) }}
+
+        {{ component('sylius_shop:product:show:taxonomy', {
+            template: 'shop/category/subcategories.html.twig'
+        }) }}
+
+        <section class="cn-category__catalog" aria-label="Produktübersicht">
+            <div class="cn-category__container cn-category__catalog-layout">
+                <aside class="cn-category__sidebar" aria-label="Produktfilter">
+                    <div class="cn-category__sidebar-shell">
+                        <div class="cn-category__filters-header">
+                            <h2 class="cn-category__filters-title">Filter</h2>
+                            {% if app.request.query.has('criteria') %}
+                                <a class="cn-category__filter-reset" href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">Zurücksetzen</a>
+                            {% endif %}
+                        </div>
+
+                        <form
+                            class="cn-category__filter-form"
+                            method="get"
+                            action="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}"
+                        >
+                            {% for key, value in current_sorting %}
+                                <input type="hidden" name="sorting[{{ key }}]" value="{{ value }}">
+                            {% endfor %}
+                            <input type="hidden" name="limit" value="{{ current_limit }}">
+                            <input type="hidden" name="page" value="1">
+
+                            {% for filter in products.definition.enabledFilters %}
+                                {% if filter.name != 'search' %}
+                                    <div class="cn-category__facet">
+                                        {{ sylius_grid_render_filter(products, filter) }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+
+                            <button class="cn-category__filter-submit" type="submit">Filter anwenden</button>
+                        </form>
+
+                    </div>
+                </aside>
+
+                <div class="cn-category__main">
+                    <div class="cn-category__toolbar">
+                        <div class="cn-category__result-count">
+                            <strong>{{ result_count }} {{ result_count == 1 ? 'Produkt' : 'Produkte' }}</strong>
+                        </div>
+
+                        <div class="cn-category__toolbar-actions">
+                            <div class="dropdown">
+                                <button class="cn-category__toolbar-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Sortieren
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end cn-category__dropdown-menu">
+                                    <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {}, 'page': 1})) }}">Position</a>
+                                    <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'name': 'asc'}, 'page': 1})) }}">Name A–Z</a>
+                                    <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'name': 'desc'}, 'page': 1})) }}">Name Z–A</a>
+                                    <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'createdAt': 'desc'}, 'page': 1})) }}">Neueste zuerst</a>
+                                    <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'price': 'asc'}, 'page': 1})) }}">Preis aufsteigend</a>
+                                    <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'price': 'desc'}, 'page': 1})) }}">Preis absteigend</a>
+                                </div>
+                            </div>
+
+                            <div class="dropdown">
+                                <button class="cn-category__toolbar-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ current_limit }} pro Seite
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end cn-category__dropdown-menu">
+                                    {% for limit in [9, 18, 27] %}
+                                        <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'limit': limit, 'page': 1})) }}">{{ limit }} pro Seite</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if resources.data|length > 0 %}
+                        <div class="cn-category__products" {{ sylius_test_html_attribute('products') }}>
+                            {% for product in resources.data %}
+                                {{ component('sylius_shop:product:card', {
+                                    product: product,
+                                    template: 'shop/category/product_card.html.twig'
+                                }) }}
+                            {% endfor %}
+                        </div>
+
+                        <div class="cn-category__pagination">
+                            {{ pagination.simple(resources.data) }}
+                        </div>
+                    {% else %}
+                        <div class="cn-category__empty">
+                            <strong>Keine Produkte gefunden.</strong>
+                            <p>Ändern Sie die Suche oder wählen Sie eine andere Produktkategorie.</p>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {{ component('sylius_shop:product:show:header', {
+                template: 'shop/category/bottom_description.html.twig'
+            }) }}
+        </section>
+
+    </main>
+{% endblock %}

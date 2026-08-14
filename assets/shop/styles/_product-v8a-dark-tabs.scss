@@ -1,0 +1,33 @@
+/* ==========================================================================
+   Phase 18 v8a – Dark product tab bar
+   ========================================================================== */
+
+.cn-product__nav.cn-product__nav--tabs {
+    background: var(--cardnext-graphite);
+    border-top-color: var(--cardnext-graphite);
+    border-bottom-color: var(--cardnext-graphite);
+}
+
+.cn-product__nav--tabs .cn-product__tab {
+    color: rgba(255, 255, 255, .72);
+    background: transparent !important;
+}
+
+.cn-product__nav--tabs .cn-product__tab:hover,
+.cn-product__nav--tabs .cn-product__tab:focus-visible {
+    color: #fff;
+    background: rgba(255, 255, 255, .05) !important;
+}
+
+.cn-product__nav--tabs .cn-product__tab.is-active {
+    color: #fff;
+    background: transparent !important;
+}
+
+.cn-product__nav--tabs .cn-product__tab::after {
+    background: var(--cardnext-orange);
+}
+
+.cn-product__nav--tabs .cn-product__tab.is-active::after {
+    transform: scaleX(1);
+}

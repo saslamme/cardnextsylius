@@ -1,0 +1,13 @@
+<div class="cardnext-breadcrumbs">
+    <div class="cardnext-container cardnext-breadcrumbs__inner">
+        <a href="{{ path('sylius_shop_homepage') }}">Startseite</a>
+        <span class="cardnext-breadcrumbs__separator" aria-hidden="true">/</span>
+
+        {% if taxon.parent %}
+            <a href="{{ path('sylius_shop_product_index', {'slug': taxon.parent.slug}) }}">{{ taxon.parent.name }}</a>
+            <span class="cardnext-breadcrumbs__separator" aria-hidden="true">/</span>
+        {% endif %}
+
+        <span aria-current="page">{{ taxon.name }}</span>
+    </div>
+</div>

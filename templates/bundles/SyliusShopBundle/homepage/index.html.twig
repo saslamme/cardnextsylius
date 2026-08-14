@@ -1,0 +1,86 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% block title %}Cardnext – Kartendrucker, RFID & Auto-ID{% endblock %}
+
+{% block content %}
+<main id="main-content" class="cn-home">
+    <section class="cn-hero" aria-labelledby="cn-hero-title">
+        <div class="cn-hero-grid">
+            <div class="cn-hero-copy">
+                <span class="cn-smallcap">Professionelle Identifikationstechnik</span>
+                <h1 id="cn-hero-title">Technologie für sichere Identitäten.</h1>
+                <p>Kartendrucker, RFID-Leser, Plastikkarten und Auto-ID-Lösungen für Unternehmen, Integratoren und professionelle Anwender.</p>
+                <div class="cn-hero-actions">
+                    <a class="cn-btn cn-btn--primary" href="#products">Produkte entdecken <span>→</span></a>
+                    <a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">Beratung anfragen</a>
+                </div>
+            </div>
+            <div class="cn-hero-visual" aria-label="Kartendrucker, RFID-Leser und Plastikkarten">
+                <svg class="cn-hero-scene" viewBox="0 0 720 430" role="img" aria-labelledby="cn-scene-title">
+                    <title id="cn-scene-title">Cardnext Produktportfolio mit Kartendrucker, RFID-Leser und Plastikkarten</title>
+                    <ellipse cx="365" cy="368" rx="220" ry="24" fill="#cfd4d7" opacity=".55"/>
+                    <g transform="translate(118 55)"><path d="M85 75h305c29 0 48 18 52 45l14 114c4 30-16 51-47 51H66c-32 0-50-21-46-52l15-112c4-29 21-46 50-46Z" fill="#e2e5e7" stroke="#c4cacf" stroke-width="2"/><path d="M108 31h258c18 0 29 10 33 27l9 48H67l10-48c3-17 14-27 31-27Z" fill="#fafafa" stroke="#c9cfd3" stroke-width="2"/><rect x="77" y="122" width="330" height="72" rx="7" fill="#20272d"/><rect x="120" y="145" width="240" height="9" rx="4.5" fill="#59636b"/><rect x="105" y="196" width="278" height="49" rx="4" fill="#30383d"/><path d="M160 190h167v74H160z" fill="#fff"/><path d="M174 206h136v7H174zm0 16h86v7h-86z" fill="#e95126"/><circle cx="385" cy="58" r="7" fill="#23845d"/></g>
+                    <g transform="translate(502 183)"><ellipse cx="75" cy="157" rx="62" ry="10" fill="#cfd4d7" opacity=".55"/><rect x="18" y="0" width="114" height="146" rx="16" fill="#20272d"/><rect x="25" y="8" width="100" height="130" rx="12" fill="#2c343a"/><path d="M47 51c18-18 38-18 56 0M55 66c13-13 27-13 40 0M66 81c6-6 12-6 18 0" fill="none" stroke="#e95126" stroke-width="5" stroke-linecap="round"/><circle cx="75" cy="101" r="4" fill="#e95126"/></g>
+                    <g transform="translate(35 283) rotate(-7)"><rect x="0" y="0" width="164" height="95" rx="6" fill="#fff" stroke="#cfd4d7"/><circle cx="43" cy="40" r="21" fill="#f0f2f3"/><path d="M79 24h60M79 38h44M79 63h65" stroke="#b8c0c5" stroke-width="5" stroke-linecap="round"/><rect x="0" y="81" width="164" height="14" fill="#e95126"/></g>
+                </svg>
+                <span class="cn-hero-caption">Kartendruck · RFID · Auto-ID</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="cn-popular" aria-labelledby="cn-popular-title">
+        <div class="cardnext-container">
+            <div class="cn-popular-head"><h2 id="cn-popular-title">Beliebte Kategorien</h2><a class="cn-link-arrow" href="#products">Alle Kategorien <span>→</span></a></div>
+            <div class="cn-popular-grid">
+                {% for label in ['Kartendrucker','RFID-Leser','Plastikkarten','Kartenzubehör','Farbbänder','Barcode-Scanner','Zeiterfassung','Zutrittskontrolle'] %}
+                    <a class="cn-popular-link" href="#products">{{ label }} <span>→</span></a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="cn-section cn-section--light" id="services">
+        <div class="cardnext-container cn-integrated-grid">
+            <div class="cn-integrated-intro"><span class="cn-smallcap">Mehr als Hardware</span><h2 class="cn-section-title">Technologieversorgung mit persönlichem Service.</h2><p class="cn-lead">Wir liefern nicht nur das Produkt. Wir helfen bei Auswahl, Kompatibilität, Konfiguration und der zuverlässigen Versorgung mit passendem Zubehör und Verbrauchsmaterial.</p></div>
+            <div class="cn-integrated-list">
+                {% set services = [
+                    ['01','Hardware & Beschaffung','Produkte etablierter Hersteller für Kartendruck, RFID und Auto-ID – passend für den professionellen Einsatz.'],
+                    ['02','Auswahl & Beratung','Unterstützung bei Drucktechnik, RFID-Frequenzen, Kartentechnologien und kompatiblem Zubehör.'],
+                    ['03','Konfiguration','Reader- und Druckerkonfigurationen können auf Wunsch passend zu vorhandenen Systemen vorbereitet werden.'],
+                    ['04','Projektgeschäft','Größere Mengen, Rollouts und wiederkehrende Bedarfe erhalten einen direkten Ansprechpartner.'],
+                    ['05','Verbrauchsmaterial','Passende Farbbänder, Karten und Reinigungsprodukte werden direkt dem jeweiligen Gerät zugeordnet.']
+                ] %}
+                {% for item in services %}<div class="cn-integrated-item"><span class="cn-integrated-no">{{ item[0] }}</span><h3>{{ item[1] }}</h3><p>{{ item[2] }}</p><a href="{{ path('sylius_shop_contact_request') }}" aria-label="Mehr zu {{ item[1] }}">→</a></div>{% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="cn-section" id="products">
+        <div class="cardnext-container">
+            <div class="cn-products-head"><div><span class="cn-smallcap">Ausgewählte Produkte</span><h2 class="cn-section-title" style="margin-bottom:0">Professionelle Hardware.</h2></div></div>
+            {{ component('sylius_shop:product:list', { limit: 4, template: 'shop/homepage/product_list.html.twig' }) }}
+        </div>
+    </section>
+
+    <section class="cn-section cn-section--light" id="industries">
+        <div class="cardnext-container">
+            <div class="cn-industries-head"><span class="cn-smallcap">Einsatzbereiche</span><h2 class="cn-section-title">Technologie, die zu Ihrem Einsatz passt.</h2><p class="cn-lead">Von der Mitarbeiterausweiserstellung bis zur RFID-gestützten Identifikation: Produkte und Zubehör werden nach Anwendung gedacht, nicht nur nach Hersteller.</p></div>
+            <div class="cn-industries-grid">
+                <article class="cn-industry"><div class="cn-industry-image" aria-hidden="true"><svg viewBox="0 0 360 210"><ellipse cx="180" cy="185" rx="120" ry="12" fill="#cfd4d7" opacity=".55"/><rect x="65" y="54" width="225" height="107" rx="13" fill="#e0e4e6" stroke="#c4cbd0"/><rect x="86" y="82" width="183" height="39" rx="5" fill="#20272d"/><path d="M112 121h128v48H112z" fill="#fff"/><path d="M127 134h96v6h-96zm0 14h61v6h-61z" fill="#e95126"/></svg></div><div class="cn-industry-body"><h3>Ausweise & Kartenausgabe</h3><p>Kartendrucker, Farbbänder, Plastikkarten und Zubehör für Mitarbeiterausweise, Besucherkarten und Mitgliedsausweise.</p><a class="cn-link-arrow" href="#products">Lösungen ansehen <span>→</span></a></div></article>
+                <article class="cn-industry"><div class="cn-industry-image" aria-hidden="true"><svg viewBox="0 0 360 210"><ellipse cx="180" cy="185" rx="92" ry="12" fill="#cfd4d7" opacity=".55"/><rect x="110" y="27" width="140" height="145" rx="20" fill="#20272d"/><rect x="119" y="36" width="122" height="127" rx="15" fill="#2c343a"/><path d="M145 79c23-23 47-23 70 0M156 96c16-16 32-16 48 0M170 113c7-7 13-7 20 0" fill="none" stroke="#e95126" stroke-width="6" stroke-linecap="round"/></svg></div><div class="cn-industry-body"><h3>Sichere Identifikation</h3><p>RFID-Leser, Smartcards und Identmedien für Login, Zutritt und eindeutige Benutzeridentifikation.</p><a class="cn-link-arrow" href="#products">Lösungen ansehen <span>→</span></a></div></article>
+                <article class="cn-industry"><div class="cn-industry-image" aria-hidden="true"><svg viewBox="0 0 360 210"><ellipse cx="180" cy="185" rx="125" ry="12" fill="#cfd4d7" opacity=".55"/><path d="M79 77 180 33l102 44-102 44Z" fill="#e2e5e7" stroke="#c5cbd0"/><path d="M79 77v74l101 35v-65Z" fill="#d7dcdf" stroke="#c5cbd0"/><path d="M282 77v74l-102 35v-65Z" fill="#eef0f1" stroke="#c5cbd0"/><path d="M104 108v27M114 104v34M126 100v42M143 94v54M156 89v62" stroke="#20272d" stroke-width="4"/></svg></div><div class="cn-industry-body"><h3>Lager & Logistik</h3><p>RFID- und Barcode-Technologie für Erfassung, Rückverfolgbarkeit und effiziente Materialbewegungen.</p><a class="cn-link-arrow" href="#products">Lösungen ansehen <span>→</span></a></div></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="cn-section" id="why-cardnext">
+        <div class="cardnext-container"><div class="cn-diff-head"><div><span class="cn-smallcap">Warum Cardnext</span><h2 class="cn-section-title" style="margin-bottom:0">Technik. Know-how. Verlässlichkeit.</h2></div><p class="cn-lead">Ein fokussierter Partner für professionelle Identifikations- und Auto-ID-Technik – mit direkter Beratung und einem klar strukturierten Produktsortiment.</p></div>
+            <div class="cn-diff-grid">{% set advantages = [['01','Spezialisiertes Sortiment','Fokus auf Kartendruck, RFID, Identifikation und professionelle Auto-ID-Technik.'],['02','Herstellerübergreifend','Produkte verschiedener etablierter Hersteller können passend zur Anwendung verglichen werden.'],['03','Kompatibilität im Blick','Zubehör und Verbrauchsmaterial werden technisch den passenden Geräten zugeordnet.'],['04','Persönlicher Kontakt','Bei Projekt- und Beratungsbedarf gibt es einen direkten Ansprechpartner statt anonymer Shop-Prozesse.']] %}{% for item in advantages %}<div class="cn-diff-item"><span class="cn-diff-no">{{ item[0] }}</span><h3>{{ item[1] }}</h3><p>{{ item[2] }}</p></div>{% endfor %}</div>
+        </div>
+    </section>
+
+    <section class="cn-contact-strip"><div class="cardnext-container cn-contact-inner"><div><h2>Nicht sicher, welches Produkt passt?</h2><p>Beschreiben Sie kurz Ihren Anwendungsfall. Wir helfen bei der Auswahl.</p></div><a class="cn-btn cn-btn--primary" href="{{ path('sylius_shop_contact_request') }}">Mit einem Produktspezialisten sprechen <span>→</span></a></div></section>
+
+    <div class="cn-promises"><div class="cardnext-container cn-promise-grid"><div class="cn-promise"><strong>Schneller Versand</strong><span>Für verfügbare Lagerartikel</span></div><div class="cn-promise"><strong>Persönliche Beratung</strong><span>Vor und nach dem Kauf</span></div><div class="cn-promise"><strong>Sichere Zahlung</strong><span>Professionelle Zahlungsabwicklung</span></div><div class="cn-promise"><strong>Projektgeschäft</strong><span>Individuelle Konditionen auf Anfrage</span></div></div></div>
+</main>
+{% endblock %}

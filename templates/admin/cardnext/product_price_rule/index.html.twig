@@ -1,0 +1,384 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">{{ product.code }}</div>
+                <h2 class="page-title">B2B- &amp; Staffelpreise</h2>
+                <div class="text-secondary mt-1">{{ product.name }}</div>
+            </div>
+
+            <div class="col-auto ms-auto">
+                <a class="btn" href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">
+                    Zum Produkt
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <strong>Preispriorität:</strong>
+        individueller Kundenpreis → Kundengruppenpreis → öffentliche Staffelregel → normaler Sylius-Kanalpreis.
+        Innerhalb einer Stufe gewinnt die höchste passende Mindestmenge.
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-xl-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Staffel- / Kundengruppenpreis hinzufügen</h3>
+                        <div class="text-secondary small">Für alle Kunden oder für eine Sylius-Kundengruppe.</div>
+                    </div>
+                </div>
+
+                <form method="post" action="{{ path('cardnext_admin_product_price_rule_create', {'id': product.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('create-product-price-rule-' ~ product.id) }}">
+
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Variante</label>
+                                <select class="form-select" name="variant_code" required>
+                                    {% for variant in product.variants %}
+                                        <option value="{{ variant.code }}">{{ variant.name|default(variant.code) }} · {{ variant.code }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Kanal</label>
+                                <select class="form-select" name="channel_code" required>
+                                    {% for channel in product.channels %}
+                                        <option value="{{ channel.code }}">
+                                            {{ channel.name }} · {{ channel.baseCurrency.code }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Kundengruppe</label>
+                                <select class="form-select" name="customer_group_code">
+                                    <option value="">Alle Kunden</option>
+                                    {% for group in customer_groups %}
+                                        <option value="{{ group.code }}">{{ group.name }} · {{ group.code }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label">Ab Menge</label>
+                                <input class="form-control" type="number" min="1" name="min_quantity" value="1" required>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label">Stückpreis</label>
+                                <input class="form-control" name="price" inputmode="decimal" placeholder="89,90" required>
+                            </div>
+                        </div>
+
+                        <label class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" name="enabled" value="1" checked>
+                            <span class="form-check-label">Preisregel aktiv</span>
+                        </label>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">Preisregel anlegen</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Individuellen Kundenpreis hinzufügen</h3>
+                        <div class="text-secondary small">Hat immer Vorrang vor Gruppen- und öffentlichen Staffelpreisen.</div>
+                    </div>
+                </div>
+
+                <form method="post" action="{{ path('cardnext_admin_customer_price_rule_create', {'id': product.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('create-customer-price-rule-' ~ product.id) }}">
+
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Kunden-E-Mail</label>
+                                <input
+                                    class="form-control"
+                                    type="email"
+                                    name="customer_email"
+                                    placeholder="einkauf@kunde.de"
+                                    autocomplete="off"
+                                    required
+                                >
+                                <div class="form-hint">Der Kunde muss bereits in Sylius vorhanden sein.</div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Variante</label>
+                                <select class="form-select" name="variant_code" required>
+                                    {% for variant in product.variants %}
+                                        <option value="{{ variant.code }}">{{ variant.name|default(variant.code) }} · {{ variant.code }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Kanal</label>
+                                <select class="form-select" name="channel_code" required>
+                                    {% for channel in product.channels %}
+                                        <option value="{{ channel.code }}">
+                                            {{ channel.name }} · {{ channel.baseCurrency.code }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label">Ab Menge</label>
+                                <input class="form-control" type="number" min="1" name="min_quantity" value="1" required>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label">Stückpreis</label>
+                                <input class="form-control" name="price" inputmode="decimal" placeholder="79,00" required>
+                            </div>
+                        </div>
+
+                        <label class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" name="enabled" value="1" checked>
+                            <span class="form-check-label">Kundenpreis aktiv</span>
+                        </label>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end">
+                        <button class="btn btn-primary" type="submit">Kundenpreis anlegen</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Individuelle Kundenpreise</h3>
+                <div class="text-secondary small">Diese Regeln haben die höchste Preispriorität.</div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead>
+                    <tr>
+                        <th>Kunde</th>
+                        <th>Variante</th>
+                        <th>Kanal</th>
+                        <th style="width: 130px;">Ab Menge</th>
+                        <th style="width: 170px;">Stückpreis</th>
+                        <th>Status</th>
+                        <th class="w-1"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for rule in customer_rules %}
+                        <tr>
+                            <td>
+                                <strong>{{ rule.customer.fullName ?: rule.customer.email }}</strong>
+                                <div class="text-secondary small">{{ rule.customer.email }}</div>
+                                {% if rule.customer.group %}
+                                    <span class="badge bg-blue-lt mt-1">{{ rule.customer.group.code }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <strong>{{ rule.variant.name|default(rule.variant.code) }}</strong>
+                                <div class="text-secondary small">{{ rule.variant.code }}</div>
+                            </td>
+
+                            <td>{{ rule.channelCode }}</td>
+
+                            <td colspan="3">
+                                <form
+                                    class="d-flex align-items-center gap-2"
+                                    method="post"
+                                    action="{{ path('cardnext_admin_customer_price_rule_update', {'id': rule.id}) }}"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token('update-customer-price-rule-' ~ rule.id) }}"
+                                    >
+
+                                    <input
+                                        class="form-control"
+                                        style="width: 90px;"
+                                        type="number"
+                                        min="1"
+                                        name="min_quantity"
+                                        value="{{ rule.minQuantity }}"
+                                        required
+                                    >
+
+                                    <input
+                                        class="form-control"
+                                        style="width: 130px;"
+                                        name="price"
+                                        value="{{ (rule.price / 100)|number_format(2, ',', '.') }}"
+                                        required
+                                    >
+
+                                    <label class="form-check m-0">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="enabled"
+                                            value="1"
+                                            {{ rule.enabled ? 'checked' : '' }}
+                                        >
+                                        <span class="form-check-label">{{ rule.enabled ? 'Aktiv' : 'Inaktiv' }}</span>
+                                    </label>
+
+                                    <button class="btn btn-sm btn-outline-primary" type="submit">Speichern</button>
+                                </form>
+                            </td>
+
+                            <td>
+                                <form
+                                    method="post"
+                                    action="{{ path('cardnext_admin_customer_price_rule_delete', {'id': rule.id}) }}"
+                                    onsubmit="return confirm('Individuellen Kundenpreis wirklich löschen?');"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token('delete-customer-price-rule-' ~ rule.id) }}"
+                                    >
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td class="text-center text-secondary py-4" colspan="7">
+                                Für dieses Produkt sind noch keine individuellen Kundenpreise hinterlegt.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Staffel- &amp; Kundengruppenpreise</h3>
+                <div class="text-secondary small">Öffentliche Mengenstaffeln und Preise für Kundengruppen.</div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead>
+                    <tr>
+                        <th>Variante</th>
+                        <th>Kanal</th>
+                        <th>Kundengruppe</th>
+                        <th style="width: 130px;">Ab Menge</th>
+                        <th style="width: 170px;">Stückpreis</th>
+                        <th>Status</th>
+                        <th class="w-1"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for rule in rules %}
+                        <tr>
+                            <td>
+                                <strong>{{ rule.variant.name|default(rule.variant.code) }}</strong>
+                                <div class="text-secondary small">{{ rule.variant.code }}</div>
+                            </td>
+                            <td>{{ rule.channelCode }}</td>
+                            <td>
+                                {% if rule.customerGroupCode %}
+                                    <span class="badge bg-blue-lt">{{ rule.customerGroupCode }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary-lt">Alle Kunden</span>
+                                {% endif %}
+                            </td>
+
+                            <td colspan="3">
+                                <form
+                                    class="d-flex align-items-center gap-2"
+                                    method="post"
+                                    action="{{ path('cardnext_admin_product_price_rule_update', {'id': rule.id}) }}"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token('update-product-price-rule-' ~ rule.id) }}"
+                                    >
+                                    <input
+                                        class="form-control"
+                                        style="width: 90px;"
+                                        type="number"
+                                        min="1"
+                                        name="min_quantity"
+                                        value="{{ rule.minQuantity }}"
+                                        required
+                                    >
+                                    <input
+                                        class="form-control"
+                                        style="width: 130px;"
+                                        name="price"
+                                        value="{{ (rule.price / 100)|number_format(2, ',', '.') }}"
+                                        required
+                                    >
+                                    <label class="form-check m-0">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="enabled"
+                                            value="1"
+                                            {{ rule.enabled ? 'checked' : '' }}
+                                        >
+                                        <span class="form-check-label">{{ rule.enabled ? 'Aktiv' : 'Inaktiv' }}</span>
+                                    </label>
+                                    <button class="btn btn-sm btn-outline-primary" type="submit">Speichern</button>
+                                </form>
+                            </td>
+
+                            <td>
+                                <form
+                                    method="post"
+                                    action="{{ path('cardnext_admin_product_price_rule_delete', {'id': rule.id}) }}"
+                                    onsubmit="return confirm('Preisregel wirklich löschen?');"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token('delete-product-price-rule-' ~ rule.id) }}"
+                                    >
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td class="text-center text-secondary py-4" colspan="7">
+                                Für dieses Produkt sind noch keine Staffel- oder Kundengruppenpreise hinterlegt.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% set product = hookable_metadata.context.product %}
+
+{% for association in product.associations %}
+    {{ component('sylius_shop:product:association', {
+        productAssociation: association,
+        template: 'shop/product/association.html.twig'
+    }) }}
+{% endfor %}

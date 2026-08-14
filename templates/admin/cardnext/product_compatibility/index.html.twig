@@ -1,0 +1,214 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% set page_title = 'Produktkompatibilität' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">{{ product.code }}</div>
+                <h2 class="page-title">{{ product.name }}</h2>
+                <div class="text-secondary mt-1">Kompatibilität, Zubehör, Verbrauchsmaterial und Alternativen pflegen.</div>
+            </div>
+            <div class="col-auto ms-auto">
+                <a class="btn" href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">Zum Produkt</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Verknüpfung hinzufügen</h3>
+        </div>
+
+        <form method="post" action="{{ path('cardnext_admin_product_compatibility_create', {'id': product.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('create-product-compatibility-' ~ product.id) }}">
+
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-3">
+                        <label class="form-label" for="cn-compat-target">Produktcode</label>
+                        <input
+                            class="form-control"
+                            id="cn-compat-target"
+                            name="target_code"
+                            placeholder="z. B. RIBBON_123"
+                            required
+                        >
+                        <div class="form-hint">Exakter Sylius-Produktcode des verknüpften Artikels.</div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <label class="form-label" for="cn-compat-type">Typ</label>
+                        <select class="form-select" id="cn-compat-type" name="relation_type" required>
+                            {% for value, label in type_labels %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label class="form-label" for="cn-compat-direction">Richtung</label>
+                        <select class="form-select" id="cn-compat-direction" name="direction">
+                            <option value="outgoing">Dieses Produkt → Zielprodukt</option>
+                            <option value="incoming">Zielprodukt → dieses Produkt</option>
+                        </select>
+                        <div class="form-hint">
+                            Beispiel Farbband: „Dieses Produkt → Drucker“. Beim Drucker kann dieselbe Beziehung als „Zielprodukt → dieses Produkt“ angelegt werden.
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-3">
+                        <label class="form-label" for="cn-compat-note">Hinweis</label>
+                        <input
+                            class="form-control"
+                            id="cn-compat-note"
+                            name="note"
+                            maxlength="255"
+                            placeholder="optional"
+                        >
+                    </div>
+
+                    <div class="col-6 col-lg-1">
+                        <label class="form-label" for="cn-compat-position">Sort.</label>
+                        <input class="form-control" id="cn-compat-position" type="number" name="position" value="0">
+                    </div>
+                </div>
+
+                <label class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" name="enabled" value="1" checked>
+                    <span class="form-check-label">Im Shop anzeigen</span>
+                </label>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end">
+                <button class="btn btn-primary" type="submit">Verknüpfung anlegen</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-xl-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Dieses Produkt → andere Produkte</h3>
+                        <div class="text-secondary small">Typisch für Farbbänder, Zubehör oder Ersatzprodukte.</div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th>Typ</th>
+                                <th>Zielprodukt</th>
+                                <th>Status</th>
+                                <th class="w-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for relation in outgoing %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-orange-lt">{{ relation.typeLabel }}</span>
+                                        {% if relation.note %}
+                                            <div class="text-secondary small mt-1">{{ relation.note }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ relation.targetProduct.name }}</strong>
+                                        <div class="text-secondary small">{{ relation.targetProduct.code }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{ relation.enabled ? 'bg-green-lt' : 'bg-secondary-lt' }}">
+                                            {{ relation.enabled ? 'Aktiv' : 'Inaktiv' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <form
+                                            method="post"
+                                            action="{{ path('cardnext_admin_product_compatibility_delete', {'id': relation.id}) }}"
+                                            onsubmit="return confirm('Verknüpfung wirklich löschen?');"
+                                        >
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-product-compatibility-' ~ relation.id) }}">
+                                            <input type="hidden" name="return_product_id" value="{{ product.id }}">
+                                            <button class="btn btn-sm btn-outline-danger" type="submit">Löschen</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-secondary py-4">
+                                        Noch keine ausgehenden Verknüpfungen.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Andere Produkte → dieses Produkt</h3>
+                        <div class="text-secondary small">Damit erscheinen z. B. passende Farbbänder direkt beim Drucker.</div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th>Typ</th>
+                                <th>Quellprodukt</th>
+                                <th>Status</th>
+                                <th class="w-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for relation in incoming %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-orange-lt">{{ relation.typeLabel }}</span>
+                                        {% if relation.note %}
+                                            <div class="text-secondary small mt-1">{{ relation.note }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ relation.sourceProduct.name }}</strong>
+                                        <div class="text-secondary small">{{ relation.sourceProduct.code }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{ relation.enabled ? 'bg-green-lt' : 'bg-secondary-lt' }}">
+                                            {{ relation.enabled ? 'Aktiv' : 'Inaktiv' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <form
+                                            method="post"
+                                            action="{{ path('cardnext_admin_product_compatibility_delete', {'id': relation.id}) }}"
+                                            onsubmit="return confirm('Verknüpfung wirklich löschen?');"
+                                        >
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete-product-compatibility-' ~ relation.id) }}">
+                                            <input type="hidden" name="return_product_id" value="{{ product.id }}">
+                                            <button class="btn btn-sm btn-outline-danger" type="submit">Löschen</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-secondary py-4">
+                                        Noch keine eingehenden Verknüpfungen.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}{{ page_title|default('Cardnext') }} | Sylius{% endblock %}
+
+{% block body %}
+    {% include '@SyliusAdmin/shared/crud/common/sidebar.html.twig' %}
+    {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
+
+    <div class="page-wrapper">
+        <div class="page-body">
+            <div class="container-xl">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                {% block cardnext_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

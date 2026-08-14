@@ -1,0 +1,65 @@
+{% set firstTaxon = taxons|first %}
+{% set rootTaxon = firstTaxon ? firstTaxon.parent : null %}
+
+<div class="cardnext-shop-navigation">
+    <nav class="cardnext-category-nav" aria-label="Produktkategorien">
+        <ul>
+            {% for taxon in taxons %}
+                <li>
+                    <a href="{{ path('sylius_shop_product_index', {
+                        'slug': taxon.slug,
+                        '_locale': taxon.translation.locale
+                    }) }}">
+                        {{ taxon.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    {% if rootTaxon %}
+        <div
+            class="cardnext-product-search"
+            id="cardnext-product-search"
+            data-cardnext-search-panel
+            hidden
+        >
+            <div class="cardnext-container cardnext-product-search__inner">
+                <form
+                    class="cardnext-product-search__form"
+                    method="get"
+                    action="{{ path('sylius_shop_product_index', {
+                        'slug': rootTaxon.slug,
+                        '_locale': rootTaxon.translation.locale
+                    }) }}"
+                    role="search"
+                >
+                    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.7">
+                        <circle cx="11" cy="11" r="6.5"/>
+                        <path d="m16 16 4.2 4.2"/>
+                    </svg>
+
+                    <input
+                        type="search"
+                        name="criteria[search][value]"
+                        placeholder="Produkte durchsuchen …"
+                        autocomplete="off"
+                        aria-label="Produkte durchsuchen"
+                        data-cardnext-search-input
+                    >
+
+                    <button type="submit">Suchen</button>
+
+                    <button
+                        class="cardnext-product-search__close"
+                        type="button"
+                        data-cardnext-search-close
+                        aria-label="Suche schließen"
+                    >
+                        ×
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+</div>

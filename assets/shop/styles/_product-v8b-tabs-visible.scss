@@ -1,0 +1,174 @@
+/* ==========================================================================
+   Phase 18 v8b – Force visible dark product tab navigation
+   ========================================================================== */
+
+/* Reduce the oversized gap between purchase area and tab navigation. */
+body[data-route="sylius_shop_product_show"] .cn-product__main {
+    padding-bottom: 32px !important;
+}
+
+/* The nav exists in the DOM; force it to render as a clear dark section bar. */
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs] {
+    position: relative !important;
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    min-height: 60px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    background: #20272d !important;
+    background-color: #20272d !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+}
+
+/* Keep the tabs aligned with the normal 1420px Cardnext content area. */
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+.cn-product__nav-inner {
+    width: 100% !important;
+    min-height: 60px !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    white-space: nowrap !important;
+    scrollbar-width: none;
+}
+
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+.cn-product__nav-inner::-webkit-scrollbar {
+    display: none;
+}
+
+/* Tabs are flat navigation items, never browser-style buttons. */
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+button.cn-product__tab {
+    position: relative !important;
+    min-width: 0 !important;
+    min-height: 60px !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 26px !important;
+    margin: 0 !important;
+    color: rgba(255, 255, 255, .68) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, .08) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline-offset: -3px;
+    font-family: inherit !important;
+    font-size: .78rem !important;
+    font-weight: 750 !important;
+    line-height: 1 !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    cursor: pointer !important;
+}
+
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+button.cn-product__tab:first-child {
+    border-left: 1px solid rgba(255, 255, 255, .08) !important;
+}
+
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+button.cn-product__tab:hover,
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+button.cn-product__tab:focus-visible {
+    color: #fff !important;
+    background: rgba(255, 255, 255, .055) !important;
+}
+
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+button.cn-product__tab.is-active {
+    color: #fff !important;
+    background: rgba(255, 255, 255, .035) !important;
+}
+
+/* Active indicator. */
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+button.cn-product__tab::after {
+    position: absolute !important;
+    right: 20px !important;
+    bottom: 0 !important;
+    left: 20px !important;
+    height: 3px !important;
+    display: block !important;
+    content: "" !important;
+    background: #e95126 !important;
+    transform: scaleX(0) !important;
+    transform-origin: left center !important;
+}
+
+body[data-route="sylius_shop_product_show"]
+.cn-product
+nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+button.cn-product__tab.is-active::after {
+    transform: scaleX(1) !important;
+}
+
+/* Make the active content follow the tab bar more tightly. */
+body[data-route="sylius_shop_product_show"] .cn-product__tabpanels {
+    margin: 0 !important;
+}
+
+body[data-route="sylius_shop_product_show"]
+.cn-product__tabpanel.cn-product__section {
+    padding-top: 42px !important;
+    padding-bottom: 50px !important;
+}
+
+/* Prevent hidden panels from reserving any page height. */
+body[data-route="sylius_shop_product_show"]
+.cn-product__tabpanel[hidden] {
+    display: none !important;
+}
+
+/* Mobile: keep exactly one horizontal row. */
+@media (max-width: 767.98px) {
+    body[data-route="sylius_shop_product_show"]
+    .cn-product
+    nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+    button.cn-product__tab {
+        min-height: 54px !important;
+        padding: 0 18px !important;
+        font-size: .73rem !important;
+    }
+
+    body[data-route="sylius_shop_product_show"]
+    .cn-product
+    nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs],
+    body[data-route="sylius_shop_product_show"]
+    .cn-product
+    nav.cn-product__nav.cn-product__nav--tabs[data-cn-product-tabs]
+    .cn-product__nav-inner {
+        min-height: 54px !important;
+    }
+}

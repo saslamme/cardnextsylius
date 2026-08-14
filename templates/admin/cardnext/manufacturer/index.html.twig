@@ -1,0 +1,89 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% set page_title = 'Hersteller' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Katalog</div>
+                <h2 class="page-title">Hersteller</h2>
+            </div>
+            <div class="col-auto ms-auto">
+                <a class="btn btn-primary" href="{{ path('cardnext_admin_manufacturer_create') }}">
+                    Hersteller anlegen
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead>
+                    <tr>
+                        <th>Logo</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Website</th>
+                        <th>Status</th>
+                        <th>Sortierung</th>
+                        <th class="w-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for manufacturer in manufacturers %}
+                        <tr>
+                            <td>
+                                {% if manufacturer.logoPath %}
+                                    <img
+                                        src="{{ asset(manufacturer.logoPath) }}"
+                                        alt="{{ manufacturer.name }}"
+                                        style="max-width:90px;max-height:34px;object-fit:contain"
+                                    >
+                                {% else %}
+                                    <span class="text-secondary">—</span>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ manufacturer.name }}</strong></td>
+                            <td><code>{{ manufacturer.code }}</code></td>
+                            <td>
+                                {% if manufacturer.website %}
+                                    <a href="{{ manufacturer.website }}" target="_blank" rel="noopener">{{ manufacturer.website }}</a>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {{ manufacturer.enabled ? 'bg-green-lt' : 'bg-secondary-lt' }}">
+                                    {{ manufacturer.enabled ? 'Aktiv' : 'Inaktiv' }}
+                                </span>
+                            </td>
+                            <td>{{ manufacturer.position }}</td>
+                            <td>
+                                <div class="btn-list flex-nowrap">
+                                    <a class="btn btn-sm" href="{{ path('cardnext_admin_manufacturer_update', {'id': manufacturer.id}) }}">
+                                        Bearbeiten
+                                    </a>
+                                    <form
+                                        method="post"
+                                        action="{{ path('cardnext_admin_manufacturer_delete', {'id': manufacturer.id}) }}"
+                                        onsubmit="return confirm('Hersteller wirklich löschen?');"
+                                    >
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete-manufacturer-' ~ manufacturer.id) }}">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Löschen</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-secondary py-5">
+                                Noch keine Hersteller angelegt.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

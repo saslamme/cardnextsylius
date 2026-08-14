@@ -1,0 +1,306 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Katalog</div>
+                <h2 class="page-title">Produktimport</h2>
+            </div>
+
+            <div class="col-auto ms-auto">
+                <a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_product_import_template') }}">
+                    CSV-Vorlage herunterladen
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-xl-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">CSV prüfen</h3>
+                </div>
+
+                <div class="card-body">
+                    <p class="text-secondary">
+                        Eine neue Datei wird immer zuerst als Dry-Run geprüft.
+                        Erst nach erfolgreicher Validierung kann der echte Import gestartet werden.
+                    </p>
+
+                    <form
+                        action="{{ path('cardnext_admin_product_import_preview') }}"
+                        method="post"
+                        enctype="multipart/form-data"
+                    >
+                        <input
+                            type="hidden"
+                            name="_token"
+                            value="{{ csrf_token('cardnext-product-import-upload') }}"
+                        >
+
+                        <div class="mb-3">
+                            <label class="form-label" for="cardnext-import-csv">CSV-Datei</label>
+                            <input
+                                class="form-control"
+                                id="cardnext-import-csv"
+                                type="file"
+                                name="csv"
+                                accept=".csv,text/csv"
+                                required
+                            >
+                            <div class="form-hint">
+                                UTF-8, Semikolon-getrennt, maximal 20 MB.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mb-3" role="alert">
+                            <div>
+                                {% if image_directory_available %}
+                                    Produktbilder: <code>var/import/cardnext/images/</code>
+                                {% else %}
+                                    Produktbilder-Ordner ist aktuell nicht vorhanden.
+                                {% endif %}
+                            </div>
+                            <div class="mt-1">
+                                {% if manufacturer_logo_directory_available %}
+                                    Herstellerlogos: <code>var/import/cardnext/manufacturer-logos/</code>
+                                {% else %}
+                                    Herstellerlogo-Ordner ist aktuell nicht vorhanden.
+                                {% endif %}
+                            </div>
+                            <div class="mt-1">
+                                {% if document_directory_available %}
+                                    Produktdokumente: <code>var/import/cardnext/documents/</code>
+                                {% else %}
+                                    Dokument-Ordner ist aktuell nicht vorhanden.
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary w-100" type="submit">
+                            Datei prüfen
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-7">
+            {% if preview and import_token %}
+                <div class="card border-success">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Dry-Run erfolgreich</h3>
+                            <div class="text-secondary small">{{ original_filename }}</div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row row-cards mb-4">
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Zeilen</div>
+                                <div class="h2 mb-0">{{ preview.rows }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Hersteller neu</div>
+                                <div class="h2 mb-0">{{ preview.manufacturers_created }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Hersteller Update</div>
+                                <div class="h2 mb-0">{{ preview.manufacturers_updated }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Dokumente neu</div>
+                                <div class="h2 mb-0">{{ preview.documents_created }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Dokumente Update</div>
+                                <div class="h2 mb-0">{{ preview.documents_updated }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Kompatibilität neu</div>
+                                <div class="h2 mb-0">{{ preview.compatibilities_created }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Kompatibilität Update</div>
+                                <div class="h2 mb-0">{{ preview.compatibilities_updated }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Preisregeln neu</div>
+                                <div class="h2 mb-0">{{ preview.price_rules_created }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Preisregeln Update</div>
+                                <div class="h2 mb-0">{{ preview.price_rules_updated }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Kundenpreise neu</div>
+                                <div class="h2 mb-0">{{ preview.customer_price_rules_created }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Kundenpreise Update</div>
+                                <div class="h2 mb-0">{{ preview.customer_price_rules_updated }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Produkte neu</div>
+                                <div class="h2 mb-0">{{ preview.products_created }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Produkte Update</div>
+                                <div class="h2 mb-0">{{ preview.products_updated }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Varianten neu</div>
+                                <div class="h2 mb-0">{{ preview.variants_created }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 col-xxl">
+                                <div class="text-secondary small">Varianten Update</div>
+                                <div class="h2 mb-0">{{ preview.variants_updated }}</div>
+                            </div>
+                        </div>
+
+                        {% if preview.warnings|length > 0 %}
+                            <div class="alert alert-warning">
+                                <strong>{{ preview.warnings|length }} Warnung(en)</strong>
+                                <ul class="mb-0 mt-2">
+                                    {% for warning in preview.warnings %}
+                                        <li>{{ warning }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success">
+                                Keine Warnungen. Die Datei kann importiert werden.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end gap-2">
+                        <a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_product_import_index') }}">
+                            Verwerfen
+                        </a>
+
+                        <form
+                            action="{{ path('cardnext_admin_product_import_run', {'token': import_token}) }}"
+                            method="post"
+                        >
+                            <input
+                                type="hidden"
+                                name="_token"
+                                value="{{ csrf_token('cardnext-product-import-run-' ~ import_token) }}"
+                            >
+                            <input
+                                type="hidden"
+                                name="original_filename"
+                                value="{{ original_filename }}"
+                            >
+
+                            <button
+                                class="btn btn-primary"
+                                type="submit"
+                                onclick="return confirm('Produktimport jetzt wirklich ausführen?');"
+                            >
+                                Import starten
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <div class="text-secondary text-center py-5">
+                            <div class="h3 text-body mb-2">Noch keine Vorschau</div>
+                            <p class="mb-0">
+                                Links eine CSV auswählen. Nach erfolgreichem Dry-Run
+                                erscheint hier die Zusammenfassung und der Import-Button.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3 class="card-title">Letzte Importe</h3>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead>
+                    <tr>
+                        <th>Zeitpunkt</th>
+                        <th>Datei</th>
+                        <th>Status</th>
+                        <th class="text-end">Zeilen</th>
+                        <th class="text-end">Hersteller neu</th>
+                        <th class="text-end">Hersteller Update</th>
+                        <th class="text-end">Dokumente neu</th>
+                        <th class="text-end">Dokumente Update</th>
+                        <th class="text-end">Kompatibilität neu</th>
+                        <th class="text-end">Kompatibilität Update</th>
+                        <th class="text-end">Preisregeln neu</th>
+                        <th class="text-end">Preisregeln Update</th>
+                        <th class="text-end">Kundenpreise neu</th>
+                        <th class="text-end">Kundenpreise Update</th>
+                        <th class="text-end">Produkte neu</th>
+                        <th class="text-end">Updates</th>
+                        <th>Benutzer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for run in runs %}
+                        <tr>
+                            <td class="text-nowrap">{{ run.createdAt|date('d.m.Y H:i') }}</td>
+                            <td>
+                                <div class="fw-semibold">{{ run.originalFilename }}</div>
+
+                                {% if run.errorMessage %}
+                                    <div class="text-danger small mt-1">
+                                        {{ run.errorMessage|u.truncate(110, '…') }}
+                                    </div>
+                                {% elseif run.warnings|length > 0 %}
+                                    <div class="text-warning small mt-1">
+                                        {{ run.warnings|length }} Warnung(en)
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if run.status == 'success' %}
+                                    <span class="badge bg-success-lt">Importiert</span>
+                                {% elseif run.status == 'failed' %}
+                                    <span class="badge bg-danger-lt">Fehler</span>
+                                {% else %}
+                                    <span class="badge bg-blue-lt">Dry-Run</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">{{ run.rows ?? '–' }}</td>
+                            <td class="text-end">{{ run.manufacturersCreated ?? '–' }}</td>
+                            <td class="text-end">{{ run.manufacturersUpdated ?? '–' }}</td>
+                            <td class="text-end">{{ run.documentsCreated ?? '–' }}</td>
+                            <td class="text-end">{{ run.documentsUpdated ?? '–' }}</td>
+                            <td class="text-end">{{ run.compatibilitiesCreated ?? '–' }}</td>
+                            <td class="text-end">{{ run.compatibilitiesUpdated ?? '–' }}</td>
+                            <td class="text-end">{{ run.priceRulesCreated ?? '–' }}</td>
+                            <td class="text-end">{{ run.priceRulesUpdated ?? '–' }}</td>
+                            <td class="text-end">{{ run.customerPriceRulesCreated ?? '–' }}</td>
+                            <td class="text-end">{{ run.customerPriceRulesUpdated ?? '–' }}</td>
+                            <td class="text-end">{{ run.productsCreated ?? '–' }}</td>
+                            <td class="text-end">{{ run.productsUpdated ?? '–' }}</td>
+                            <td>{{ run.userIdentifier ?? '–' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td class="text-secondary text-center py-4" colspan="17">
+                                Noch keine Importläufe gespeichert.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

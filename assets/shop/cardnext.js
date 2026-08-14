@@ -1,0 +1,115 @@
+const openButton = document.querySelector('[data-cardnext-menu-open]');
+const closeButton = document.querySelector('[data-cardnext-menu-close]');
+const overlay = document.querySelector('[data-cardnext-mobile-overlay]');
+
+const openMenu = () => {
+    if (!overlay) return;
+
+    overlay.hidden = false;
+    document.body.classList.add('cardnext-nav-open');
+    closeButton?.focus();
+};
+
+const closeMenu = () => {
+    if (!overlay) return;
+
+    overlay.hidden = true;
+    document.body.classList.remove('cardnext-nav-open');
+    openButton?.focus();
+};
+
+openButton?.addEventListener('click', openMenu);
+closeButton?.addEventListener('click', closeMenu);
+
+overlay?.addEventListener('click', (event) => {
+    if (event.target === overlay) closeMenu();
+});
+
+// Product gallery
+const productGallery = document.querySelector('[data-cn-product-gallery]');
+
+if (productGallery) {
+    const mainImage = productGallery.querySelector('[data-cn-product-main-image]');
+    const thumbs = productGallery.querySelectorAll('[data-cn-product-thumb]');
+
+    thumbs.forEach((thumb) => {
+        thumb.addEventListener('click', () => {
+            if (!mainImage) return;
+
+            const source = thumb.dataset.cnProductImage;
+            if (!source) return;
+
+            mainImage.src = source;
+
+            thumbs.forEach((item) => {
+                item.classList.remove('is-active');
+                item.setAttribute('aria-pressed', 'false');
+            });
+
+            thumb.classList.add('is-active');
+            thumb.setAttribute('aria-pressed', 'true');
+        });
+    });
+}
+
+// Quantity control for the Sylius LiveComponent quantity field
+document.addEventListener('click', (event) => {
+    const minus = event.target.closest('[data-cn-qty-minus]');
+    const plus = event.target.closest('[data-cn-qty-plus]');
+
+    if (!minus && !plus) return;
+
+    const wrapper = event.target.closest('[data-cn-product-qty]');
+    const input = wrapper?.querySelector('input[type="number"]');
+
+    if (!input) return;
+
+    const minimum = Number.parseInt(input.min || '1', 10) || 1;
+    const current = Number.parseInt(input.value || String(minimum), 10) || minimum;
+
+    input.value = String(Math.max(minimum, current + (plus ? 1 : -1)));
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+});
+
+// Desktop product search
+const searchOpenButton = document.querySelector('[data-cardnext-search-open]');
+const searchCloseButton = document.querySelector('[data-cardnext-search-close]');
+const searchPanel = document.querySelector('[data-cardnext-search-panel]');
+const searchInput = document.querySelector('[data-cardnext-search-input]');
+
+const openProductSearch = () => {
+    if (!searchPanel) return;
+
+    searchPanel.hidden = false;
+    searchOpenButton?.setAttribute('aria-expanded', 'true');
+    window.requestAnimationFrame(() => searchInput?.focus());
+};
+
+const closeProductSearch = () => {
+    if (!searchPanel) return;
+
+    searchPanel.hidden = true;
+    searchOpenButton?.setAttribute('aria-expanded', 'false');
+};
+
+searchOpenButton?.addEventListener('click', () => {
+    if (!searchPanel) return;
+    searchPanel.hidden ? openProductSearch() : closeProductSearch();
+});
+
+searchCloseButton?.addEventListener('click', closeProductSearch);
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+
+    if (overlay && !overlay.hidden) {
+        closeMenu();
+        return;
+    }
+
+    if (searchPanel && !searchPanel.hidden) {
+        closeProductSearch();
+        searchOpenButton?.focus();
+    }
+});

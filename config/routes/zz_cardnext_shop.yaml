@@ -1,0 +1,27 @@
+# Loaded after Sylius' own shop routes.
+# Re-defining the same route name changes URL generation everywhere in Twig
+# while keeping Sylius' standard product grid/controller.
+
+sylius_shop_product_index:
+    path: /{_locale}/{slug}
+    methods: [GET]
+    defaults:
+        _controller: sylius.controller.product::indexAction
+        _sylius:
+            template: "@SyliusShop/product/index.html.twig"
+            grid: sylius_shop_product
+    requirements:
+        _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
+        # Cardnext category slugs are one URL segment. Keeping "/" out prevents
+        # this catch-all route from swallowing nested/system routes.
+        slug: '[^/]+'
+
+# Preserve existing /taxons/... links and search-engine signals.
+# The old address redirects permanently to the new canonical category URL.
+cardnext_legacy_taxon_redirect:
+    path: /{_locale}/taxons/{slug}
+    controller: App\Controller\Shop\LegacyTaxonRedirectController
+    methods: [GET]
+    requirements:
+        _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
+        slug: '[^/]+'

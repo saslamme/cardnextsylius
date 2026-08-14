@@ -1,0 +1,13 @@
+{% set form = hookable_metadata.context.form %}
+{% set variant = form.cartItem.vars.value.variant %}
+{% set enabled = form.vars.valid and variant is not null and variant.enabled %}
+
+<button
+    class="cn-product__add-cart"
+    type="submit"
+    {% if not enabled %}disabled{% endif %}
+    {{ sylius_test_html_attribute('add-to-cart-button') }}
+>
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" aria-hidden="true"><path d="M3.5 5h2l2 10.5h9.5l2.5-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="17" cy="19" r="1"/></svg>
+    In den Warenkorb
+</button>
