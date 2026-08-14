@@ -127,20 +127,19 @@
                                 Fehlende Felder werden ergänzt. Vorhandene Werte werden nicht überschrieben.
                             </div>
 
-                            <div
-                                data-controller="cardnext-product-attribute-profile"
-                                data-cardnext-product-attribute-profile-url-value="{{ path('cardnext_admin_product_attribute_profile_apply', {'id': resource.id}) }}"
-                                data-cardnext-product-attribute-profile-token-value="{{ csrf_token('apply-product-attribute-profile-' ~ resource.id) }}"
+                            <form
+                                method="post"
+                                action="{{ path('cardnext_admin_product_attribute_profile_apply', {'id': resource.id}) }}"
                             >
-                                <button
-                                    class="btn btn-primary"
-                                    type="button"
-                                    data-action="click->cardnext-product-attribute-profile#submit"
-                                    data-cardnext-product-attribute-profile-target="button"
+                                <input
+                                    type="hidden"
+                                    name="_token"
+                                    value="{{ csrf_token('apply-product-attribute-profile-' ~ resource.id) }}"
                                 >
+                                <button class="btn btn-primary" type="submit">
                                     Datenprofil anwenden / aktualisieren
                                 </button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
