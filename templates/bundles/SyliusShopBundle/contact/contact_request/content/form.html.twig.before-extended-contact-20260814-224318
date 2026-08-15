@@ -1,6 +1,0 @@
-{% set form = hookable_metadata.context.form %}
-{{ form_start(form, {'action': path('sylius_shop_contact_request'), 'attr': {'novalidate': 'novalidate', 'class': 'cn-form'}}) }}
-{{ form_row(form.email, sylius_test_form_attribute('contact-email')|merge({'attr': {'placeholder': 'name@unternehmen.de','autocomplete': 'email'}})) }}
-{{ form_row(form.message, sylius_test_form_attribute('contact-message')|merge({'attr': {'placeholder': 'Produkt, Hersteller, Artikelnummer oder Anwendungsfall …','rows': 6}})) }}
-<button type="submit" class="cn-btn cn-btn--primary cn-btn--block" {{ sylius_test_html_attribute('contact-send') }}>Nachricht senden →</button>
-{{ form_end(form, {'render_rest': false}) }}

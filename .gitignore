@@ -67,3 +67,9 @@ phpstan.neon
 /templates.backup-*/
 /*.zip
 /public/php-test.php
+
+# Local backup and temporary development artifacts
+*.before-*
+*.bak
+__pycache__/
+*.pyc

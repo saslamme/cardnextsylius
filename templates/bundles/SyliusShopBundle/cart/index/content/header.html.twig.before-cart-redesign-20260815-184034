@@ -1,6 +1,0 @@
-{% set header = hookable_metadata.context.header %}
-<header class="cn-cart-heading">
-    <div class="cn-cart-heading__eyebrow">Warenkorb</div>
-    <h1 class="cn-cart-heading__title">{{ header|trans }}</h1>
-    <p class="cn-cart-heading__lead">Prüfen Sie Artikel, Mengen und Preise, bevor Sie zur Kasse gehen.</p>
-</header>

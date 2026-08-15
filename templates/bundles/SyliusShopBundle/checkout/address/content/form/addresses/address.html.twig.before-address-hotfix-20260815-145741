@@ -1,8 +1,0 @@
-{% set type = hookable_metadata.context.type %}
-
-<section
-    class="cn-checkout-section cn-checkout-section--{{ type }}{% if type == 'shipping' and not hookable_metadata.context.is_different_address %} d-none{% endif %}"
-    {{ sylius_test_html_attribute(type) }}
->
-    {% hook 'address' %}
-</section>

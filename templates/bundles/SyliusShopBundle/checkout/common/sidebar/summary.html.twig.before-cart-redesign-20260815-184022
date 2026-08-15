@@ -1,5 +1,0 @@
-{% set order = hookable_metadata.context.order %}
-
-<section class="cn-checkout-summary-card">
-    {% hook 'summary' with { order } %}
-</section>
