@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Service;
 
 use App\Entity\Channel\Channel;
+use App\Entity\Channel\ChannelPricing;
 use App\Entity\Customer\Customer;
 use App\Entity\Customer\CustomerB2BProfile;
 use App\Entity\Customer\CustomerGroup;
@@ -23,8 +24,7 @@ final class B2BPriceResolverTest extends TestCase
     #[DataProvider('ineligibleCustomers')]
     public function testOnlyPublicRulesApplyWithoutAnActiveB2bProfile(?Customer $customer): void
     {
-        $publicRule = $this->regularRule('', 1, 800);
-        $resolver = $this->resolverWithQueryResults([$publicRule]);
+        $resolver = $this->resolverWithRuleSets([[$this->regularRule('', 1, 800)]]);
 
         self::assertSame(800, $resolver->resolve(new ProductVariant(), $this->channel(), 1, $customer));
     }
@@ -36,72 +36,102 @@ final class B2BPriceResolverTest extends TestCase
         yield 'customer with disabled profile' => [self::customer(false)];
     }
 
-    #[DataProvider('ineligibleCustomers')]
-    public function testIndividualAndGroupRulesAreNotQueriedWithoutAnActiveB2bProfile(?Customer $customer): void
+    public function testPriorityAndHighestApplicableQuantityArePreserved(): void
     {
-        $resolver = $this->resolverWithQueryResults([null]);
+        $public10 = $this->regularRule('', 10, 9500);
+        $public50 = $this->regularRule('', 50, 8500);
+        $group20 = $this->regularRule('retailers', 20, 8800);
+        $customer30 = $this->customerRule(30, 0);
+        $resolver = $this->resolverWithRuleSets([[$public10, $group20, $public50], [$customer30]]);
+        $variant = new ProductVariant();
+        $channel = $this->channel();
+        $customer = self::customer(true);
 
-        self::assertNull($resolver->resolve(new ProductVariant(), $this->channel(), 1, $customer));
+        self::assertNull($resolver->resolve($variant, $channel, 9, $customer));
+        self::assertSame(9500, $resolver->resolve($variant, $channel, 10, $customer));
+        self::assertSame(8800, $resolver->resolve($variant, $channel, 20, $customer));
+        self::assertSame(0, $resolver->resolve($variant, $channel, 30, $customer));
+        self::assertSame(0, $resolver->resolve($variant, $channel, 50, $customer));
     }
 
-    public function testActiveB2bCustomerGetsIndividualPriceBeforeGroupAndPublicPrices(): void
+    public function testPublicTierLadderRemainsUnchanged(): void
     {
-        $individualRule = $this->customerRule(1, 0);
-        $resolver = $this->resolverWithQueryResults([$individualRule]);
+        $resolver = $this->resolverWithRuleSets([[
+            $this->regularRule('', 10, 9500),
+            $this->regularRule('', 20, 9000),
+            $this->regularRule('', 50, 8500),
+        ]]);
 
-        self::assertSame(0, $resolver->resolve(new ProductVariant(), $this->channel(), 1, self::customer(true)));
+        self::assertSame([
+            $this->tier(1, 10000, 'base'),
+            $this->tier(10, 9500, 'public'),
+            $this->tier(20, 9000, 'public'),
+            $this->tier(50, 8500, 'public'),
+        ], $resolver->getEffectiveTiers($this->variantWithBasePrice(10000), $this->channel()));
     }
 
-    public function testActiveB2bCustomerGetsGroupPriceBeforePublicPrice(): void
+    public function testMixedTierLadderUsesPriorityAtEveryBreakpoint(): void
     {
-        $groupRule = $this->regularRule('retailers', 1, 700);
-        $resolver = $this->resolverWithQueryResults([null, $groupRule]);
+        $customer = self::customer(true, 'buyer@example.com');
+        $customerRule = $this->customerRule(30, 8200, $customer);
+        $resolver = $this->resolverWithRuleSets([[
+            $this->regularRule('', 10, 9500),
+            $this->regularRule('retailers', 20, 8800),
+            $this->regularRule('', 50, 8500),
+        ], [$customerRule]]);
 
-        self::assertSame(700, $resolver->resolve(new ProductVariant(), $this->channel(), 1, self::customer(true)));
+        self::assertSame([
+            $this->tier(1, 10000, 'base'),
+            $this->tier(10, 9500, 'public'),
+            $this->tier(20, 8800, 'group', 'retailers'),
+            $this->tier(30, 8200, 'customer', '', 'buyer@example.com'),
+        ], $resolver->getEffectiveTiers($this->variantWithBasePrice(10000), $this->channel(), $customer));
     }
 
-    public function testActiveB2bCustomerFallsBackToPublicPrice(): void
+    public function testRuleSetsAreLoadedOnlyOnceAcrossAllResolverOperations(): void
     {
-        $publicRule = $this->regularRule('', 1, 800);
-        $resolver = $this->resolverWithQueryResults([null, null, $publicRule]);
+        $queryCount = 0;
+        $resolver = $this->resolverWithRuleSets([
+            [$this->regularRule('', 10, 9500)],
+            [$this->customerRule(20, 9000)],
+        ], $queryCount);
+        $variant = $this->variantWithBasePrice(10000);
+        $channel = $this->channel();
+        $customer = self::customer(true);
 
-        self::assertSame(800, $resolver->resolve(new ProductVariant(), $this->channel(), 1, self::customer(true)));
+        $resolver->resolve($variant, $channel, 1, $customer);
+        $resolver->resolve($variant, $channel, 10, $customer);
+        $resolver->resolveRule($variant, $channel, 20, $customer);
+        self::assertTrue($resolver->hasEffectiveRules($variant, $channel, $customer));
+        $resolver->getEffectiveTiers($variant, $channel, $customer);
+
+        self::assertSame(2, $queryCount);
     }
 
-    public function testHighestApplicableMinimumQuantityRemainsTheResolvedRule(): void
+    public function testGuestRuleSetIsLoadedOnlyOnce(): void
     {
-        $quantityRule = $this->regularRule('', 10, 600);
-        $resolver = $this->resolverWithQueryResults([$quantityRule]);
+        $queryCount = 0;
+        $resolver = $this->resolverWithRuleSets([[$this->regularRule('', 10, 9500)]], $queryCount);
+        $variant = $this->variantWithBasePrice(10000);
+        $channel = $this->channel();
 
-        self::assertSame(600, $resolver->resolve(new ProductVariant(), $this->channel(), 12));
+        $resolver->resolve($variant, $channel, 1);
+        $resolver->resolve($variant, $channel, 10);
+        $resolver->hasEffectiveRules($variant, $channel);
+        $resolver->getEffectiveTiers($variant, $channel);
+
+        self::assertSame(1, $queryCount);
     }
 
-    #[DataProvider('ineligibleCustomers')]
-    public function testTierDisplayDoesNotReportIndividualOrGroupRulesForIneligibleCustomers(?Customer $customer): void
-    {
-        $resolver = $this->resolverWithQueryResults([], [[]]);
-        $variant = $this->createMock(ProductVariant::class);
-        $variant->method('getChannelPricingForChannel')->willReturn(null);
-
-        self::assertSame([], $resolver->getEffectiveTiers($variant, $this->channel(), $customer));
-        self::assertFalse($resolver->hasEffectiveRules($variant, $this->channel(), $customer));
-    }
-
-    private function resolverWithQueryResults(array $singleResults, array $listResults = []): B2BPriceResolver
+    private function resolverWithRuleSets(array $results, int &$queryCount = 0): B2BPriceResolver
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->method('createQueryBuilder')->willReturnCallback(function () use (&$singleResults, &$listResults, $entityManager): QueryBuilder {
-            $query = $this->getMockBuilder(Query::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['getOneOrNullResult', 'getResult'])
-                ->getMock();
-            $query->method('getOneOrNullResult')->willReturnCallback(static function () use (&$singleResults) {
-                return array_shift($singleResults);
+        $entityManager->method('createQueryBuilder')->willReturnCallback(function () use (&$results, &$queryCount, $entityManager): QueryBuilder {
+            ++$queryCount;
+            $query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->onlyMethods(['getResult'])->getMock();
+            $query->method('getResult')->willReturnCallback(static function () use (&$results): array {
+                return array_shift($results) ?? [];
             });
-            $query->method('getResult')->willReturnCallback(static function () use (&$listResults): array {
-                return array_shift($listResults) ?? [];
-            });
-
             $builder = $this->getMockBuilder(QueryBuilder::class)
                 ->setConstructorArgs([$entityManager])
                 ->onlyMethods(['getQuery'])
@@ -114,9 +144,10 @@ final class B2BPriceResolverTest extends TestCase
         return new B2BPriceResolver($entityManager);
     }
 
-    private static function customer(?bool $profileEnabled): Customer
+    private static function customer(?bool $profileEnabled, string $email = 'customer@example.com'): Customer
     {
         $customer = new Customer();
+        $customer->setEmail($email);
         $group = new CustomerGroup();
         $group->setCode('retailers');
         $customer->setGroup($group);
@@ -138,6 +169,16 @@ final class B2BPriceResolverTest extends TestCase
         return $channel;
     }
 
+    private function variantWithBasePrice(int $price): ProductVariant
+    {
+        $pricing = new ChannelPricing();
+        $pricing->setPrice($price);
+        $variant = $this->createMock(ProductVariant::class);
+        $variant->method('getChannelPricingForChannel')->willReturn($pricing);
+
+        return $variant;
+    }
+
     private function regularRule(string $groupCode, int $minQuantity, int $price): VariantPriceRule
     {
         $rule = new VariantPriceRule();
@@ -148,13 +189,29 @@ final class B2BPriceResolverTest extends TestCase
         return $rule;
     }
 
-    private function customerRule(int $minQuantity, int $price): CustomerVariantPriceRule
+    private function customerRule(int $minQuantity, int $price, ?Customer $customer = null): CustomerVariantPriceRule
     {
         $rule = new CustomerVariantPriceRule();
-        $rule->setCustomer(self::customer(true));
+        $rule->setCustomer($customer ?? self::customer(true));
         $rule->setMinQuantity($minQuantity);
         $rule->setPrice($price);
 
         return $rule;
+    }
+
+    private function tier(
+        int $quantity,
+        int $price,
+        string $source,
+        string $groupCode = '',
+        string $email = '',
+    ): array {
+        return [
+            'min_quantity' => $quantity,
+            'price' => $price,
+            'source' => $source,
+            'customer_group_code' => $groupCode,
+            'customer_email' => $email,
+        ];
     }
 }

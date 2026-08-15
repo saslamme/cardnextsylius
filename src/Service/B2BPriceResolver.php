@@ -11,12 +11,27 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Customer\Model\CustomerInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
-final readonly class B2BPriceResolver
+final class B2BPriceResolver implements ResetInterface
 {
+    /**
+     * @var array<string, array{
+     *     regularRules:list<VariantPriceRule>,
+     *     customerRules:list<CustomerVariantPriceRule>,
+     *     groupCode:string
+     * }>
+     */
+    private array $ruleSets = [];
+
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
+    }
+
+    public function reset(): void
+    {
+        $this->ruleSets = [];
     }
 
     public function resolve(
@@ -38,27 +53,9 @@ final readonly class B2BPriceResolver
     ): CustomerVariantPriceRule|VariantPriceRule|null {
         $quantity = max(1, $quantity);
 
-        $b2bCustomer = $this->getActiveB2bCustomer($customer);
+        $ruleSet = $this->getRuleSet($variant, $channel, $customer);
 
-        if ($b2bCustomer !== null) {
-            $customerRule = $this->findBestCustomerRule($variant, $channel, $quantity, $b2bCustomer);
-            if ($customerRule instanceof CustomerVariantPriceRule) {
-                return $customerRule;
-            }
-        }
-
-        $groupCode = $b2bCustomer !== null
-            ? trim((string) $b2bCustomer->getGroup()?->getCode())
-            : '';
-
-        if ($groupCode !== '') {
-            $groupRule = $this->findBestGroupOrPublicRule($variant, $channel, $quantity, $groupCode);
-            if ($groupRule instanceof VariantPriceRule) {
-                return $groupRule;
-            }
-        }
-
-        return $this->findBestGroupOrPublicRule($variant, $channel, $quantity, '');
+        return $this->resolveFromRuleSet($ruleSet, $quantity);
     }
 
     /**
@@ -88,20 +85,9 @@ final readonly class B2BPriceResolver
             return [];
         }
 
-        $b2bCustomer = $this->getActiveB2bCustomer($customer);
-        $groupCode = $b2bCustomer !== null
-            ? trim((string) $b2bCustomer->getGroup()?->getCode())
-            : '';
-
-        $regularRules = $this->findRulesForScopes(
-            $variant,
-            $channel,
-            $groupCode !== '' ? ['', $groupCode] : [''],
-        );
-
-        $customerRules = $b2bCustomer !== null
-            ? $this->findCustomerRules($variant, $channel, $b2bCustomer)
-            : [];
+        $ruleSet = $this->getRuleSet($variant, $channel, $customer);
+        $regularRules = $ruleSet['regularRules'];
+        $customerRules = $ruleSet['customerRules'];
 
         if ($regularRules === [] && $customerRules === []) {
             return [];
@@ -125,7 +111,7 @@ final readonly class B2BPriceResolver
         $lastSource = null;
 
         foreach ($breakpoints as $quantity) {
-            $resolvedRule = $this->resolveRule($variant, $channel, $quantity, $customer);
+            $resolvedRule = $this->resolveFromRuleSet($ruleSet, $quantity);
             $price = $resolvedRule?->getPrice() ?? $basePrice;
 
             if ($resolvedRule instanceof CustomerVariantPriceRule) {
@@ -167,21 +153,9 @@ final readonly class B2BPriceResolver
         ChannelInterface $channel,
         ?CustomerInterface $customer = null,
     ): bool {
-        $b2bCustomer = $this->getActiveB2bCustomer($customer);
+        $ruleSet = $this->getRuleSet($variant, $channel, $customer);
 
-        if ($b2bCustomer !== null && $this->findCustomerRules($variant, $channel, $b2bCustomer) !== []) {
-            return true;
-        }
-
-        $groupCode = $b2bCustomer !== null
-            ? trim((string) $b2bCustomer->getGroup()?->getCode())
-            : '';
-
-        return $this->findRulesForScopes(
-            $variant,
-            $channel,
-            $groupCode !== '' ? ['', $groupCode] : [''],
-        ) !== [];
+        return $ruleSet['customerRules'] !== [] || $ruleSet['regularRules'] !== [];
     }
 
     /**
@@ -202,69 +176,98 @@ final readonly class B2BPriceResolver
         return $rules;
     }
 
-    private function findBestCustomerRule(
-        ProductVariantInterface $variant,
-        ChannelInterface $channel,
-        int $quantity,
-        CustomerInterface $customer,
-    ): ?CustomerVariantPriceRule {
-        /** @var CustomerVariantPriceRule|null $rule */
-        $rule = $this->entityManager
-            ->createQueryBuilder()
-            ->select('rule')
-            ->from(CustomerVariantPriceRule::class, 'rule')
-            ->andWhere('rule.variant = :variant')
-            ->andWhere('rule.channelCode = :channelCode')
-            ->andWhere('rule.customer = :customer')
-            ->andWhere('rule.enabled = :enabled')
-            ->andWhere('rule.minQuantity <= :quantity')
-            ->setParameter('variant', $variant)
-            ->setParameter('channelCode', (string) $channel->getCode())
-            ->setParameter('customer', $customer)
-            ->setParameter('enabled', true)
-            ->setParameter('quantity', $quantity)
-            ->orderBy('rule.minQuantity', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-
-        return $rule;
-    }
-
     private function getActiveB2bCustomer(?CustomerInterface $customer): ?Customer
     {
         return $customer instanceof Customer && $customer->isB2bCustomer() ? $customer : null;
     }
 
-    private function findBestGroupOrPublicRule(
+    /**
+     * @param array{regularRules:list<VariantPriceRule>, customerRules:list<CustomerVariantPriceRule>, groupCode:string} $ruleSet
+     */
+    private function resolveFromRuleSet(array $ruleSet, int $quantity): CustomerVariantPriceRule|VariantPriceRule|null
+    {
+        $quantity = max(1, $quantity);
+
+        $customerRule = $this->findBestApplicableRule($ruleSet['customerRules'], $quantity);
+        if ($customerRule instanceof CustomerVariantPriceRule) {
+            return $customerRule;
+        }
+
+        if ($ruleSet['groupCode'] !== '') {
+            $groupRules = array_filter(
+                $ruleSet['regularRules'],
+                static fn (VariantPriceRule $rule): bool => $rule->getCustomerGroupCode() === $ruleSet['groupCode'],
+            );
+            $groupRule = $this->findBestApplicableRule($groupRules, $quantity);
+            if ($groupRule instanceof VariantPriceRule) {
+                return $groupRule;
+            }
+        }
+
+        $publicRules = array_filter(
+            $ruleSet['regularRules'],
+            static fn (VariantPriceRule $rule): bool => $rule->getCustomerGroupCode() === '',
+        );
+
+        return $this->findBestApplicableRule($publicRules, $quantity);
+    }
+
+    /**
+     * @template T of CustomerVariantPriceRule|VariantPriceRule
+     * @param iterable<T> $rules
+     * @return T|null
+     */
+    private function findBestApplicableRule(iterable $rules, int $quantity): CustomerVariantPriceRule|VariantPriceRule|null
+    {
+        $bestRule = null;
+
+        foreach ($rules as $rule) {
+            if ($rule->getMinQuantity() <= $quantity
+                && ($bestRule === null || $rule->getMinQuantity() > $bestRule->getMinQuantity())) {
+                $bestRule = $rule;
+            }
+        }
+
+        return $bestRule;
+    }
+
+    /**
+     * @return array{regularRules:list<VariantPriceRule>, customerRules:list<CustomerVariantPriceRule>, groupCode:string}
+     */
+    private function getRuleSet(
         ProductVariantInterface $variant,
         ChannelInterface $channel,
-        int $quantity,
-        string $customerGroupCode,
-    ): ?VariantPriceRule {
-        /** @var VariantPriceRule|null $rule */
-        $rule = $this->entityManager
-            ->createQueryBuilder()
-            ->select('rule')
-            ->from(VariantPriceRule::class, 'rule')
-            ->andWhere('rule.variant = :variant')
-            ->andWhere('rule.channelCode = :channelCode')
-            ->andWhere('rule.customerGroupCode = :customerGroupCode')
-            ->andWhere('rule.enabled = :enabled')
-            ->andWhere('rule.minQuantity <= :quantity')
-            ->setParameter('variant', $variant)
-            ->setParameter('channelCode', (string) $channel->getCode())
-            ->setParameter('customerGroupCode', $customerGroupCode)
-            ->setParameter('enabled', true)
-            ->setParameter('quantity', $quantity)
-            ->orderBy('rule.minQuantity', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        ?CustomerInterface $customer,
+    ): array {
+        $b2bCustomer = $this->getActiveB2bCustomer($customer);
+        $groupCode = $b2bCustomer !== null ? trim((string) $b2bCustomer->getGroup()?->getCode()) : '';
+        $customerGroupCode = trim((string) $customer?->getGroup()?->getCode());
+        $cacheKey = implode(':', [
+            spl_object_id($variant),
+            spl_object_id($channel),
+            $customer !== null ? spl_object_id($customer) : 'guest',
+            $customerGroupCode,
+            $b2bCustomer !== null ? 'b2b' : 'standard',
+        ]);
 
-        return $rule;
+        if (isset($this->ruleSets[$cacheKey])) {
+            return $this->ruleSets[$cacheKey];
+        }
+
+        $regularRules = $this->findRulesForScopes(
+            $variant,
+            $channel,
+            $groupCode !== '' ? ['', $groupCode] : [''],
+        );
+        $customerRules = $b2bCustomer !== null
+            ? $this->findCustomerRules($variant, $channel, $b2bCustomer)
+            : [];
+
+        return $this->ruleSets[$cacheKey] = [
+            'regularRules' => $regularRules,
+            'customerRules' => $customerRules,
+            'groupCode' => $groupCode,
+        ];
     }
 
     /**
