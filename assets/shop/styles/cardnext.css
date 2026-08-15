@@ -1720,9 +1720,11 @@ body.cn-nav-open { overflow: hidden; }
     height: auto;
 }
 
-.cardnext-header .cn-shop-header__search {
+.cardnext-header form.cn-shop-header__search {
+    position: relative;
     width: 100%;
     min-width: 0;
+    margin: 0;
 }
 
 .cardnext-header .cn-shop-header__search-box {
@@ -1754,7 +1756,7 @@ body.cn-nav-open { overflow: hidden; }
     font: inherit;
     font-size: .84rem;
     font-weight: 500;
-    cursor: pointer;
+    cursor: text;
 }
 
 .cardnext-header .cn-shop-header__search-input::placeholder {
@@ -1938,60 +1940,6 @@ body.cn-nav-open { overflow: hidden; }
     }
 }
 
-@media (max-width: 991.98px) {
-    .cardnext-header .cn-shop-header__top {
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "logo actions"
-            "search search";
-        gap: 10px 16px;
-        min-height: auto;
-        padding: 12px 0;
-    }
-
-    .cardnext-header .cn-shop-header__logo { grid-area: logo; }
-    .cardnext-header .cn-shop-header__search { grid-area: search; }
-    .cardnext-header .cn-shop-header__actions { grid-area: actions; }
-
-    .cardnext-header .cn-shop-header__logo img {
-        width: 165px;
-    }
-
-    .cardnext-header .cn-shop-header__action {
-        min-width: 46px;
-        min-height: 46px;
-        padding: 4px;
-    }
-
-    .cardnext-header .cn-shop-header__action-label {
-        display: none;
-    }
-
-    .cardnext-header .cn-shop-header__menu-toggle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 4px;
-        width: 42px;
-        height: 42px;
-        padding: 0;
-        border: 0;
-        background: transparent;
-    }
-
-    .cardnext-header .cn-shop-header__menu-toggle span {
-        display: block;
-        width: 18px;
-        height: 2px;
-        background: var(--cn-ink);
-    }
-
-    .cardnext-header .cn-shop-header__nav {
-        display: none;
-    }
-}
-
 @media (max-width: 767.98px) {
     .cardnext-header .cn-shop-header__inner {
         padding-left: 16px;
@@ -2028,16 +1976,16 @@ body.cn-nav-open { overflow: hidden; }
         top: 100%;
         right: 0;
         left: 0;
-        width: 100% !important;
-        max-width: none !important;
+        width: 100%;
+        max-width: none;
         visibility: hidden;
         opacity: 0;
         pointer-events: none;
         background: #fff;
-        border: 1px solid var(--cn-border) !important;
-        border-top: 1px solid var(--cn-border) !important;
+        border: 1px solid var(--cn-border);
+        border-top: 1px solid var(--cn-border);
         box-shadow: 0 18px 42px rgba(22, 28, 34, .10);
-        transform: translateY(6px) !important;
+        transform: translateY(6px);
         transition:
             opacity 140ms ease,
             transform 140ms ease,
@@ -2048,7 +1996,7 @@ body.cn-nav-open { overflow: hidden; }
         visibility: visible;
         opacity: 1;
         pointer-events: auto;
-        transform: translateY(0) !important;
+        transform: translateY(0);
     }
 
     .cn-shop-header__nav .cn-nav__mega-inner {
@@ -2092,7 +2040,7 @@ body.cn-nav-open { overflow: hidden; }
 
     /* Search moves into the drawer on mobile. */
     .cardnext-header .cn-shop-header__search {
-        display: none !important;
+        display: none;
     }
 
     .cardnext-header .cn-shop-header__actions {
@@ -2119,18 +2067,32 @@ body.cn-nav-open { overflow: hidden; }
     }
 
     .cardnext-header .cn-shop-header__action-label {
-        display: none !important;
+        display: none;
     }
 
     .cardnext-header .cn-shop-header__menu-toggle {
-        display: inline-flex !important;
+        display: inline-flex;
         flex: 0 0 42px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
         width: 42px;
         height: 42px;
+        padding: 0;
+        background: transparent;
+        border: 0;
+    }
+
+    .cardnext-header .cn-shop-header__menu-toggle span {
+        display: block;
+        width: 18px;
+        height: 2px;
+        background: var(--cn-ink);
     }
 
     .cardnext-header .cn-shop-header__nav {
-        display: none !important;
+        display: none;
     }
 
     body.cardnext-nav-open {
@@ -2388,27 +2350,63 @@ body.cn-nav-open { overflow: hidden; }
     }
 }
 
-/* Cardnext direct header search polish */
-.cardnext-header .cn-shop-header__search-input {
-    cursor: text !important;
+/* Header cart icon and badge */
+
+.cn-shop-header__cart .cn-shop-header__action {
+    overflow: visible;
 }
 
+.cn-shop-header__cart .cn-shop-header__action-icon {
+    position: relative;
+    overflow: visible;
+}
+
+.cn-shop-header__cart .cn-shop-header__action-icon > svg {
+    position: relative;
+    z-index: 1;
+}
+
+.cn-shop-header__cart .cardnext-cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    min-width: 19px;
+    height: 19px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    margin: 0;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    background: var(--cn-primary, #f04b23);
+    color: #fff;
+    box-sizing: border-box;
+    font-size: .64rem;
+    font-weight: 800;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    z-index: 3;
+}
+
+.cn-shop-header__cart .cardnext-cart-badge:empty {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+    .cn-shop-header__cart .cardnext-cart-badge {
+        top: -7px;
+        right: -9px;
+        min-width: 18px;
+        height: 18px;
+        font-size: .6rem;
+    }
+}
+
+/* Smart search and suggestions */
 .cardnext-header .cn-shop-header__search-input::-webkit-search-cancel-button {
     cursor: pointer;
-}
-
-/* Cardnext native header search */
-.cardnext-header form.cn-shop-header__search {
-    margin: 0;
-}
-
-.cardnext-header .cn-shop-header__search-input {
-    cursor: text !important;
-}
-
-/* Cardnext smart product search */
-.cardnext-header form.cn-shop-header__search {
-    position: relative;
 }
 
 .cn-search-suggest[hidden] {
@@ -2422,6 +2420,7 @@ body.cn-nav-open { overflow: hidden; }
     right: 0;
     left: 0;
     max-height: min(68vh, 620px);
+    overflow-x: hidden;
     overflow-y: auto;
     background: #fff;
     border: 1px solid var(--cn-border);
@@ -2489,7 +2488,8 @@ body.cn-nav-open { overflow: hidden; }
     min-height: 46px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
+    gap: 20px;
     padding: 9px 15px;
     color: var(--cn-primary-hover);
     background: var(--cn-surface-soft);
@@ -2725,11 +2725,7 @@ body.cn-nav-open { overflow: hidden; }
     }
 }
 
-/* Cardnext rich search suggestions */
-.cn-search-suggest {
-    overflow-x: hidden;
-}
-
+/* Rich search suggestion entries */
 .cn-search-suggest__product {
     min-height: 92px;
     display: grid;
@@ -2907,11 +2903,6 @@ body.cn-nav-open { overflow: hidden; }
 .cn-search-suggest__manufacturer > span:last-child {
     color: var(--cn-primary);
     font-weight: 800;
-}
-
-.cn-search-suggest__all {
-    justify-content: space-between;
-    gap: 20px;
 }
 
 @media (max-width: 991.98px) {
@@ -4777,61 +4768,7 @@ tbody td:nth-child(2) {
 
 /* CARDNEXT CART POLISH:END */
 
-/* CARDNEXT CART BADGE TEMPLATE:START */
 
-.cn-shop-header__cart .cn-shop-header__action {
-    overflow: visible;
-}
-
-.cn-shop-header__cart .cn-shop-header__action-icon {
-    position: relative;
-    overflow: visible;
-}
-
-.cn-shop-header__cart .cn-shop-header__action-icon > svg {
-    position: relative;
-    z-index: 1;
-}
-
-.cn-shop-header__cart .cardnext-cart-badge {
-    position: absolute;
-    top: -8px;
-    right: -10px;
-    min-width: 19px;
-    height: 19px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 4px;
-    margin: 0;
-    border: 2px solid #fff;
-    border-radius: 999px;
-    background: var(--cn-primary, #f04b23);
-    color: #fff;
-    box-sizing: border-box;
-    font-size: .64rem;
-    font-weight: 800;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-    z-index: 3;
-}
-
-.cn-shop-header__cart .cardnext-cart-badge:empty {
-    display: none;
-}
-
-@media (max-width: 767.98px) {
-    .cn-shop-header__cart .cardnext-cart-badge {
-        top: -7px;
-        right: -9px;
-        min-width: 18px;
-        height: 18px;
-        font-size: .6rem;
-    }
-}
-
-/* CARDNEXT CART BADGE TEMPLATE:END */
 
 /* CARDNEXT CONTACT SUBMIT:START */
 
