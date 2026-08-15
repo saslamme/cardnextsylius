@@ -52,10 +52,6 @@ final class B2BPriceExtension extends AbstractExtension
         $groups = [];
 
         foreach ($product->getEnabledVariants() as $variant) {
-            if (!$this->priceResolver->hasEffectiveRules($variant, $channel, $customer)) {
-                continue;
-            }
-
             $tiers = $this->priceResolver->getEffectiveTiers($variant, $channel, $customer);
             if ($tiers === []) {
                 continue;
@@ -103,10 +99,6 @@ final class B2BPriceExtension extends AbstractExtension
     {
         $channel = $this->channelContext->getChannel();
         $customer = $this->customerContext->getCustomer();
-
-        if (!$this->priceResolver->hasEffectiveRules($variant, $channel, $customer)) {
-            return [];
-        }
 
         $tiers = $this->priceResolver->getEffectiveTiers($variant, $channel, $customer);
         if ($tiers === []) {
