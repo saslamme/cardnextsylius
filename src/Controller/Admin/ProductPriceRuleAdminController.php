@@ -173,6 +173,12 @@ final class ProductPriceRuleAdminController extends AbstractController
         $channel = $this->resolveChannel($product, (string) $request->request->get('channel_code'), $entityManager);
         $customer = $this->resolveCustomer((string) $request->request->get('customer_email'), $entityManager);
 
+        if ($customer->getB2bProfile() === null) {
+            $this->addFlash('error', 'Für individuelle Preise benötigt der Kunde ein B2B-Profil.');
+
+            return $this->redirectToRoute('cardnext_admin_product_price_rule_index', ['id' => $product->getId()]);
+        }
+
         $minQuantity = max(1, (int) $request->request->get('min_quantity', 1));
         $price = $this->priceToMinor((string) $request->request->get('price'));
 

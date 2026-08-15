@@ -930,6 +930,14 @@ final readonly class CardnextProductCsvImporter
                 ));
             }
 
+            if ($customer->getB2bProfile() === null) {
+                throw new \RuntimeException(sprintf(
+                    'Row %d: customer "%s" requires a B2B profile before importing individual prices.',
+                    $rowNumber,
+                    $customerEmail,
+                ));
+            }
+
             $price = (int) $specification['price'];
             if ($price < 0) {
                 throw new \RuntimeException(sprintf(
