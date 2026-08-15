@@ -1,14 +1,6 @@
 {% if taxon.children|length > 0 %}
-    <nav class="cn-category__subcategories" aria-label="Unterkategorien {{ taxon.name }}">
-        <div class="cardnext-container cn-category__subcategory-list">
-            <a class="cn-category__subcategory-link is-active" href="{{ path('sylius_shop_product_index', {'slug': taxon.slug}) }}">
-                Alle {{ taxon.name }}
-            </a>
-            {% for child in taxon.children %}
-                <a class="cn-category__subcategory-link" href="{{ path('sylius_shop_product_index', {'slug': child.slug}) }}">
-                    {{ child.name }}
-                </a>
-            {% endfor %}
-        </div>
-    </nav>
+<nav class="cn-chipbar" aria-label="Unterkategorien {{ taxon.name }}"><div class="cn-container cn-chip-list">
+<a class="cn-chip is-active" href="{{ path('sylius_shop_product_index', {'slug': taxon.slug}) }}">Alle {{ taxon.name }}</a>
+{% for child in taxon.children %}<a class="cn-chip" href="{{ path('sylius_shop_product_index', {'slug': child.slug}) }}">{{ child.name }}</a>{% endfor %}
+</div></nav>
 {% endif %}

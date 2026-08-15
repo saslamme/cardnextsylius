@@ -1,0 +1,8 @@
+{% set form = hookable_metadata.context.form %}
+
+<div class="cn-checkout-different-address">
+    {{ form_row(
+        form.differentShippingAddress,
+        sylius_test_form_attribute('different-shipping-address')
+    ) }}
+</div>

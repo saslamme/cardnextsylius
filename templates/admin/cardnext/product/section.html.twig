@@ -15,6 +15,23 @@
                     <div class="form-hint">
                         Hersteller werden unter <strong>Katalog → Hersteller</strong> gepflegt.
                     </div>
+
+                    <div class="mt-3">
+                        {{ form_row(hookable_metadata.context.form.manufacturerPartNumber) }}
+                    </div>
+
+                    {{ form_row(hookable_metadata.context.form.ean) }}
+                </div>
+
+                <div class="col-12 col-xl-3">
+                    <label class="form-label">Startseite</label>
+                    <div class="border rounded p-3">
+                        {{ form_row(hookable_metadata.context.form.homepageFeatured) }}
+                        {{ form_row(hookable_metadata.context.form.homepagePosition) }}
+                        <div class="form-hint">
+                            Maximal vier markierte Produkte werden auf der Startseite angezeigt.
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-12 col-xl-3">

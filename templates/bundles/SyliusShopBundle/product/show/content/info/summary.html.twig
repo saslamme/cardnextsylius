@@ -1,6 +1,1 @@
-{# Rendered with Sylius Product Summary live component. #}
-<aside class="cn-product__summary" {{ attributes }}>
-    <div class="cn-product__summary-inner" {{ sylius_test_html_attribute('product-box') }}>
-        {% hook 'summary' with { product, variant } %}
-    </div>
-</aside>
+<aside class="cn-summary" {{ attributes }}><div class="cn-summary__inner" {{ sylius_test_html_attribute('product-box') }}>{% hook 'summary' with { product, variant } %}</div></aside>

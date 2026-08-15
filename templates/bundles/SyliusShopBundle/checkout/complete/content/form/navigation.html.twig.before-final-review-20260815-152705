@@ -1,0 +1,10 @@
+{% import '@SyliusShop/shared/macro/navigation_buttons.html.twig' as navigation %}
+
+<div class="cn-checkout-review__submit">
+    <div class="cn-checkout-review__submit-note">
+        <span class="cn-checkout-review__submit-lock" aria-hidden="true">✓</span>
+        <span>{{ 'sylius.ui.summary_of_your_order'|trans }}</span>
+    </div>
+
+    {{ navigation.complete('sylius.ui.place_order'|trans) }}
+</div>

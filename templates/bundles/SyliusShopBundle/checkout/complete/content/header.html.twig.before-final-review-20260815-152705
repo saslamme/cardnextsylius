@@ -1,0 +1,18 @@
+<header class="cn-checkout-page-heading cn-checkout-review__heading">
+    <div class="cn-checkout-page-heading__eyebrow">Checkout</div>
+    <h1 class="cn-checkout-page-heading__title">
+        {{ 'sylius.ui.summary_of_your_order'|trans }}
+    </h1>
+</header>
+
+<div class="cn-checkout-review__intro">
+    <span class="cn-checkout-review__intro-icon" aria-hidden="true">✓</span>
+    <div class="cn-checkout-review__intro-copy">
+        <strong>{{ 'sylius.ui.complete'|trans }}</strong>
+        <span>{{ 'sylius.ui.summary_of_your_order'|trans }}</span>
+    </div>
+
+    <div class="cn-checkout-review__meta">
+        {% hook 'header' %}
+    </div>
+</div>

@@ -1,0 +1,6 @@
+<div class="cn-cart-widget" {{ attributes }}>
+    <button type="button" class="cn-icon-btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" aria-label="Warenkorb" {{ sylius_test_html_attribute('cart-button') }}>
+        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path d="M3.5 5h2l2 10.5h9.5l2.5-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="17" cy="19" r="1"/></svg>
+        {% if cart.totalQuantity > 0 %}<span class="cn-cart-badge" {{ sylius_test_html_attribute('cart-quantity', cart.totalQuantity) }}>{{ cart.totalQuantity }}</span>{% endif %}
+    </button>
+</div>

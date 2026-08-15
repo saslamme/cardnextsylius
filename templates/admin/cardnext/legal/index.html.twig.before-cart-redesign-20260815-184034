@@ -1,0 +1,62 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+
+{% block cardnext_content %}
+    {% set route_map = {
+        'imprint': 'cardnext_shop_legal_imprint',
+        'privacy': 'cardnext_shop_legal_privacy',
+        'terms': 'cardnext_shop_legal_terms'
+    } %}
+
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Inhalte</div>
+                <h2 class="page-title">Rechtstexte</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning mb-4">
+        <strong>Hinweis:</strong>
+        Die hinterlegten Texte sind eine redaktionelle Ausgangsbasis.
+        Betreiberangaben, eingesetzte Dienste, Zahlungsarten und die B2B-Ausrichtung sollten vor dem Livegang geprüft werden.
+    </div>
+
+    <div class="row g-4">
+        {% for page in pages %}
+            <div class="col-12 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="badge bg-secondary-lt mb-2">{{ page.localeCode }}</span>
+                        <h3 class="card-title mb-2">{{ page.title }}</h3>
+                        <div class="text-secondary small">
+                            Zuletzt geändert: {{ page.updatedAt|date('d.m.Y H:i') }}
+                        </div>
+                    </div>
+
+                    <div class="card-footer d-flex gap-2">
+                        <a class="btn btn-primary" href="{{ path('cardnext_admin_legal_page_edit', {
+                            localeCode: page.localeCode,
+                            code: page.code
+                        }) }}">
+                            Bearbeiten
+                        </a>
+
+                        {% if route_map[page.code] is defined %}
+                            <a class="btn btn-outline-secondary"
+                               href="{{ path(route_map[page.code], {'_locale': page.localeCode}) }}"
+                               target="_blank"
+                               rel="noopener">
+                                Vorschau
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">Noch keine Rechtstexte vorhanden.</div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

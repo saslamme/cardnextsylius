@@ -1,0 +1,17 @@
+{% set form = hookable_metadata.context.form %}
+
+<section class="cn-checkout-review__notes">
+    <div class="cn-checkout-review__section-head">
+        <div>
+            <span class="cn-checkout-review__section-kicker">Optional</span>
+            <h2>{{ 'sylius.ui.additional_information'|trans }}</h2>
+        </div>
+    </div>
+
+    <div class="cn-checkout-review__section-body">
+        {{ form_row(
+            form.notes,
+            sylius_test_form_attribute('extra-notes')|merge({'rows': 3})
+        ) }}
+    </div>
+</section>

@@ -1,0 +1,7 @@
+{% set form = hookable_metadata.context.form %}
+{% set type = hookable_metadata.context.type %}
+{% set prefixes = hookable_metadata.prefixes|merge(['sylius_shop.shared.form']) %}
+
+<div class="cn-checkout-section__body">
+    {% hook 'address' with { _prefixes: prefixes, form: attribute(form, type), type } %}
+</div>

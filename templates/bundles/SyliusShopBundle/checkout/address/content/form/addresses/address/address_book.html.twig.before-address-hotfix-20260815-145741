@@ -1,0 +1,5 @@
+{% set type = hookable_metadata.context.type %}
+
+<div class="cn-checkout-section__address-book">
+    {{ component('sylius_shop:checkout:address:address_book', { type }) }}
+</div>

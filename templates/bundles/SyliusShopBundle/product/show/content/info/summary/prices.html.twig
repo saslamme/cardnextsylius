@@ -1,59 +1,12 @@
 {% set variant = hookable_metadata.context.variant|default(null) %}
-
-<div class="cn-product__purchase-price">
-    {% if variant is not null %}
-        {% set has_discount = variant|sylius_has_discount({'channel': sylius.channel}) %}
-        {% set days = sylius.channel.channelPriceHistoryConfig.lowestPriceForDiscountedProductsCheckingPeriod %}
-        {% set has_lowest_price = variant|sylius_has_lowest_price({'channel': sylius.channel}) %}
-
-        <div class="cn-product__purchase-top">
-            <div class="cn-product__price-block">
-                <small>Ihr Preis</small>
-                {% hook 'prices' with { variant, has_discount, has_lowest_price, days } %}
-                <div class="cn-product__price-tax">netto · zzgl. gesetzlicher MwSt.</div>
-
-                {% set quantity_tiers = cardnext_b2b_variant_tiers(variant) %}
-                {% if quantity_tiers|length > 0 %}
-                    <div class="cn-product__price-tiers" aria-label="Staffelpreise">
-                        <div class="cn-product__price-tiers-head">
-                            <strong>Mehr bestellen &amp; sparen</strong>
-                            <span>Staffelpreise</span>
-                        </div>
-
-                        <div class="cn-product__price-tiers-list">
-                            {% for tier in quantity_tiers %}
-                                <div class="cn-product__price-tier">
-                                    <span class="cn-product__price-tier-qty">ab {{ tier.min_quantity }} Stück</span>
-                                    <strong class="cn-product__price-tier-price">{{ tier.formatted_price }}</strong>
-
-                                    {% if tier.saving_percent > 0 %}
-                                        <span
-                                            class="cn-product__price-tier-saving"
-                                            title="Sie sparen {{ tier.formatted_saving }} pro Stück gegenüber dem Preis für 1 Stück"
-                                        >
-                                            −{{ tier.saving_percent }}%
-                                        </span>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="cn-product__stock-block">
-                {% if sylius_inventory_is_available(variant) %}
-                    <span class="cn-product__stock-status">Lieferbar</span>
-                    <small>Verfügbarkeit für diese Variante</small>
-                {% else %}
-                    <span class="cn-product__stock-status is-unavailable">Nicht auf Lager</span>
-                    <small>Bitte Verfügbarkeit anfragen</small>
-                {% endif %}
-            </div>
-        </div>
-    {% else %}
-        <div class="cn-product__unavailable" {{ sylius_test_html_attribute('product-price', 'sylius.ui.unavailable'|trans) }}>
-            {{ 'sylius.ui.unavailable'|trans }}
-        </div>
-    {% endif %}
+<div class="cn-price-panel">
+{% if variant is not null %}
+{% set has_discount = variant|sylius_has_discount({'channel': sylius.channel}) %}{% set days = sylius.channel.channelPriceHistoryConfig.lowestPriceForDiscountedProductsCheckingPeriod %}{% set has_lowest_price = variant|sylius_has_lowest_price({'channel': sylius.channel}) %}
+<div class="cn-price-panel__top">
+<div><small class="cn-price-label">Ihr Preis</small>{% hook 'prices' with { variant, has_discount, has_lowest_price, days } %}<div class="cn-price-tax">netto · zzgl. gesetzlicher MwSt.</div>
+{% set quantity_tiers = cardnext_b2b_variant_tiers(variant) %}{% if quantity_tiers|length > 0 %}<div class="cn-tier-table" aria-label="Staffelpreise"><div class="cn-tier-table__head"><strong>Mehr bestellen &amp; sparen</strong><span>Staffelpreise</span><span></span></div>{% for tier in quantity_tiers %}<div class="cn-tier-table__row"><span>ab {{ tier.min_quantity }} Stück</span><strong>{{ tier.formatted_price }}</strong>{% if tier.saving_percent > 0 %}<span class="cn-tier-table__saving" title="Sie sparen {{ tier.formatted_saving }} pro Stück gegenüber dem Preis für 1 Stück">−{{ tier.saving_percent }}%</span>{% else %}<span></span>{% endif %}</div>{% endfor %}</div>{% endif %}
+</div>
+<div class="cn-stock">{% if sylius_inventory_is_available(variant) %}<span class="cn-status">Lieferbar</span><small>Verfügbarkeit für diese Variante</small>{% else %}<span class="cn-status cn-status--warning">Nicht auf Lager</span><small>Bitte Verfügbarkeit anfragen</small>{% endif %}</div>
+</div>
+{% else %}<div class="cn-panel" {{ sylius_test_html_attribute('product-price', 'sylius.ui.unavailable'|trans) }}>{{ 'sylius.ui.unavailable'|trans }}</div>{% endif %}
 </div>

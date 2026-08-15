@@ -1,0 +1,537 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Search;
+
+use Doctrine\DBAL\Connection;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
+
+final class CardnextProductSearch
+{
+    /**
+     * @var list<array{key: string, terms: list<string>}>
+     */
+    private array $choiceSearchEntries = [];
+
+    private ?string $choiceSearchLocale = null;
+
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly ChannelContextInterface $channelContext,
+    ) {
+    }
+
+    public function search(string $query, string $localeCode, int $limit = 48): array
+    {
+        $query = $this->cleanQuery($query);
+
+        if ($query === '') {
+            return ['query' => '', 'total' => 0, 'products' => []];
+        }
+
+        $channelId = $this->channelContext->getChannel()->getId();
+
+        if ($channelId === null) {
+            return ['query' => $query, 'total' => 0, 'products' => []];
+        }
+
+        $lowerQuery = mb_strtolower($query);
+        $normalizedQuery = $this->normalizeIdentifier($query);
+        $tokens = $this->tokens($query);
+
+        $parameters = [
+            'channelId' => $channelId,
+            'localeCode' => $localeCode,
+            'query' => $lowerQuery,
+            'contains' => '%' . $lowerQuery . '%',
+            'prefix' => $lowerQuery . '%',
+            'normalizedQuery' => $normalizedQuery,
+            'normalizedPrefix' => $normalizedQuery . '%',
+            'normalizedContains' => '%' . $normalizedQuery . '%',
+        ];
+
+        $tokenConditions = [];
+
+        foreach ($tokens as $index => $token) {
+            $rawName = 'token_' . $index;
+            $normalizedName = 'token_norm_' . $index;
+
+            $parameters[$rawName] = '%' . mb_strtolower($token) . '%';
+            $parameters[$normalizedName] = '%' . $this->normalizeIdentifier($token) . '%';
+
+            $technicalCondition = $this->buildTechnicalAttributeCondition(
+                $token,
+                $index,
+                $localeCode,
+                $parameters,
+            );
+
+            $tokenConditions[] = sprintf(
+                "(LOWER(pt.name) LIKE :%1\$s
+                    OR LOWER(p.code) LIKE :%1\$s
+                    OR LOWER(COALESCE(pv.code, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(m.name, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(m.code, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(p.manufacturer_part_number, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(p.ean, '')) LIKE :%1\$s
+                    OR COALESCE(p.manufacturer_part_number_normalized, '') LIKE :%2\$s
+                    OR COALESCE(p.ean_normalized, '') LIKE :%2\$s
+                    OR %3\$s)",
+                $rawName,
+                $normalizedName,
+                $technicalCondition,
+            );
+        }
+
+        $whereSearch = $tokenConditions !== []
+            ? implode(' AND ', $tokenConditions)
+            : '1 = 0';
+
+        $productCodeNormalized = $this->sqlNormalized('p.code');
+        $variantCodeNormalized = $this->sqlNormalized('pv.code');
+
+        $baseFrom = "
+            FROM sylius_product p
+            INNER JOIN sylius_product_translation pt
+                ON pt.translatable_id = p.id
+                AND pt.locale = :localeCode
+            INNER JOIN sylius_product_channels pc
+                ON pc.product_id = p.id
+                AND pc.channel_id = :channelId
+            LEFT JOIN sylius_product_variant pv
+                ON pv.product_id = p.id
+            LEFT JOIN cardnext_manufacturer m
+                ON m.id = p.manufacturer_id
+            WHERE p.enabled = 1
+              AND ({$whereSearch})
+        ";
+
+        $total = (int) $this->connection->fetchOne(
+            "SELECT COUNT(DISTINCT p.id) {$baseFrom}",
+            $parameters,
+        );
+
+        $limit = max(1, min(100, $limit));
+
+        $score = "
+            MAX(
+                CASE
+                    WHEN COALESCE(p.ean_normalized, '') = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 150
+
+                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 145
+
+                    WHEN LOWER(p.code) = :query THEN 130
+
+                    WHEN {$productCodeNormalized} = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 128
+
+                    WHEN LOWER(COALESCE(pv.code, '')) = :query THEN 126
+
+                    WHEN {$variantCodeNormalized} = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 124
+
+                    WHEN LOWER(pt.name) = :query THEN 110
+                    WHEN LOWER(COALESCE(m.name, '')) = :query THEN 105
+                    WHEN LOWER(COALESCE(m.code, '')) = :query THEN 103
+
+                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 101
+
+                    WHEN COALESCE(p.ean_normalized, '') LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 100
+
+                    WHEN LOWER(p.code) LIKE :prefix THEN 96
+                    WHEN LOWER(COALESCE(pv.code, '')) LIKE :prefix THEN 94
+
+                    WHEN {$productCodeNormalized} LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 92
+
+                    WHEN {$variantCodeNormalized} LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 90
+
+                    WHEN LOWER(pt.name) LIKE :prefix THEN 86
+                    WHEN LOWER(COALESCE(m.name, '')) LIKE :prefix THEN 80
+
+                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') LIKE :normalizedContains
+                        AND :normalizedQuery <> '' THEN 78
+
+                    WHEN COALESCE(p.ean_normalized, '') LIKE :normalizedContains
+                        AND :normalizedQuery <> '' THEN 76
+
+                    WHEN LOWER(p.code) LIKE :contains THEN 74
+                    WHEN LOWER(COALESCE(pv.code, '')) LIKE :contains THEN 72
+                    WHEN LOWER(pt.name) LIKE :contains THEN 66
+                    WHEN LOWER(COALESCE(m.name, '')) LIKE :contains THEN 58
+
+                    ELSE 40
+                END
+            )
+        ";
+
+        $sql = "
+            SELECT
+                p.id,
+                p.code,
+                p.manufacturer_part_number,
+                p.ean,
+                pt.name,
+                pt.slug,
+                m.name AS manufacturer,
+                m.code AS manufacturer_code,
+                {$score} AS search_score
+            {$baseFrom}
+            GROUP BY
+                p.id,
+                p.code,
+                p.manufacturer_part_number,
+                p.ean,
+                pt.name,
+                pt.slug,
+                m.name,
+                m.code
+            ORDER BY search_score DESC, pt.name ASC
+            LIMIT {$limit}
+        ";
+
+        $rows = $this->connection->fetchAllAssociative($sql, $parameters);
+
+        $products = array_map(
+            static fn (array $row): array => [
+                'id' => (int) $row['id'],
+                'code' => (string) $row['code'],
+                'manufacturerPartNumber' => $row['manufacturer_part_number'] !== null
+                    ? (string) $row['manufacturer_part_number']
+                    : null,
+                'ean' => $row['ean'] !== null ? (string) $row['ean'] : null,
+                'name' => (string) $row['name'],
+                'slug' => (string) $row['slug'],
+                'manufacturer' => $row['manufacturer'] !== null
+                    ? (string) $row['manufacturer']
+                    : null,
+                'manufacturerCode' => $row['manufacturer_code'] !== null
+                    ? (string) $row['manufacturer_code']
+                    : null,
+                'score' => (int) $row['search_score'],
+            ],
+            $rows,
+        );
+
+        return [
+            'query' => $query,
+            'total' => $total,
+            'products' => $products,
+        ];
+    }
+
+    public function manufacturers(string $query, int $limit = 4): array
+    {
+        $query = $this->cleanQuery($query);
+
+        if (mb_strlen($query) < 2) {
+            return [];
+        }
+
+        $channelId = $this->channelContext->getChannel()->getId();
+
+        if ($channelId === null) {
+            return [];
+        }
+
+        $limit = max(1, min(10, $limit));
+        $lowerQuery = mb_strtolower($query);
+
+        $sql = "
+            SELECT DISTINCT m.name, m.code
+            FROM cardnext_manufacturer m
+            INNER JOIN sylius_product p
+                ON p.manufacturer_id = m.id
+                AND p.enabled = 1
+            INNER JOIN sylius_product_channels pc
+                ON pc.product_id = p.id
+                AND pc.channel_id = :channelId
+            WHERE m.enabled = 1
+              AND (
+                  LOWER(m.name) LIKE :contains
+                  OR LOWER(m.code) LIKE :contains
+              )
+            ORDER BY
+                CASE
+                    WHEN LOWER(m.name) = :query THEN 0
+                    WHEN LOWER(m.code) = :query THEN 1
+                    WHEN LOWER(m.name) LIKE :prefix THEN 2
+                    ELSE 3
+                END,
+                m.name ASC
+            LIMIT {$limit}
+        ";
+
+        return array_map(
+            static fn (array $row): array => [
+                'name' => (string) $row['name'],
+                'code' => (string) $row['code'],
+            ],
+            $this->connection->fetchAllAssociative($sql, [
+                'channelId' => $channelId,
+                'query' => $lowerQuery,
+                'prefix' => $lowerQuery . '%',
+                'contains' => '%' . $lowerQuery . '%',
+            ]),
+        );
+    }
+
+    /**
+     * Builds one correlated EXISTS condition for a single search token.
+     *
+     * A technical value counts only when the attribute actually has a value.
+     * This prevents empty profile fields (or false checkboxes) from producing
+     * irrelevant results just because their attribute code exists.
+     *
+     * @param array<string, mixed> $parameters
+     */
+    private function buildTechnicalAttributeCondition(
+        string $token,
+        int $index,
+        string $localeCode,
+        array &$parameters,
+    ): string {
+        $rawParam = 'attr_raw_' . $index;
+        $normalizedParam = 'attr_norm_' . $index;
+
+        $lowerToken = mb_strtolower($token);
+        $normalizedToken = $this->normalizeSearchTerm($token);
+
+        $parameters[$rawParam] = '%' . $lowerToken . '%';
+        $parameters[$normalizedParam] = '%' . $normalizedToken . '%';
+
+        $aliasConditions = [];
+
+        foreach ($this->choiceAliasesForToken($token, $localeCode) as $aliasIndex => $alias) {
+            $parameterName = sprintf('attr_alias_%d_%d', $index, $aliasIndex);
+            $parameters[$parameterName] = '%' . mb_strtolower($alias) . '%';
+
+            $aliasConditions[] = sprintf(
+                "LOWER(CAST(pav.json_value AS CHAR)) LIKE :%s",
+                $parameterName,
+            );
+        }
+
+        $aliasSql = $aliasConditions !== []
+            ? ' OR ' . implode(' OR ', $aliasConditions)
+            : '';
+
+        return "
+            EXISTS (
+                SELECT 1
+                FROM sylius_product_attribute_value pav
+                INNER JOIN sylius_product_attribute pa
+                    ON pa.id = pav.attribute_id
+                LEFT JOIN sylius_product_attribute_translation pat
+                    ON pat.translatable_id = pa.id
+                    AND pat.locale = :localeCode
+                WHERE pav.product_id = p.id
+                  AND (pav.locale_code IS NULL OR pav.locale_code = :localeCode)
+                  AND (
+                      NULLIF(TRIM(COALESCE(pav.text_value, '')), '') IS NOT NULL
+                      OR pav.boolean_value = 1
+                      OR pav.integer_value IS NOT NULL
+                      OR pav.float_value IS NOT NULL
+                      OR pav.datetime_value IS NOT NULL
+                      OR pav.date_value IS NOT NULL
+                      OR (
+                          pav.json_value IS NOT NULL
+                          AND CAST(pav.json_value AS CHAR) NOT IN ('null', '[]', '{}', '\"\"')
+                      )
+                  )
+                  AND (
+                      LOWER(COALESCE(pav.text_value, '')) LIKE :{$rawParam}
+                      OR CAST(pav.integer_value AS CHAR) LIKE :{$rawParam}
+                      OR CAST(pav.float_value AS CHAR) LIKE :{$rawParam}
+                      OR CAST(pav.date_value AS CHAR) LIKE :{$rawParam}
+                      OR CAST(pav.datetime_value AS CHAR) LIKE :{$rawParam}
+                      OR LOWER(CAST(pav.json_value AS CHAR)) LIKE :{$rawParam}
+                      OR LOWER(pa.code) LIKE :{$rawParam}
+                      OR LOWER(COALESCE(pat.name, '')) LIKE :{$rawParam}
+                      {$aliasSql}
+                  )
+            )
+        ";
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function choiceAliasesForToken(string $token, string $localeCode): array
+    {
+        $needle = $this->normalizeSearchTerm($token);
+
+        if (mb_strlen($needle) < 2) {
+            return [];
+        }
+
+        $this->ensureChoiceSearchEntries($localeCode);
+
+        $aliases = [];
+
+        foreach ($this->choiceSearchEntries as $entry) {
+            foreach ($entry['terms'] as $term) {
+                if (
+                    $term === $needle
+                    || str_contains($term, $needle)
+                    || (mb_strlen($term) >= 3 && str_contains($needle, $term))
+                ) {
+                    $aliases[$entry['key']] = true;
+                    break;
+                }
+            }
+        }
+
+        return array_keys($aliases);
+    }
+
+    private function ensureChoiceSearchEntries(string $localeCode): void
+    {
+        if ($this->choiceSearchLocale === $localeCode) {
+            return;
+        }
+
+        $this->choiceSearchLocale = $localeCode;
+        $this->choiceSearchEntries = [];
+
+        $rows = $this->connection->fetchAllAssociative(
+            'SELECT code, configuration FROM sylius_product_attribute',
+        );
+
+        foreach ($rows as $row) {
+            $configuration = $row['configuration'];
+
+            if (is_string($configuration)) {
+                $configuration = json_decode($configuration, true);
+            }
+
+            if (!is_array($configuration)) {
+                continue;
+            }
+
+            $choices = $configuration['choices'] ?? null;
+
+            if (!is_array($choices)) {
+                continue;
+            }
+
+            foreach ($choices as $key => $labels) {
+                if (!is_string($key) && !is_int($key)) {
+                    continue;
+                }
+
+                $key = (string) $key;
+                $terms = [
+                    $this->normalizeSearchTerm($key),
+                ];
+
+                if (is_array($labels)) {
+                    $preferred = $labels[$localeCode] ?? null;
+
+                    if (is_string($preferred)) {
+                        $terms = array_merge(
+                            $terms,
+                            $this->searchTermsFromLabel($preferred),
+                        );
+                    }
+
+                    foreach ($labels as $label) {
+                        if (is_string($label)) {
+                            $terms = array_merge(
+                                $terms,
+                                $this->searchTermsFromLabel($label),
+                            );
+                        }
+                    }
+                } elseif (is_string($labels)) {
+                    $terms = array_merge(
+                        $terms,
+                        $this->searchTermsFromLabel($labels),
+                    );
+                }
+
+                $terms = array_values(array_unique(array_filter(
+                    $terms,
+                    static fn (string $term): bool => mb_strlen($term) >= 2,
+                )));
+
+                if ($terms === []) {
+                    continue;
+                }
+
+                $this->choiceSearchEntries[] = [
+                    'key' => mb_strtolower($key),
+                    'terms' => $terms,
+                ];
+            }
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function searchTermsFromLabel(string $label): array
+    {
+        $terms = [
+            $this->normalizeSearchTerm($label),
+        ];
+
+        $parts = preg_split('/[\s,;\/()|+\-–—]+/u', $label) ?: [];
+
+        foreach ($parts as $part) {
+            $normalized = $this->normalizeSearchTerm($part);
+
+            if (mb_strlen($normalized) >= 2) {
+                $terms[] = $normalized;
+            }
+        }
+
+        return $terms;
+    }
+
+    private function cleanQuery(string $query): string
+    {
+        $query = preg_replace('/\s+/u', ' ', trim($query)) ?? '';
+
+        return mb_substr($query, 0, 120);
+    }
+
+    private function normalizeIdentifier(string $value): string
+    {
+        $value = mb_strtolower($value);
+
+        return preg_replace('/[^a-z0-9]+/i', '', $value) ?? '';
+    }
+
+    private function normalizeSearchTerm(string $value): string
+    {
+        $value = mb_strtolower($value);
+
+        return preg_replace('/[^\p{L}\p{N}]+/u', '', $value) ?? '';
+    }
+
+    private function tokens(string $query): array
+    {
+        $tokens = preg_split('/[\s,;\/]+/u', trim($query)) ?: [];
+        $tokens = array_values(array_filter(
+            array_map('trim', $tokens),
+            static fn (string $token): bool => $token !== '',
+        ));
+
+        return array_slice($tokens, 0, 6);
+    }
+
+    private function sqlNormalized(string $field): string
+    {
+        return sprintf(
+            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(COALESCE(%s, '')), '-', ''), ' ', ''), '_', ''), '.', ''), '/', '')",
+            $field,
+        );
+    }
+}

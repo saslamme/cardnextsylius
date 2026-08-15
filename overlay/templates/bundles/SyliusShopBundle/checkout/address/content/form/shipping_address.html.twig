@@ -1,0 +1,22 @@
+{% set prefixes = hookable_metadata.prefixes|merge(['sylius_shop.shared.form']) %}
+
+<section class="cn-checkout-section cn-checkout-section--address {% if not hookable_metadata.context.is_diffrent_address %}d-none{% endif %}">
+    <div class="cn-checkout-section__header">
+        <div>
+            <div class="cn-checkout-section__kicker">02</div>
+            <h2 class="cn-checkout-section__title">{{ 'sylius.ui.shipping_address'|trans }}</h2>
+        </div>
+    </div>
+
+    <div class="cn-checkout-section__body">
+        <div class="cn-checkout-address-book">
+            {{ component('sylius_shop:checkout:address:address_book', {type: 'shippingAddress'}) }}
+        </div>
+
+        {% hook 'address' with {
+            _prefixes: prefixes,
+            'form': hookable_metadata.context.form.shippingAddress,
+            'type': 'shipping'
+        } %}
+    </div>
+</section>

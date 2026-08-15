@@ -1,0 +1,98 @@
+{% if products|length > 0 %}
+    <div class="cn-search-suggest__heading">Produkte</div>
+
+    {% for product in products %}
+        {% set variant = product.enabledVariants|first %}
+        {% set identifier = product.manufacturerPartNumber ?: product.code %}
+        {% set available = variant and (not variant.tracked or ((variant.onHand - variant.onHold) > 0)) %}
+
+        <a
+            class="cn-search-suggest__product"
+            href="{{ path('sylius_shop_product_show', {
+                '_locale': product.translation.locale,
+                'slug': product.slug
+            }) }}"
+        >
+            <span class="cn-search-suggest__media">
+                {{ component('sylius_shop:main_image', {
+                    product: product,
+                    class: 'cn-search-suggest__image'
+                }) }}
+            </span>
+
+            <span class="cn-search-suggest__product-content">
+                <span class="cn-search-suggest__product-topline">
+                    {% if product.manufacturer %}
+                        <span>{{ product.manufacturer.name }}</span>
+                    {% endif %}
+                    {% if identifier %}
+                        <span>{{ identifier }}</span>
+                    {% endif %}
+                </span>
+
+                <strong class="cn-search-suggest__product-name">{{ product.name }}</strong>
+
+                <span class="cn-search-suggest__product-bottom">
+                    <span class="cn-search-suggest__availability {{ available ? 'is-available' : 'is-unavailable' }}">
+                        <span class="cn-search-suggest__availability-dot"></span>
+                        {{ available ? 'Lieferbar' : 'Auf Anfrage' }}
+                    </span>
+
+                    {% if variant %}
+                        <span class="cn-search-suggest__price">
+                            {{ component('sylius_shop:product:card:price', {
+                                variant: variant,
+                                template: '@SyliusShop/product/common/price.html.twig'
+                            }) }}
+                        </span>
+                    {% endif %}
+                </span>
+            </span>
+
+            <span class="cn-search-suggest__arrow" aria-hidden="true">→</span>
+        </a>
+    {% endfor %}
+{% endif %}
+
+{% if manufacturers|length > 0 %}
+    <div class="cn-search-suggest__heading">Hersteller</div>
+
+    <div class="cn-search-suggest__manufacturers">
+        {% for manufacturer in manufacturers %}
+            <a
+                class="cn-search-suggest__manufacturer"
+                href="{{ path('cardnext_shop_search', {
+                    '_locale': app.request.locale,
+                    'q': manufacturer.name
+                }) }}"
+            >
+                <span>
+                    <strong>{{ manufacturer.name }}</strong>
+                    {% if manufacturer.code %}
+                        <small>{{ manufacturer.code }}</small>
+                    {% endif %}
+                </span>
+                <span aria-hidden="true">→</span>
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if products|length == 0 and manufacturers|length == 0 %}
+    <div class="cn-search-suggest__empty">
+        Keine direkten Vorschläge für „{{ query }}“ gefunden.
+    </div>
+{% endif %}
+
+{% if total > products|length %}
+    <a
+        class="cn-search-suggest__all"
+        href="{{ path('cardnext_shop_search', {
+            '_locale': app.request.locale,
+            'q': query
+        }) }}"
+    >
+        <span>Alle {{ total }} Ergebnisse anzeigen</span>
+        <span aria-hidden="true">→</span>
+    </a>
+{% endif %}

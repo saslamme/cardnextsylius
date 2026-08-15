@@ -1,0 +1,281 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Search;
+
+use Doctrine\DBAL\Connection;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
+
+final class CardnextProductSearch
+{
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly ChannelContextInterface $channelContext,
+    ) {
+    }
+
+    public function search(string $query, string $localeCode, int $limit = 48): array
+    {
+        $query = $this->cleanQuery($query);
+
+        if ($query === '') {
+            return ['query' => '', 'total' => 0, 'products' => []];
+        }
+
+        $channelId = $this->channelContext->getChannel()->getId();
+
+        if ($channelId === null) {
+            return ['query' => $query, 'total' => 0, 'products' => []];
+        }
+
+        $lowerQuery = mb_strtolower($query);
+        $normalizedQuery = $this->normalizeIdentifier($query);
+        $tokens = $this->tokens($query);
+
+        $parameters = [
+            'channelId' => $channelId,
+            'localeCode' => $localeCode,
+            'query' => $lowerQuery,
+            'contains' => '%' . $lowerQuery . '%',
+            'prefix' => $lowerQuery . '%',
+            'normalizedQuery' => $normalizedQuery,
+            'normalizedPrefix' => $normalizedQuery . '%',
+            'normalizedContains' => '%' . $normalizedQuery . '%',
+        ];
+
+        $tokenConditions = [];
+
+        foreach ($tokens as $index => $token) {
+            $rawName = 'token_' . $index;
+            $normalizedName = 'token_norm_' . $index;
+
+            $parameters[$rawName] = '%' . mb_strtolower($token) . '%';
+            $parameters[$normalizedName] = '%' . $this->normalizeIdentifier($token) . '%';
+
+            $tokenConditions[] = sprintf(
+                "(LOWER(pt.name) LIKE :%1\$s
+                    OR LOWER(p.code) LIKE :%1\$s
+                    OR LOWER(COALESCE(pv.code, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(m.name, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(m.code, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(p.manufacturer_part_number, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(p.ean, '')) LIKE :%1\$s
+                    OR COALESCE(p.manufacturer_part_number_normalized, '') LIKE :%2\$s
+                    OR COALESCE(p.ean_normalized, '') LIKE :%2\$s)",
+                $rawName,
+                $normalizedName,
+            );
+        }
+
+        $whereSearch = $tokenConditions !== [] ? implode(' AND ', $tokenConditions) : '1 = 0';
+
+        $productCodeNormalized = $this->sqlNormalized('p.code');
+        $variantCodeNormalized = $this->sqlNormalized('pv.code');
+
+        $baseFrom = "
+            FROM sylius_product p
+            INNER JOIN sylius_product_translation pt
+                ON pt.translatable_id = p.id
+                AND pt.locale = :localeCode
+            INNER JOIN sylius_product_channels pc
+                ON pc.product_id = p.id
+                AND pc.channel_id = :channelId
+            LEFT JOIN sylius_product_variant pv
+                ON pv.product_id = p.id
+            LEFT JOIN cardnext_manufacturer m
+                ON m.id = p.manufacturer_id
+            WHERE p.enabled = 1
+              AND ({$whereSearch})
+        ";
+
+        $total = (int) $this->connection->fetchOne(
+            "SELECT COUNT(DISTINCT p.id) {$baseFrom}",
+            $parameters,
+        );
+
+        $limit = max(1, min(100, $limit));
+
+        $score = "
+            MAX(
+                CASE
+                    WHEN COALESCE(p.ean_normalized, '') = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 150
+                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 145
+                    WHEN LOWER(p.code) = :query THEN 130
+                    WHEN {$productCodeNormalized} = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 128
+                    WHEN LOWER(COALESCE(pv.code, '')) = :query THEN 126
+                    WHEN {$variantCodeNormalized} = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 124
+                    WHEN LOWER(pt.name) = :query THEN 110
+                    WHEN LOWER(COALESCE(m.name, '')) = :query THEN 105
+                    WHEN LOWER(COALESCE(m.code, '')) = :query THEN 103
+                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 101
+                    WHEN COALESCE(p.ean_normalized, '') LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 100
+                    WHEN LOWER(p.code) LIKE :prefix THEN 96
+                    WHEN LOWER(COALESCE(pv.code, '')) LIKE :prefix THEN 94
+                    WHEN {$productCodeNormalized} LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 92
+                    WHEN {$variantCodeNormalized} LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 90
+                    WHEN LOWER(pt.name) LIKE :prefix THEN 86
+                    WHEN LOWER(COALESCE(m.name, '')) LIKE :prefix THEN 80
+                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') LIKE :normalizedContains
+                        AND :normalizedQuery <> '' THEN 78
+                    WHEN COALESCE(p.ean_normalized, '') LIKE :normalizedContains
+                        AND :normalizedQuery <> '' THEN 76
+                    WHEN LOWER(p.code) LIKE :contains THEN 74
+                    WHEN LOWER(COALESCE(pv.code, '')) LIKE :contains THEN 72
+                    WHEN LOWER(pt.name) LIKE :contains THEN 66
+                    WHEN LOWER(COALESCE(m.name, '')) LIKE :contains THEN 58
+                    ELSE 25
+                END
+            )
+        ";
+
+        $sql = "
+            SELECT
+                p.id,
+                p.code,
+                p.manufacturer_part_number,
+                p.ean,
+                pt.name,
+                pt.slug,
+                m.name AS manufacturer,
+                m.code AS manufacturer_code,
+                {$score} AS search_score
+            {$baseFrom}
+            GROUP BY
+                p.id,
+                p.code,
+                p.manufacturer_part_number,
+                p.ean,
+                pt.name,
+                pt.slug,
+                m.name,
+                m.code
+            ORDER BY search_score DESC, pt.name ASC
+            LIMIT {$limit}
+        ";
+
+        $rows = $this->connection->fetchAllAssociative($sql, $parameters);
+
+        $products = array_map(
+            static fn (array $row): array => [
+                'id' => (int) $row['id'],
+                'code' => (string) $row['code'],
+                'manufacturerPartNumber' => $row['manufacturer_part_number'] !== null
+                    ? (string) $row['manufacturer_part_number']
+                    : null,
+                'ean' => $row['ean'] !== null ? (string) $row['ean'] : null,
+                'name' => (string) $row['name'],
+                'slug' => (string) $row['slug'],
+                'manufacturer' => $row['manufacturer'] !== null ? (string) $row['manufacturer'] : null,
+                'manufacturerCode' => $row['manufacturer_code'] !== null
+                    ? (string) $row['manufacturer_code']
+                    : null,
+                'score' => (int) $row['search_score'],
+            ],
+            $rows,
+        );
+
+        return [
+            'query' => $query,
+            'total' => $total,
+            'products' => $products,
+        ];
+    }
+
+    public function manufacturers(string $query, int $limit = 4): array
+    {
+        $query = $this->cleanQuery($query);
+
+        if (mb_strlen($query) < 2) {
+            return [];
+        }
+
+        $channelId = $this->channelContext->getChannel()->getId();
+
+        if ($channelId === null) {
+            return [];
+        }
+
+        $limit = max(1, min(10, $limit));
+        $lowerQuery = mb_strtolower($query);
+
+        $sql = "
+            SELECT DISTINCT m.name, m.code
+            FROM cardnext_manufacturer m
+            INNER JOIN sylius_product p
+                ON p.manufacturer_id = m.id
+                AND p.enabled = 1
+            INNER JOIN sylius_product_channels pc
+                ON pc.product_id = p.id
+                AND pc.channel_id = :channelId
+            WHERE m.enabled = 1
+              AND (
+                  LOWER(m.name) LIKE :contains
+                  OR LOWER(m.code) LIKE :contains
+              )
+            ORDER BY
+                CASE
+                    WHEN LOWER(m.name) = :query THEN 0
+                    WHEN LOWER(m.code) = :query THEN 1
+                    WHEN LOWER(m.name) LIKE :prefix THEN 2
+                    ELSE 3
+                END,
+                m.name ASC
+            LIMIT {$limit}
+        ";
+
+        return array_map(
+            static fn (array $row): array => [
+                'name' => (string) $row['name'],
+                'code' => (string) $row['code'],
+            ],
+            $this->connection->fetchAllAssociative($sql, [
+                'channelId' => $channelId,
+                'query' => $lowerQuery,
+                'prefix' => $lowerQuery . '%',
+                'contains' => '%' . $lowerQuery . '%',
+            ]),
+        );
+    }
+
+    private function cleanQuery(string $query): string
+    {
+        $query = preg_replace('/\s+/u', ' ', trim($query)) ?? '';
+
+        return mb_substr($query, 0, 120);
+    }
+
+    private function normalizeIdentifier(string $value): string
+    {
+        $value = mb_strtolower($value);
+
+        return preg_replace('/[^a-z0-9]+/i', '', $value) ?? '';
+    }
+
+    private function tokens(string $query): array
+    {
+        $tokens = preg_split('/[\s,;\/]+/u', trim($query)) ?: [];
+        $tokens = array_values(array_filter(
+            array_map('trim', $tokens),
+            static fn (string $token): bool => $token !== '',
+        ));
+
+        return array_slice($tokens, 0, 6);
+    }
+
+    private function sqlNormalized(string $field): string
+    {
+        return sprintf(
+            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(COALESCE(%s, '')), '-', ''), ' ', ''), '_', ''), '.', ''), '/', '')",
+            $field,
+        );
+    }
+}

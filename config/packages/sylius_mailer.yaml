@@ -1,0 +1,4 @@
+sylius_mailer:
+    sender:
+        name: 'Cardnext'
+        address: 'info@cardnext.de'

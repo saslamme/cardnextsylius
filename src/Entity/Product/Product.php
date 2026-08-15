@@ -22,6 +22,27 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\JoinColumn(name: 'manufacturer_id', nullable: true, onDelete: 'SET NULL')]
     private ?Manufacturer $manufacturer = null;
 
+
+    #[ORM\Column(name: 'manufacturer_part_number', length: 128, nullable: true)]
+    private ?string $manufacturerPartNumber = null;
+
+    #[ORM\Column(name: 'manufacturer_part_number_normalized', length: 128, nullable: true)]
+    private ?string $manufacturerPartNumberNormalized = null;
+
+    #[ORM\Column(name: 'ean', length: 64, nullable: true)]
+    private ?string $ean = null;
+
+    #[ORM\Column(name: 'ean_normalized', length: 64, nullable: true)]
+    private ?string $eanNormalized = null;
+
+
+    #[ORM\Column(name: 'homepage_featured', options: ['default' => false])]
+    private bool $homepageFeatured = false;
+
+    #[ORM\Column(name: 'homepage_position', options: ['default' => 100])]
+    private int $homepagePosition = 100;
+
+
     /** @var Collection<int, ProductCompatibility> */
     #[ORM\OneToMany(
         mappedBy: 'sourceProduct',
@@ -69,6 +90,64 @@ class Product extends BaseProduct implements ProductInterface
     {
         $this->manufacturer = $manufacturer;
     }
+
+    public function getManufacturerPartNumber(): ?string
+    {
+        return $this->manufacturerPartNumber;
+    }
+
+    public function setManufacturerPartNumber(?string $manufacturerPartNumber): void
+    {
+        $manufacturerPartNumber = $manufacturerPartNumber !== null ? trim($manufacturerPartNumber) : null;
+        $this->manufacturerPartNumber = $manufacturerPartNumber !== '' ? $manufacturerPartNumber : null;
+        $this->manufacturerPartNumberNormalized = $this->manufacturerPartNumber !== null
+            ? self::normalizeIdentifier($this->manufacturerPartNumber)
+            : null;
+    }
+
+    public function getManufacturerPartNumberNormalized(): ?string
+    {
+        return $this->manufacturerPartNumberNormalized;
+    }
+
+    public function getEan(): ?string
+    {
+        return $this->ean;
+    }
+
+    public function setEan(?string $ean): void
+    {
+        $ean = $ean !== null ? trim($ean) : null;
+        $this->ean = $ean !== '' ? $ean : null;
+        $this->eanNormalized = $this->ean !== null ? self::normalizeIdentifier($this->ean) : null;
+    }
+
+    public function getEanNormalized(): ?string
+    {
+        return $this->eanNormalized;
+    }
+
+
+    public function isHomepageFeatured(): bool
+    {
+        return $this->homepageFeatured;
+    }
+
+    public function setHomepageFeatured(bool $homepageFeatured): void
+    {
+        $this->homepageFeatured = $homepageFeatured;
+    }
+
+    public function getHomepagePosition(): int
+    {
+        return $this->homepagePosition;
+    }
+
+    public function setHomepagePosition(int $homepagePosition): void
+    {
+        $this->homepagePosition = max(0, $homepagePosition);
+    }
+
 
     /** @return Collection<int, ProductDocument> */
     public function getDocuments(): Collection
@@ -194,6 +273,13 @@ class Product extends BaseProduct implements ProductInterface
         );
 
         return $items;
+    }
+
+    private static function normalizeIdentifier(string $value): string
+    {
+        $value = mb_strtolower($value);
+
+        return preg_replace('/[^a-z0-9]+/i', '', $value) ?? '';
     }
 
     protected function createTranslation(): ProductTranslationInterface

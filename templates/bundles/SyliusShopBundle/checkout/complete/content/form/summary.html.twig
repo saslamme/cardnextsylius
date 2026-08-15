@@ -1,0 +1,26 @@
+{% set prefixes = hookable_metadata.prefixes|merge(['sylius_shop.shared.order.show']) %}
+
+<nav class="cn-checkout-review__editbar" aria-label="{{ 'sylius.ui.edit'|trans }}">
+    <a href="{{ path('sylius_shop_checkout_address') }}">
+        <span>{{ 'sylius.ui.address'|trans }}</span>
+        <strong>{{ 'sylius.ui.edit'|trans }}</strong>
+    </a>
+
+    {% if sylius_is_shipping_required(hookable_metadata.context.order) %}
+        <a href="{{ path('sylius_shop_checkout_select_shipping') }}">
+            <span>{{ 'sylius.ui.shipping'|trans }}</span>
+            <strong>{{ 'sylius.ui.edit'|trans }}</strong>
+        </a>
+    {% endif %}
+
+    {% if sylius_is_payment_required(hookable_metadata.context.order) %}
+        <a href="{{ path('sylius_shop_checkout_select_payment') }}">
+            <span>{{ 'sylius.ui.payment'|trans }}</span>
+            <strong>{{ 'sylius.ui.edit'|trans }}</strong>
+        </a>
+    {% endif %}
+</nav>
+
+<section class="cn-checkout-review__details">
+    {% hook 'summary' with { _prefixes: prefixes } %}
+</section>

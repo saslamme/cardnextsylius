@@ -1,0 +1,42 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% block title %}
+    {% if query %}Suche nach „{{ query }}“ | Cardnext{% else %}Produktsuche | Cardnext{% endif %}
+{% endblock %}
+
+{% block content %}
+    <main class="cn-search-page">
+        <div class="cn-container">
+            <header class="cn-search-page__header">
+                <span class="cn-kicker">Produktsuche</span>
+
+                {% if query %}
+                    <h1 class="cn-title cn-title--section">Ergebnisse für „{{ query }}“</h1>
+                    <p class="cn-search-page__count">{{ total }} Treffer</p>
+                {% else %}
+                    <h1 class="cn-title cn-title--section">Produkte durchsuchen</h1>
+                    <p class="cn-search-page__count">Suche nach Produktname, Artikelnummer oder Hersteller.</p>
+                {% endif %}
+            </header>
+
+            {% if query and products|length > 0 %}
+                <div class="products-grid cn-search-page__products">
+                    {% for product in products %}
+                        <div>
+                            {{ component('sylius_shop:product:card', {
+                                product: product,
+                                template: '@SyliusShop/product/common/card.html.twig',
+                                hookableMetadata: null
+                            }) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% elseif query %}
+                <div class="cn-search-empty">
+                    <h2>Keine passenden Produkte gefunden.</h2>
+                    <p>Versuchen Sie Hersteller, Modell oder Artikelnummer.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

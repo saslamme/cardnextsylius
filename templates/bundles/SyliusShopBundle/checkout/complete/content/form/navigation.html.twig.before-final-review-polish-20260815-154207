@@ -1,0 +1,30 @@
+{% import '@SyliusShop/shared/macro/navigation_buttons.html.twig' as navigation %}
+{% set form = hookable_metadata.context.form %}
+
+<div class="cn-checkout-review__submit">
+    <div class="cn-checkout-review__terms">
+        <div class="form-check">
+            {{ form_widget(form.termsAccepted, {
+                attr: {
+                    class: 'form-check-input'
+                }
+            }) }}
+
+            <label class="form-check-label" for="{{ form.termsAccepted.vars.id }}">
+                Ich habe die
+                <a
+                    href="{{ path('cardnext_shop_legal_terms', {'_locale': app.request.locale}) }}"
+                    target="_blank"
+                    rel="noopener"
+                >Allgemeinen Geschäftsbedingungen</a>
+                gelesen und akzeptiere sie.
+            </label>
+        </div>
+
+        {{ form_errors(form.termsAccepted) }}
+    </div>
+
+    <div class="cn-checkout-review__actions">
+        {{ navigation.complete('sylius.ui.place_order'|trans) }}
+    </div>
+</div>

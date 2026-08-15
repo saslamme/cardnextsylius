@@ -1,0 +1,238 @@
+{% extends '@SyliusCore/Email/orderConfirmation.html.twig' %}
+
+{% block body %}
+    {% autoescape false %}
+        {% set order_url = sylius_bundle_loaded_checker('SyliusShopBundle')
+            ? sylius_channel_url(
+                path('sylius_shop_order_show', {
+                    'tokenValue': order.tokenValue,
+                    '_locale': localeCode
+                }),
+                channel
+            )
+            : null
+        %}
+
+        {% set billing = order.billingAddress %}
+        {% set shipping = order.shippingAddress %}
+        {% set shipment = order.shipments|first %}
+        {% set payment = order.payments|first %}
+
+        <div style="margin:0;padding:0;background:#f3f5f8;font-family:Arial,Helvetica,sans-serif;color:#182638;line-height:1.5;">
+            <div style="max-width:680px;margin:0 auto;padding:32px 16px;">
+
+                <div style="padding:0 4px 22px;text-align:left;">
+                    {% if sylius_bundle_loaded_checker('SyliusShopBundle') %}
+                        {% set homepage_url = sylius_channel_url(path('sylius_shop_homepage', {'_locale': localeCode}), channel) %}
+                        <a href="{{ homepage_url|raw }}" style="display:inline-block;text-decoration:none;">
+                            <span style="font-size:25px;line-height:1;font-weight:800;letter-spacing:-1px;color:#145ea8;">card</span><span style="font-size:25px;line-height:1;font-weight:800;letter-spacing:-1px;color:#182638;">next</span>
+                        </a>
+                    {% else %}
+                        <span style="font-size:25px;line-height:1;font-weight:800;letter-spacing:-1px;color:#145ea8;">card</span><span style="font-size:25px;line-height:1;font-weight:800;letter-spacing:-1px;color:#182638;">next</span>
+                    {% endif %}
+                </div>
+
+                <div style="overflow:hidden;border:1px solid #dfe5ec;border-radius:10px;background:#ffffff;">
+                    <div style="padding:30px 30px 25px;border-bottom:1px solid #e7ebf0;">
+                        <div style="margin-bottom:7px;color:#145ea8;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">
+                            {{ 'sylius.ui.order'|trans({}, null, localeCode) }} {{ order.number }}
+                        </div>
+
+                        <h1 style="margin:0 0 10px;font-size:25px;line-height:1.2;font-weight:750;color:#182638;">
+                            {{ 'sylius.email.order_confirmation.has_been_successfully_placed'|trans({}, null, localeCode) }}
+                        </h1>
+
+                        <p style="margin:0;color:#68768a;font-size:14px;">
+                            {% if billing and billing.firstName %}
+                                {{ billing.firstName }},
+                            {% endif %}
+                            {{ 'sylius.email.order_confirmation.thank_you'|trans({}, null, localeCode) }}
+                        </p>
+                    </div>
+
+                    <div style="padding:22px 30px;border-bottom:1px solid #e7ebf0;background:#fafbfd;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                            <tr>
+                                <td style="padding:0 12px 0 0;vertical-align:top;">
+                                    <div style="color:#7a8797;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;">
+                                        {{ 'sylius.ui.order_number'|trans({}, null, localeCode) }}
+                                    </div>
+                                    <div style="margin-top:3px;font-size:15px;font-weight:750;color:#182638;">
+                                        {{ order.number }}
+                                    </div>
+                                </td>
+                                <td style="padding:0 0 0 12px;vertical-align:top;text-align:right;">
+                                    <div style="color:#7a8797;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;">
+                                        {{ 'sylius.ui.total'|trans({}, null, localeCode) }}
+                                    </div>
+                                    <div style="margin-top:3px;font-size:17px;font-weight:800;color:#182638;">
+                                        {{ order.total|sylius_format_money(order.currencyCode, localeCode) }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="padding:28px 30px 12px;">
+                        <h2 style="margin:0 0 15px;font-size:16px;font-weight:750;color:#182638;">
+                            {{ 'sylius.ui.items'|trans({}, null, localeCode) }}
+                        </h2>
+
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                            {% for item in order.items %}
+                                <tr>
+                                    <td style="padding:13px 12px 13px 0;border-top:1px solid #edf0f3;vertical-align:top;">
+                                        <div style="font-size:14px;font-weight:700;color:#182638;">
+                                            {{ item.productName }}
+                                        </div>
+                                        {% if item.variantName and item.variantName != item.productName %}
+                                            <div style="margin-top:3px;color:#7a8797;font-size:12px;">
+                                                {{ item.variantName }}
+                                            </div>
+                                        {% endif %}
+                                        {% if item.variant and item.variant.code %}
+                                            <div style="margin-top:3px;color:#7a8797;font-size:11px;">
+                                                {{ item.variant.code }}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td style="width:55px;padding:13px 8px;border-top:1px solid #edf0f3;text-align:center;vertical-align:top;color:#68768a;font-size:13px;">
+                                        {{ item.quantity }} ×
+                                    </td>
+                                    <td style="width:105px;padding:13px 0 13px 12px;border-top:1px solid #edf0f3;text-align:right;vertical-align:top;font-size:14px;font-weight:750;color:#182638;">
+                                        {{ item.total|sylius_format_money(order.currencyCode, localeCode) }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                    <div style="padding:8px 30px 26px;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                            <tr>
+                                <td style="padding:7px 0;color:#68768a;font-size:13px;">
+                                    {{ 'sylius.ui.subtotal'|trans({}, null, localeCode) }}
+                                </td>
+                                <td style="padding:7px 0;text-align:right;color:#182638;font-size:13px;">
+                                    {{ order.itemsTotal|sylius_format_money(order.currencyCode, localeCode) }}
+                                </td>
+                            </tr>
+
+                            {% if order.shippingTotal != 0 %}
+                                <tr>
+                                    <td style="padding:7px 0;color:#68768a;font-size:13px;">
+                                        {{ 'sylius.ui.shipping_total'|trans({}, null, localeCode) }}
+                                    </td>
+                                    <td style="padding:7px 0;text-align:right;color:#182638;font-size:13px;">
+                                        {{ order.shippingTotal|sylius_format_money(order.currencyCode, localeCode) }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% if order.taxTotal != 0 %}
+                                <tr>
+                                    <td style="padding:7px 0;color:#68768a;font-size:13px;">
+                                        {{ 'sylius.ui.taxes_total'|trans({}, null, localeCode) }}
+                                    </td>
+                                    <td style="padding:7px 0;text-align:right;color:#182638;font-size:13px;">
+                                        {{ order.taxTotal|sylius_format_money(order.currencyCode, localeCode) }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            <tr>
+                                <td style="padding:13px 0 0;border-top:1px solid #dfe5ec;color:#182638;font-size:15px;font-weight:800;">
+                                    {{ 'sylius.ui.total'|trans({}, null, localeCode) }}
+                                </td>
+                                <td style="padding:13px 0 0;border-top:1px solid #dfe5ec;text-align:right;color:#182638;font-size:17px;font-weight:800;">
+                                    {{ order.total|sylius_format_money(order.currencyCode, localeCode) }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="padding:0 30px 28px;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                            <tr>
+                                <td width="50%" style="padding:18px 14px 18px 0;border-top:1px solid #e7ebf0;vertical-align:top;">
+                                    <div style="margin-bottom:8px;color:#7a8797;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;">
+                                        {{ 'sylius.ui.billing_address'|trans({}, null, localeCode) }}
+                                    </div>
+                                    {% if billing %}
+                                        <div style="font-size:13px;color:#182638;">
+                                            {% if billing.company %}{{ billing.company }}<br>{% endif %}
+                                            {{ billing.firstName }} {{ billing.lastName }}<br>
+                                            {{ billing.street }}<br>
+                                            {{ billing.postcode }} {{ billing.city }}<br>
+                                            {{ billing.countryCode|sylius_country_name(localeCode) }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+
+                                <td width="50%" style="padding:18px 0 18px 14px;border-top:1px solid #e7ebf0;vertical-align:top;">
+                                    <div style="margin-bottom:8px;color:#7a8797;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;">
+                                        {{ 'sylius.ui.shipping_address'|trans({}, null, localeCode) }}
+                                    </div>
+                                    {% if shipping %}
+                                        <div style="font-size:13px;color:#182638;">
+                                            {% if shipping.company %}{{ shipping.company }}<br>{% endif %}
+                                            {{ shipping.firstName }} {{ shipping.lastName }}<br>
+                                            {{ shipping.street }}<br>
+                                            {{ shipping.postcode }} {{ shipping.city }}<br>
+                                            {{ shipping.countryCode|sylius_country_name(localeCode) }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    {% if shipment or payment %}
+                        <div style="padding:20px 30px;border-top:1px solid #e7ebf0;background:#fafbfd;">
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                <tr>
+                                    {% if shipment %}
+                                        <td width="50%" style="padding-right:12px;vertical-align:top;">
+                                            <div style="color:#7a8797;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;">
+                                                {{ 'sylius.ui.shipping_method'|trans({}, null, localeCode) }}
+                                            </div>
+                                            <div style="margin-top:3px;color:#182638;font-size:13px;font-weight:700;">
+                                                {{ shipment.method.name|default('') }}
+                                            </div>
+                                        </td>
+                                    {% endif %}
+
+                                    {% if payment %}
+                                        <td width="50%" style="padding-left:12px;vertical-align:top;text-align:right;">
+                                            <div style="color:#7a8797;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;">
+                                                {{ 'sylius.ui.payment_method'|trans({}, null, localeCode) }}
+                                            </div>
+                                            <div style="margin-top:3px;color:#182638;font-size:13px;font-weight:700;">
+                                                {{ payment.method.name|default('') }}
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if order_url %}
+                        <div style="padding:25px 30px 30px;text-align:center;border-top:1px solid #e7ebf0;">
+                            <a href="{{ order_url|raw }}" style="display:inline-block;padding:13px 22px;border-radius:6px;background:#145ea8;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;">
+                                {{ 'sylius.email.order_confirmation.view_order_or_change_payment_method'|trans({}, null, localeCode) }}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div style="padding:22px 6px 0;color:#8290a1;font-size:11px;line-height:1.6;text-align:center;">
+                    <div style="font-weight:700;color:#59687a;">Cardnext</div>
+                    <div>
+                        {{ 'sylius.email.order_confirmation.thank_you'|trans({}, null, localeCode) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endautoescape %}
+{% endblock %}

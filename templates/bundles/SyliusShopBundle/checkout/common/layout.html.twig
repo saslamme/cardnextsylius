@@ -1,0 +1,46 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% set prefixes = prefixes|default([])|merge(['sylius_shop.checkout.common']) %}
+
+{% block body %}
+    {% set prefixes = prefixes|filter(hook => hook != generic_hook) %}
+
+    <div class="cn-commerce cn-commerce--checkout d-flex flex-column min-vh-100">
+        <header class="cn-commerce__checkout-header">
+            <div class="cn-commerce__checkout-header-inner">
+                <div class="row align-items-center g-3">
+                    {% if active_step|default(null) is not null %}
+                        {% set hooks = [ active_step ~ '.header'] %}
+                    {% endif %}
+
+                    {% hook hooks|default([])|merge(['header']) with { _prefixes: prefixes, order } %}
+                </div>
+            </div>
+        </header>
+
+        <div class="cn-commerce__checkout-stage flex-grow-1">
+            <div class="cn-commerce__shell cn-checkout-shell">
+                <div class="row g-0 align-items-stretch">
+                    <main class="col-12 col-lg-8 cn-commerce__checkout-main">
+                        <div class="cn-checkout-main-inner">
+                            {% block content %}
+                            {% endblock %}
+                        </div>
+                    </main>
+
+                    {% block sidebar %}
+                        <aside class="col-12 col-lg-4 cn-commerce__checkout-sidebar checkout-sidebar">
+                            <div class="cn-commerce__checkout-sidebar-inner">
+                                {% if active_step|default(null) is not null %}
+                                    {% set hooks = [ active_step ~ '.sidebar'] %}
+                                {% endif %}
+
+                                {% hook hooks|default([])|merge(['sidebar']) with { _prefixes: prefixes, order } %}
+                            </div>
+                        </aside>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

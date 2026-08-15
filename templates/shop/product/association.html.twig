@@ -1,13 +1,1 @@
-{% if not associated_products.empty() %}
-    <div class="cn-product__association" {{ sylius_test_html_attribute('product-association', product_association.type.name) }}>
-        <h3>{{ product_association.type.name }}</h3>
-        <div class="cn-product__association-grid">
-            {% for product in associated_products %}
-                {{ component('sylius_shop:product:card', {
-                    product: product,
-                    template: 'shop/product/association_card.html.twig'
-                }) }}
-            {% endfor %}
-        </div>
-    </div>
-{% endif %}
+{% if not associated_products.empty() %}<div class="cn-stack cn-stack--sm mb-5" {{ sylius_test_html_attribute('product-association', product_association.type.name) }}><h3 class="cn-title cn-title--sm">{{ product_association.type.name }}</h3><div class="cn-product-grid cn-product-grid--compact">{% for product in associated_products %}{{ component('sylius_shop:product:card', {product: product, template: 'shop/product/association_card.html.twig'}) }}{% endfor %}</div></div>{% endif %}

@@ -1,0 +1,82 @@
+{% set firstTaxon = taxons|first %}
+{% set rootTaxon = firstTaxon ? firstTaxon.parent : null %}
+
+<div class="cn-nav-wrap">
+    <nav class="cn-nav" aria-label="Produktkategorien">
+        <ul>
+            {% for taxon in taxons %}
+                {% set children = taxon.children %}
+                <li class="cn-nav__item{% if children|length %} cn-nav__item--has-children{% endif %}">
+                    <a
+                        class="cn-nav__link"
+                        href="{{ path('sylius_shop_product_index', {
+                            'slug': taxon.slug,
+                            '_locale': taxon.translation.locale
+                        }) }}"
+                    >
+                        <span>{{ taxon.name }}</span>
+                        {% if children|length %}
+                            <svg class="cn-nav__chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                                <path d="m4 6 4 4 4-4"/>
+                            </svg>
+                        {% endif %}
+                    </a>
+
+                    {% if children|length %}
+                        <div class="cn-nav__dropdown">
+                            <div class="cn-nav__dropdown-head">
+                                <span class="cn-kicker">Produktbereich</span>
+                                <strong>{{ taxon.name }}</strong>
+                            </div>
+
+                            <div class="cn-nav__dropdown-links">
+                                {% for child in children %}
+                                    <a
+                                        href="{{ path('sylius_shop_product_index', {
+                                            'slug': child.slug,
+                                            '_locale': child.translation.locale
+                                        }) }}"
+                                    >
+                                        <span>{{ child.name }}</span>
+                                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                                            <path d="M3 8h9M9 4l4 4-4 4"/>
+                                        </svg>
+                                    </a>
+                                {% endfor %}
+                            </div>
+
+                            <a
+                                class="cn-nav__all"
+                                href="{{ path('sylius_shop_product_index', {
+                                    'slug': taxon.slug,
+                                    '_locale': taxon.translation.locale
+                                }) }}"
+                            >
+                                Alle {{ taxon.name }} anzeigen
+                            </a>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    {% if rootTaxon %}
+        <div class="cn-search-panel" id="cardnext-product-search" data-cardnext-search-panel hidden>
+            <div class="cn-container cn-search-panel__inner">
+                <form class="cn-search-form" method="get" action="{{ path('sylius_shop_product_index', {
+                    'slug': rootTaxon.slug,
+                    '_locale': rootTaxon.translation.locale
+                }) }}" role="search">
+                    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.7">
+                        <circle cx="11" cy="11" r="6.5"/>
+                        <path d="m16 16 4.2 4.2"/>
+                    </svg>
+                    <input type="search" name="criteria[search][value]" placeholder="Produkte durchsuchen …" autocomplete="off" aria-label="Produkte durchsuchen" data-cardnext-search-input>
+                    <button class="cn-btn cn-btn--primary cn-btn--small" type="submit">Suchen</button>
+                    <button class="cn-icon-btn" type="button" data-cardnext-search-close aria-label="Suche schließen">×</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+</div>

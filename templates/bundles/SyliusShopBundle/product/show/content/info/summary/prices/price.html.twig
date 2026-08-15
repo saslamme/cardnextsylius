@@ -1,6 +1,1 @@
-<div class="cn-product__price" {{ attributes }}>
-    {% if has_discount %}
-        <del {{ sylius_test_html_attribute('product-original-price', original_price) }}>{{ original_price }}</del>
-    {% endif %}
-    <strong {{ sylius_test_html_attribute('product-price', price) }}>{{ price }}</strong>
-</div>
+<div class="cn-price" {{ attributes }}>{% if has_discount %}<del {{ sylius_test_html_attribute('product-original-price', original_price) }}>{{ original_price }}</del>{% endif %}<strong {{ sylius_test_html_attribute('product-price', price) }}>{{ price }}</strong></div>

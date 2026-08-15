@@ -1,0 +1,6 @@
+<div class="cn-cart-checkout">
+    <button type="submit" class="btn btn-primary cn-cart-checkout__button" {{ sylius_test_html_attribute('cart-checkout-button') }}>
+        <span>{{ 'sylius.ui.checkout'|trans }}</span><span aria-hidden="true">→</span>
+    </button>
+    <div class="cn-cart-checkout__note">Sichere Bestellung · Daten werden verschlüsselt übertragen</div>
+</div>

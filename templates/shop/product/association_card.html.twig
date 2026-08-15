@@ -1,18 +1,1 @@
-<article class="cn-product-related" {{ sylius_test_html_attribute('product', product.code) }}>
-    <a class="cn-product-related__image" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">
-        {{ component('sylius_shop:main_image', { product: product, class: 'cn-product-related__img' }) }}
-    </a>
-    <div class="cn-product-related__body">
-        <small>{{ product.code }}</small>
-        <h4><a href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">{{ product.name }}</a></h4>
-        {% if variant %}
-            <div class="cn-product-related__price">
-                {{ component('sylius_shop:product:card:price', {
-                    variant: variant,
-                    template: '@SyliusShop/product/common/price.html.twig'
-                }) }}
-            </div>
-        {% endif %}
-        <a class="cn-product-related__link" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">Details <span>→</span></a>
-    </div>
-</article>
+<article class="cn-product-card cn-product-card--compact" {{ sylius_test_html_attribute('product', product.code) }}><a class="cn-product-card__media" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">{{ component('sylius_shop:main_image', {product: product, class: 'cn-product-card__image'}) }}</a><div class="cn-product-card__body"><div class="cn-product-card__code">{{ product.code }}</div><h4 class="cn-product-card__title"><a href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">{{ product.name }}</a></h4>{% if variant %}<div class="cn-product-card__price mt-auto mb-2">{{ component('sylius_shop:product:card:price', {variant: variant, template: '@SyliusShop/product/common/price.html.twig'}) }}</div>{% endif %}<a class="cn-link cn-link--arrow cn-link--small" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">Details</a></div></article>

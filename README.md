@@ -1,49 +1,35 @@
-# Cardnext – Phase 18 v8b: Produkt-Tabs sichtbar + Abstände korrigiert
+# Cardnext – Kontaktbutton Farbe wiederherstellen
 
-Der aktuelle HTML-Quelltext enthält die Tab-Navigation korrekt, sie wurde
-optisch aber nicht zuverlässig dargestellt.
+Stellt das Cardnext-Design für den Kontaktformular-Button wieder her.
 
-Dieser Hotfix verwendet deshalb bewusst höhere CSS-Spezifität und erzwingt die
-Darstellung nur auf der Sylius-Produktdetailroute.
+Der vorhandene Button:
 
-## Änderungen
+```html
+<button type="submit" class="cn-contact-form__submit">
+    Nachricht senden →
+</button>
+```
 
-- dunkle Tab-Leiste `#20272d`
-- Tabs sicher sichtbar
-- aktive Schrift weiß
-- inaktive Schrift hellgrau
-- orange aktive Unterstreichung
-- keine nativen Button-Rahmen
-- kein Zeilenumbruch
-- mobil horizontal scrollbar
-- Abstand zwischen Kaufbereich und Tabs reduziert
-- aktiver Tab-Inhalt beginnt kompakter
-- versteckte Tabpanels reservieren garantiert keinen Platz
+wird wieder dargestellt mit:
+
+- Cardnext-Orange
+- weißer Schrift
+- orangem/dunklerem Hover
+- sauberem Focus-State
+- voller Formularbreite
+
+Es wird ausschließlich die zentrale Datei
+
+`assets/shop/styles/cardnext.css`
+
+angepasst.
 
 ## Installation
 
 ```bash
 cd ~/public_html/cardnext
 
-unzip -o cardnext-sylius-phase18-v8b-product-tabs-visible.zip
-
-nvm use 20.18.3
-npm run build:prod
-
-php bin/console assets:install public
-
-rm -rf var/cache/prod
-php bin/console cache:clear --env=prod
-php bin/console cache:warmup --env=prod
+unzip -o cardnext-contact-button-color-restore.zip
+chmod +x apply-cardnext-contact-button-color-restore.sh
+./apply-cardnext-contact-button-color-restore.sh
 ```
-
-## Schnelle Kontrolle nach dem Build
-
-Der neue Hotfix muss im kompilierten CSS vorhanden sein:
-
-```bash
-grep -R "Force visible dark product tab navigation" public/build -n | head
-```
-
-Wenn der grep-Treffer vorhanden ist, aber die Leiste im Browser noch nicht
-sichtbar ist, bitte den Browser-Cache einmal hart neu laden.

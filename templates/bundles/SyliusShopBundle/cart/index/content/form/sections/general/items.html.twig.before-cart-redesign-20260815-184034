@@ -1,0 +1,10 @@
+<section class="cn-cart-items">
+    <div class="cn-cart-items__header">
+        <div><span class="cn-cart-items__kicker">Artikel</span><h2>Ihre Auswahl</h2></div>
+    </div>
+    <div class="table-responsive cn-cart-items__table-wrap">
+        <table class="table align-middle cn-cart-items__table" {{ sylius_test_html_attribute('cart-items') }}>
+            {% hook 'items' %}
+        </table>
+    </div>
+</section>

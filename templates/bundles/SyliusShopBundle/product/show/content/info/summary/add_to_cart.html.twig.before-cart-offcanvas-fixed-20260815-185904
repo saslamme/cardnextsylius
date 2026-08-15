@@ -1,0 +1,19 @@
+{% import '@SyliusShop/shared/macro/loader.html.twig' as loader %}
+{% form_theme form '@SyliusShop/form/theme.html.twig' %}
+{% set visible_product_attributes = cardnext_visible_product_attributes(product.attributes) %}
+{% set cn_cart_return_route = app.request.attributes.get('_route') %}
+{% set cn_cart_return_parameters = (app.request.attributes.get('_route_params')|default({}))|merge({
+    'cnCart': 'open'
+}) %}
+<div class="cn-purchase" {{ attributes }}>
+{% if product.enabledVariants.empty() or product.simple and not sylius_inventory_is_available(product.enabledVariants.first) %}<div class="alert alert-warning" {{ sylius_test_html_attribute('product-out-of-stock') }}>{{ 'sylius.ui.out_of_stock'|trans }}</div>
+{% else %}{{ loader.render() }}<div {{ sylius_test_html_attribute('product-selecting-variant') }}>{{ form_start(form, {'attr': {
+    'data-action': 'live#action:prevent live#$render',
+    'data-live-action-param': 'addToCart',
+    'data-live-route-name-param': cn_cart_return_route,
+    'data-live-route-parameters-param': cn_cart_return_parameters|json_encode,
+    'data-live-add-flash-message-param': 'false'
+}}) }}{{ form_errors(form) }}{% hook 'add_to_cart' with { product, form } %}{{ form_end(form, {'render_rest': false}) }}</div>{% endif %}
+<div class="cn-purchase__secondary"><a class="cn-btn cn-btn--secondary cn-btn--small" href="{{ path('sylius_shop_contact_request') }}">Beratung</a>{% if visible_product_attributes|length > 0 %}<a class="cn-btn cn-btn--secondary cn-btn--small" href="#specifications">Technische Daten</a>{% endif %}</div>
+<div class="cn-purchase__notes"><div class="cn-note"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.7" aria-hidden="true"><path d="M4 7h12v10H4zM16 10h3l2 3v4h-5z"/><circle cx="8" cy="18" r="1.5"/><circle cx="18" cy="18" r="1.5"/></svg>Versandart und Lieferkosten werden im Checkout anhand der Lieferadresse ermittelt.</div><div class="cn-note"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.7" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 2.5 7.6 7 10 4.5-2.4 7-5.5 7-10V6Z"/><path d="m9 12 2 2 4-4"/></svg>B2B-Fachhandel mit persönlicher Beratung.</div></div>
+</div>

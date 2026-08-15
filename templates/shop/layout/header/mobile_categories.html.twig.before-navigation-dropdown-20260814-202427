@@ -1,0 +1,12 @@
+{% set firstTaxon = taxons|first %}
+{% set rootTaxon = firstTaxon ? firstTaxon.parent : null %}
+{% if rootTaxon %}
+<form class="cn-search-form cn-search-form--mobile" method="get" action="{{ path('sylius_shop_product_index', {'slug': rootTaxon.slug, '_locale': rootTaxon.translation.locale}) }}" role="search">
+    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.7"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.2 4.2"/></svg>
+    <input type="search" name="criteria[search][value]" placeholder="Produkte durchsuchen …" aria-label="Produkte durchsuchen">
+    <button class="cn-icon-btn" type="submit" aria-label="Suchen">→</button>
+</form>
+{% endif %}
+<nav class="cn-drawer-nav" aria-label="Produktkategorien">
+    {% for taxon in taxons %}<a href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': taxon.translation.locale}) }}"><span>{{ taxon.name }}</span><span>→</span></a>{% endfor %}
+</nav>

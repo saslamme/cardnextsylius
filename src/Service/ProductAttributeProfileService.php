@@ -320,9 +320,9 @@ final readonly class ProductAttributeProfileService
             'configuration' => [
                 'multiple' => false,
                 'choices' => [
-                    '300' => ['de_DE' => '300 dpi', 'en_US' => '300 dpi'],
-                    '600' => ['de_DE' => '600 dpi', 'en_US' => '600 dpi'],
-                    '1200' => ['de_DE' => '1200 dpi', 'en_US' => '1200 dpi'],
+                    'dpi_300' => ['de_DE' => '300 dpi', 'en_US' => '300 dpi'],
+                    'dpi_600' => ['de_DE' => '600 dpi', 'en_US' => '600 dpi'],
+                    'dpi_1200' => ['de_DE' => '1200 dpi', 'en_US' => '1200 dpi'],
                 ],
                 'min' => null,
                 'max' => null,

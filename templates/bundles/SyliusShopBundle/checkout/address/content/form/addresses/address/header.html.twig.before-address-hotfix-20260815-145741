@@ -1,0 +1,17 @@
+{% set type = hookable_metadata.context.type %}
+
+<header class="cn-checkout-section__header">
+    <div>
+        <div class="cn-checkout-section__kicker">
+            {{ type == 'billing' ? '01' : '02' }}
+        </div>
+
+        <h2 class="cn-checkout-section__title">
+            {{ (type == 'billing' ? 'sylius.ui.billing_address' : 'sylius.ui.shipping_address')|trans }}
+        </h2>
+    </div>
+
+    <span class="cn-checkout-section__status">
+        {{ type == 'billing' ? 'Rechnungsdaten' : 'Lieferdaten' }}
+    </span>
+</header>

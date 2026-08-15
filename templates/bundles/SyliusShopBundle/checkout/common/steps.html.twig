@@ -1,0 +1,70 @@
+{% set order = hookable_metadata.context.order %}
+{% set active_step = hookable_metadata.context.active_step|default('') %}
+{% set order_requires_shipping = sylius_is_shipping_required(order) %}
+{% set order_requires_payment = sylius_is_payment_required(order) %}
+
+{% set steps = [
+    {
+        'name': 'address',
+        'route': 'sylius_shop_checkout_address',
+        'label': 'sylius.ui.address'|trans,
+        'required': true,
+        'state': active_step == 'address' ? 'active' : 'completed',
+        'test_attribute': 'step-address',
+    },
+    {
+        'name': 'select_shipping',
+        'route': 'sylius_shop_checkout_select_shipping',
+        'label': 'sylius.ui.shipping'|trans,
+        'required': order_requires_shipping,
+        'state': active_step == 'select_shipping' ? 'active' : (active_step == 'address' ? 'disabled' : 'completed'),
+        'test_attribute': 'step-shipping',
+    },
+    {
+        'name': 'select_payment',
+        'route': 'sylius_shop_checkout_select_payment',
+        'label': 'sylius.ui.payment'|trans,
+        'required': order_requires_payment,
+        'state': active_step == 'select_payment' ? 'active' : (active_step == 'complete' ? 'completed' : 'disabled'),
+        'test_attribute': 'step-payment',
+    },
+    {
+        'name': 'complete',
+        'route': 'sylius_shop_checkout_complete',
+        'label': 'sylius.ui.complete'|trans,
+        'required': true,
+        'state': active_step == 'complete' ? 'active' : 'disabled',
+        'test_attribute': 'step-complete',
+    },
+] %}
+
+{% set visible_steps = steps|filter(step => step.required) %}
+
+<nav class="cn-checkout-steps" aria-label="Checkout">
+    {% for step in visible_steps %}
+        <div class="cn-checkout-step cn-checkout-step--{{ step.state }}">
+            {% if step.state != 'disabled' %}
+                <a
+                    class="cn-checkout-step__link"
+                    href="{{ path(step.route) }}"
+                    {% if step.state == 'active' %}aria-current="step"{% endif %}
+                    {{ sylius_test_html_attribute(step.test_attribute) }}
+                >
+                    <span class="cn-checkout-step__number">
+                        {% if step.state == 'completed' %}
+                            <span aria-hidden="true">✓</span>
+                        {% else %}
+                            {{ loop.index }}
+                        {% endif %}
+                    </span>
+                    <span class="cn-checkout-step__label">{{ step.label }}</span>
+                </a>
+            {% else %}
+                <span class="cn-checkout-step__link">
+                    <span class="cn-checkout-step__number">{{ loop.index }}</span>
+                    <span class="cn-checkout-step__label">{{ step.label }}</span>
+                </span>
+            {% endif %}
+        </div>
+    {% endfor %}
+</nav>
