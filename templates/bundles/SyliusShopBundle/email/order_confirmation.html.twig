@@ -1,7 +1,6 @@
 {% extends '@SyliusCore/Email/orderConfirmation.html.twig' %}
 
 {% block body %}
-    {% autoescape false %}
         {% set is_de = localeCode starts with 'de' %}
         {% set order_url = sylius_bundle_loaded_checker('SyliusShopBundle')
             ? sylius_channel_url(
@@ -25,7 +24,7 @@
                 <div style="padding:0 4px 22px;text-align:left;">
                     {% if sylius_bundle_loaded_checker('SyliusShopBundle') %}
                         {% set homepage_url = sylius_channel_url(path('sylius_shop_homepage', {'_locale': localeCode}), channel) %}
-                        <a href="{{ homepage_url|raw }}" style="display:inline-block;text-decoration:none;">
+                        <a href="{{ homepage_url|e('html_attr') }}" style="display:inline-block;text-decoration:none;">
                             <span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#111111;">cardne</span><span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#f04b23;">X</span><span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#111111;">t</span>
                         </a>
                     {% else %}
@@ -225,7 +224,7 @@
 
                     {% if order_url %}
                         <div style="padding:25px 30px 30px;text-align:center;border-top:1px solid #e4e7ec;">
-                            <a href="{{ order_url|raw }}" style="display:inline-block;padding:13px 22px;border-radius:6px;background:#f04b23;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;">
+                            <a href="{{ order_url|e('html_attr') }}" style="display:inline-block;padding:13px 22px;border-radius:6px;background:#f04b23;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;">
                                 {{ is_de ? 'Bestellung ansehen' : 'View order' }}
                             </a>
                         </div>
@@ -244,5 +243,4 @@
                 </div>
             </div>
         </div>
-    {% endautoescape %}
 {% endblock %}

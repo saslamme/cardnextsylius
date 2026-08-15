@@ -44,6 +44,7 @@ final class ContactTypeExtension extends AbstractTypeExtension
             ])
             ->add('privacyAccepted', CheckboxType::class, [
                 'label' => 'Ich habe die Datenschutzbestimmungen gelesen und akzeptiere diese.',
+                'mapped' => false,
                 'required' => true,
                 'constraints' => [
                     new IsTrue([
