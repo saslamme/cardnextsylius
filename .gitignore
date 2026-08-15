@@ -73,3 +73,6 @@ phpstan.neon
 *.bak
 __pycache__/
 *.pyc
+
+# Local production encryption keys
+/config/encryption/*.local.key
