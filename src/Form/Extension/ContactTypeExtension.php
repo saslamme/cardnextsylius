@@ -21,17 +21,17 @@ final class ContactTypeExtension extends AbstractTypeExtension
             ->add('firstName', TextType::class, [
                 'label' => 'Vorname',
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Bitte geben Sie Ihren Vornamen ein.',
-                    ]),
+                    new NotBlank(
+                        message: 'Bitte geben Sie Ihren Vornamen ein.',
+                    ),
                 ],
             ])
             ->add('lastName', TextType::class, [
                 'label' => 'Name',
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Bitte geben Sie Ihren Namen ein.',
-                    ]),
+                    new NotBlank(
+                        message: 'Bitte geben Sie Ihren Namen ein.',
+                    ),
                 ],
             ])
             ->add('company', TextType::class, [
@@ -47,9 +47,9 @@ final class ContactTypeExtension extends AbstractTypeExtension
                 'mapped' => false,
                 'required' => true,
                 'constraints' => [
-                    new IsTrue([
-                        'message' => 'Bitte akzeptieren Sie die Datenschutzbestimmungen.',
-                    ]),
+                    new IsTrue(
+                        message: 'Bitte akzeptieren Sie die Datenschutzbestimmungen.',
+                    ),
                 ],
             ])
         ;
