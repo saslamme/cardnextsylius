@@ -6,100 +6,106 @@
 <div class="tab-pane" id="product-cardnext-data" role="tabpanel" tabindex="0">
     <div class="card mb-3">
         <div class="card-header">
-            <h2 class="card-title">Hersteller, Dokumente, Kompatibilität &amp; Preise</h2>
+            <div>
+                <h2 class="card-title mb-1">Cardnext Produktdaten</h2>
+                <div class="text-secondary small">Stammdaten, Sichtbarkeit und weiterführende Produktinformationen zentral verwalten.</div>
+            </div>
         </div>
+
         <div class="card-body">
             <div class="row g-4">
-                <div class="col-12 col-xl-3">
-                    {{ form_row(hookable_metadata.context.form.manufacturer) }}
-                    <div class="form-hint">
-                        Hersteller werden unter <strong>Katalog → Hersteller</strong> gepflegt.
-                    </div>
+                <div class="col-12 col-lg-6">
+                    <h3 class="h4 mb-3">Produktstammdaten</h3>
 
-                    <div class="mt-3">
-                        {{ form_row(hookable_metadata.context.form.model) }}
-                    </div>
-
-                    <div class="mt-3">
-                        {{ form_row(hookable_metadata.context.form.dataQualityStatus) }}
-                    </div>
-
-                    <div class="alert alert-light border mt-3 mb-0 small">
-                        Hersteller-Art.-Nr., GTIN und Bestellmengen werden an der jeweiligen
-                        <strong>Produktvariante</strong> gepflegt.
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            {{ form_row(hookable_metadata.context.form.manufacturer) }}
+                            <div class="form-hint">
+                                Pflege unter <strong>Katalog → Hersteller</strong>.
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            {{ form_row(hookable_metadata.context.form.model) }}
+                        </div>
+                        <div class="col-12">
+                            {{ form_row(hookable_metadata.context.form.dataQualityStatus) }}
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-12 col-xl-3">
-                    <label class="form-label">Startseite</label>
+                <div class="col-12 col-lg-6">
+                    <h3 class="h4 mb-3">Sichtbarkeit auf der Startseite</h3>
+
                     <div class="border rounded p-3">
                         {{ form_row(hookable_metadata.context.form.homepageFeatured) }}
-                        {{ form_row(hookable_metadata.context.form.homepagePosition) }}
+                        <div class="mt-3">
+                            {{ form_row(hookable_metadata.context.form.homepagePosition) }}
+                        </div>
                         <div class="form-hint">
-                            Maximal vier markierte Produkte werden auf der Startseite angezeigt.
+                            Kleinere Positionsnummern erscheinen zuerst. Es werden maximal vier markierte Produkte angezeigt.
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-12 col-xl-3">
-                    <label class="form-label">Produktdokumente</label>
+            <div class="alert alert-light border mt-4 mb-0 small">
+                <strong>Hinweis zu Varianten:</strong> Hersteller-Art.-Nr., GTIN und Bestellmengen werden an der jeweiligen Produktvariante gepflegt.
+            </div>
+        </div>
+    </div>
 
-                    {% if resource.id %}
-                        <div class="d-flex align-items-center justify-content-between gap-3 border rounded p-3">
-                            <div>
-                                <strong>{{ resource.documents|length }} Dokument(e)</strong>
-                                <div class="text-secondary small">Datenblätter, Handbücher, Zertifikate und Broschüren.</div>
-                            </div>
-                            <a class="btn btn-outline-primary" href="{{ path('cardnext_admin_product_document_index', {'id': resource.id}) }}">
-                                Dokumente verwalten
-                            </a>
+    <div class="card mb-3">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title mb-1">Erweiterte Produktdaten</h2>
+                <div class="text-secondary small">Dokumente, Verknüpfungen und kundenspezifische Preise ergänzen.</div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-lg-4">
+                    <div class="border rounded p-3 h-100 d-flex flex-column">
+                        <div class="d-flex align-items-start justify-content-between gap-3 mb-2">
+                            <h3 class="h4 mb-0">Produktdokumente</h3>
+                            {% if resource.id %}<span class="badge bg-secondary-lt">{{ resource.documents|length }}</span>{% endif %}
                         </div>
-                    {% else %}
-                        <div class="alert alert-info mb-0">
-                            Das Produkt zuerst speichern. Anschließend können Dokumente hochgeladen werden.
-                        </div>
-                    {% endif %}
+                        <p class="text-secondary small flex-grow-1">Datenblätter, Handbücher, Zertifikate und Broschüren verwalten.</p>
+                        {% if resource.id %}
+                            <a class="btn btn-outline-primary align-self-start" href="{{ path('cardnext_admin_product_document_index', {'id': resource.id}) }}">Dokumente verwalten</a>
+                        {% else %}
+                            <div class="text-secondary small">Nach dem ersten Speichern verfügbar.</div>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="col-12 col-xl-3">
-                    <label class="form-label">Produktkompatibilität</label>
-
-                    {% if resource.id %}
-                        {% set compatibility_count = resource.compatibilities|length + resource.reverseCompatibilities|length %}
-                        <div class="d-flex align-items-center justify-content-between gap-3 border rounded p-3">
-                            <div>
-                                <strong>{{ compatibility_count }} Verknüpfung(en)</strong>
-                                <div class="text-secondary small">Zubehör, Verbrauchsmaterial, kompatible Geräte und Alternativen.</div>
-                            </div>
-                            <a class="btn btn-outline-primary" href="{{ path('cardnext_admin_product_compatibility_index', {'id': resource.id}) }}">
-                                Verknüpfungen
-                            </a>
+                <div class="col-12 col-lg-4">
+                    <div class="border rounded p-3 h-100 d-flex flex-column">
+                        <div class="d-flex align-items-start justify-content-between gap-3 mb-2">
+                            <h3 class="h4 mb-0">Kompatibilität</h3>
+                            {% if resource.id %}
+                                {% set compatibility_count = resource.compatibilities|length + resource.reverseCompatibilities|length %}
+                                <span class="badge bg-secondary-lt">{{ compatibility_count }}</span>
+                            {% endif %}
                         </div>
-                    {% else %}
-                        <div class="alert alert-info mb-0">
-                            Das Produkt zuerst speichern. Anschließend können Kompatibilitäten gepflegt werden.
-                        </div>
-                    {% endif %}
+                        <p class="text-secondary small flex-grow-1">Zubehör, Verbrauchsmaterial, kompatible Geräte und Alternativen verknüpfen.</p>
+                        {% if resource.id %}
+                            <a class="btn btn-outline-primary align-self-start" href="{{ path('cardnext_admin_product_compatibility_index', {'id': resource.id}) }}">Verknüpfungen verwalten</a>
+                        {% else %}
+                            <div class="text-secondary small">Nach dem ersten Speichern verfügbar.</div>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="col-12 col-xl-3">
-                    <label class="form-label">B2B- &amp; Staffelpreise</label>
-
-                    {% if resource.id %}
-                        <div class="d-flex align-items-center justify-content-between gap-3 border rounded p-3">
-                            <div>
-                                <strong>Preisregeln</strong>
-                                <div class="text-secondary small">Mengenstaffeln und Preise für Sylius-Kundengruppen.</div>
-                            </div>
-                            <a class="btn btn-outline-primary" href="{{ path('cardnext_admin_product_price_rule_index', {'id': resource.id}) }}">
-                                Preise
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info mb-0">
-                            Das Produkt zuerst speichern. Anschließend können Preisregeln gepflegt werden.
-                        </div>
-                    {% endif %}
+                <div class="col-12 col-lg-4">
+                    <div class="border rounded p-3 h-100 d-flex flex-column">
+                        <h3 class="h4 mb-2">B2B- &amp; Staffelpreise</h3>
+                        <p class="text-secondary small flex-grow-1">Mengenstaffeln und Preise für Sylius-Kundengruppen pflegen.</p>
+                        {% if resource.id %}
+                            <a class="btn btn-outline-primary align-self-start" href="{{ path('cardnext_admin_product_price_rule_index', {'id': resource.id}) }}">Preisregeln verwalten</a>
+                        {% else %}
+                            <div class="text-secondary small">Nach dem ersten Speichern verfügbar.</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,7 +113,10 @@
 
     <div class="card mb-3">
         <div class="card-header">
-            <h2 class="card-title">Technisches Datenprofil</h2>
+            <div>
+                <h2 class="card-title mb-1">Technisches Datenprofil</h2>
+                <div class="text-secondary small">Standardisierte Attribute passend zur Produktkategorie ergänzen.</div>
+            </div>
         </div>
         <div class="card-body">
             {% if not resource.id %}
@@ -115,40 +124,31 @@
                     Das Produkt zuerst speichern. Das technische Datenprofil wird anschließend anhand des Haupt-Taxons bestimmt.
                 </div>
             {% elseif profile_code %}
-                <div class="row g-4 align-items-start">
-                    <div class="col-12 col-xl-7">
-                        <div class="mb-2">
-                            <span class="badge bg-orange-lt">{{ profile_label }}</span>
-                        </div>
+                <div class="row g-4 align-items-center">
+                    <div class="col-12 col-lg-8">
+                        <div class="mb-2"><span class="badge bg-orange-lt">{{ profile_label }}</span></div>
                         <h3 class="h4 mb-2">Standardfelder für {{ profile_label }}</h3>
                         <p class="text-secondary mb-3">
-                            Cardnext verwendet feste Attribut-Codes. Dadurch bleiben technische Daten,
-                            spätere Filter, PIM-Importe und internationale Übersetzungen konsistent.
+                            Feste Attribut-Codes sorgen für konsistente technische Daten, Filter, PIM-Importe und Übersetzungen.
                         </p>
-
                         <div class="d-flex flex-wrap gap-2">
                             {% for code, definition in profile_definitions %}
-                                <span class="badge bg-secondary-lt" title="{{ code }}">
-                                    {{ definition.name }}
-                                </span>
+                                <span class="badge bg-secondary-lt" title="{{ code }}">{{ definition.name }}</span>
                             {% endfor %}
                         </div>
                     </div>
 
-                    <div class="col-12 col-xl-5">
+                    <div class="col-12 col-lg-4">
                         <div class="border rounded p-3 bg-light">
                             <strong>{{ profile_definitions|length }} Standardfelder</strong>
-                            <div class="text-secondary small mt-1 mb-3">
-                                Fehlende Felder werden ergänzt. Vorhandene Werte werden nicht überschrieben.
-                            </div>
-
+                            <div class="text-secondary small mt-1 mb-3">Fehlende Felder werden ergänzt; vorhandene Werte bleiben erhalten.</div>
                             <div
                                 data-controller="cardnext-product-attribute-profile"
                                 data-cardnext-product-attribute-profile-url-value="{{ path('cardnext_admin_product_attribute_profile_apply', {'id': resource.id}) }}"
                                 data-cardnext-product-attribute-profile-token-value="{{ csrf_token('apply-product-attribute-profile-' ~ resource.id) }}"
                             >
                                 <button
-                                    class="btn btn-primary"
+                                    class="btn btn-primary w-100"
                                     type="button"
                                     data-action="click->cardnext-product-attribute-profile#submit"
                                     data-cardnext-product-attribute-profile-target="button"
