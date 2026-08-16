@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Product\Product;
 use App\Entity\Taxonomy\Taxon;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,8 +45,8 @@ INNER JOIN sylius_product_taxon pt ON pt.product_id = p.id
 INNER JOIN sylius_taxon assigned ON assigned.id = pt.taxon_id
 WHERE p.enabled = 1
   AND assigned.tree_root = :treeRoot
-  AND assigned.lft >= :taxonLeft
-  AND assigned.rgt <= :taxonRight
+  AND assigned.tree_left >= :taxonLeft
+  AND assigned.tree_right <= :taxonRight
 SQL;
         $parameters = [
             'channel' => $channel->getId(),
