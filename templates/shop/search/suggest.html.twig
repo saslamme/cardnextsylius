@@ -3,7 +3,10 @@
 
     {% for product in products %}
         {% set variant = product.enabledVariants|first %}
-        {% set identifier = product.manufacturerPartNumber ?: product.code %}
+        {% set identifier = variant and variant.manufacturerPartNumber
+            ? variant.manufacturerPartNumber
+            : (variant and variant.gtin ? variant.gtin : product.code)
+        %}
         {% set available = variant and (not variant.tracked or ((variant.onHand - variant.onHold) > 0)) %}
 
         <a

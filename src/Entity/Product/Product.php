@@ -22,19 +22,11 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\JoinColumn(name: 'manufacturer_id', nullable: true, onDelete: 'SET NULL')]
     private ?Manufacturer $manufacturer = null;
 
+    #[ORM\Column(name: 'model', length: 255, nullable: true)]
+    private ?string $model = null;
 
-    #[ORM\Column(name: 'manufacturer_part_number', length: 128, nullable: true)]
-    private ?string $manufacturerPartNumber = null;
-
-    #[ORM\Column(name: 'manufacturer_part_number_normalized', length: 128, nullable: true)]
-    private ?string $manufacturerPartNumberNormalized = null;
-
-    #[ORM\Column(name: 'ean', length: 64, nullable: true)]
-    private ?string $ean = null;
-
-    #[ORM\Column(name: 'ean_normalized', length: 64, nullable: true)]
-    private ?string $eanNormalized = null;
-
+    #[ORM\Column(name: 'data_quality_status', length: 32, options: ['default' => 'imported'])]
+    private string $dataQualityStatus = 'imported';
 
     #[ORM\Column(name: 'homepage_featured', options: ['default' => false])]
     private bool $homepageFeatured = false;
@@ -42,34 +34,18 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\Column(name: 'homepage_position', options: ['default' => 100])]
     private int $homepagePosition = 100;
 
-
     /** @var Collection<int, ProductCompatibility> */
-    #[ORM\OneToMany(
-        mappedBy: 'sourceProduct',
-        targetEntity: ProductCompatibility::class,
-        cascade: ['persist'],
-        orphanRemoval: true,
-    )]
+    #[ORM\OneToMany(mappedBy: 'sourceProduct', targetEntity: ProductCompatibility::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
     private Collection $compatibilities;
 
     /** @var Collection<int, ProductCompatibility> */
-    #[ORM\OneToMany(
-        mappedBy: 'targetProduct',
-        targetEntity: ProductCompatibility::class,
-        cascade: ['persist'],
-        orphanRemoval: true,
-    )]
+    #[ORM\OneToMany(mappedBy: 'targetProduct', targetEntity: ProductCompatibility::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
     private Collection $reverseCompatibilities;
 
     /** @var Collection<int, ProductDocument> */
-    #[ORM\OneToMany(
-        mappedBy: 'product',
-        targetEntity: ProductDocument::class,
-        cascade: ['persist'],
-        orphanRemoval: true,
-    )]
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductDocument::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'title' => 'ASC'])]
     private Collection $documents;
 
@@ -91,42 +67,30 @@ class Product extends BaseProduct implements ProductInterface
         $this->manufacturer = $manufacturer;
     }
 
-    public function getManufacturerPartNumber(): ?string
+    public function getModel(): ?string
     {
-        return $this->manufacturerPartNumber;
+        return $this->model;
     }
 
-    public function setManufacturerPartNumber(?string $manufacturerPartNumber): void
+    public function setModel(?string $model): void
     {
-        $manufacturerPartNumber = $manufacturerPartNumber !== null ? trim($manufacturerPartNumber) : null;
-        $this->manufacturerPartNumber = $manufacturerPartNumber !== '' ? $manufacturerPartNumber : null;
-        $this->manufacturerPartNumberNormalized = $this->manufacturerPartNumber !== null
-            ? self::normalizeIdentifier($this->manufacturerPartNumber)
-            : null;
+        $model = $model !== null ? trim($model) : null;
+        $this->model = $model !== '' ? $model : null;
     }
 
-    public function getManufacturerPartNumberNormalized(): ?string
+    public function getDataQualityStatus(): string
     {
-        return $this->manufacturerPartNumberNormalized;
+        return $this->dataQualityStatus;
     }
 
-    public function getEan(): ?string
+    public function setDataQualityStatus(string $dataQualityStatus): void
     {
-        return $this->ean;
-    }
+        if (!in_array($dataQualityStatus, ['imported', 'needs_review', 'verified'], true)) {
+            throw new \InvalidArgumentException(sprintf('Invalid data quality status "%s".', $dataQualityStatus));
+        }
 
-    public function setEan(?string $ean): void
-    {
-        $ean = $ean !== null ? trim($ean) : null;
-        $this->ean = $ean !== '' ? $ean : null;
-        $this->eanNormalized = $this->ean !== null ? self::normalizeIdentifier($this->ean) : null;
+        $this->dataQualityStatus = $dataQualityStatus;
     }
-
-    public function getEanNormalized(): ?string
-    {
-        return $this->eanNormalized;
-    }
-
 
     public function isHomepageFeatured(): bool
     {
@@ -147,7 +111,6 @@ class Product extends BaseProduct implements ProductInterface
     {
         $this->homepagePosition = max(0, $homepagePosition);
     }
-
 
     /** @return Collection<int, ProductDocument> */
     public function getDocuments(): Collection
@@ -170,28 +133,18 @@ class Product extends BaseProduct implements ProductInterface
         $this->documents->removeElement($document);
     }
 
-    /**
-     * @return list<ProductDocument>
-     */
+    /** @return list<ProductDocument> */
     public function getPublicDocuments(?string $localeCode = null): array
     {
         $documents = array_values(array_filter(
             $this->documents->toArray(),
-            static fn (ProductDocument $document): bool =>
-                $document->isEnabled()
-                && $document->getFilePath() !== null
-                && ($document->getLocale() === null || $document->getLocale() === $localeCode),
+            static fn (ProductDocument $document): bool => $document->isEnabled() && $document->getFilePath() !== null && ($document->getLocale() === null || $document->getLocale() === $localeCode),
         ));
 
-        usort(
-            $documents,
-            static fn (ProductDocument $a, ProductDocument $b): int =>
-                [$a->getPosition(), $a->getTitle()] <=> [$b->getPosition(), $b->getTitle()],
-        );
+        usort($documents, static fn (ProductDocument $a, ProductDocument $b): int => [$a->getPosition(), $a->getTitle()] <=> [$b->getPosition(), $b->getTitle()]);
 
         return $documents;
     }
-
 
     /** @return Collection<int, ProductCompatibility> */
     public function getCompatibilities(): Collection
@@ -235,51 +188,29 @@ class Product extends BaseProduct implements ProductInterface
         $this->reverseCompatibilities->removeElement($compatibility);
     }
 
-    /**
-     * @return list<ProductCompatibility>
-     */
+    /** @return list<ProductCompatibility> */
     public function getPublicCompatibilities(): array
     {
         return $this->sortPublicCompatibilities($this->compatibilities);
     }
 
-    /**
-     * @return list<ProductCompatibility>
-     */
+    /** @return list<ProductCompatibility> */
     public function getPublicReverseCompatibilities(): array
     {
         return $this->sortPublicCompatibilities($this->reverseCompatibilities);
     }
 
-    /**
-     * @param Collection<int, ProductCompatibility> $collection
-     *
-     * @return list<ProductCompatibility>
-     */
+    /** @param Collection<int, ProductCompatibility> $collection @return list<ProductCompatibility> */
     private function sortPublicCompatibilities(Collection $collection): array
     {
         $items = array_values(array_filter(
             $collection->toArray(),
-            static fn (ProductCompatibility $compatibility): bool =>
-                $compatibility->isEnabled()
-                && $compatibility->getSourceProduct()->isEnabled()
-                && $compatibility->getTargetProduct()->isEnabled(),
+            static fn (ProductCompatibility $compatibility): bool => $compatibility->isEnabled() && $compatibility->getSourceProduct()->isEnabled() && $compatibility->getTargetProduct()->isEnabled(),
         ));
 
-        usort(
-            $items,
-            static fn (ProductCompatibility $a, ProductCompatibility $b): int =>
-                [$a->getPosition(), $a->getId() ?? 0] <=> [$b->getPosition(), $b->getId() ?? 0],
-        );
+        usort($items, static fn (ProductCompatibility $a, ProductCompatibility $b): int => [$a->getPosition(), $a->getId() ?? 0] <=> [$b->getPosition(), $b->getId() ?? 0]);
 
         return $items;
-    }
-
-    private static function normalizeIdentifier(string $value): string
-    {
-        $value = mb_strtolower($value);
-
-        return preg_replace('/[^a-z0-9]+/i', '', $value) ?? '';
     }
 
     protected function createTranslation(): ProductTranslationInterface
