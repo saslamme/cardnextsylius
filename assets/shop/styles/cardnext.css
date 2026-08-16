@@ -682,7 +682,7 @@ body.cn-nav-open { overflow: hidden; }
 .cn-note { display: flex; align-items: flex-start; gap: 8px; color: #7b858b; font-size: .74rem; line-height: 1.5; }
 .cn-note svg { width: 16px; height: 16px; flex: 0 0 auto; margin-top: 1px; stroke: currentColor; }
 .cn-gallery > .cn-note { position: static; width: 100%; margin-top: 16px; padding: 0 2px; }
-.cn-summary { min-width: 0; position: sticky; top: calc(var(--cn-header-height) + 24px); }
+.cn-summary { min-width: 0; }
 .cn-summary__inner { display: flex; flex-direction: column; }
 .cn-summary__header { order: 10; padding-bottom: 18px; border-bottom: 1px solid var(--cn-border); }
 .cn-brand { min-height: 28px; display: flex; align-items: center; gap: 11px; margin-bottom: 10px; color: var(--cn-primary-hover); font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
