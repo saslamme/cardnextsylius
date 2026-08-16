@@ -36,6 +36,7 @@ final class ProductVariantTypeExtension extends AbstractTypeExtension
             ])
             ->add('minimumOrderQuantity', IntegerType::class, [
                 'required' => true,
+                'empty_data' => '1',
                 'label' => 'Mindestbestellmenge',
                 'help' => 'Kleinste Menge, die bestellt werden kann.',
                 'constraints' => [new GreaterThanOrEqual(1)],
@@ -43,6 +44,7 @@ final class ProductVariantTypeExtension extends AbstractTypeExtension
             ])
             ->add('orderIncrement', IntegerType::class, [
                 'required' => true,
+                'empty_data' => '1',
                 'label' => 'Bestellschritt',
                 'help' => 'Weitere Mengen müssen in diesem Schritt erhöht werden, z. B. 10, 20, 30.',
                 'constraints' => [new GreaterThanOrEqual(1)],
@@ -50,6 +52,7 @@ final class ProductVariantTypeExtension extends AbstractTypeExtension
             ])
             ->add('packQuantity', IntegerType::class, [
                 'required' => true,
+                'empty_data' => '1',
                 'label' => 'Verpackungseinheit',
                 'help' => 'Anzahl physischer Einheiten je Verkaufspackung.',
                 'constraints' => [new GreaterThanOrEqual(1)],
