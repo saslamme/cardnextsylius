@@ -1,0 +1,11 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_admin.product_variant.create.content.form.sections.general.body':
+            cardnext_identifiers:
+                template: 'admin/cardnext/product_variant/identifiers.html.twig'
+                priority: 250
+
+        'sylius_admin.product_variant.update.content.form.sections.general.body':
+            cardnext_identifiers:
+                template: 'admin/cardnext/product_variant/identifiers.html.twig'
+                priority: 250
