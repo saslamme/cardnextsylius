@@ -119,6 +119,27 @@ final class LegacyImportTest extends TestCase
         self::assertSame([], json_decode($row[15], true));
     }
 
+    public function testCsvGeneratesDeterministicUniqueSlugsForDuplicateNames(): void
+    {
+        $name = 'Zebra ZC100 ZC300 ZC350 Farbband Schwarz 2000 Prints';
+        $first = new LegacyProductRecord('1','a.dat','Zebra','800015-901',$name,1200,'Description',null,['ribbons'],[],[],false,false,[]);
+        $second = new LegacyProductRecord('2','b.dat','Zebra','800015-902',$name,1300,'Description',null,['ribbons'],[],[],false,false,[]);
+
+        $csv = tempnam(sys_get_temp_dir(), 'legacy-csv-'); self::assertNotFalse($csv);
+        $dependency = (new \ReflectionClass(CardnextProductCsvImporter::class))->newInstanceWithoutConstructor();
+        (new CardnextLegacyProductImporter((new \ReflectionClass(CardnextLegacySourceParser::class))->newInstanceWithoutConstructor(), $dependency))->writeCsv($csv, new LegacyImportPlan([$first, $second], []));
+
+        $h=fopen($csv,'rb'); self::assertIsResource($h);
+        $header=fgetcsv($h,0,';'); $row1=fgetcsv($h,0,';'); $row2=fgetcsv($h,0,';');
+        fclose($h); @unlink($csv);
+
+        $slugIndex = array_search('slug', $header, true);
+        self::assertIsInt($slugIndex);
+        self::assertSame('zebra-zc100-zc300-zc350-farbband-schwarz-2000-prints-zebra-800015-901', $row1[$slugIndex]);
+        self::assertSame('zebra-zc100-zc300-zc350-farbband-schwarz-2000-prints-zebra-800015-902', $row2[$slugIndex]);
+        self::assertNotSame($row1[$slugIndex], $row2[$slugIndex]);
+    }
+
     private function row(string $id,string $category,string $mpn,string $manufacturer,string $attributes): string
     {
         $f=array_fill(0,62,''); $f[0]=$id; $f[2]=$category; $f[3]=$mpn; $f[4]='Test'; $f[5]='12,00'; $f[17]=$manufacturer; $f[25]=$attributes;
