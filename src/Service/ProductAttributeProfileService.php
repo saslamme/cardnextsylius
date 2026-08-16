@@ -11,8 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Attribute\AttributeType\CheckboxAttributeType;
 use Sylius\Component\Attribute\AttributeType\IntegerAttributeType;
 use Sylius\Component\Attribute\AttributeType\SelectAttributeType;
-use Sylius\Component\Attribute\AttributeType\TextAttributeType;
 use Sylius\Component\Attribute\AttributeType\TextareaAttributeType;
+use Sylius\Component\Attribute\AttributeType\TextAttributeType;
 use Sylius\Component\Attribute\Model\AttributeValueInterface;
 
 final readonly class ProductAttributeProfileService
@@ -25,8 +25,6 @@ final readonly class ProductAttributeProfileService
      * @var list<string>
      */
     private const COMMON = [
-        'CN_MPN',
-        'CN_EAN',
         'CN_WARRANTY_MONTHS',
     ];
 
@@ -38,7 +36,7 @@ final readonly class ProductAttributeProfileService
      * @var array<string, list<string>>
      */
     private const PROFILES = [
-        'CARD_PRINTERS' => [
+        'card_printers' => [
             'CN_PRINTER_TECHNOLOGY',
             'CN_PRINT_SIDES',
             'CN_PRINT_RESOLUTION',
@@ -51,7 +49,7 @@ final readonly class ProductAttributeProfileService
             'CN_ENCODING_OPTIONS',
             'CN_PRINTER_DISPLAY',
         ],
-        'RFID_READERS' => [
+        'rfid_readers' => [
             'CN_RFID_FREQUENCY',
             'CN_RFID_TECHNOLOGIES',
             'CN_RFID_INTERFACE',
@@ -61,7 +59,7 @@ final readonly class ProductAttributeProfileService
             'CN_IP_RATING',
             'CN_OPERATING_TEMPERATURE',
         ],
-        'PLASTIC_CARDS' => [
+        'plastic_cards' => [
             'CN_CARD_MATERIAL',
             'CN_CARD_FORMAT',
             'CN_CARD_THICKNESS',
@@ -71,7 +69,7 @@ final readonly class ProductAttributeProfileService
             'CN_RFID_FREQUENCY',
             'CN_CARD_CHIP',
         ],
-        'CARD_ACCESSORIES' => [
+        'id_accessories' => [
             'CN_ACCESSORY_TYPE',
             'CN_CARD_ORIENTATION',
             'CN_CARD_CAPACITY',
@@ -79,13 +77,12 @@ final readonly class ProductAttributeProfileService
             'CN_PRODUCT_COLOR',
             'CN_ATTACHMENT_TYPE',
         ],
-        'RIBBONS' => [
+        'ribbons' => [
             'CN_RIBBON_TYPE',
             'CN_RIBBON_COLOR',
             'CN_RIBBON_YIELD',
-            'CN_COMPATIBLE_PRINTERS',
         ],
-        'BARCODE_SCANNERS' => [
+        'barcode_scanners' => [
             'CN_BARCODE_DIMENSION',
             'CN_SCAN_ENGINE',
             'CN_SCANNER_INTERFACES',
@@ -95,7 +92,7 @@ final readonly class ProductAttributeProfileService
             'CN_DROP_RESISTANCE',
             'CN_SUPPORTED_SYMBOLOGIES',
         ],
-        'TIME_ATTENDANCE' => [
+        'time_terminals' => [
             'CN_IDENTIFICATION_METHODS',
             'CN_RFID_TECHNOLOGIES',
             'CN_TERMINAL_DISPLAY',
@@ -105,7 +102,7 @@ final readonly class ProductAttributeProfileService
             'CN_OFFLINE_MODE',
             'CN_OPERATING_TEMPERATURE',
         ],
-        'ACCESS_CONTROL' => [
+        'access_control' => [
             'CN_ACCESS_COMPONENT_TYPE',
             'CN_ACCESS_PROTOCOLS',
             'CN_RFID_TECHNOLOGIES',
@@ -116,6 +113,13 @@ final readonly class ProductAttributeProfileService
             'CN_RELAY_OUTPUTS',
             'CN_OPERATING_TEMPERATURE',
         ],
+        'rfid_transponders' => [
+            'CN_RFID_FREQUENCY', 'CN_RFID_TECHNOLOGIES', 'CN_CARD_CHIP',
+            'CN_PRODUCT_MATERIAL', 'CN_PRODUCT_COLOR', 'CN_IP_RATING',
+        ],
+        'cleaning_material' => ['CN_ACCESSORY_TYPE'],
+        'card_printer_accessories' => ['CN_ACCESSORY_TYPE', 'CN_CONNECTIVITY'],
+        'card_software' => ['CN_SOFTWARE_LICENSE', 'CN_SOFTWARE_DELIVERY', 'CN_SUPPORTED_OS'],
     ];
 
     /**
@@ -128,6 +132,9 @@ final readonly class ProductAttributeProfileService
      * }>
      */
     private const DEFINITIONS = [
+        'CN_SOFTWARE_LICENSE' => ['name' => 'Lizenztyp', 'type' => TextAttributeType::TYPE, 'storage' => AttributeValueInterface::STORAGE_TEXT, 'position' => 800],
+        'CN_SOFTWARE_DELIVERY' => ['name' => 'Bereitstellung', 'type' => TextAttributeType::TYPE, 'storage' => AttributeValueInterface::STORAGE_TEXT, 'position' => 810],
+        'CN_SUPPORTED_OS' => ['name' => 'Betriebssysteme', 'type' => TextAttributeType::TYPE, 'storage' => AttributeValueInterface::STORAGE_TEXT, 'position' => 820],
         // ---------------------------------------------------------------------
         // Common
         // ---------------------------------------------------------------------
@@ -915,14 +922,18 @@ final readonly class ProductAttributeProfileService
     public function getProfileLabel(?string $profileCode): ?string
     {
         return match ($profileCode) {
-            'CARD_PRINTERS' => 'Kartendrucker',
-            'RFID_READERS' => 'RFID-Leser',
-            'PLASTIC_CARDS' => 'Plastikkarten',
-            'CARD_ACCESSORIES' => 'Kartenzubehör',
-            'RIBBONS' => 'Farbbänder',
-            'BARCODE_SCANNERS' => 'Barcode-Scanner',
-            'TIME_ATTENDANCE' => 'Zeiterfassung',
-            'ACCESS_CONTROL' => 'Zutrittskontrolle',
+            'card_printers' => 'Kartendrucker',
+            'rfid_readers' => 'RFID-Leser',
+            'plastic_cards' => 'Plastikkarten',
+            'id_accessories' => 'Kartenzubehör',
+            'ribbons' => 'Farbbänder',
+            'barcode_scanners' => 'Barcode-Scanner',
+            'time_terminals' => 'Zeiterfassung',
+            'access_control' => 'Zutrittskontrolle',
+            'rfid_transponders' => 'RFID-Transponder',
+            'cleaning_material' => 'Reinigungsmaterial',
+            'card_printer_accessories' => 'Kartendrucker-Zubehör',
+            'card_software' => 'Kartensoftware',
             default => null,
         };
     }
