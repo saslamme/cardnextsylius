@@ -16,20 +16,38 @@ final readonly class CardnextLegacyProductImporter
     public function import(string $zip, bool $dryRun, string $reportPath): array
     {
         $plan = $this->parser->parse($zip);
-        if (!$dryRun) {
-            $csv = tempnam(sys_get_temp_dir(), 'cardnext-legacy-');
-            if ($csv === false) { throw new \RuntimeException('Could not create the temporary import file.'); }
-            try {
-                $this->writeCsv($csv, $plan);
-                $this->csvImporter->import($csv, false);
-            } finally { @unlink($csv); }
+        $csv = tempnam(sys_get_temp_dir(), 'cardnext-legacy-');
+        if ($csv === false) {
+            throw new \RuntimeException('Could not create the temporary import file.');
         }
-        $directory = dirname($reportPath);
-        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) { throw new \RuntimeException("Cannot create report directory $directory."); }
-        $payload = ['generated_at'=>(new \DateTimeImmutable())->format(DATE_ATOM),'source'=>basename($zip),'dry_run'=>$dryRun,'statistics'=>$plan->report];
-        if (file_put_contents($reportPath, json_encode($payload, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)."\n", LOCK_EX) === false) { throw new \RuntimeException("Cannot write report $reportPath."); }
 
-        return $plan->report;
+        try {
+            $this->writeCsv($csv, $plan);
+            $csvResult = $this->csvImporter->import($csv, $dryRun);
+        } finally {
+            @unlink($csv);
+        }
+
+        $report = $plan->report;
+        $report['validated_csv_rows'] = $csvResult['rows'];
+        $report['validation_warnings'] = $csvResult['warnings'];
+
+        $directory = dirname($reportPath);
+        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+            throw new \RuntimeException("Cannot create report directory $directory.");
+        }
+
+        $payload = [
+            'generated_at' => (new \DateTimeImmutable())->format(DATE_ATOM),
+            'source' => basename($zip),
+            'dry_run' => $dryRun,
+            'statistics' => $report,
+        ];
+        if (file_put_contents($reportPath, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)."\n", LOCK_EX) === false) {
+            throw new \RuntimeException("Cannot write report $reportPath.");
+        }
+
+        return $report;
     }
 
     public function writeCsv(string $path, LegacyImportPlan $plan): void
