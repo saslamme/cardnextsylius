@@ -76,3 +76,7 @@ __pycache__/
 
 # Local production encryption keys
 /config/encryption/*.local.key
+
+# One-off legacy migration inputs and generated reports (never ship publicly)
+/import-source/
+/var/import/
