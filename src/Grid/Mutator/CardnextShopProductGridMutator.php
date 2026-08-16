@@ -8,6 +8,7 @@ use App\Entity\Taxonomy\Taxon;
 use App\Service\ProductFacetDefinitionService;
 use App\Service\ProductFacetService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Bundle\GridBundle\Builder\Filter\Filter;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
@@ -27,6 +28,7 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
         private ProductFacetDefinitionService $facets,
         private ProductFacetService $facetValues,
         private ChannelContextInterface $channelContext,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -47,7 +49,20 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
             return;
         }
         [$taxon, $profileCode] = $resolved;
-        $available = $this->facetValues->getFacets($taxon, $this->channelContext->getChannel(), $request, $profileCode);
+
+        try {
+            $available = $this->facetValues->getFacets($taxon, $this->channelContext->getChannel(), $request, $profileCode);
+        } catch (\Throwable $exception) {
+            // Facets are an optional catalogue enhancement. A malformed legacy
+            // attribute must never make an otherwise valid taxon page fail.
+            $this->logger->warning('Could not build product facets for taxon.', [
+                'taxon' => $taxon->getCode(),
+                'profile' => $profileCode,
+                'exception' => $exception,
+            ]);
+
+            return;
+        }
 
         $manufacturerChoices = [];
         foreach ($available['manufacturer'] as $code => $manufacturer) {
@@ -126,11 +141,20 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
             return null;
         }
 
-        $openedTaxon = $taxon;
+        $profileCode = $this->resolveProfileCode($taxon);
+        if ($profileCode !== null) {
+            return [$taxon, $profileCode];
+        }
+
+        return null;
+    }
+
+    public function resolveProfileCode(Taxon $taxon): ?string
+    {
         do {
             $code = $taxon->getCode();
             if (is_string($code) && $this->facets->hasProfile($code)) {
-                return [$openedTaxon, $code];
+                return $code;
             }
 
             $parent = $taxon->getParent();
