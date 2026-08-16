@@ -50,8 +50,9 @@ document.addEventListener('click', (event) => {
     const input = wrapper?.querySelector('input[type="number"]');
     if (!input) return;
     const minimum = Number.parseInt(input.min || '1', 10) || 1;
+    const increment = Number.parseInt(input.step || '1', 10) || 1;
     const current = Number.parseInt(input.value || String(minimum), 10) || minimum;
-    input.value = String(Math.max(minimum, current + (plus ? 1 : -1)));
+    input.value = String(Math.max(minimum, current + (plus ? increment : -increment)));
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.dispatchEvent(new Event('change', { bubbles: true }));
 });
