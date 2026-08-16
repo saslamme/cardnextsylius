@@ -80,6 +80,23 @@ final class ProductFacetServiceTest extends TestCase
         self::assertSame(['manufacturer' => [], 'attributes' => []], $facets);
     }
 
+    public function testAccessoriesWithUnknownStoredChoiceStillReturnKnownFacets(): void
+    {
+        $connection = $this->createDatabase();
+        $connection->executeStatement("INSERT INTO sylius_product_attribute VALUES (41, 'CN_ACCESSORY_TYPE')");
+        $connection->executeStatement("INSERT INTO sylius_product_attribute_value VALUES (30, 41, '\"legacy_reel_value\"', NULL, NULL, NULL, NULL)");
+
+        $facets = $this->createService($connection)->getFacets(
+            $this->createTaxon(1, 10),
+            $this->createChannel(),
+            new Request(['criteria' => ['cn_accessory_type' => ['value' => ['invalid']]]], [], ['_locale' => 'de_DE']),
+            'id_accessories',
+        );
+
+        self::assertSame('Acme', $facets['manufacturer']['acme']['label']);
+        self::assertSame([], $facets['attributes']);
+    }
+
     private function createDatabase(): Connection
     {
         $connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);

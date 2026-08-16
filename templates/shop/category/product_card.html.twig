@@ -1,4 +1,5 @@
 {% set variant = variant|default(product.variants|first) %}
+{% set channel_pricing = variant ? variant.channelPricings[sylius.channel.code]|default(null) : null %}
 
 <article class="cn-product-card" {{ sylius_test_html_attribute('product', product.code) }}>
     <a class="cn-product-card__media" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}" tabindex="-1" aria-hidden="true">
@@ -38,7 +39,7 @@
 
         <div class="cn-product-card__meta">
             <div class="cn-product-card__price">
-                {% if variant %}
+                {% if channel_pricing and channel_pricing.price is not null %}
                     {{ component('sylius_shop:product:card:price', {
                         variant: variant,
                         template: '@SyliusShop/product/common/price.html.twig'
