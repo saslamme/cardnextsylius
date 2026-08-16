@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
 
 final class ProductTypeExtension extends AbstractTypeExtension
 {
@@ -25,8 +26,7 @@ final class ProductTypeExtension extends AbstractTypeExtension
             'placeholder' => '— Kein Hersteller —',
             'required' => false,
             'label' => 'Hersteller',
-            'query_builder' => static fn (EntityRepository $repository) =>
-                $repository->createQueryBuilder('manufacturer')
+            'query_builder' => static fn (EntityRepository $repository) => $repository->createQueryBuilder('manufacturer')
                     ->orderBy('manufacturer.position', 'ASC')
                     ->addOrderBy('manufacturer.name', 'ASC'),
         ]);
@@ -60,8 +60,17 @@ final class ProductTypeExtension extends AbstractTypeExtension
             ])
             ->add('homepagePosition', IntegerType::class, [
                 'required' => true,
+                // Imported products and requests created before this field was
+                // introduced can submit an empty value. Without an explicit
+                // default, the form mapper passes null to the int-only entity
+                // setter and turns an otherwise recoverable validation case
+                // into a 500 response.
+                'empty_data' => '100',
                 'label' => 'Startseiten-Position',
                 'help' => 'Kleinere Zahlen werden zuerst angezeigt.',
+                'constraints' => [
+                    new PositiveOrZero(),
+                ],
                 'attr' => [
                     'min' => 0,
                     'step' => 1,
