@@ -12,19 +12,19 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class LegalPageController extends AbstractController
 {
-    #[Route('/{_locale}/impressum', name: 'cardnext_shop_legal_imprint', methods: ['GET'])]
+    #[Route('/{_locale}/impressum', name: 'cardnext_shop_legal_imprint', methods: ['GET'], priority: 120)]
     public function imprint(string $_locale, EntityManagerInterface $entityManager): Response
     {
         return $this->show('imprint', $_locale, $entityManager);
     }
 
-    #[Route('/{_locale}/datenschutz', name: 'cardnext_shop_legal_privacy', methods: ['GET'])]
+    #[Route('/{_locale}/datenschutz', name: 'cardnext_shop_legal_privacy', methods: ['GET'], priority: 120)]
     public function privacy(string $_locale, EntityManagerInterface $entityManager): Response
     {
         return $this->show('privacy', $_locale, $entityManager);
     }
 
-    #[Route('/{_locale}/agb', name: 'cardnext_shop_legal_terms', methods: ['GET'])]
+    #[Route('/{_locale}/agb', name: 'cardnext_shop_legal_terms', methods: ['GET'], priority: 120)]
     public function terms(string $_locale, EntityManagerInterface $entityManager): Response
     {
         return $this->show('terms', $_locale, $entityManager);
