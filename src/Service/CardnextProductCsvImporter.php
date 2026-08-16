@@ -6,21 +6,24 @@ namespace App\Service;
 
 use App\Entity\Channel\Channel;
 use App\Entity\Channel\ChannelPricing;
+use App\Entity\Customer\Customer;
+use App\Entity\Customer\CustomerGroup;
+use App\Entity\Product\CustomerVariantPriceRule;
+use App\Entity\Product\DeviceModel;
 use App\Entity\Product\Manufacturer;
 use App\Entity\Product\Product;
 use App\Entity\Product\ProductAttribute;
 use App\Entity\Product\ProductAttributeValue;
-use App\Entity\Product\ProductDocument;
 use App\Entity\Product\ProductCompatibility;
+use App\Entity\Product\ProductDeviceCompatibility;
+use App\Entity\Product\ProductDocument;
 use App\Entity\Product\ProductImage;
 use App\Entity\Product\ProductTaxon;
 use App\Entity\Product\ProductVariant;
 use App\Entity\Product\VariantPriceRule;
-use App\Entity\Product\CustomerVariantPriceRule;
-use App\Entity\Customer\Customer;
-use App\Entity\Customer\CustomerGroup;
 use App\Entity\Taxation\TaxCategory;
 use App\Entity\Taxonomy\Taxon;
+use App\Repository\Product\DeviceModelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -57,6 +60,8 @@ final readonly class CardnextProductCsvImporter
      *   price_rules_updated:int,
      *   customer_price_rules_created:int,
      *   customer_price_rules_updated:int,
+     *   device_compatibilities_created:int,
+     *   device_compatibilities_updated:int,
      *   products_created:int,
      *   products_updated:int,
      *   variants_created:int,
@@ -70,8 +75,7 @@ final readonly class CardnextProductCsvImporter
         ?string $imageDirectory = null,
         ?string $manufacturerLogoDirectory = null,
         ?string $documentDirectory = null,
-    ): array
-    {
+    ): array {
         if (!is_file($csvPath) || !is_readable($csvPath)) {
             throw new \RuntimeException(sprintf('CSV file "%s" does not exist or is not readable.', $csvPath));
         }
@@ -93,6 +97,7 @@ final readonly class CardnextProductCsvImporter
         $header = fgetcsv($handle, 0, ';');
         if (!is_array($header)) {
             fclose($handle);
+
             throw new \RuntimeException('The CSV file has no header row.');
         }
 
@@ -104,6 +109,7 @@ final readonly class CardnextProductCsvImporter
         foreach (self::REQUIRED_COLUMNS as $requiredColumn) {
             if (!in_array($requiredColumn, $header, true)) {
                 fclose($handle);
+
                 throw new \RuntimeException(sprintf('Required CSV column "%s" is missing.', $requiredColumn));
             }
         }
@@ -120,6 +126,8 @@ final readonly class CardnextProductCsvImporter
             'price_rules_updated' => 0,
             'customer_price_rules_created' => 0,
             'customer_price_rules_updated' => 0,
+            'device_compatibilities_created' => 0,
+            'device_compatibilities_updated' => 0,
             'products_created' => 0,
             'products_updated' => 0,
             'variants_created' => 0,
@@ -194,6 +202,16 @@ final readonly class CardnextProductCsvImporter
                 $product->setCurrentLocale($locale);
                 $product->setFallbackLocale($locale);
 
+                if (($row['model'] ?? '') !== '') {
+                    $product->setModel($row['model']);
+                }
+                if (!$productIsNew && $product->getDataQualityStatus() === 'verified') {
+                    // A routine import never silently removes a manual verification.
+                } else {
+                    $requestedStatus = $row['data_quality_status'] ?? 'imported';
+                    $product->setDataQualityStatus($requestedStatus === 'needs_review' ? 'needs_review' : 'imported');
+                }
+
                 if (($row['name'] ?? '') !== '') {
                     $product->setName($row['name']);
                 }
@@ -238,6 +256,11 @@ final readonly class CardnextProductCsvImporter
 
                         $seenManufacturers[$manufacturerCode] = true;
                     }
+                }
+
+                if (($row['name'] ?? '') === '' || !($manufacturerResult['manufacturer'] instanceof Manufacturer)) {
+                    $product->setDataQualityStatus('needs_review');
+                    $result['warnings'][] = sprintf('Row %d: product is missing a name or manufacturer and requires review.', $rowNumber);
                 }
 
                 $taxon = $this->assignTaxon($product, $row['taxon_code'], $rowNumber);
@@ -344,7 +367,11 @@ final readonly class CardnextProductCsvImporter
                     );
                 }
 
-                $this->assignAttributes($product, $row['attributes_json'] ?? '', $rowNumber);
+                if (($row['device_compatibilities_json'] ?? '') !== '') {
+                    $this->assignDeviceCompatibilities($product, $row['device_compatibilities_json'], $rowNumber, $result);
+                }
+
+                $this->assignAttributes($product, $row['attributes_json'] ?? '', $rowNumber, $result['warnings']);
 
                 if (($row['documents_json'] ?? '') !== '') {
                     $this->assignDocuments(
@@ -575,7 +602,7 @@ final readonly class CardnextProductCsvImporter
             return false;
         }
 
-        $extension = strtolower(pathinfo($safeFilename, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($safeFilename, \PATHINFO_EXTENSION));
         if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
             $warnings[] = sprintf(
                 'Row %d: manufacturer logo "%s" has an unsupported extension; skipped.',
@@ -586,7 +613,7 @@ final readonly class CardnextProductCsvImporter
             return false;
         }
 
-        $filenameWithoutExtension = pathinfo($safeFilename, PATHINFO_FILENAME);
+        $filenameWithoutExtension = pathinfo($safeFilename, \PATHINFO_FILENAME);
         $targetFilename = sprintf(
             '%s-%s.%s',
             strtolower((string) $this->slugger->slug($manufacturer->getCode())),
@@ -617,9 +644,9 @@ final readonly class CardnextProductCsvImporter
             $filesystem->copy($source, $publicDirectory . '/' . $targetFilename, true);
 
             if (
-                $oldPath !== null
-                && $oldPath !== $relativePath
-                && str_starts_with($oldPath, $directory . '/')
+                $oldPath !== null &&
+                $oldPath !== $relativePath &&
+                str_starts_with($oldPath, $directory . '/')
             ) {
                 $oldAbsolutePath = dirname(__DIR__, 2) . '/public/' . ltrim($oldPath, '/');
                 if (is_file($oldAbsolutePath)) {
@@ -638,24 +665,25 @@ final readonly class CardnextProductCsvImporter
         if ($taxonCode === '') {
             return null;
         }
-
-        /** @var Taxon|null $taxon */
-        $taxon = $this->entityManager->getRepository(Taxon::class)->findOneBy(['code' => $taxonCode]);
-        if ($taxon === null) {
-            throw new \RuntimeException(sprintf('Row %d: taxon "%s" was not found.', $rowNumber, $taxonCode));
+        $mainTaxon = null;
+        foreach ($this->splitPipe($taxonCode) as $position => $code) {
+            /** @var Taxon|null $taxon */
+            $taxon = $this->entityManager->getRepository(Taxon::class)->findOneBy(['code' => $code]);
+            if ($taxon === null) {
+                throw new \RuntimeException(sprintf('Row %d: taxon "%s" was not found.', $rowNumber, $code));
+            }
+            $mainTaxon ??= $taxon;
+            if (!$product->hasTaxon($taxon)) {
+                $productTaxon = new ProductTaxon();
+                $productTaxon->setTaxon($taxon);
+                $productTaxon->setPosition($position);
+                $product->addProductTaxon($productTaxon);
+                $this->entityManager->persist($productTaxon);
+            }
         }
+        $product->setMainTaxon($mainTaxon);
 
-        $product->setMainTaxon($taxon);
-
-        if (!$product->hasTaxon($taxon)) {
-            $productTaxon = new ProductTaxon();
-            $productTaxon->setTaxon($taxon);
-            $productTaxon->setPosition(0);
-            $product->addProductTaxon($productTaxon);
-            $this->entityManager->persist($productTaxon);
-        }
-
-        return $taxon;
+        return $mainTaxon;
     }
 
     private function assignChannels(Product $product, string $channelCodes, int $rowNumber): void
@@ -707,7 +735,6 @@ final readonly class CardnextProductCsvImporter
             $pricing->setPrice((int) $price);
         }
     }
-
 
     /**
      * @param array{
@@ -842,7 +869,6 @@ final readonly class CardnextProductCsvImporter
             }
         }
     }
-
 
     /**
      * @param array{
@@ -1004,7 +1030,8 @@ final readonly class CardnextProductCsvImporter
         }
     }
 
-    private function assignAttributes(Product $product, string $attributesJson, int $rowNumber): void
+    /** @param list<string> $warnings */
+    private function assignAttributes(Product $product, string $attributesJson, int $rowNumber, array &$warnings): void
     {
         if ($attributesJson === '') {
             return;
@@ -1016,11 +1043,22 @@ final readonly class CardnextProductCsvImporter
             /** @var ProductAttribute|null $attribute */
             $attribute = $this->entityManager->getRepository(ProductAttribute::class)->findOneBy(['code' => (string) $attributeCode]);
             if ($attribute === null) {
-                throw new \RuntimeException(sprintf(
-                    'Row %d: product attribute "%s" was not found. Run Phase 7 setup first.',
-                    $rowNumber,
-                    (string) $attributeCode,
-                ));
+                $product->setDataQualityStatus('needs_review');
+                $warnings[] = sprintf('Row %d: unknown product attribute "%s"; value skipped.', $rowNumber, (string) $attributeCode);
+
+                continue;
+            }
+
+            if ($attribute->getType() === 'select') {
+                $allowedValues = array_keys((array) ($attribute->getConfiguration()['choices'] ?? []));
+                $submittedValues = is_array($rawValue) ? $rawValue : [$rawValue];
+                $unknownValues = array_diff(array_map('strval', $submittedValues), $allowedValues);
+                if ($unknownValues !== []) {
+                    $product->setDataQualityStatus('needs_review');
+                    $warnings[] = sprintf('Row %d: attribute "%s" contains unknown controlled value(s) "%s"; value skipped.', $rowNumber, (string) $attributeCode, implode(', ', $unknownValues));
+
+                    continue;
+                }
             }
 
             $existing = $product->getAttributeByCodeAndLocale((string) $attributeCode, null);
@@ -1037,13 +1075,61 @@ final readonly class CardnextProductCsvImporter
                 'integer' => (int) $rawValue,
                 'float' => (float) $rawValue,
                 'json' => is_array($rawValue) ? $rawValue : [(string) $rawValue],
-                default => is_scalar($rawValue) ? (string) $rawValue : json_encode($rawValue, JSON_THROW_ON_ERROR),
+                default => is_scalar($rawValue) ? (string) $rawValue : json_encode($rawValue, \JSON_THROW_ON_ERROR),
             };
 
             $existing->setValue($value);
         }
     }
 
+    /** @param array<string, mixed> $result */
+    private function assignDeviceCompatibilities(Product $product, string $json, int $rowNumber, array &$result): void
+    {
+        $specifications = $this->decodeJsonList($json, 'device_compatibilities_json', $rowNumber);
+        /** @var DeviceModelRepository $repository */
+        $repository = $this->entityManager->getRepository(DeviceModel::class);
+
+        foreach ($specifications as $index => $specification) {
+            if (!is_array($specification)) {
+                throw new \RuntimeException(sprintf('Row %d: device compatibility item %d must be an object.', $rowNumber, $index + 1));
+            }
+            $identifier = trim((string) ($specification['device'] ?? $specification['code'] ?? $specification['name'] ?? ''));
+            $type = trim((string) ($specification['type'] ?? ProductDeviceCompatibility::TYPE_COMPATIBLE_WITH));
+            $device = $repository->findOneByIdentifier($identifier);
+            if (!$device instanceof DeviceModel) {
+                $product->setDataQualityStatus('needs_review');
+                $result['warnings'][] = sprintf('Row %d: device "%s" could not be resolved by code, name or alias; no device was created.', $rowNumber, $identifier);
+
+                continue;
+            }
+            if (!isset(ProductDeviceCompatibility::typeLabels()[$type])) {
+                $product->setDataQualityStatus('needs_review');
+                $result['warnings'][] = sprintf('Row %d: unknown device compatibility type "%s"; skipped.', $rowNumber, $type);
+
+                continue;
+            }
+            /** @var ProductDeviceCompatibility|null $compatibility */
+            $compatibility = $this->entityManager->getRepository(ProductDeviceCompatibility::class)->findOneBy(['product' => $product, 'deviceModel' => $device, 'compatibilityType' => $type]);
+            $created = $compatibility === null;
+            if ($compatibility === null) {
+                $compatibility = new ProductDeviceCompatibility();
+                $compatibility->setProduct($product);
+                $compatibility->setDeviceModel($device);
+                $compatibility->setCompatibilityType($type);
+                $product->addDeviceCompatibility($compatibility);
+                $this->entityManager->persist($compatibility);
+            }
+            $compatibility->setNote(isset($specification['note']) ? (string) $specification['note'] : null);
+            $compatibility->setPosition((int) ($specification['position'] ?? 0));
+            $compatibility->setEnabled(array_key_exists('enabled', $specification) ? $this->toBool($specification['enabled']) : true);
+            // Imports are deliberately unverified unless a human verifies them later.
+            if ($created) {
+                ++$result['device_compatibilities_created'];
+            } else {
+                ++$result['device_compatibilities_updated'];
+            }
+        }
+    }
 
     /**
      * @param array{
@@ -1144,6 +1230,7 @@ final readonly class CardnextProductCsvImporter
                         $rowNumber,
                         $importKey,
                     );
+
                     continue;
                 }
 
@@ -1196,6 +1283,7 @@ final readonly class CardnextProductCsvImporter
                     if ($created) {
                         $product->removeDocument($document);
                         $this->entityManager->remove($document);
+
                         continue;
                     }
                 } else {
@@ -1212,6 +1300,7 @@ final readonly class CardnextProductCsvImporter
                     if ($created && $document->getFilePath() === null) {
                         $product->removeDocument($document);
                         $this->entityManager->remove($document);
+
                         continue;
                     }
 
@@ -1257,7 +1346,7 @@ final readonly class CardnextProductCsvImporter
             return false;
         }
 
-        if (strtolower(pathinfo($safeFilename, PATHINFO_EXTENSION)) !== 'pdf') {
+        if (strtolower(pathinfo($safeFilename, \PATHINFO_EXTENSION)) !== 'pdf') {
             $warnings[] = sprintf(
                 'Row %d: document file "%s" is not a PDF; skipped.',
                 $rowNumber,
@@ -1268,7 +1357,7 @@ final readonly class CardnextProductCsvImporter
         }
 
         $fileSize = filesize($source);
-        $mimeType = (new \finfo(FILEINFO_MIME_TYPE))->file($source) ?: 'application/pdf';
+        $mimeType = (new \finfo(\FILEINFO_MIME_TYPE))->file($source) ?: 'application/pdf';
 
         if ($mimeType !== 'application/pdf') {
             $warnings[] = sprintf(
@@ -1287,9 +1376,9 @@ final readonly class CardnextProductCsvImporter
         $targetFilename = $key . '.pdf';
         $relativePath = $directory . '/' . $targetFilename;
 
-        $changed = $document->getFilePath() !== $relativePath
-            || $document->getOriginalFilename() !== $safeFilename
-            || $document->getFileSize() !== ($fileSize !== false ? $fileSize : null);
+        $changed = $document->getFilePath() !== $relativePath ||
+            $document->getOriginalFilename() !== $safeFilename ||
+            $document->getFileSize() !== ($fileSize !== false ? $fileSize : null);
 
         if (!$dryRun) {
             $filesystem = new Filesystem();
@@ -1299,9 +1388,9 @@ final readonly class CardnextProductCsvImporter
 
             $oldPath = $document->getFilePath();
             if (
-                $oldPath !== null
-                && $oldPath !== $relativePath
-                && str_starts_with($oldPath, 'media/cardnext/product-documents/')
+                $oldPath !== null &&
+                $oldPath !== $relativePath &&
+                str_starts_with($oldPath, 'media/cardnext/product-documents/')
             ) {
                 $oldAbsolutePath = dirname(__DIR__, 2) . '/public/' . ltrim($oldPath, '/');
                 if (is_file($oldAbsolutePath)) {
@@ -1328,7 +1417,7 @@ final readonly class CardnextProductCsvImporter
         }
 
         try {
-            $value = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $value = json_decode($json, true, 512, \JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             throw new \RuntimeException(sprintf(
                 'Row %d: invalid JSON in "%s": %s',
@@ -1348,7 +1437,6 @@ final readonly class CardnextProductCsvImporter
 
         return $value;
     }
-
 
     /**
      * @param array<string, Product> $productsByCode
@@ -1513,12 +1601,14 @@ final readonly class CardnextProductCsvImporter
 
             if (!is_file($source) || !is_readable($source)) {
                 $warnings[] = sprintf('Row %d: image "%s" was not found; skipped.', $rowNumber, $safeFilename);
+
                 continue;
             }
 
-            $extension = strtolower(pathinfo($safeFilename, PATHINFO_EXTENSION));
+            $extension = strtolower(pathinfo($safeFilename, \PATHINFO_EXTENSION));
             if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
                 $warnings[] = sprintf('Row %d: image "%s" has an unsupported extension; skipped.', $rowNumber, $safeFilename);
+
                 continue;
             }
 
@@ -1529,6 +1619,7 @@ final readonly class CardnextProductCsvImporter
             foreach ($product->getImages() as $existingImage) {
                 if ($existingImage->getPath() === $relativePath) {
                     $alreadyExists = true;
+
                     break;
                 }
             }
@@ -1562,7 +1653,7 @@ final readonly class CardnextProductCsvImporter
         }
 
         try {
-            $value = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $value = json_decode($json, true, 512, \JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             throw new \RuntimeException(sprintf(
                 'Row %d: invalid JSON in "%s": %s',

@@ -33,4 +33,15 @@ final class ProductVariantTest extends TestCase
         self::assertFalse($variant->isValidOrderQuantity(11));
         self::assertTrue($variant->isValidOrderQuantity(15));
     }
+
+    public function testItKeepsPackQuantitySeparateFromOrderingStep(): void
+    {
+        $variant = new ProductVariant();
+        $variant->setMinimumOrderQuantity(10);
+        $variant->setOrderIncrement(5);
+        $variant->setPackQuantity(100);
+        self::assertSame(10, $variant->getMinimumOrderQuantity());
+        self::assertSame(5, $variant->getOrderIncrement());
+        self::assertSame(100, $variant->getPackQuantity());
+    }
 }

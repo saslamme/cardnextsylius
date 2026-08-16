@@ -44,6 +44,11 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
     private Collection $reverseCompatibilities;
 
+    /** @var Collection<int, ProductDeviceCompatibility> */
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductDeviceCompatibility::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    private Collection $deviceCompatibilities;
+
     /** @var Collection<int, ProductDocument> */
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductDocument::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'title' => 'ASC'])]
@@ -55,6 +60,7 @@ class Product extends BaseProduct implements ProductInterface
         $this->documents = new ArrayCollection();
         $this->compatibilities = new ArrayCollection();
         $this->reverseCompatibilities = new ArrayCollection();
+        $this->deviceCompatibilities = new ArrayCollection();
     }
 
     public function getManufacturer(): ?Manufacturer
@@ -186,6 +192,25 @@ class Product extends BaseProduct implements ProductInterface
     public function removeReverseCompatibility(ProductCompatibility $compatibility): void
     {
         $this->reverseCompatibilities->removeElement($compatibility);
+    }
+
+    /** @return Collection<int, ProductDeviceCompatibility> */
+    public function getDeviceCompatibilities(): Collection
+    {
+        return $this->deviceCompatibilities;
+    }
+
+    public function addDeviceCompatibility(ProductDeviceCompatibility $compatibility): void
+    {
+        if (!$this->deviceCompatibilities->contains($compatibility)) {
+            $this->deviceCompatibilities->add($compatibility);
+            $compatibility->setProduct($this);
+        }
+    }
+
+    public function removeDeviceCompatibility(ProductDeviceCompatibility $compatibility): void
+    {
+        $this->deviceCompatibilities->removeElement($compatibility);
     }
 
     /** @return list<ProductCompatibility> */

@@ -47,6 +47,13 @@ final class AdminMenuListener
                     ->setLabelAttribute('icon', 'tabler:file-import')
                 ;
             }
+
+            if ($catalog->getChild('cardnext_device_models') === null) {
+                $catalog->addChild('cardnext_device_models', [
+                    'route' => 'cardnext_admin_device_model_index',
+                    'extras' => ['routes' => [['route' => 'cardnext_admin_device_model_create'], ['route' => 'cardnext_admin_device_model_update']]],
+                ])->setLabel('Gerätemodelle')->setLabelAttribute('icon', 'tabler:devices');
+            }
         }
 
         $customers = $menu->getChild('customers');
