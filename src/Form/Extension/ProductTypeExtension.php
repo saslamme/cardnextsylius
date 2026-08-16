@@ -8,9 +8,10 @@ use App\Entity\Product\Manufacturer;
 use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -30,25 +31,25 @@ final class ProductTypeExtension extends AbstractTypeExtension
                     ->addOrderBy('manufacturer.name', 'ASC'),
         ]);
 
-        $builder->add('manufacturerPartNumber', TextType::class, [
+        $builder->add('model', TextType::class, [
             'required' => false,
-            'label' => 'Hersteller-Artikelnummer',
-            'help' => 'Originale Artikelnummer des Herstellers, z. B. RDR-805W1BKU.',
+            'label' => 'Modell',
+            'help' => 'Modell- bzw. Produktfamilienbezeichnung, z. B. Primacy 2, ZC300 oder TWN4 MultiTech 2.',
             'attr' => [
-                'maxlength' => 128,
+                'maxlength' => 255,
                 'autocomplete' => 'off',
             ],
         ]);
 
-        $builder->add('ean', TextType::class, [
-            'required' => false,
-            'label' => 'EAN / GTIN',
-            'help' => 'EAN, UPC oder GTIN des Artikels.',
-            'attr' => [
-                'maxlength' => 64,
-                'inputmode' => 'numeric',
-                'autocomplete' => 'off',
+        $builder->add('dataQualityStatus', ChoiceType::class, [
+            'required' => true,
+            'label' => 'Datenstatus',
+            'choices' => [
+                'Importiert / ungeprüft' => 'imported',
+                'Prüfung erforderlich' => 'needs_review',
+                'Verifiziert' => 'verified',
             ],
+            'help' => 'Kennzeichnet, ob die technischen Produktdaten bereits geprüft wurden.',
         ]);
 
         $builder

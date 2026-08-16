@@ -114,10 +114,10 @@ final class CardnextProductSearch
                     OR LOWER(COALESCE(pv.code, '')) LIKE :%1\$s
                     OR LOWER(COALESCE(m.name, '')) LIKE :%1\$s
                     OR LOWER(COALESCE(m.code, '')) LIKE :%1\$s
-                    OR LOWER(COALESCE(p.manufacturer_part_number, '')) LIKE :%1\$s
-                    OR LOWER(COALESCE(p.ean, '')) LIKE :%1\$s
-                    OR COALESCE(p.manufacturer_part_number_normalized, '') LIKE :%2\$s
-                    OR COALESCE(p.ean_normalized, '') LIKE :%2\$s
+                    OR LOWER(COALESCE(pv.manufacturer_part_number, '')) LIKE :%1\$s
+                    OR LOWER(COALESCE(pv.gtin, '')) LIKE :%1\$s
+                    OR COALESCE(pv.manufacturer_part_number_normalized, '') LIKE :%2\$s
+                    OR COALESCE(pv.gtin_normalized, '') LIKE :%2\$s
                     OR %3\$s)",
                 $rawName,
                 $normalizedName,
@@ -142,6 +142,7 @@ final class CardnextProductSearch
                 AND pc.channel_id = :channelId
             LEFT JOIN sylius_product_variant pv
                 ON pv.product_id = p.id
+                AND pv.enabled = 1
             LEFT JOIN cardnext_manufacturer m
                 ON m.id = p.manufacturer_id
             WHERE p.enabled = 1
@@ -158,11 +159,11 @@ final class CardnextProductSearch
         $score = "
             MAX(
                 CASE
-                    WHEN COALESCE(p.ean_normalized, '') = :normalizedQuery
-                        AND :normalizedQuery <> '' THEN 150
+                    WHEN COALESCE(pv.gtin_normalized, '') = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 160
 
-                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') = :normalizedQuery
-                        AND :normalizedQuery <> '' THEN 145
+                    WHEN COALESCE(pv.manufacturer_part_number_normalized, '') = :normalizedQuery
+                        AND :normalizedQuery <> '' THEN 150
 
                     WHEN LOWER(p.code) = :query THEN 130
 
@@ -178,11 +179,11 @@ final class CardnextProductSearch
                     WHEN LOWER(COALESCE(m.name, '')) = :query THEN 105
                     WHEN LOWER(COALESCE(m.code, '')) = :query THEN 103
 
-                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') LIKE :normalizedPrefix
-                        AND :normalizedQuery <> '' THEN 101
+                    WHEN COALESCE(pv.manufacturer_part_number_normalized, '') LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 102
 
-                    WHEN COALESCE(p.ean_normalized, '') LIKE :normalizedPrefix
-                        AND :normalizedQuery <> '' THEN 100
+                    WHEN COALESCE(pv.gtin_normalized, '') LIKE :normalizedPrefix
+                        AND :normalizedQuery <> '' THEN 101
 
                     WHEN LOWER(p.code) LIKE :prefix THEN 96
                     WHEN LOWER(COALESCE(pv.code, '')) LIKE :prefix THEN 94
@@ -196,11 +197,11 @@ final class CardnextProductSearch
                     WHEN LOWER(pt.name) LIKE :prefix THEN 86
                     WHEN LOWER(COALESCE(m.name, '')) LIKE :prefix THEN 80
 
-                    WHEN COALESCE(p.manufacturer_part_number_normalized, '') LIKE :normalizedContains
-                        AND :normalizedQuery <> '' THEN 78
+                    WHEN COALESCE(pv.manufacturer_part_number_normalized, '') LIKE :normalizedContains
+                        AND :normalizedQuery <> '' THEN 79
 
-                    WHEN COALESCE(p.ean_normalized, '') LIKE :normalizedContains
-                        AND :normalizedQuery <> '' THEN 76
+                    WHEN COALESCE(pv.gtin_normalized, '') LIKE :normalizedContains
+                        AND :normalizedQuery <> '' THEN 78
 
                     WHEN LOWER(p.code) LIKE :contains THEN 74
                     WHEN LOWER(COALESCE(pv.code, '')) LIKE :contains THEN 72
@@ -212,12 +213,47 @@ final class CardnextProductSearch
             )
         ";
 
+        // Select all display fields from the same, deterministically ranked variant.
+        // Identifier matches win; otherwise the lowest-ID enabled variant is used.
+        $displayVariantOrder = "
+            CASE
+                WHEN COALESCE(display_pv.gtin_normalized, '') = :normalizedQuery
+                    AND :normalizedQuery <> '' THEN 60
+                WHEN COALESCE(display_pv.manufacturer_part_number_normalized, '') = :normalizedQuery
+                    AND :normalizedQuery <> '' THEN 50
+                WHEN COALESCE(display_pv.gtin_normalized, '') LIKE :normalizedPrefix
+                    AND :normalizedQuery <> '' THEN 40
+                WHEN COALESCE(display_pv.manufacturer_part_number_normalized, '') LIKE :normalizedPrefix
+                    AND :normalizedQuery <> '' THEN 39
+                WHEN COALESCE(display_pv.gtin_normalized, '') LIKE :normalizedContains
+                    AND :normalizedQuery <> '' THEN 30
+                WHEN COALESCE(display_pv.manufacturer_part_number_normalized, '') LIKE :normalizedContains
+                    AND :normalizedQuery <> '' THEN 29
+                WHEN {$this->sqlNormalized('display_pv.code')} = :normalizedQuery
+                    AND :normalizedQuery <> '' THEN 20
+                ELSE 0
+            END DESC,
+            display_pv.id ASC
+        ";
+
+        $variantValue = static fn (string $column): string => "
+            (
+                SELECT display_pv.{$column}
+                FROM sylius_product_variant display_pv
+                WHERE display_pv.product_id = p.id
+                  AND display_pv.enabled = 1
+                ORDER BY {$displayVariantOrder}
+                LIMIT 1
+            )
+        ";
+
         $sql = "
             SELECT
                 p.id,
                 p.code,
-                p.manufacturer_part_number,
-                p.ean,
+                {$variantValue('code')} AS variant_code,
+                {$variantValue('manufacturer_part_number')} AS manufacturer_part_number,
+                {$variantValue('gtin')} AS gtin,
                 pt.name,
                 pt.slug,
                 m.name AS manufacturer,
@@ -227,8 +263,6 @@ final class CardnextProductSearch
             GROUP BY
                 p.id,
                 p.code,
-                p.manufacturer_part_number,
-                p.ean,
                 pt.name,
                 pt.slug,
                 m.name,
@@ -246,7 +280,8 @@ final class CardnextProductSearch
                 'manufacturerPartNumber' => $row['manufacturer_part_number'] !== null
                     ? (string) $row['manufacturer_part_number']
                     : null,
-                'ean' => $row['ean'] !== null ? (string) $row['ean'] : null,
+                'gtin' => $row['gtin'] !== null ? (string) $row['gtin'] : null,
+                'variantCode' => $row['variant_code'] !== null ? (string) $row['variant_code'] : null,
                 'name' => (string) $row['name'],
                 'slug' => (string) $row['slug'],
                 'manufacturer' => $row['manufacturer'] !== null
@@ -310,10 +345,11 @@ final class CardnextProductSearch
                 AND pc.channel_id = :channelId
             LEFT JOIN sylius_product_variant pv
                 ON pv.product_id = p.id
+                AND pv.enabled = 1
             WHERE p.enabled = 1
               AND (
-                  COALESCE(p.ean_normalized, '') = :normalizedQuery
-                  OR COALESCE(p.manufacturer_part_number_normalized, '') = :normalizedQuery
+                  COALESCE(pv.gtin_normalized, '') = :normalizedQuery
+                  OR COALESCE(pv.manufacturer_part_number_normalized, '') = :normalizedQuery
                   OR {$productCodeNormalized} = :normalizedQuery
                   OR {$variantCodeNormalized} = :normalizedQuery
                   OR EXISTS (

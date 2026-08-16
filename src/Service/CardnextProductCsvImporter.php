@@ -286,6 +286,22 @@ final readonly class CardnextProductCsvImporter
                 $variant->setTracked($this->toBool($row['tracked'] ?? '1'));
                 $variant->setOnHand($this->toInt($row['stock'] ?? '0'));
                 $variant->setShippingRequired($this->toBool($row['shipping_required'] ?? '1'));
+                if (array_key_exists('manufacturer_part_number', $row)) {
+                    $variant->setManufacturerPartNumber($row['manufacturer_part_number']);
+                }
+                if (array_key_exists('gtin', $row)) {
+                    $variant->setGtin($row['gtin']);
+                }
+
+                if (($row['minimum_order_quantity'] ?? '') !== '') {
+                    $variant->setMinimumOrderQuantity($this->toInt($row['minimum_order_quantity']));
+                }
+                if (($row['order_increment'] ?? '') !== '') {
+                    $variant->setOrderIncrement($this->toInt($row['order_increment']));
+                }
+                if (($row['pack_quantity'] ?? '') !== '') {
+                    $variant->setPackQuantity($this->toInt($row['pack_quantity']));
+                }
 
                 foreach (['weight', 'width', 'height', 'depth'] as $dimension) {
                     if (($row[$dimension] ?? '') !== '') {
