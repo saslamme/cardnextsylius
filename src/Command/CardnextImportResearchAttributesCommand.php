@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\CardnextResearchAttributeCsvImporter;
+use App\Service\CardnextResearchAttributeCsvImporterFinal;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class CardnextImportResearchAttributesCommand extends Command
 {
-    public function __construct(private readonly CardnextResearchAttributeCsvImporter $importer)
+    public function __construct(private readonly CardnextResearchAttributeCsvImporterFinal $importer)
     {
         parent::__construct();
     }
@@ -66,7 +66,9 @@ final class CardnextImportResearchAttributesCommand extends Command
             ['Würden geschrieben', $result['values_would_write']],
             ['Geschrieben', $result['values_written']],
             ['Bestehende Werte geschützt', $result['existing_values_skipped']],
-            ['Nicht im Produktprofil', $result['missing_slots']],
+            ['Attribut-Slots würden angelegt', $result['slots_would_create']],
+            ['Attribut-Slots angelegt', $result['slots_created']],
+            ['Unbekannte Attribute', $result['unknown_attributes']],
             ['Ungültige Werte', $result['invalid_values']],
             ['Hersteller-Abweichungen', $result['manufacturer_mismatches']],
         ]);
@@ -103,16 +105,9 @@ final class CardnextImportResearchAttributesCommand extends Command
 
     private static function formatValue(mixed $value): string
     {
-        if ($value === null) {
-            return 'NULL';
-        }
-        if (is_bool($value)) {
-            return $value ? 'true' : 'false';
-        }
-        if (is_array($value)) {
-            return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
-        }
-
+        if ($value === null) return 'NULL';
+        if (is_bool($value)) return $value ? 'true' : 'false';
+        if (is_array($value)) return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
         return (string) $value;
     }
 }
