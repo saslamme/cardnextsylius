@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Grid\Mutator;
 
-use App\Entity\Product\Manufacturer;
 use App\Entity\Taxonomy\Taxon;
 use App\Service\ProductFacetDefinitionService;
+use App\Service\ProductFacetService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\GridBundle\Builder\Filter\Filter;
 use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Grid\Mutator\GridMutatorInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -24,32 +25,33 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
         private RequestStack $requestStack,
         private EntityManagerInterface $entityManager,
         private ProductFacetDefinitionService $facets,
+        private ProductFacetService $facetValues,
+        private ChannelContextInterface $channelContext,
     ) {
     }
 
     public function __invoke(GridBuilderInterface $gridBuilder): void
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug = $request?->attributes->get('slug');
+        if ($request === null) {
+            return;
+        }
+        $slug = $request->attributes->get('slug');
 
         if (!is_string($slug) || $slug === '') {
             return;
         }
 
-        $profileCode = $this->resolveProfileCode($slug, $request?->getLocale() ?: 'de_DE');
-        if ($profileCode === null || !$this->facets->hasProfile($profileCode)) {
+        $resolved = $this->resolveTaxonAndProfile($slug, $request->getLocale());
+        if ($resolved === null) {
             return;
         }
+        [$taxon, $profileCode] = $resolved;
+        $available = $this->facetValues->getFacets($taxon, $this->channelContext->getChannel(), $request, $profileCode);
 
         $manufacturerChoices = [];
-        /** @var list<Manufacturer> $manufacturers */
-        $manufacturers = $this->entityManager->getRepository(Manufacturer::class)->findBy(
-            ['enabled' => true],
-            ['position' => 'ASC', 'name' => 'ASC'],
-        );
-
-        foreach ($manufacturers as $manufacturer) {
-            $manufacturerChoices[$manufacturer->getName()] = $manufacturer->getCode();
+        foreach ($available['manufacturer'] as $code => $manufacturer) {
+            $manufacturerChoices[sprintf('%s (%d)', $manufacturer['label'], $manufacturer['count'])] = $code;
         }
 
         if ($manufacturerChoices !== []) {
@@ -63,17 +65,27 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
             );
         }
 
-        foreach ($this->facets->forProfile($profileCode) as $facet) {
+        foreach ($this->facets->forProfile($profileCode, $request->getLocale()) as $facet) {
+            $counts = $available['attributes'][$facet['attribute']] ?? [];
+            if ($counts === []) {
+                continue;
+            }
+            $choices = [];
+            foreach ($facet['choices'] as $label => $value) {
+                if (isset($counts[$value])) {
+                    $choices[sprintf('%s (%d)', $label, $counts[$value])] = $value;
+                }
+            }
+            if ($choices === []) {
+                continue;
+            }
             if ($facet['type'] === 'boolean') {
                 $gridBuilder->addFilter(
                     Filter::create($facet['name'], 'cardnext_attribute_boolean')
                         ->setLabel($facet['label'])
                         ->setTemplate('shop/grid/filter/accordion_choice.html.twig')
                         ->addOption('attribute_code', $facet['attribute'])
-                        ->addFormOption('choices', [
-                            'Ja' => '1',
-                            'Nein' => '0',
-                        ])
+                        ->addFormOption('choices', $choices)
                         ->addFormOption('expanded', true)
                         ->addFormOption('multiple', false),
                 );
@@ -86,14 +98,15 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
                     ->setLabel($facet['label'])
                     ->setTemplate('shop/grid/filter/accordion_choice.html.twig')
                     ->addOption('attribute_code', $facet['attribute'])
-                    ->addFormOption('choices', $facet['choices'] ?? [])
+                    ->addFormOption('choices', $choices)
                     ->addFormOption('expanded', true)
                     ->addFormOption('multiple', true),
             );
         }
     }
 
-    private function resolveProfileCode(string $slug, string $locale): ?string
+    /** @return array{Taxon, string}|null */
+    private function resolveTaxonAndProfile(string $slug, string $locale): ?array
     {
         $taxon = $this->entityManager
             ->createQueryBuilder()
@@ -113,10 +126,11 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
             return null;
         }
 
+        $openedTaxon = $taxon;
         do {
             $code = $taxon->getCode();
             if (is_string($code) && $this->facets->hasProfile($code)) {
-                return $code;
+                return [$openedTaxon, $code];
             }
 
             $parent = $taxon->getParent();

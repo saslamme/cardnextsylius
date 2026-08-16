@@ -128,7 +128,8 @@ final readonly class ProductAttributeProfileService
      *     type: string,
      *     storage: string,
      *     position: int,
-     *     configuration?: array<string, mixed>
+     *     configuration?: array<string, mixed>,
+     *     filterable?: bool
      * }>
      */
     private const DEFINITIONS = [
@@ -161,6 +162,7 @@ final readonly class ProductAttributeProfileService
         // Shared technical facets
         // ---------------------------------------------------------------------
         'CN_CONNECTIVITY' => [
+            'filterable' => true,
             'name' => 'Schnittstellen',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -179,6 +181,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_RFID_FREQUENCY' => [
+            'filterable' => true,
             'name' => 'RFID-Frequenz',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -195,6 +198,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_RFID_TECHNOLOGIES' => [
+            'filterable' => true,
             'name' => 'RFID-Technologien',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -216,6 +220,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_IP_RATING' => [
+            'filterable' => true,
             'name' => 'Schutzart',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -241,6 +246,7 @@ final readonly class ProductAttributeProfileService
             'position' => 395,
         ],
         'CN_PRODUCT_COLOR' => [
+            'filterable' => true,
             'name' => 'Farbe',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -268,6 +274,7 @@ final readonly class ProductAttributeProfileService
             'position' => 460,
         ],
         'CN_NETWORK_INTERFACES' => [
+            'filterable' => true,
             'name' => 'Netzwerkschnittstellen',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -290,6 +297,7 @@ final readonly class ProductAttributeProfileService
         // Card printers
         // ---------------------------------------------------------------------
         'CN_PRINTER_TECHNOLOGY' => [
+            'filterable' => true,
             'name' => 'Drucktechnologie',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -305,6 +313,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_PRINT_SIDES' => [
+            'filterable' => true,
             'name' => 'Druckseiten',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -320,6 +329,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_PRINT_RESOLUTION' => [
+            'filterable' => true,
             'name' => 'Druckauflösung',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -357,6 +367,7 @@ final readonly class ProductAttributeProfileService
             'position' => 250,
         ],
         'CN_CARD_FORMAT' => [
+            'filterable' => true,
             'name' => 'Kartenformat',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -385,6 +396,7 @@ final readonly class ProductAttributeProfileService
             'position' => 280,
         ],
         'CN_ENCODING_OPTIONS' => [
+            'filterable' => true,
             'name' => 'Kodieroptionen',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -411,6 +423,7 @@ final readonly class ProductAttributeProfileService
         // RFID readers
         // ---------------------------------------------------------------------
         'CN_RFID_INTERFACE' => [
+            'filterable' => true,
             'name' => 'Leser-Schnittstelle',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -430,6 +443,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_RFID_FORM_FACTOR' => [
+            'filterable' => true,
             'name' => 'Bauform',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -474,6 +488,7 @@ final readonly class ProductAttributeProfileService
         // Plastic cards
         // ---------------------------------------------------------------------
         'CN_CARD_MATERIAL' => [
+            'filterable' => true,
             'name' => 'Kartenmaterial',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -514,6 +529,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_MAGNETIC_STRIPE' => [
+            'filterable' => true,
             'name' => 'Magnetstreifen',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -540,6 +556,7 @@ final readonly class ProductAttributeProfileService
         // Card accessories
         // ---------------------------------------------------------------------
         'CN_ACCESSORY_TYPE' => [
+            'filterable' => true,
             'name' => 'Zubehörtyp',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -559,6 +576,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_CARD_ORIENTATION' => [
+            'filterable' => true,
             'name' => 'Kartenausrichtung',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -591,6 +609,7 @@ final readonly class ProductAttributeProfileService
         // Ribbons
         // ---------------------------------------------------------------------
         'CN_RIBBON_TYPE' => [
+            'filterable' => true,
             'name' => 'Farbbandtyp',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -633,6 +652,7 @@ final readonly class ProductAttributeProfileService
         // Barcode scanners
         // ---------------------------------------------------------------------
         'CN_BARCODE_DIMENSION' => [
+            'filterable' => true,
             'name' => 'Barcode-Typ',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -649,6 +669,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_SCAN_ENGINE' => [
+            'filterable' => true,
             'name' => 'Scan-Technologie',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -665,6 +686,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_SCANNER_INTERFACES' => [
+            'filterable' => true,
             'name' => 'Scanner-Schnittstellen',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -682,6 +704,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_WIRELESS' => [
+            'filterable' => true,
             'name' => 'Kabellos',
             'type' => CheckboxAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_BOOLEAN,
@@ -710,6 +733,7 @@ final readonly class ProductAttributeProfileService
         // Time attendance
         // ---------------------------------------------------------------------
         'CN_IDENTIFICATION_METHODS' => [
+            'filterable' => true,
             'name' => 'Identifikationsmethoden',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -740,6 +764,7 @@ final readonly class ProductAttributeProfileService
             'position' => 730,
         ],
         'CN_OFFLINE_MODE' => [
+            'filterable' => true,
             'name' => 'Offline-Betrieb',
             'type' => CheckboxAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_BOOLEAN,
@@ -750,6 +775,7 @@ final readonly class ProductAttributeProfileService
         // Access control
         // ---------------------------------------------------------------------
         'CN_ACCESS_COMPONENT_TYPE' => [
+            'filterable' => true,
             'name' => 'Komponententyp',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -768,6 +794,7 @@ final readonly class ProductAttributeProfileService
             ],
         ],
         'CN_ACCESS_PROTOCOLS' => [
+            'filterable' => true,
             'name' => 'Zutrittsprotokolle',
             'type' => SelectAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_JSON,
@@ -791,6 +818,7 @@ final readonly class ProductAttributeProfileService
             'position' => 820,
         ],
         'CN_POE' => [
+            'filterable' => true,
             'name' => 'PoE',
             'type' => CheckboxAttributeType::TYPE,
             'storage' => AttributeValueInterface::STORAGE_BOOLEAN,
@@ -960,6 +988,49 @@ final readonly class ProductAttributeProfileService
         }
 
         uasort($result, static fn (array $a, array $b): int => $a['position'] <=> $b['position']);
+
+        return $result;
+    }
+
+    /**
+     * Returns the facet metadata from the same definitions used to create and assign
+     * product attributes. Choice keys remain locale-independent URL identifiers.
+     *
+     * @return array<string, array{name: string, type: string, position: int, choices: array<string, string>}>
+     */
+    public function getFilterableDefinitionsForProfile(string $profileCode, string $locale): array
+    {
+        if (!isset(self::PROFILES[$profileCode])) {
+            return [];
+        }
+
+        $result = [];
+        foreach (self::PROFILES[$profileCode] as $code) {
+            $definition = self::DEFINITIONS[$code] ?? null;
+            if ($definition === null || ($definition['filterable'] ?? false) !== true) {
+                continue;
+            }
+
+            $choices = [];
+            foreach (($definition['configuration']['choices'] ?? []) as $value => $labels) {
+                if (!is_array($labels)) {
+                    continue;
+                }
+                $choices[(string) $value] = (string) ($labels[$locale] ?? $labels[self::LOCALE] ?? $value);
+            }
+            if ($definition['type'] === CheckboxAttributeType::TYPE) {
+                $choices = $locale === 'de_DE' ? ['1' => 'Ja', '0' => 'Nein'] : ['1' => 'Yes', '0' => 'No'];
+            }
+
+            $result[$code] = [
+                'name' => $definition['name'],
+                'type' => $definition['type'],
+                'position' => $definition['position'],
+                'choices' => $choices,
+            ];
+        }
+
+        uasort($result, static fn (array $left, array $right): int => $left['position'] <=> $right['position']);
 
         return $result;
     }
