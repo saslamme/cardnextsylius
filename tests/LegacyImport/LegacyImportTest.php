@@ -81,9 +81,10 @@ final class LegacyImportTest extends TestCase
     public function testCsvContainsAttributesRelationsAndAllTaxonsWithoutVariantDuplication(): void
     {
         $record = new LegacyProductRecord('1','x.dat','OEM','ABC-1','Name',1200,'Description',null,['one','two'],['CN_PRINT_RESOLUTION'=>'dpi_300'],[],false,false,[], 'Model', [], ['LEGACY_OEM_TARGET']);
+        $target = new LegacyProductRecord('2','y.dat','OEM','TARGET','Target',1200,'Description',null,['one'],[],[],false,false,[]);
         $csv = tempnam(sys_get_temp_dir(), 'legacy-csv-'); self::assertNotFalse($csv);
         $dependency = (new \ReflectionClass(CardnextProductCsvImporter::class))->newInstanceWithoutConstructor();
-        (new CardnextLegacyProductImporter((new \ReflectionClass(CardnextLegacySourceParser::class))->newInstanceWithoutConstructor(), $dependency))->writeCsv($csv, new LegacyImportPlan([$record], []));
+        (new CardnextLegacyProductImporter((new \ReflectionClass(CardnextLegacySourceParser::class))->newInstanceWithoutConstructor(), $dependency))->writeCsv($csv, new LegacyImportPlan([$record, $target], []));
         $h=fopen($csv,'rb'); self::assertIsResource($h); $header=fgetcsv($h,0,';'); $a=fgetcsv($h,0,';'); $b=fgetcsv($h,0,';'); fclose($h); @unlink($csv);
         self::assertSame('attributes_json', $header[14]);
         self::assertSame($a[0], $b[0]); self::assertSame($a[1], $b[1]);
@@ -102,6 +103,20 @@ final class LegacyImportTest extends TestCase
         self::assertSame('', $row[8]);
         self::assertSame('', $row[9]);
         self::assertSame('needs_review', $row[19]);
+    }
+
+    public function testCsvSkipsRelationsToProductsThatAreNotPersisted(): void
+    {
+        $withheldTarget = new LegacyProductRecord('2','archive.dat','Omnikey','OK5421','Target',1200,'Description',null,[],[],[],true,false,[]);
+        $targetCode = CardnextLegacySourceParser::productCode($withheldTarget);
+        $source = new LegacyProductRecord('1','x.dat','OEM','ABC-1','Name',1200,'Description',null,['card_printers'],[],[],false,false,[], '', [], [$targetCode]);
+
+        $csv = tempnam(sys_get_temp_dir(), 'legacy-csv-'); self::assertNotFalse($csv);
+        $dependency = (new \ReflectionClass(CardnextProductCsvImporter::class))->newInstanceWithoutConstructor();
+        (new CardnextLegacyProductImporter((new \ReflectionClass(CardnextLegacySourceParser::class))->newInstanceWithoutConstructor(), $dependency))->writeCsv($csv, new LegacyImportPlan([$source, $withheldTarget], []));
+
+        $h=fopen($csv,'rb'); self::assertIsResource($h); fgetcsv($h,0,';'); $row=fgetcsv($h,0,';'); fclose($h); @unlink($csv);
+        self::assertSame([], json_decode($row[15], true));
     }
 
     private function row(string $id,string $category,string $mpn,string $manufacturer,string $attributes): string
