@@ -1,0 +1,30 @@
+<div class="border-top pt-4 mt-4">
+    <div class="mb-3">
+        <h3 class="card-title mb-1">Artikelidentifikation &amp; Bestellmengen</h3>
+        <div class="text-secondary">
+            Variantenbezogene Herstellerdaten und Mengeneinstellungen.
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-lg-6">
+            {{ form_row(hookable_metadata.context.form.manufacturerPartNumber) }}
+        </div>
+
+        <div class="col-12 col-lg-6">
+            {{ form_row(hookable_metadata.context.form.gtin) }}
+        </div>
+
+        <div class="col-12 col-md-4">
+            {{ form_row(hookable_metadata.context.form.minimumOrderQuantity) }}
+        </div>
+
+        <div class="col-12 col-md-4">
+            {{ form_row(hookable_metadata.context.form.orderIncrement) }}
+        </div>
+
+        <div class="col-12 col-md-4">
+            {{ form_row(hookable_metadata.context.form.packQuantity) }}
+        </div>
+    </div>
+</div>

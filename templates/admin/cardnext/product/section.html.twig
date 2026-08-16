@@ -17,10 +17,17 @@
                     </div>
 
                     <div class="mt-3">
-                        {{ form_row(hookable_metadata.context.form.manufacturerPartNumber) }}
+                        {{ form_row(hookable_metadata.context.form.model) }}
                     </div>
 
-                    {{ form_row(hookable_metadata.context.form.ean) }}
+                    <div class="mt-3">
+                        {{ form_row(hookable_metadata.context.form.dataQualityStatus) }}
+                    </div>
+
+                    <div class="alert alert-light border mt-3 mb-0 small">
+                        Hersteller-Art.-Nr., GTIN und Bestellmengen werden an der jeweiligen
+                        <strong>Produktvariante</strong> gepflegt.
+                    </div>
                 </div>
 
                 <div class="col-12 col-xl-3">
@@ -43,10 +50,7 @@
                                 <strong>{{ resource.documents|length }} Dokument(e)</strong>
                                 <div class="text-secondary small">Datenblätter, Handbücher, Zertifikate und Broschüren.</div>
                             </div>
-                            <a
-                                class="btn btn-outline-primary"
-                                href="{{ path('cardnext_admin_product_document_index', {'id': resource.id}) }}"
-                            >
+                            <a class="btn btn-outline-primary" href="{{ path('cardnext_admin_product_document_index', {'id': resource.id}) }}">
                                 Dokumente verwalten
                             </a>
                         </div>
@@ -67,10 +71,7 @@
                                 <strong>{{ compatibility_count }} Verknüpfung(en)</strong>
                                 <div class="text-secondary small">Zubehör, Verbrauchsmaterial, kompatible Geräte und Alternativen.</div>
                             </div>
-                            <a
-                                class="btn btn-outline-primary"
-                                href="{{ path('cardnext_admin_product_compatibility_index', {'id': resource.id}) }}"
-                            >
+                            <a class="btn btn-outline-primary" href="{{ path('cardnext_admin_product_compatibility_index', {'id': resource.id}) }}">
                                 Verknüpfungen
                             </a>
                         </div>
@@ -90,10 +91,7 @@
                                 <strong>Preisregeln</strong>
                                 <div class="text-secondary small">Mengenstaffeln und Preise für Sylius-Kundengruppen.</div>
                             </div>
-                            <a
-                                class="btn btn-outline-primary"
-                                href="{{ path('cardnext_admin_product_price_rule_index', {'id': resource.id}) }}"
-                            >
+                            <a class="btn btn-outline-primary" href="{{ path('cardnext_admin_product_price_rule_index', {'id': resource.id}) }}">
                                 Preise
                             </a>
                         </div>
