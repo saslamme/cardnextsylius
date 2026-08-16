@@ -21,10 +21,12 @@ final class CardnextImportLegacyProductsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        try { $r = $this->importer->import((string)$input->getArgument('zip'), (bool)$input->getOption('dry-run'), (string)$input->getOption('report')); }
+        $zip=$input->getArgument('zip'); $report=$input->getOption('report');
+        if (!is_string($zip) || !is_string($report)) { $io->error('ZIP and report paths must be strings.'); return self::INVALID; }
+        try { $r = $this->importer->import($zip, (bool)$input->getOption('dry-run'), $report); }
         catch (\Throwable $e) { $io->error($e->getMessage()); return self::FAILURE; }
         $io->title('Cardnext Legacy Product Import');
-        $io->table(['Metric','Value'], array_map(static fn($k,$v)=>[str_replace('_',' ',ucwords((string)$k,'_')),$v], array_keys($r), $r));
+        $io->table(['Metric','Value'], array_map(static fn($k,$v)=>[str_replace('_',' ',ucwords((string)$k,'_')),is_array($v)?json_encode($v, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES):$v], array_keys($r), $r));
         $io->success((bool)$input->getOption('dry-run') ? 'Dry run complete; no database writes were performed.' : 'Legacy product import complete.');
         return self::SUCCESS;
     }

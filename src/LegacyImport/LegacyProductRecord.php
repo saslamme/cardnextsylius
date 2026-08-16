@@ -6,7 +6,14 @@ namespace App\LegacyImport;
 
 final class LegacyProductRecord
 {
-    /** @param list<string> $taxonCodes @param array<string,string> $attributes @param list<string> $compatibilityReferences */
+    /**
+     * @param list<string> $taxonCodes
+     * @param array<string,mixed> $attributes
+     * @param list<string> $compatibilityReferences
+     * @param list<string> $rawData
+     * @param list<string> $reviewReasons
+     * @param list<string> $relatedProductCodes
+     */
     public function __construct(
         public readonly string $legacyId,
         public readonly string $sourceFile,
@@ -22,6 +29,9 @@ final class LegacyProductRecord
         public readonly bool $archived,
         public readonly bool $hasImage,
         public readonly array $rawData,
+        public readonly string $model = '',
+        public readonly array $reviewReasons = [],
+        public readonly array $relatedProductCodes = [],
     ) {
     }
 }

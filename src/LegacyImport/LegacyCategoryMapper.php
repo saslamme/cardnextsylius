@@ -11,6 +11,11 @@ final class LegacyCategoryMapper
     {
         $name = mb_strtolower($filename);
         $rules = [
+            'ausweiszubehoerausweissets' => ['id_accessories_sets'],
+            'ausweiszubehoerkartenlocher' => ['id_accessories_punches'],
+            'ausweiszubehoerrfid-schutz' => ['id_accessories_rfid_protection'],
+            'blankokarten_unterschriftenfeld' => ['plastic_cards_signature'],
+            'blankokarten_sonstige' => ['plastic_cards_other'],
             'kartendrucker' => ['card_printers'], 'farbbaender' => ['ribbons'],
             'pvc-karten' => ['plastic_cards_pvc'], 'magnetkarten' => ['plastic_cards_magnetic'],
             'chipkarten' => ['plastic_cards_chip'], 'rfid-karten' => ['plastic_cards_rfid', 'rfid_transponder_cards'],
@@ -18,6 +23,8 @@ final class LegacyCategoryMapper
             'kartenhalter' => ['id_accessories_holders'], 'hartplastik' => ['id_accessories_sleeves_hard'],
             'weichplastik' => ['id_accessories_sleeves_soft'], 'lanyard' => ['id_accessories_lanyards'],
             'kartenclips' => ['id_accessories_clips'], 'oem-reader' => ['rfid_readers_oem'],
+            'kartenclipse' => ['id_accessories_clips'], 'montageleser' => ['rfid_readers'],
+            'readerzubehoer' => ['rfid_readers'], 'desktop-__usb-reader' => ['rfid_readers'],
             'rfid-reader' => ['rfid_readers'], 'barcode' => ['barcode_scanners'],
             'reinigungsmaterial' => ['cleaning_material'], 'software' => ['card_software'],
             'zubehoer__ersatzteile' => ['card_printer_accessories'], 'sicherheit' => ['access_control'],

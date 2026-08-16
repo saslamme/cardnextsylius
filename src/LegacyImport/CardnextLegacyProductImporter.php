@@ -32,18 +32,18 @@ final readonly class CardnextLegacyProductImporter
         return $plan->report;
     }
 
-    private function writeCsv(string $path, LegacyImportPlan $plan): void
+    public function writeCsv(string $path, LegacyImportPlan $plan): void
     {
         $h = fopen($path, 'wb'); if ($h === false) throw new \RuntimeException('Cannot open temporary CSV.');
-        $header = ['product_code','variant_code','locale','name','taxon_code','channel_codes','prices_json','manufacturer_name','manufacturer_code','manufacturer_part_number','gtin','description','data_quality_status','enabled','variant_enabled','minimum_order_quantity','order_increment','pack_quantity'];
+        $header = ['product_code','variant_code','locale','name','model','taxon_code','channel_codes','prices_json','manufacturer_name','manufacturer_code','manufacturer_part_number','gtin','short_description','description','attributes_json','compatibilities_json','device_compatibilities_json','images','documents_json','data_quality_status','enabled','variant_enabled','minimum_order_quantity','order_increment','pack_quantity'];
         fputcsv($h, $header, ';');
         foreach ($plan->records as $r) {
             if ($r->taxonCodes === []) { continue; }
-            $stable = CardnextLegacySourceParser::normalize($r->manufacturerPartNumber ?: $r->legacyId);
-            $reviewKey = 'mpn:'.CardnextLegacySourceParser::normalize($r->manufacturerPartNumber);
-            $quality = $r->manufacturerPartNumber === '' || $r->manufacturer === '' || in_array($reviewKey, $plan->reviewKeys, true) ? 'needs_review' : 'imported';
+            $code = CardnextLegacySourceParser::productCode($r);
+            $quality = $r->manufacturerPartNumber === '' || $r->manufacturer === '' || array_diff($r->reviewReasons, ['unresolved_relation']) !== [] ? 'needs_review' : 'imported';
+            $relations = array_map(static fn (string $target): array => ['target_code'=>$target, 'type'=>'compatible_with'], $r->relatedProductCodes);
             foreach ($r->taxonCodes as $taxon) {
-                $row = ['LEGACY_'.$stable,'LEGACY_'.$stable,'de_DE',$r->name,$taxon,'CARDNEXT_DE',json_encode($r->price === null ? [] : ['CARDNEXT_DE'=>$r->price]),$r->manufacturer,'LEGACY_MFR_'.CardnextLegacySourceParser::normalize($r->manufacturer),$r->manufacturerPartNumber,$r->gtin ?? '',$r->description,$quality,$r->archived?'0':'1',$r->archived?'0':'1','1','1','1'];
+                $row = [$code,$code,'de_DE',$r->name,$r->model,$taxon,'CARDNEXT_DE',json_encode($r->price === null ? [] : ['CARDNEXT_DE'=>$r->price], JSON_THROW_ON_ERROR),$r->manufacturer,'LEGACY_MFR_'.CardnextLegacySourceParser::normalize($r->manufacturer),$r->manufacturerPartNumber,$r->gtin ?? '','',$r->description,json_encode($r->attributes, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE),json_encode($relations, JSON_THROW_ON_ERROR),'[]','','[]',$quality,$r->archived?'0':'1',$r->archived?'0':'1','1','1','1'];
                 fputcsv($h, $row, ';');
             }
         }
