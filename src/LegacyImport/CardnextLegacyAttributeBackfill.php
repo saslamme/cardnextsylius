@@ -12,7 +12,7 @@ final class CardnextLegacyAttributeBackfill
 {
     public function __construct(
         private readonly CardnextLegacySourceParser $parser,
-        private readonly LegacyDescriptionAttributeExtractor $descriptionExtractor,
+        private readonly LegacyRecordAttributeExtractor $recordExtractor,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -78,9 +78,9 @@ final class CardnextLegacyAttributeBackfill
 
             ++$result['products_found'];
 
-            // Description-derived data fills the gaps. Explicit legacy attribute data
-            // wins whenever it contains a real value.
-            $candidates = $this->descriptionExtractor->extract($record->description);
+            // Category-aware title/description rules fill the gaps. Explicit
+            // structured legacy attributes remain authoritative when present.
+            $candidates = $this->recordExtractor->extract($record);
             foreach ($record->attributes as $attributeCode => $value) {
                 if ($this->hasValue($value)) {
                     $candidates[(string) $attributeCode] = $value;
