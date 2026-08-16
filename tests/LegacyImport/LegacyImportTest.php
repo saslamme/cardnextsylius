@@ -92,6 +92,18 @@ final class LegacyImportTest extends TestCase
         self::assertSame('LEGACY_OEM_TARGET', json_decode($a[15],true)[0]['target_code']);
     }
 
+    public function testCsvLeavesManufacturerFieldsEmptyWhenManufacturerIsMissing(): void
+    {
+        $record = new LegacyProductRecord('1','x.dat','','ABC-1','Name',1200,'Description',null,['one'],[],[],false,false,[], '', ['missing_manufacturer']);
+        $csv = tempnam(sys_get_temp_dir(), 'legacy-csv-'); self::assertNotFalse($csv);
+        $dependency = (new \ReflectionClass(CardnextProductCsvImporter::class))->newInstanceWithoutConstructor();
+        (new CardnextLegacyProductImporter((new \ReflectionClass(CardnextLegacySourceParser::class))->newInstanceWithoutConstructor(), $dependency))->writeCsv($csv, new LegacyImportPlan([$record], []));
+        $h=fopen($csv,'rb'); self::assertIsResource($h); fgetcsv($h,0,';'); $row=fgetcsv($h,0,';'); fclose($h); @unlink($csv);
+        self::assertSame('', $row[8]);
+        self::assertSame('', $row[9]);
+        self::assertSame('needs_review', $row[19]);
+    }
+
     private function row(string $id,string $category,string $mpn,string $manufacturer,string $attributes): string
     {
         $f=array_fill(0,62,''); $f[0]=$id; $f[2]=$category; $f[3]=$mpn; $f[4]='Test'; $f[5]='12,00'; $f[17]=$manufacturer; $f[25]=$attributes;
