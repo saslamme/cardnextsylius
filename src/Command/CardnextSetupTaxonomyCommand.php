@@ -7,6 +7,7 @@ namespace App\Command;
 use App\Entity\Taxonomy\Taxon;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,9 +46,9 @@ final class CardnextSetupTaxonomyCommand extends Command
         'rfid_readers_desktop' => ['name' => 'Desktop- & USB-Leser', 'slug' => 'desktop-usb-leser', 'parent' => 'rfid_readers'],
         'rfid_readers_mount' => ['name' => 'Montageleser', 'slug' => 'montageleser', 'parent' => 'rfid_readers'],
         'rfid_readers_oem' => ['name' => 'OEM-Leser', 'slug' => 'oem-leser', 'parent' => 'rfid_readers'],
-        'rfid_readers_accessories' => ['name' => 'RFID-Leser Zubehör', 'slug' => 'zubehoer', 'parent' => 'rfid_readers'],
+        'rfid_readers_accessories' => ['name' => 'RFID-Leser Zubehör', 'slug' => 'rfid-leser-zubehoer', 'parent' => 'rfid_readers'],
         'rfid_transponders' => ['name' => 'RFID-Transponder', 'slug' => 'rfid-transponder', 'parent' => 'products'],
-        'rfid_transponder_cards' => ['name' => 'RFID-Karten', 'slug' => 'rfid-karten', 'parent' => 'rfid_transponders'],
+        'rfid_transponder_cards' => ['name' => 'RFID-Karten', 'slug' => 'rfid-transponder-karten', 'parent' => 'rfid_transponders'],
         'rfid_transponder_keyfobs' => ['name' => 'RFID-Keyfobs', 'slug' => 'rfid-keyfobs', 'parent' => 'rfid_transponders'],
         'barcode_scanners' => ['name' => 'Barcode-Scanner', 'slug' => 'barcode-scanner', 'parent' => 'products', 'legacy' => 'BARCODE_SCANNERS'],
         'cleaning_material' => ['name' => 'Reinigungsmaterial', 'slug' => 'reinigungsmaterial', 'parent' => 'products'],
@@ -71,15 +72,13 @@ final class CardnextSetupTaxonomyCommand extends Command
 
         try {
             foreach (self::TAXONS as $code => $definition) {
-                /** @var Taxon|null $taxon */
-                $taxon = $repository->findOneBy(['code' => $code]);
-                if (!$taxon instanceof Taxon && isset($definition['legacy'])) {
-                    $taxon = $repository->findOneBy(['code' => $definition['legacy']]);
-                }
+                $taxon = $this->findExistingTaxon($repository, $code, $definition);
+
                 if (!$taxon instanceof Taxon) {
                     $taxon = new Taxon();
                     $this->entityManager->persist($taxon);
                 }
+
                 $taxon->setCode($code);
                 $taxon->setCurrentLocale(self::LOCALE);
                 $taxon->setFallbackLocale(self::LOCALE);
@@ -90,8 +89,12 @@ final class CardnextSetupTaxonomyCommand extends Command
                 $taxon->setPosition($positions[$parentCode ?? 'root'] = ($positions[$parentCode ?? 'root'] ?? 0) + 1);
                 $taxons[$code] = $taxon;
             }
+
             $this->entityManager->flush();
-            $this->connection->executeStatement('UPDATE sylius_channel SET menu_taxon_id = :id WHERE code = :channel', ['id' => $taxons['products']->getId(), 'channel' => 'CARDNEXT_DE']);
+            $this->connection->executeStatement(
+                'UPDATE sylius_channel SET menu_taxon_id = :id WHERE code = :channel',
+                ['id' => $taxons['products']->getId(), 'channel' => 'CARDNEXT_DE'],
+            );
             $this->connection->commit();
             $io->success(sprintf('Final Cardnext taxonomy ready (%d taxons).', count($taxons)));
 
@@ -105,5 +108,39 @@ final class CardnextSetupTaxonomyCommand extends Command
 
             return Command::FAILURE;
         }
+    }
+
+    /**
+     * @param ObjectRepository<Taxon> $repository
+     * @param array{name:string, slug:string, parent:?string, legacy?:string} $definition
+     */
+    private function findExistingTaxon(ObjectRepository $repository, string $code, array $definition): ?Taxon
+    {
+        $taxon = $repository->findOneBy(['code' => $code]);
+
+        if (!$taxon instanceof Taxon && isset($definition['legacy'])) {
+            $taxon = $repository->findOneBy(['code' => $definition['legacy']]);
+        }
+
+        if ($taxon instanceof Taxon) {
+            return $taxon;
+        }
+
+        $existingId = $this->connection->fetchOne(
+            'SELECT translatable_id FROM sylius_taxon_translation WHERE locale = :locale AND slug = :slug AND name = :name LIMIT 1',
+            [
+                'locale' => self::LOCALE,
+                'slug' => $definition['slug'],
+                'name' => $definition['name'],
+            ],
+        );
+
+        if (false === $existingId) {
+            return null;
+        }
+
+        $taxon = $repository->find((int) $existingId);
+
+        return $taxon instanceof Taxon ? $taxon : null;
     }
 }
