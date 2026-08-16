@@ -60,8 +60,9 @@ final readonly class CardnextLegacyProductImporter
             $code = CardnextLegacySourceParser::productCode($r);
             $quality = $r->manufacturerPartNumber === '' || $r->manufacturer === '' || array_diff($r->reviewReasons, ['unresolved_relation']) !== [] ? 'needs_review' : 'imported';
             $relations = array_map(static fn (string $target): array => ['target_code'=>$target, 'type'=>'compatible_with'], $r->relatedProductCodes);
+            $manufacturerCode = $r->manufacturer !== '' ? 'LEGACY_MFR_'.CardnextLegacySourceParser::normalize($r->manufacturer) : '';
             foreach ($r->taxonCodes as $taxon) {
-                $row = [$code,$code,'de_DE',$r->name,$r->model,$taxon,'CARDNEXT_DE',json_encode($r->price === null ? [] : ['CARDNEXT_DE'=>$r->price], JSON_THROW_ON_ERROR),$r->manufacturer,'LEGACY_MFR_'.CardnextLegacySourceParser::normalize($r->manufacturer),$r->manufacturerPartNumber,$r->gtin ?? '','',$r->description,json_encode($r->attributes, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE),json_encode($relations, JSON_THROW_ON_ERROR),'[]','','[]',$quality,$r->archived?'0':'1',$r->archived?'0':'1','1','1','1'];
+                $row = [$code,$code,'de_DE',$r->name,$r->model,$taxon,'CARDNEXT_DE',json_encode($r->price === null ? [] : ['CARDNEXT_DE'=>$r->price], JSON_THROW_ON_ERROR),$r->manufacturer,$manufacturerCode,$r->manufacturerPartNumber,$r->gtin ?? '','',$r->description,json_encode($r->attributes, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE),json_encode($relations, JSON_THROW_ON_ERROR),'[]','','[]',$quality,$r->archived?'0':'1',$r->archived?'0':'1','1','1','1'];
                 fputcsv($h, $row, ';');
             }
         }
