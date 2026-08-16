@@ -1,1 +1,18 @@
-{% set quantity = hookable_metadata.context.form.cartItem.quantity %}<div class="cn-quantity"><label class="cn-visually-hidden" for="{{ quantity.vars.id }}">Menge</label><div class="cn-qty" data-cn-product-qty><button type="button" data-cn-qty-minus aria-label="Menge verringern">−</button>{{ form_widget(quantity, sylius_test_form_attribute('quantity')|merge({'attr': {'min': 1}})) }}<button type="button" data-cn-qty-plus aria-label="Menge erhöhen">+</button></div>{{ form_errors(quantity) }}</div>
+{% set quantity = hookable_metadata.context.form.cartItem.quantity %}
+{% set variant = quantity.parent.vars.data.variant|default(null) %}
+{% set minimum = variant ? variant.minimumOrderQuantity : 1 %}
+{% set increment = variant ? variant.orderIncrement : 1 %}
+<div class="cn-quantity">
+    <label class="cn-visually-hidden" for="{{ quantity.vars.id }}">Menge</label>
+    <div class="cn-qty" data-cn-product-qty>
+        <button type="button" data-cn-qty-minus aria-label="Menge verringern">−</button>
+        {{ form_widget(quantity, sylius_test_form_attribute('quantity')|merge({'attr': {'min': minimum, 'step': increment}})) }}
+        <button type="button" data-cn-qty-plus aria-label="Menge erhöhen">+</button>
+    </div>
+    {% if variant and (minimum > 1 or increment > 1 or variant.packQuantity > 1) %}
+        <small class="form-text text-muted">
+            Mindestmenge: {{ minimum }}{% if increment > 1 %} · Bestellschritt: {{ increment }}{% endif %}{% if variant.packQuantity > 1 %} · Verpackungseinheit: {{ variant.packQuantity }} Stück{% endif %}
+        </small>
+    {% endif %}
+    {{ form_errors(quantity) }}
+</div>
