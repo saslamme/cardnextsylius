@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Configurator;
+
+use App\Entity\Configurator\ConfiguratorPriceRule;
+
+final class PriceRuleOverlapValidator
+{ /** @param iterable<ConfiguratorPriceRule> $rules @return list<array{first:ConfiguratorPriceRule,second:ConfiguratorPriceRule}> */ public function findOverlaps(iterable $rules): array
+{
+    $groups = [];
+    foreach ($rules as $r) {
+        if (!$r->isEnabled()) {
+            continue;
+        }
+        $channel = $r->getChannel()?->getCode() ?? '*';
+        $groups[$r->dimensionKey().'|'.$channel.'|'.$r->getCurrencyCode()][] = $r;
+    }
+    $errors = [];
+    foreach ($groups as $group) {
+        usort($group, fn ($a, $b) => $a->getMinimumQuantity() <=> $b->getMinimumQuantity());
+        for ($i = 1;$i < count($group);++$i) {
+            $previous = $group[$i - 1];
+            $end = $previous->getMaximumQuantity() ?? PHP_INT_MAX;
+            if ($group[$i]->getMinimumQuantity() <= $end) {
+                $errors[] = ['first' => $previous,'second' => $group[$i]];
+            }
+        }
+    }
+
+    return $errors;
+}
+}
