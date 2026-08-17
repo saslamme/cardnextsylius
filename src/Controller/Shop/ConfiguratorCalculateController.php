@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Shop;
 
 use App\Dto\Configurator\ConfiguratorConfiguration;
+use App\Entity\Product\Product;
 use App\Exception\Configurator\InvalidConfigurationException;
 use App\Exception\Configurator\MissingPriceRuleException;
 use App\Repository\Configurator\ConfiguratorRepository;
 use App\Service\Configurator\ConfiguratorPriceCalculator;
+use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,18 +23,23 @@ final class ConfiguratorCalculateController extends AbstractController
 {
     public function __construct(
         private readonly ConfiguratorRepository $configurators,
+        private readonly EntityManagerInterface $entityManager,
         private readonly ConfiguratorPriceCalculator $calculator,
         private readonly ChannelContextInterface $channelContext,
         private readonly CurrencyContextInterface $currencyContext,
     ) {
     }
 
-    #[Route('/products/{productCode}/configurator/{code}/calculate', name: 'cardnext_shop_configurator_calculate', methods: ['POST'])]
-    public function __invoke(Request $request, string $productCode, string $code): JsonResponse
+    #[Route('/products/{productCode}/configuration/calculate', name: 'cardnext_shop_configuration_calculate', methods: ['POST'])]
+    public function __invoke(Request $request, string $productCode): JsonResponse
     {
-        $configurator = $this->configurators->findEnabledByCode($code);
-        if ($configurator === null || $configurator->getProduct()?->getCode() !== $productCode) {
-            return $this->error(null, 'Dieser Konfigurator ist für das Produkt nicht verfügbar.', Response::HTTP_NOT_FOUND);
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['code' => $productCode]);
+        if (!$product instanceof Product || !$product->isConfigurable()) {
+            return $this->error(null, 'Dieses Konfigurationsprodukt ist nicht verfügbar.', Response::HTTP_NOT_FOUND);
+        }
+        $configurator = $this->configurators->findEnabledByProduct($product);
+        if ($configurator === null) {
+            return $this->error(null, 'Der Konfigurator ist nicht verfügbar.', Response::HTTP_NOT_FOUND);
         }
 
         try {
@@ -56,7 +63,7 @@ final class ConfiguratorCalculateController extends AbstractController
 
         try {
             $result = $this->calculator->calculate(
-                new ConfiguratorConfiguration($code, $quantity, $currencyCode, $channelCode, $selections),
+                new ConfiguratorConfiguration($configurator->getCode(), $quantity, $currencyCode, $channelCode, $selections),
                 $channel,
                 $currencyCode,
             );

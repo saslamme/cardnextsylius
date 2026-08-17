@@ -1,0 +1,6 @@
+{% set current_product = product|default(resource|default(null)) %}
+{% if current_product and current_product.isConfigurable and current_product.configurator %}
+    <a class="btn btn-primary" href="{{ path('cardnext_admin_configurator_structure', {id: current_product.configurator.id}) }}">
+        Konfigurator bearbeiten
+    </a>
+{% endif %}

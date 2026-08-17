@@ -9,7 +9,6 @@ use App\Entity\Configurator\ConfiguratorField;
 use App\Entity\Configurator\ConfiguratorPriceRule;
 use App\Entity\Configurator\ConfiguratorSection;
 use App\Entity\Configurator\ConfiguratorValue;
-use App\Entity\Product\Product;
 use App\Enum\Configurator\FieldType;
 use App\Enum\Configurator\MultiplierType;
 use App\Enum\Configurator\PercentageBase;
@@ -19,7 +18,6 @@ use App\Service\Configurator\PriceRuleOverlapValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,7 +32,7 @@ final class ConfiguratorAdminController extends AbstractController
     {
         $page = max(1, $request->query->getInt('page', 1));
         $search = trim((string) $request->query->get('q'));
-        $qb = $em->createQueryBuilder()->select('c', 'COUNT(DISTINCT s.id) AS sectionCount', 'COUNT(DISTINCT f.id) AS fieldCount', 'COUNT(DISTINCT v.id) AS valueCount')->from(Configurator::class, 'c')->leftJoin('c.sections', 's')->leftJoin('s.fields', 'f')->leftJoin('f.values', 'v')->groupBy('c.id')->orderBy('c.name', 'ASC');
+        $qb = $em->createQueryBuilder()->select('c', 'p', 'COUNT(DISTINCT s.id) AS sectionCount', 'COUNT(DISTINCT f.id) AS fieldCount', 'COUNT(DISTINCT v.id) AS valueCount', 'COUNT(DISTINCT r.id) AS priceRuleCount')->from(Configurator::class, 'c')->leftJoin('c.product', 'p')->leftJoin('c.sections', 's')->leftJoin('s.fields', 'f')->leftJoin('f.values', 'v')->leftJoin(ConfiguratorPriceRule::class, 'r', 'WITH', 'r.configurator = c')->groupBy('c.id', 'p.id')->orderBy('p.code', 'ASC');
         if ($search !== '') {
             $qb->andWhere('LOWER(c.name) LIKE :q OR LOWER(c.code) LIKE :q')->setParameter('q', '%' . mb_strtolower($search) . '%');
         }
@@ -48,24 +46,10 @@ final class ConfiguratorAdminController extends AbstractController
         return $this->render('admin/cardnext/configurator/index.html.twig', compact('rows', 'page', 'total', 'search'));
     }
 
-    #[Route('/new', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    #[Route('/new', name: 'create', methods: ['GET'])]
+    public function create(): Response
     {
-        if ($request->isMethod('POST') && $this->validToken($request, 'configurator-create')) {
-            try {
-                $configurator = new Configurator($this->required($request, 'code'), $this->required($request, 'name'));
-                $this->applyConfigurator($configurator, $request, $em);
-                $em->persist($configurator);
-                $em->flush();
-                $this->addFlash('success', 'cardnext.configurator.flash.created');
-
-                return $this->redirectToRoute('cardnext_admin_configurator_structure', ['id' => $configurator->getId()]);
-            } catch (\Throwable $exception) {
-                $this->addFlash('error', $exception->getMessage());
-            }
-        }
-
-        return $this->render('admin/cardnext/configurator/form.html.twig', ['configurator' => null]);
+        return $this->redirectToRoute('sylius_admin_product_create');
     }
 
     #[Route('/{id}/edit', name: 'update', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
@@ -74,7 +58,7 @@ final class ConfiguratorAdminController extends AbstractController
         if ($request->isMethod('POST') && $this->validToken($request, 'configurator-' . $configurator->getId())) {
             try {
                 $configurator->setName($this->required($request, 'name'));
-                $this->applyConfigurator($configurator, $request, $em);
+                $configurator->setEnabled($request->request->getBoolean('enabled'));
                 $em->flush();
                 $this->addFlash('success', 'cardnext.configurator.flash.updated');
             } catch (\Throwable $exception) {
@@ -97,6 +81,11 @@ final class ConfiguratorAdminController extends AbstractController
         if (!$this->validToken($request, 'configurator-delete-' . $configurator->getId())) {
             throw $this->createAccessDeniedException();
         }
+        if ($configurator->getProduct() !== null) {
+            $this->addFlash('error', 'Der Konfigurator ist fester Bestandteil seines Konfigurationsprodukts und kann nicht separat gelöscht werden.');
+
+            return $this->redirectToRoute('cardnext_admin_configurator_update', ['id' => $configurator->getId()]);
+        }
         if (!$configurator->getSections()->isEmpty() || $em->getRepository(ConfiguratorPriceRule::class)->count(['configurator' => $configurator]) > 0) {
             $this->addFlash('error', 'Der Konfigurator enthält noch Struktur- oder Preisdaten und kann nicht gelöscht werden.');
 
@@ -114,19 +103,6 @@ final class ConfiguratorAdminController extends AbstractController
         $rules = $em->createQueryBuilder()->select('r', 'v', 'f', 's', 'ch', 'mf', 'mfs')->from(ConfiguratorPriceRule::class, 'r')->leftJoin('r.value', 'v')->leftJoin('v.field', 'f')->leftJoin('f.section', 's')->leftJoin('r.channel', 'ch')->leftJoin('r.multiplierField', 'mf')->leftJoin('mf.section', 'mfs')->where('r.configurator = :configurator')->setParameter('configurator', $configurator)->orderBy('s.position', 'ASC')->addOrderBy('f.position', 'ASC')->addOrderBy('v.position', 'ASC')->addOrderBy('r.chargeCode', 'ASC')->addOrderBy('r.minimumQuantity', 'ASC')->getQuery()->getResult();
 
         return $this->render('admin/cardnext/configurator/prices.html.twig', compact('configurator', 'rules', 'amounts'));
-    }
-
-    #[Route('/products/search', name: 'product_search', methods: ['GET'])]
-    public function productSearch(Request $request, EntityManagerInterface $em): JsonResponse
-    {
-        $q = trim((string) $request->query->get('q'));
-        if (mb_strlen($q) < 2) {
-            return $this->json(['results' => []]);
-        }
-        $products = $em->createQueryBuilder()->select('p', 't')->from(Product::class, 'p')->leftJoin('p.translations', 't')->where('LOWER(p.code) LIKE :q OR LOWER(t.name) LIKE :q')->setParameter('q', '%' . mb_strtolower($q) . '%')->setMaxResults(20)->getQuery()->getResult();
-        $results = array_map(static fn (Product $p): array => ['id' => $p->getId(), 'text' => sprintf('%s [%s]', $p->getName() ?? $p->getCode(), $p->getCode())], $products);
-
-        return $this->json(compact('results'));
     }
 
     #[Route('/{id}/sections/new', name: 'section_create', methods: ['GET', 'POST'])]
@@ -371,14 +347,6 @@ final class ConfiguratorAdminController extends AbstractController
         sort($currencies);
 
         return $this->render('admin/cardnext/configurator/price_form.html.twig', ['configurator' => $configurator, 'values' => $values, 'fields' => $fields, 'channels' => $channels, 'currencies' => $currencies, 'price_types' => PriceType::cases(), 'multipliers' => MultiplierType::cases(), 'percentage_bases' => PercentageBase::cases(), 'amounts' => $amounts]);
-    }
-
-    private function applyConfigurator(Configurator $c, Request $r, EntityManagerInterface $em): void
-    {
-        $c->setEnabled($r->request->getBoolean('enabled'));
-        $id = $this->optionalPositiveInt($r, 'product_id', 'Die Produkt-ID ist ungültig.');
-        $product = $id === null ? null : ($em->find(Product::class, $id) ?? throw new \DomainException('Das gewählte Produkt existiert nicht.'));
-        $c->setProduct($product);
     }
 
     private function applySection(ConfiguratorSection $s, Request $r): void

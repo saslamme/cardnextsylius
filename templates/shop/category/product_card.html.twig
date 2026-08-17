@@ -27,7 +27,9 @@
             </a>
         </h2>
 
-        {% if variant %}
+        {% if product.isConfigurable %}
+            <div class="cn-status">Konfigurierbares Produkt</div>
+        {% elseif variant %}
             <div class="cn-status {{ variant.tracked and variant.onHand <= 0 ? 'cn-status--warning' : '' }}">
                 {% if variant.tracked and variant.onHand <= 0 %}Auf Anfrage{% else %}Lieferbar{% endif %}
             </div>
@@ -36,7 +38,7 @@
 
         <div class="cn-product-card__meta">
             <div class="cn-product-card__price">
-                {% if channel_pricing and channel_pricing.price is not null %}
+                {% if not product.isConfigurable and channel_pricing and channel_pricing.price is not null %}
                     {{ component('sylius_shop:product:card:price', {
                         variant: variant,
                         template: '@SyliusShop/product/common/price.html.twig'
@@ -45,7 +47,7 @@
             </div>
 
             <a class="cn-link cn-link--arrow cn-link--small" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">
-                Details
+                {{ product.isConfigurable ? 'Konfigurieren' : 'Details' }}
             </a>
         </div>
     </div>

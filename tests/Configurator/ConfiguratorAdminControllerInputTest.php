@@ -9,7 +9,6 @@ use App\Entity\Configurator\Configurator;
 use App\Entity\Configurator\ConfiguratorField;
 use App\Entity\Configurator\ConfiguratorPriceRule;
 use App\Entity\Configurator\ConfiguratorSection;
-use App\Entity\Product\Product;
 use App\Enum\Configurator\FieldType;
 use App\Enum\Configurator\MultiplierType;
 use App\Enum\Configurator\PercentageBase;
@@ -28,62 +27,26 @@ final class ConfiguratorAdminControllerInputTest extends TestCase
         $this->controller = new ConfiguratorAdminController();
     }
 
-    #[DataProvider('emptyOptionalProductIds')]
-    public function testEmptyProductIdClearsProductWithoutSymfonyInputException(array $parameters): void
+    public function testConfiguratorAdminCannotAssignAProduct(): void
     {
-        $configurator = new Configurator('desk', 'Desk');
-        $configurator->setProduct(new Product());
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::never())->method('find');
+        $controller = file_get_contents(__DIR__ . '/../../src/Controller/Admin/ConfiguratorAdminController.php');
+        $template = file_get_contents(__DIR__ . '/../../templates/admin/cardnext/configurator/form.html.twig');
 
-        $this->invoke('applyConfigurator', $configurator, new Request([], $parameters), $em);
-
-        self::assertNull($configurator->getProduct());
+        self::assertIsString($controller);
+        self::assertIsString($template);
+        self::assertStringNotContainsString('productSearch', $controller);
+        self::assertStringNotContainsString('product_id', $controller);
+        self::assertStringNotContainsString('product_id', $template);
+        self::assertStringNotContainsString('product-search', $template);
     }
 
-    public static function emptyOptionalProductIds(): iterable
+    public function testConfiguratorCreateRedirectsToProductWorkflow(): void
     {
-        yield 'empty string regression for POST /admin/configurators/new' => [['product_id' => '']];
-        yield 'missing parameter' => [[]];
-    }
+        $controller = file_get_contents(__DIR__ . '/../../src/Controller/Admin/ConfiguratorAdminController.php');
 
-    public function testValidProductIdLoadsProduct(): void
-    {
-        $product = new Product();
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('find')->with(Product::class, 123)->willReturn($product);
-        $configurator = new Configurator('desk', 'Desk');
-
-        $this->invoke('applyConfigurator', $configurator, new Request([], ['product_id' => '123']), $em);
-
-        self::assertSame($product, $configurator->getProduct());
-    }
-
-    #[DataProvider('invalidProductIds')]
-    public function testInvalidProductIdIsRejectedAsDomainError(mixed $value): void
-    {
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('Die Produkt-ID ist ungültig.');
-
-        $this->invoke('applyConfigurator', new Configurator('desk', 'Desk'), new Request([], ['product_id' => $value]), $this->createMock(EntityManagerInterface::class));
-    }
-
-    public static function invalidProductIds(): iterable
-    {
-        yield 'text' => ['abc'];
-        yield 'decimal' => ['1.5'];
-        yield 'array' => [[]];
-        yield 'negative' => ['-1'];
-    }
-
-    public function testMissingProductIsReportedClearly(): void
-    {
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->method('find')->willReturn(null);
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('Das gewählte Produkt existiert nicht.');
-
-        $this->invoke('applyConfigurator', new Configurator('desk', 'Desk'), new Request([], ['product_id' => '999']), $em);
+        self::assertIsString($controller);
+        self::assertStringContainsString("redirectToRoute('sylius_admin_product_create')", $controller);
+        self::assertStringNotContainsString("new Configurator($this->required", $controller);
     }
 
     public function testEmptyOptionalPriceRuleIdsAreAccepted(): void

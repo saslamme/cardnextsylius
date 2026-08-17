@@ -8,12 +8,5 @@ sylius_twig_hooks:
                 component: 'sylius_shop:product:summary'
                 props:
                     product: '@=_context.product'
-                    template: '@SyliusShop/product/show/content/info/summary.html.twig'
+                    template: 'shop/product/configurable_summary.html.twig'
                 priority: 100
-
-        'sylius_shop.product.show.content':
-            configurator:
-                component: 'cardnext:configurator:product'
-                props:
-                    product: '@=_context.product'
-                priority: 50

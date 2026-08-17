@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Product;
 
+use App\Entity\Configurator\Configurator;
+use App\Enum\Product\ProductKind;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,6 +36,12 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\Column(name: 'homepage_position', options: ['default' => 100])]
     private int $homepagePosition = 100;
 
+    #[ORM\Column(name: 'product_kind', length: 20, enumType: ProductKind::class, options: ['default' => 'standard'])]
+    private ProductKind $productKind = ProductKind::STANDARD;
+
+    #[ORM\OneToOne(mappedBy: 'product', targetEntity: Configurator::class, cascade: ['persist'])]
+    private ?Configurator $configurator = null;
+
     /** @var Collection<int, ProductCompatibility> */
     #[ORM\OneToMany(mappedBy: 'sourceProduct', targetEntity: ProductCompatibility::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
@@ -61,6 +69,53 @@ class Product extends BaseProduct implements ProductInterface
         $this->compatibilities = new ArrayCollection();
         $this->reverseCompatibilities = new ArrayCollection();
         $this->deviceCompatibilities = new ArrayCollection();
+    }
+
+    public function getProductKind(): ProductKind
+    {
+        return $this->productKind;
+    }
+
+    public function setProductKind(ProductKind $productKind): void
+    {
+        if ($this->getId() !== null && $this->productKind !== $productKind) {
+            throw new \DomainException('Der Produkttyp kann nach der Erstellung nicht mehr geändert werden.');
+        }
+        if ($productKind === ProductKind::STANDARD && $this->configurator !== null) {
+            throw new \DomainException('Ein Produkt mit Konfigurator kann nicht als Standardprodukt markiert werden.');
+        }
+
+        $this->productKind = $productKind;
+    }
+
+    public function isConfigurable(): bool
+    {
+        return $this->productKind === ProductKind::CONFIGURABLE;
+    }
+
+    public function isStandard(): bool
+    {
+        return $this->productKind === ProductKind::STANDARD;
+    }
+
+    public function getConfigurator(): ?Configurator
+    {
+        return $this->configurator;
+    }
+
+    public function attachConfigurator(Configurator $configurator): void
+    {
+        if (!$this->isConfigurable()) {
+            throw new \DomainException('Nur Konfigurationsprodukte dürfen einen Konfigurator besitzen.');
+        }
+        if ($this->configurator !== null && $this->configurator !== $configurator) {
+            throw new \DomainException('Das Produkt besitzt bereits einen Konfigurator.');
+        }
+
+        $this->configurator = $configurator;
+        if ($configurator->getProduct() !== $this) {
+            $configurator->assignToProduct($this);
+        }
     }
 
     public function getManufacturer(): ?Manufacturer

@@ -27,7 +27,7 @@ final class ConfiguratorProductComponent
     #[PostMount]
     public function postMount(): void
     {
-        if ($this->product instanceof Product) {
+        if ($this->product instanceof Product && $this->product->isConfigurable()) {
             $this->configurator = $this->configurators->findEnabledByProduct($this->product);
         }
     }
