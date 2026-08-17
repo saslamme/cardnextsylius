@@ -1,27 +1,17 @@
-# Loaded after Sylius' own shop routes.
-# Re-defining the same route name changes URL generation everywhere in Twig
-# while keeping Sylius' standard product grid/controller.
+# Loaded after Sylius' shop routes. Both established route names generate the
+# same flat URL; the Cardnext resolver decides whether the slug is a taxon or a
+# product before delegating to Sylius' unchanged resource controllers.
 
 sylius_shop_product_index:
     path: /{_locale}/{slug}
+    controller: App\Controller\Shop\PublicSlugController
     methods: [GET]
-    defaults:
-        _controller: sylius.controller.product::indexAction
-        _sylius:
-            template: "@SyliusShop/product/index.html.twig"
-            grid: sylius_shop_product
-    requirements:
+    requirements: &public_slug_requirements
         _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
-        # Cardnext category slugs are one URL segment. Keeping "/" out prevents
-        # this catch-all route from swallowing nested/system routes.
         slug: '[^/]+'
 
-# Preserve existing /taxons/... links and search-engine signals.
-# The old address redirects permanently to the new canonical category URL.
-cardnext_legacy_taxon_redirect:
-    path: /{_locale}/taxons/{slug}
-    controller: App\Controller\Shop\LegacyTaxonRedirectController
+sylius_shop_product_show:
+    path: /{_locale}/{slug}
+    controller: App\Controller\Shop\PublicSlugController
     methods: [GET]
-    requirements:
-        _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
-        slug: '[^/]+'
+    requirements: *public_slug_requirements
