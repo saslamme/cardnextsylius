@@ -435,6 +435,9 @@ final class ConfiguratorAdminController extends AbstractController
         $rule->setQuantityRange($minimum, $maximum);
         $multiplier = MultiplierType::from($this->required($r, 'multiplier_type'));
         $fieldId = $this->optionalPositiveInt($r, 'multiplier_field_id', 'Die Multiplikatorfeld-ID ist ungültig.');
+        if ($multiplier !== MultiplierType::FIELD_VALUE && $fieldId !== null) {
+            throw new \DomainException('Ein Multiplikatorfeld ist nur für Feldwert-Multiplikatoren zulässig.');
+        }
         $field = $fieldId !== null ? ($em->find(ConfiguratorField::class, $fieldId) ?? throw new \DomainException('Das Multiplikatorfeld existiert nicht.')) : null;
         $rule->setMultiplier($multiplier, $field);
         if ($rule->getPriceType() === PriceType::PERCENT) {
