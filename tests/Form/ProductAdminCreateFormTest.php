@@ -27,6 +27,7 @@ final class ProductAdminCreateFormTest extends TestCase
         self::assertSame(ProductKind::STANDARD, $form->get('productKind')->getData());
         self::assertNull($form->get('productKind')->getConfig()->getOption('placeholder'));
         self::assertTrue($form->get('productKind')->getConfig()->getOption('required'));
+        self::assertTrue($form->get('productKind')->isDisabled());
 
         $form->submit(['productKind' => '']);
 
@@ -34,7 +35,7 @@ final class ProductAdminCreateFormTest extends TestCase
         self::assertSame(ProductKind::STANDARD, $product->getProductKind());
     }
 
-    public function testSubmittedConfigurableKindIsNotOverriddenByTheDefault(): void
+    public function testStandardCreateFlowDoesNotTrustSubmittedConfigurableKind(): void
     {
         $product = new Product();
         $form = $this->createProductKindForm($product);
@@ -42,7 +43,7 @@ final class ProductAdminCreateFormTest extends TestCase
         $form->submit(['productKind' => ProductKind::CONFIGURABLE->value]);
 
         self::assertTrue($form->isSynchronized());
-        self::assertSame(ProductKind::CONFIGURABLE, $product->getProductKind());
+        self::assertSame(ProductKind::STANDARD, $product->getProductKind());
     }
 
     public function testPersistedProductKindRemainsDisabledAndCannotBeChanged(): void
@@ -61,15 +62,15 @@ final class ProductAdminCreateFormTest extends TestCase
     public function testConfiguratorPathIsMappedWhileCreatingAConfigurableProduct(): void
     {
         $product = new Product();
+        $product->setProductKind(ProductKind::CONFIGURABLE);
         $translation = new ProductTranslation();
         $translation->setLocale('de_DE');
         $translation->setTranslatable($product);
         $form = $this->createConfiguratorPathForm($translation);
 
         self::assertTrue($form->has('configuratorPath'));
-        self::assertFalse($form->get('configuratorPath')->getConfig()->getOption('required'));
+        self::assertTrue($form->get('configuratorPath')->getConfig()->getOption('required'));
 
-        $product->setProductKind(ProductKind::CONFIGURABLE);
         $form->submit(['configuratorPath' => '/plastikkarten/plastikkarten-bedrucken']);
 
         self::assertTrue($form->isSynchronized());
@@ -79,6 +80,7 @@ final class ProductAdminCreateFormTest extends TestCase
     public function testEmptyConfiguratorPathCanBeSubmittedWithoutAMappingException(): void
     {
         $product = new Product();
+        $product->setProductKind(ProductKind::CONFIGURABLE);
         $translation = new ProductTranslation();
         $translation->setLocale('de_DE');
         $translation->setTranslatable($product);
@@ -110,6 +112,16 @@ final class ProductAdminCreateFormTest extends TestCase
 
         self::assertTrue($form->has('configuratorPath'));
         self::assertTrue($form->get('configuratorPath')->getConfig()->getOption('required'));
+    }
+
+    public function testConfiguratorPathIsAbsentFromNewStandardProduct(): void
+    {
+        $product = new Product();
+        $translation = new ProductTranslation();
+        $translation->setLocale('de_DE');
+        $translation->setTranslatable($product);
+
+        self::assertFalse($this->createConfiguratorPathForm($translation)->has('configuratorPath'));
     }
 
     private function createProductKindForm(Product $product): \Symfony\Component\Form\FormInterface

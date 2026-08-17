@@ -1,4 +1,9 @@
 cardnext:
+  admin:
+    product_create:
+      standard: Standardprodukt
+      variant: Variantenprodukt
+      configuration: Konfigurationsprodukt
   configurator:
     title: Konfiguratoren
     create: Konfigurator anlegen
