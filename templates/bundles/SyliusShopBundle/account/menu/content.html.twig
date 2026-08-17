@@ -1,0 +1,31 @@
+{% extends 'knp_menu.html.twig' %}
+
+{% block root %}
+    <div class="cn-account-nav__head">
+        <span class="cn-account-nav__eyebrow">Cardnext</span>
+        <div class="cn-account-nav__title">{{ item.label|trans }}</div>
+    </div>
+    {{ block('list') }}
+{% endblock %}
+
+{% block list %}
+    <nav class="cn-account-nav__links" aria-label="{{ item.label|trans }}">
+        {% for item in item.children %}
+            {{ block('item') }}
+        {% endfor %}
+    </nav>
+{% endblock %}
+
+{% block item %}
+    <a class="cn-account-nav__link{{ item.current ? ' is-active' : '' }}" href="{{ item.uri }}"{% if item.current %} aria-current="page"{% endif %}>
+        <span class="cn-account-nav__icon" aria-hidden="true">
+            {%- if item.labelAttributes.icon is defined -%}
+                {{ ux_icon(item.labelAttributes.icon) }}
+            {%- else -%}
+                <span></span>
+            {%- endif -%}
+        </span>
+        <span>{{ item.label|trans }}</span>
+        <span class="cn-account-nav__arrow" aria-hidden="true">→</span>
+    </a>
+{% endblock %}
