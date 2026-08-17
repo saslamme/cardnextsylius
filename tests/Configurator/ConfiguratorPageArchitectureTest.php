@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Configurator;
 
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Routing\RouterInterface;
+use Twig\Environment;
 
-final class ConfiguratorPageArchitectureTest extends TestCase
+final class ConfiguratorPageArchitectureTest extends KernelTestCase
 {
     public function testLandingPageIsNotAStandardPdp(): void
     {
@@ -21,12 +23,36 @@ final class ConfiguratorPageArchitectureTest extends TestCase
         self::assertStringNotContainsString('inventory', $page);
     }
 
-    public function testCatchAllComesAfterExplicitStorefrontRoutes(): void
+    public function testCatchAllIsRegisteredAfterExplicitStorefrontRoutes(): void
     {
-        $routes = (string) file_get_contents(__DIR__ . '/../../config/routes/zz_cardnext_shop.yaml');
+        self::bootKernel();
 
-        self::assertStringContainsString('configuratorPath: .+', $routes);
-        self::assertStringContainsString('priority: -1000', $routes);
-        self::assertGreaterThan(strpos($routes, 'sylius_shop_product_show:'), strpos($routes, 'cardnext_shop_configurator_page:'));
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get('router');
+        $routeNames = array_keys($router->getRouteCollection()->all());
+
+        self::assertContains('cardnext_shop_configurator_page', $routeNames);
+        $catchAllPosition = array_search('cardnext_shop_configurator_page', $routeNames, true);
+        self::assertIsInt($catchAllPosition);
+
+        foreach (['sylius_shop_product_index', 'sylius_shop_product_show'] as $specificRoute) {
+            $specificPosition = array_search($specificRoute, $routeNames, true);
+            self::assertIsInt($specificPosition, sprintf('Route "%s" must be registered.', $specificRoute));
+            self::assertGreaterThan($specificPosition, $catchAllPosition, sprintf('The catch-all must follow route "%s".', $specificRoute));
+        }
+    }
+
+    public function testPublicUrlFunctionAndConfiguratorTemplateLoadInRealTwigEnvironment(): void
+    {
+        self::bootKernel();
+
+        /** @var Environment $twig */
+        $twig = self::getContainer()->get('twig');
+
+        self::assertNotNull($twig->getFunction('cardnext_product_url'));
+        self::assertSame(
+            'shop/configurator/page.html.twig',
+            $twig->load('shop/configurator/page.html.twig')->getTemplateName(),
+        );
     }
 }
