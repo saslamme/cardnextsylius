@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity\Taxonomy;
 
+use App\Validator\PublicSlugUnique;
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Taxonomy\Model\TaxonTranslation as BaseTaxonTranslation;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'sylius_taxon_translation')]
+#[PublicSlugUnique]
 class TaxonTranslation extends BaseTaxonTranslation
 {
     #[ORM\Column(name: 'bottom_description', type: 'text', nullable: true)]
