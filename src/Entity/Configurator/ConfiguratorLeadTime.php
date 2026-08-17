@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity\Configurator;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity] #[ORM\Table(name:'cardnext_configurator_lead_time')] #[ORM\UniqueConstraint(name:'UNIQ_CN_CFG_LEAD_CODE', columns:['configurator_id','code'])]
+class ConfiguratorLeadTime
+{
+    #[ORM\Id,ORM\GeneratedValue,ORM\Column] private ?int $id = null;
+    #[ORM\ManyToOne(targetEntity:Configurator::class),ORM\JoinColumn(nullable:false, onDelete:'CASCADE')] private Configurator $configurator;
+    #[ORM\Column(length:100)] private string $code;
+    #[ORM\Column(length:255)] private string $name;
+    #[ORM\Column(type:'text', nullable:true)] private ?string $description = null;
+    #[ORM\Column] private int $workingDays;
+    #[ORM\Column] private int $position = 0;
+    #[ORM\Column(options:['default' => true])] private bool $enabled = true;
+    public function __construct(Configurator $c, string $code, string $name, int $days)
+    {
+        if ($days < 0) {
+            throw new \InvalidArgumentException('Working days cannot be negative.');
+        }
+        $this->configurator = $c;
+        $this->code = $code;
+        $this->name = $name;
+        $this->workingDays = $days;
+    }
+}
