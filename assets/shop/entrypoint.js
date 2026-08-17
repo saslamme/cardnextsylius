@@ -5,3 +5,4 @@ import './bootstrap.js';
 import './styles/cardnext.css';
 import './cardnext.js';
 import './product-tabs.js';
+import './configurator.js';
