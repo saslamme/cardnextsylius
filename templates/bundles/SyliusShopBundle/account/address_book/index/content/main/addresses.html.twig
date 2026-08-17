@@ -1,0 +1,11 @@
+{% if hookable_metadata.context.addresses|length > 0 %}
+    {% hook 'addresses' %}
+{% else %}
+    <section class="cn-account-empty">
+        <h2>{{ 'sylius.ui.you_have_no_addresses_defined'|trans }}</h2>
+        <p>{{ 'sylius.ui.add_address'|trans }}</p>
+        <a class="btn btn-primary" href="{{ path('sylius_shop_account_address_book_create') }}">
+            {{ 'sylius.ui.add_address'|trans }}
+        </a>
+    </section>
+{% endif %}

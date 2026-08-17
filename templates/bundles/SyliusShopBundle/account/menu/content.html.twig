@@ -2,7 +2,6 @@
 
 {% block root %}
     <div class="cn-account-nav__head">
-        <span class="cn-account-nav__eyebrow">Cardnext</span>
         <div class="cn-account-nav__title">{{ item.label|trans }}</div>
     </div>
     {{ block('list') }}
@@ -26,6 +25,5 @@
             {%- endif -%}
         </span>
         <span>{{ item.label|trans }}</span>
-        <span class="cn-account-nav__arrow" aria-hidden="true">→</span>
     </a>
 {% endblock %}

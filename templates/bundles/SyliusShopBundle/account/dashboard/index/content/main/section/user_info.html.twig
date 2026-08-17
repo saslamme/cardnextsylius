@@ -1,5 +1,4 @@
 <div class="cn-dashboard__identity">
-    <div class="cn-dashboard__avatar" aria-hidden="true">{{ hookable_metadata.context.customer.firstName|first|upper }}{{ hookable_metadata.context.customer.lastName|first|upper }}</div>
     <div class="cn-dashboard__details">
         {% hook 'user_info' %}
     </div>
