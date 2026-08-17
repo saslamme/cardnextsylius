@@ -1,0 +1,83 @@
+{% if configurator %}
+    <section class="container cn-configurator" data-configurator data-endpoint="{{ path('cardnext_shop_configurator_calculate', {productCode: product.code, code: configurator.code}) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
+        <div class="cn-configurator__heading">
+            <span class="cn-kicker">Konfiguration</span>
+            <h2 id="configurator-title-{{ configurator.code }}">{{ configurator.name }}</h2>
+            <p>Stellen Sie Ihr Produkt zusammen und lassen Sie den Preis unverbindlich berechnen.</p>
+        </div>
+
+        <div class="cn-configurator__layout">
+            <form class="cn-configurator__form" data-configurator-form novalidate>
+                <div class="cn-configurator__section">
+                    <label class="form-label fw-bold" for="configurator-quantity-{{ configurator.code }}">Menge <span aria-hidden="true">*</span></label>
+                    <input class="form-control" id="configurator-quantity-{{ configurator.code }}" name="quantity" type="number" min="1" step="1" value="1" required data-configurator-quantity>
+                    <div class="invalid-feedback" data-field-error="quantity"></div>
+                </div>
+
+                {% for section in configurator.sections %}
+                    {% if section.enabled %}
+                        <fieldset class="cn-configurator__section">
+                            <legend>{{ section.name }}</legend>
+                            {% if section.description %}<p class="text-body-secondary">{{ section.description }}</p>{% endif %}
+
+                            {% for field in section.fields %}
+                                {% if field.enabled %}
+                                    <div class="cn-configurator__field" data-configurator-field="{{ field.code }}" data-field-type="{{ field.type.value }}">
+                                        <label class="form-label fw-bold"{% if field.type.value not in ['single_choice', 'multiple_choice', 'boolean'] %} for="configurator-{{ configurator.code }}-{{ field.code }}"{% endif %}>
+                                            {{ field.name }}{% if field.required %} <span aria-hidden="true">*</span>{% endif %}
+                                        </label>
+                                        {% if field.description %}<p class="small text-body-secondary mb-2">{{ field.description }}</p>{% endif %}
+
+                                        {% if field.type.value in ['single_choice', 'multiple_choice'] %}
+                                            <div class="cn-configurator__choices">
+                                                {% for value in field.values %}
+                                                    {% if value.enabled %}
+                                                        <label class="cn-configurator__choice" for="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}">
+                                                            <input class="form-check-input" id="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}" name="selection[{{ field.code }}]{{ field.type.value == 'multiple_choice' ? '[]' : '' }}" value="{{ value.code }}" type="{{ field.type.value == 'single_choice' ? 'radio' : 'checkbox' }}"{% if field.required and field.type.value == 'single_choice' %} required{% endif %}>
+                                                            {% if value.imagePath %}<img src="{{ asset(value.imagePath) }}" alt="" loading="lazy">{% endif %}
+                                                            <span class="cn-configurator__choice-copy">
+                                                                <strong>{% if value.colorHex %}<i class="cn-configurator__swatch" style="--choice-color: {{ value.colorHex }}"></i>{% endif %}{% if value.icon %}<span class="cn-configurator__icon" aria-hidden="true">{{ value.icon }}</span>{% endif %}{{ value.name }}</strong>
+                                                                {% if value.description %}<small>{{ value.description }}</small>{% endif %}
+                                                            </span>
+                                                        </label>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        {% elseif field.type.value == 'boolean' %}
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="checkbox" role="switch">
+                                                <label class="form-check-label" for="configurator-{{ configurator.code }}-{{ field.code }}">Ja</label>
+                                            </div>
+                                        {% elseif field.type.value in ['integer', 'quantity', 'decimal'] %}
+                                            <input class="form-control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="number"{% if field.minimumValue is not null %} min="{{ field.minimumValue }}"{% endif %}{% if field.maximumValue is not null %} max="{{ field.maximumValue }}"{% endif %} step="{{ field.step ?? (field.type.value == 'decimal' ? 'any' : '1') }}"{% if field.required %} required{% endif %}>
+                                        {% elseif field.type.value == 'text' %}
+                                            <input class="form-control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="text"{% if field.required %} required{% endif %}>
+                                        {% elseif field.type.value == 'upload' %}
+                                            <div class="alert alert-secondary mb-0">Dateiupload wird in einem späteren Schritt ergänzt.</div>
+                                        {% endif %}
+
+                                        {% if field.helpText %}<div class="form-text">{{ field.helpText }}</div>{% endif %}
+                                        <div class="invalid-feedback" data-field-error="{{ field.code }}"></div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </fieldset>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="alert alert-danger d-none" role="alert" data-configurator-errors></div>
+                <button class="btn btn-primary" type="submit" data-configurator-submit>Preis berechnen</button>
+            </form>
+
+            <aside class="cn-configurator__price" aria-live="polite" aria-busy="false">
+                <h3>Preis</h3>
+                <p class="text-body-secondary" data-configurator-placeholder>Füllen Sie die Konfiguration aus, um den Preis zu berechnen.</p>
+                <div class="d-none" data-configurator-result>
+                    <div data-configurator-breakdown></div>
+                    <div class="cn-configurator__total"><strong>Gesamt</strong><strong data-configurator-total></strong></div>
+                    <small class="text-body-secondary">Alle Beträge für <span data-configurator-result-quantity></span> Stück.</small>
+                </div>
+            </aside>
+        </div>
+    </section>
+{% endif %}

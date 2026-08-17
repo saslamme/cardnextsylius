@@ -394,6 +394,41 @@ final class ConfiguratorCoreTest extends TestCase
         self::assertSame(24600, $result->total);
     }
 
+    public function testStorefrontRegressionForTwoHundredFiftyItemsAndThreeDesigns(): void
+    {
+        $model = new Configurator('printed-product', 'Printed product');
+        $section = new ConfiguratorSection('production', 'Production');
+        $model->addSection($section);
+        $method = new ConfiguratorField('print_method', 'Print method', FieldType::SINGLE_CHOICE);
+        $method->setRequired(true);
+        $section->addField($method);
+        $screenPrint = new ConfiguratorValue('screen_print', 'Screen print');
+        $method->addValue($screenPrint);
+        $designCount = new ConfiguratorField('design_count', 'Design count', FieldType::INTEGER);
+        $designCount->setRequired(true);
+        $section->addField($designCount);
+
+        $base = $this->rule($model, null, PriceType::UNIT, 50, 250, null, 'base');
+        $production = $this->rule($model, $screenPrint, PriceType::UNIT, 25, 250, null, 'production');
+        $setup = $this->rule($model, $screenPrint, PriceType::FIXED, 3500, 250, null, 'setup');
+        $perDesign = $this->rule($model, $screenPrint, PriceType::FIXED, 2500, 250, null, 'setup_per_design');
+        $perDesign->setMultiplier(MultiplierType::FIELD_VALUE, $designCount);
+
+        $result = $this->calculateWithRules(
+            new ConfiguratorConfiguration('printed-product', 250, 'EUR', 'DE_WEB', ['print_method' => 'screen_print', 'design_count' => 3]),
+            $model,
+            [$base, $production, $setup, $perDesign],
+        );
+        $amounts = [];
+        foreach ($result->breakdown as $line) {
+            $amounts[$line->chargeCode] = $line->amount;
+        }
+        ksort($amounts);
+
+        self::assertSame(29750, $result->total);
+        self::assertSame(['base' => 12500, 'production' => 6250, 'setup' => 3500, 'setup_per_design' => 7500], $amounts);
+    }
+
     public function testReparentingAndDuplicateValueCodesAreRejected(): void
     {
         [$first, $field] = $this->model();

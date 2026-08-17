@@ -10,3 +10,10 @@ sylius_twig_hooks:
                     product: '@=_context.product'
                     template: '@SyliusShop/product/show/content/info/summary.html.twig'
                 priority: 100
+
+        'sylius_shop.product.show.content':
+            configurator:
+                component: 'cardnext:configurator:product'
+                props:
+                    product: '@=_context.product'
+                priority: 50
