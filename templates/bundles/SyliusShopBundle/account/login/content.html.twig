@@ -1,0 +1,8 @@
+{% set form = hookable_metadata.context.form %}
+<section class="cn-auth">
+    <div class="cn-container cn-container--narrow">
+        <div class="cn-auth__split">
+            {% hook 'content' %}
+        </div>
+    </div>
+</section>

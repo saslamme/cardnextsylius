@@ -1,0 +1,11 @@
+<section class="cn-account-panel cn-dashboard" {{ sylius_test_html_attribute('customer-information') }}>
+    <div class="cn-account-panel__body">
+        {% hook 'section' %}
+    </div>
+    <div class="cn-dashboard__quick-links" aria-label="{{ 'sylius.ui.my_account'|trans }}">
+        <a href="{{ path('sylius_shop_account_profile_update') }}"><strong>{{ 'sylius.ui.personal_information'|trans }}</strong><span>{{ 'sylius.ui.edit'|trans }} →</span></a>
+        <a href="{{ path('sylius_shop_account_change_password') }}"><strong>{{ 'sylius.ui.change_password'|trans }}</strong><span>{{ 'sylius.ui.manage'|trans }} →</span></a>
+        <a href="{{ path('sylius_shop_account_address_book_index') }}"><strong>{{ 'sylius.ui.address_book'|trans }}</strong><span>{{ 'sylius.ui.manage'|trans }} →</span></a>
+        <a href="{{ path('sylius_shop_account_order_index') }}"><strong>{{ 'sylius.ui.order_history'|trans }}</strong><span>{{ 'sylius.ui.show'|trans }} →</span></a>
+    </div>
+</section>
