@@ -1,0 +1,193 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Configurator;
+
+use App\Dto\Configurator\ConfiguratorConfiguration;
+use App\Dto\Configurator\ValidationError;
+use App\Dto\Configurator\ValidationResult;
+use App\Entity\Configurator\Configurator;
+use App\Entity\Configurator\ConfiguratorDependency;
+use App\Entity\Configurator\ConfiguratorField;
+use App\Enum\Configurator\DependencyEffect;
+use App\Enum\Configurator\DependencyOperator;
+use App\Enum\Configurator\FieldType;
+
+final class ConfiguratorValidator
+{
+    /** @param iterable<ConfiguratorDependency> $dependencies */
+    public function validate(ConfiguratorConfiguration $cfg, Configurator $model, iterable $dependencies = []): ValidationResult
+    {
+        $errors = [];
+        if (!$model->isEnabled() || $model->getCode() !== $cfg->configuratorCode) {
+            $errors[] = new ValidationError(null, 'configurator_unavailable', 'Configurator does not exist or is disabled.');
+        }if ($cfg->quantity < 1) {
+            $errors[] = new ValidationError('quantity', 'invalid_quantity', 'Quantity must be at least one.');
+        }
+        $fields = [];
+        foreach ($model->getSections() as $section) {
+            foreach ($section->getFields() as $field) {
+                $fields[$field->getCode()] = [$field, $section->isEnabled()];
+            }
+        }foreach ($cfg->selections as $code => $selection) {
+            if (!isset($fields[$code])) {
+                $errors[] = new ValidationError($code, 'unknown_field', 'Field does not belong to the configurator.');
+
+                continue;
+            }[$field,$sectionEnabled] = $fields[$code];
+            if (!$sectionEnabled || !$field->isEnabled()) {
+                $errors[] = new ValidationError($code, 'field_disabled', 'Field or section is disabled.');
+
+                continue;
+            }
+            $this->validateSelection($field, $selection, $errors);
+        }foreach ($fields as $code => [$field,$sectionEnabled]) {
+            if ($sectionEnabled && $field->isEnabled() && $field->isRequired() && !$this->hasSelection($cfg, $code)) {
+                $errors[] = new ValidationError($code, 'required', 'A selection is required.');
+            }
+        }foreach ($dependencies as $dependency) {
+            if ($dependency->isEnabled() && $this->matches($dependency, $cfg->selections)) {
+                $target = $dependency->getTargetField()?->getCode();
+                $targetSelected = $this->dependencyTargetSelected($dependency, $cfg);
+                if ($dependency->getEffect() === DependencyEffect::REQUIRE && $target !== null && !$targetSelected) {
+                    $errors[] = new ValidationError($target, 'dependency_required', $dependency->getTargetValue() === null ? 'Field is required by a dependency.' : 'Specific value is required by a dependency.');
+                }
+                if ($dependency->getEffect() === DependencyEffect::FORBID && $target !== null && $targetSelected) {
+                    $errors[] = new ValidationError($target, 'dependency_forbidden', $dependency->getTargetValue() === null ? 'Selection is forbidden by a dependency.' : 'Specific value is forbidden by a dependency.');
+                }
+            }
+        }
+
+        return new ValidationResult($errors);
+    }
+
+    private function dependencyTargetSelected(ConfiguratorDependency $dependency, ConfiguratorConfiguration $cfg): bool
+    {
+        $fieldCode = $dependency->getTargetField()?->getCode();
+        if ($fieldCode === null || !$this->hasSelection($cfg, $fieldCode)) {
+            return false;
+        }
+        $targetValue = $dependency->getTargetValue();
+        if ($targetValue === null) {
+            return true;
+        }
+
+        return in_array($targetValue->getCode(), (array) $cfg->selections[$fieldCode], true);
+    }
+
+    /** @param list<ValidationError> $errors */
+    private function validateSelection(ConfiguratorField $field, mixed $selection, array &$errors): void
+    {
+        $type = $field->getType();
+        if ($type === FieldType::SINGLE_CHOICE && !is_string($selection)) {
+            $errors[] = new ValidationError($field->getCode(), 'single_choice_count', 'Single choice accepts exactly one value code.');
+            if (!is_array($selection)) {
+                return;
+            }
+        }
+        if ($type === FieldType::MULTIPLE_CHOICE && (!is_array($selection) || !array_is_list($selection))) {
+            $errors[] = new ValidationError($field->getCode(), 'multiple_choice_list', 'Multiple choice requires a list of value codes.');
+
+            return;
+        }
+        if ($type === FieldType::MULTIPLE_CHOICE && count($selection) !== count(array_unique($selection, \SORT_REGULAR))) {
+            $errors[] = new ValidationError($field->getCode(), 'duplicate_value', 'Multiple choice must not contain duplicate values.');
+        }
+        if (in_array($type, [FieldType::SINGLE_CHOICE, FieldType::MULTIPLE_CHOICE], true)) {
+            $codes = $type === FieldType::SINGLE_CHOICE && !is_array($selection) ? [$selection] : $selection;
+            foreach ($codes as $code) {
+                $valid = false;
+                foreach (is_string($code) ? $field->getValues() : [] as $value) {
+                    if ($value->getCode() === $code && $value->isEnabled()) {
+                        $valid = true;
+
+                        break;
+                    }
+                }
+                if (!$valid) {
+                    $errors[] = new ValidationError($field->getCode(), 'invalid_value', 'Value does not belong to the field or is disabled.', ['value' => $code]);
+                }
+            }
+
+            return;
+        }
+        if ($type === FieldType::BOOLEAN) {
+            if (!is_bool($selection)) {
+                $errors[] = new ValidationError($field->getCode(), 'not_boolean', 'A boolean value is required.');
+            }
+
+            return;
+        }
+        if ($type === FieldType::TEXT) {
+            if (!is_string($selection)) {
+                $errors[] = new ValidationError($field->getCode(), 'not_text', 'A string value is required.');
+            }
+
+            return;
+        }
+        if (in_array($type, [FieldType::INTEGER, FieldType::QUANTITY], true)) {
+            if (!is_int($selection)) {
+                $errors[] = new ValidationError($field->getCode(), 'not_integer', 'An integer value is required.');
+
+                return;
+            }
+            if ($type === FieldType::QUANTITY && (int) $selection < 1) {
+                $errors[] = new ValidationError($field->getCode(), 'not_positive', 'Quantity must be a positive integer.');
+
+                return;
+            }
+            $this->validateNumericConstraints($field, (float) $selection, $errors);
+
+            return;
+        }
+        if ($type === FieldType::DECIMAL) {
+            if (!is_int($selection) && !is_float($selection) && !(is_string($selection) && is_numeric($selection))) {
+                $errors[] = new ValidationError($field->getCode(), 'not_numeric', 'A numeric value is required.');
+
+                return;
+            }
+            $this->validateNumericConstraints($field, (float) $selection, $errors);
+        }
+    }
+
+    /** @param list<ValidationError> $errors */
+    private function validateNumericConstraints(ConfiguratorField $field, float $value, array &$errors): void
+    {
+        $min = $field->getMinimumValue();
+        $max = $field->getMaximumValue();
+        $step = $field->getStep();
+        if ($min !== null && $value < (float) $min) {
+            $errors[] = new ValidationError($field->getCode(), 'below_minimum', 'Value is below its minimum.');
+        }
+        if ($max !== null && $value > (float) $max) {
+            $errors[] = new ValidationError($field->getCode(), 'above_maximum', 'Value is above its maximum.');
+        }
+        if ($step !== null && (float) $step > 0.0) {
+            $origin = $min === null ? 0.0 : (float) $min;
+            if (abs(fmod($value - $origin, (float) $step)) > 1e-9) {
+                $errors[] = new ValidationError($field->getCode(), 'invalid_step', 'Value does not match the configured step.');
+            }
+        }
+    }
+
+    private function hasSelection(ConfiguratorConfiguration $c, string $code): bool
+    {
+        return array_key_exists($code, $c->selections) && $c->selections[$code] !== null && $c->selections[$code] !== '' && $c->selections[$code] !== [];
+    }
+
+    /** @param array<string,mixed> $s */
+    private function matches(ConfiguratorDependency $d, array $s): bool
+    {
+        $code = $d->getSourceField()->getCode();
+        if (!array_key_exists($code, $s) || $s[$code] === null || $s[$code] === '' || $s[$code] === []) {
+            return false;
+        }
+        $actual = $s[$code];
+        $expected = $d->getExpectedValues();
+
+        return match ($d->getOperator()) {
+            DependencyOperator::EQUALS => in_array($actual, $expected, true),DependencyOperator::NOT_EQUALS => !in_array($actual, $expected, true),DependencyOperator::IN => count(array_intersect((array) $actual, $expected)) > 0,DependencyOperator::NOT_IN => count(array_intersect((array) $actual, $expected)) === 0,DependencyOperator::GREATER_THAN => is_numeric($actual) && (float) $actual > (float) $expected[0],DependencyOperator::GREATER_THAN_OR_EQUAL => is_numeric($actual) && (float) $actual >= (float) $expected[0],DependencyOperator::LESS_THAN => is_numeric($actual) && (float) $actual < (float) $expected[0],DependencyOperator::LESS_THAN_OR_EQUAL => is_numeric($actual) && (float) $actual <= (float) $expected[0],DependencyOperator::IS_SELECTED => true
+        };
+    }
+}
