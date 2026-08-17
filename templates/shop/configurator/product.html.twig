@@ -1,7 +1,8 @@
 {% if configurator %}
     <section class="cn-configurator" data-configurator data-endpoint="{{ path('cardnext_shop_configuration_calculate', {productCode: product.code}) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
         <div class="cn-configurator__heading">
-            <span class="cn-kicker">{{ product.name }}</span>
+            <span class="cn-kicker">Konfigurationsprodukt</span>
+            <h1 class="cn-title cn-title--page">{{ product.name }}</h1>
             <h2 id="configurator-title-{{ configurator.code }}">Produkt konfigurieren</h2>
             <p>Stellen Sie Ihr Produkt zusammen und lassen Sie den Preis unverbindlich berechnen.</p>
         </div>
@@ -70,7 +71,7 @@
             </form>
 
             <aside class="cn-configurator__price" aria-live="polite" aria-busy="false">
-                <h3>Preis</h3>
+                <h3 data-configurator-price-title>Preis</h3>
                 <p class="text-body-secondary" data-configurator-placeholder>Füllen Sie die Konfiguration aus, um den Preis zu berechnen.</p>
                 <div class="d-none" data-configurator-result>
                     <div data-configurator-breakdown></div>

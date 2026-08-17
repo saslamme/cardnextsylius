@@ -83,7 +83,24 @@ final class ConfiguratorStorefrontTest extends TestCase
         self::assertSame(1, substr_count($hooks, 'cardnext:configurator:product') + substr_count($summary, 'cardnext:configurator:product'));
         self::assertStringContainsString('{% if product.isConfigurable %}', $summary);
         self::assertStringContainsString('{% else %}', $summary);
+        self::assertStringContainsString('class="cn-configurable-summary"', $summary);
+        self::assertStringNotContainsString('col-12', $summary);
+        self::assertStringNotContainsString('col-lg-7', $summary);
+        self::assertStringNotContainsString('order-lg-1', $summary);
         self::assertStringContainsString('@SyliusShop/product/show/content/info/summary.html.twig', $summary);
+    }
+
+    public function testEmbeddedConfiguratorUsesAFullWidthSingleColumnLayout(): void
+    {
+        $styles = file_get_contents(__DIR__ . '/../../assets/shop/styles/cardnext.css');
+
+        self::assertIsString($styles);
+        self::assertMatchesRegularExpression('/\.cn-configurable-summary\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;/s', $styles);
+        self::assertMatchesRegularExpression('/\.cn-configurable-summary \.cn-configurator__layout\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s', $styles);
+        self::assertMatchesRegularExpression('/\.cn-configurable-summary \.cn-configurator__price\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;[^}]*position:\s*static;/s', $styles);
+        self::assertStringContainsString('.cn-configurator__form .form-control { width: 100%; min-width: 0; }', $styles);
+        self::assertStringContainsString('.cn-configurator__choice { width: 100%; min-width: 0;', $styles);
+        self::assertStringContainsString('.cn-product-layout--configurable { grid-template-columns: minmax(0,1fr); }', $styles);
     }
 
     public function testClientOnlySendsQuantityAndSelectionsAndDoesNotCalculatePrices(): void
@@ -95,5 +112,8 @@ final class ConfiguratorStorefrontTest extends TestCase
         self::assertStringNotContainsString('channelCode', $client);
         self::assertStringNotContainsString('currencyCode:', $client);
         self::assertStringNotContainsString('unitPrice', $client);
+        self::assertStringNotContainsString('label.title', $client);
+        self::assertStringNotContainsString('line.priceType', $client);
+        self::assertStringNotContainsString('line.multiplier', $client);
     }
 }

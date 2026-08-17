@@ -95,14 +95,14 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
                 const row = document.createElement('div');
                 row.className = 'cn-configurator__price-line';
                 const label = document.createElement('span');
-                label.textContent = line.label || line.chargeCode;
-                label.title = `${line.chargeCode} · ${line.priceType} · × ${line.multiplier}`;
+                label.textContent = line.label || 'Preisposition';
                 const amount = document.createElement('span');
                 amount.textContent = formatter.format(line.amount / 100);
                 row.append(label, amount);
                 return row;
             }));
             root.querySelector('[data-configurator-total]').textContent = formatter.format(data.total / 100);
+            root.querySelector('[data-configurator-price-title]').textContent = 'Preisübersicht';
             root.querySelector('[data-configurator-result-quantity]').textContent = data.quantity;
             root.querySelector('[data-configurator-placeholder]').classList.add('d-none');
             root.querySelector('[data-configurator-result]').classList.remove('d-none');

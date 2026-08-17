@@ -1,5 +1,5 @@
 {% if product.isConfigurable %}
-    <div class="col-12 col-lg-7 order-lg-1" {{ attributes }}>
+    <div class="cn-configurable-summary" {{ attributes }}>
         {{ component('cardnext:configurator:product', {product: product}) }}
     </div>
 {% else %}
