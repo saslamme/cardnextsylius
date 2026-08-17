@@ -11,34 +11,34 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity] #[ORM\Table(name:'cardnext_configurator_dependency')] #[ORM\Index(name:'IDX_CN_CFG_DEP_LOOKUP', columns:['configurator_id', 'enabled', 'priority'])]
 class ConfiguratorDependency
 {
-    #[ORM\Id,ORM\GeneratedValue,ORM\Column]
+    #[ORM\Id,ORM\GeneratedValue,ORM\Column(name:'id')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity:Configurator::class, inversedBy: 'dependencies'),ORM\JoinColumn(nullable:false, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:Configurator::class, inversedBy: 'dependencies'),ORM\JoinColumn(name:'configurator_id', nullable:false, onDelete:'CASCADE')]
     private Configurator $configurator;
 
-    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class),ORM\JoinColumn(nullable:false, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class),ORM\JoinColumn(name:'source_field_id', nullable:false, onDelete:'CASCADE')]
     private ConfiguratorField $sourceField;
 
-    #[ORM\Column(enumType:DependencyOperator::class, length:40)]
+    #[ORM\Column(name:'operator', enumType:DependencyOperator::class, length:40)]
     private DependencyOperator $operator;
 
-    #[ORM\Column(type:'json')]
+    #[ORM\Column(name:'expected_values', type:'json')]
     private array $expectedValues = [];
 
-    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class),ORM\JoinColumn(nullable:true, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class),ORM\JoinColumn(name:'target_field_id', nullable:true, onDelete:'CASCADE')]
     private ?ConfiguratorField $targetField = null;
 
-    #[ORM\ManyToOne(targetEntity:ConfiguratorValue::class),ORM\JoinColumn(nullable:true, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:ConfiguratorValue::class),ORM\JoinColumn(name:'target_value_id', nullable:true, onDelete:'CASCADE')]
     private ?ConfiguratorValue $targetValue = null;
 
-    #[ORM\Column(enumType:DependencyEffect::class, length:20)]
+    #[ORM\Column(name:'effect', enumType:DependencyEffect::class, length:20)]
     private DependencyEffect $effect;
 
-    #[ORM\Column]
+    #[ORM\Column(name:'priority')]
     private int $priority = 0;
 
-    #[ORM\Column(options:['default' => true])]
+    #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
 
     /** @param list<string|int|bool> $expected */

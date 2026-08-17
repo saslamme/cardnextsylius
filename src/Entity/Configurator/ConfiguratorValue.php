@@ -11,34 +11,34 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name:'IDX_CN_CFG_VALUE_PARENT', columns:['field_id', 'position', 'enabled'])]
 class ConfiguratorValue
 {
-    #[ORM\Id,ORM\GeneratedValue,ORM\Column]
+    #[ORM\Id,ORM\GeneratedValue,ORM\Column(name:'id')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class, inversedBy:'values'),ORM\JoinColumn(nullable:false, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class, inversedBy:'values'),ORM\JoinColumn(name:'field_id', nullable:false, onDelete:'CASCADE')]
     private ConfiguratorField $field;
 
-    #[ORM\Column(length:100)]
+    #[ORM\Column(name:'code', length:100)]
     private string $code;
 
-    #[ORM\Column(length:255)]
+    #[ORM\Column(name:'name', length:255)]
     private string $name;
 
-    #[ORM\Column(type:'text', nullable:true)]
+    #[ORM\Column(name:'description', type:'text', nullable:true)]
     private ?string $description = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name:'position')]
     private int $position = 0;
 
-    #[ORM\Column(options:['default' => true])]
+    #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
 
-    #[ORM\Column(length:7, nullable:true)]
+    #[ORM\Column(name:'color_hex', length:7, nullable:true)]
     private ?string $colorHex = null;
 
-    #[ORM\Column(length:500, nullable:true)]
+    #[ORM\Column(name:'image_path', length:500, nullable:true)]
     private ?string $imagePath = null;
 
-    #[ORM\Column(length:100, nullable:true)]
+    #[ORM\Column(name:'icon', length:100, nullable:true)]
     private ?string $icon = null;
 
     public function __construct(string $code, string $name)

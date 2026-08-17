@@ -10,28 +10,28 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name:'IDX_CN_CFG_LEAD_PARENT', columns:['configurator_id', 'position', 'enabled'])]
 class ConfiguratorLeadTime
 {
-    #[ORM\Id,ORM\GeneratedValue,ORM\Column]
+    #[ORM\Id,ORM\GeneratedValue,ORM\Column(name:'id')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity:Configurator::class, inversedBy:'leadTimes'),ORM\JoinColumn(nullable:false, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:Configurator::class, inversedBy:'leadTimes'),ORM\JoinColumn(name:'configurator_id', nullable:false, onDelete:'CASCADE')]
     private Configurator $configurator;
 
-    #[ORM\Column(length:100)]
+    #[ORM\Column(name:'code', length:100)]
     private string $code;
 
-    #[ORM\Column(length:255)]
+    #[ORM\Column(name:'name', length:255)]
     private string $name;
 
-    #[ORM\Column(type:'text', nullable:true)]
+    #[ORM\Column(name:'description', type:'text', nullable:true)]
     private ?string $description = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name:'working_days')]
     private int $workingDays;
 
-    #[ORM\Column]
+    #[ORM\Column(name:'position')]
     private int $position = 0;
 
-    #[ORM\Column(options:['default' => true])]
+    #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
 
     public function __construct(Configurator $c, string $code, string $name, int $days)
