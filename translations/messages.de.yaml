@@ -1,0 +1,53 @@
+cardnext:
+  configurator:
+    title: Konfiguratoren
+    create: Konfigurator anlegen
+    edit: Bearbeiten
+    delete: Löschen
+    delete_confirm: Wirklich löschen?
+    save: Speichern
+    name: Name
+    code: Code
+    product: Produkt
+    status: Status
+    enabled: Aktiv
+    disabled: Inaktiv
+    sections: Bereiche
+    fields: Felder
+    values: Werte
+    type: Typ
+    required: Pflichtfeld
+    position: Position
+    description: Beschreibung
+    help: Hilfetext
+    step: Schrittweite
+    color: Farbe
+    color_icon: Farbe / Icon
+    search: Name oder Code suchen
+    all_statuses: Alle Status
+    filter: Filtern
+    empty: Noch keine Konfiguratoren vorhanden.
+    from: ab
+    global: Global / alle Channels
+    source: Quelle
+    currency: Währung
+    charge: Preisdimension
+    tier: Mengenstaffel
+    amount: Betrag
+    minimum_quantity: Mindestmenge
+    maximum_quantity: Höchstmenge (leer = unbegrenzt)
+    multiplier_field: Multiplikatorfeld
+    percentage_base: Prozentbasis
+    channel_help: Eine Channel-spezifische Preisregel überschreibt die globale Regel derselben Preisdimension.
+    tabs: { master: Stammdaten, structure: Struktur, prices: Preise }
+    section: { create: Bereich anlegen, empty: Noch keine Bereiche vorhanden. }
+    field: { create: Feld anlegen, empty: Noch keine Felder vorhanden. }
+    value: { create: Wert anlegen }
+    price: { create: Preisregel anlegen, base: BASIS, empty: Noch keine Preisregeln vorhanden. }
+    field_type: { single_choice: Einzelauswahl, multiple_choice: Mehrfachauswahl, boolean: Ja/Nein, integer: Ganzzahl, decimal: Dezimalzahl, text: Text, quantity: Menge, upload: Datei }
+    price_type: { unit: Preis pro Stück, fixed: Einmaliger Betrag, percent: Prozentualer Zuschlag }
+    multiplier: { none: Kein Multiplikator, quantity: Menge, field_value: Feldwert }
+    percentage_base_base: Basispreis
+    percentage_base_options: Optionen
+    percentage_base_subtotal: Zwischensumme
+    flash: { created: Konfigurator wurde angelegt., updated: Konfigurator wurde aktualisiert. }

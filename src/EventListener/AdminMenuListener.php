@@ -16,6 +16,12 @@ final class AdminMenuListener
 
         $catalog = $menu->getChild('catalog');
         if ($catalog !== null) {
+            if ($catalog->getChild('cardnext_configurators') === null) {
+                $catalog->addChild('cardnext_configurators', [
+                    'route' => 'cardnext_admin_configurator_index',
+                    'extras' => ['routes' => [['route' => 'cardnext_admin_configurator_*']]],
+                ])->setLabel('cardnext.configurator.title')->setLabelAttribute('icon', 'tabler:adjustments-horizontal');
+            }
             if ($catalog->getChild('cardnext_manufacturers') === null) {
                 $catalog
                     ->addChild('cardnext_manufacturers', [
