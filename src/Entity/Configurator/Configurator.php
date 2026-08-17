@@ -26,8 +26,8 @@ class Configurator
     #[ORM\Column(name: 'enabled', options: ['default' => true])]
     private bool $enabled = true;
 
-    #[ORM\ManyToOne(targetEntity: Product::class)]
-    #[ORM\JoinColumn(name: 'product_id', nullable: true, onDelete: 'SET NULL')]
+    #[ORM\OneToOne(targetEntity: Product::class, inversedBy: 'configurator')]
+    #[ORM\JoinColumn(name: 'product_id', nullable: true, unique: true, onDelete: 'RESTRICT')]
     private ?Product $product = null;
 
     #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
@@ -98,10 +98,20 @@ class Configurator
         return $this->product;
     }
 
-    public function setProduct(?Product $product): void
+    public function assignToProduct(Product $product): void
     {
+        if (!$product->isConfigurable()) {
+            throw new \DomainException('Ein Konfigurator kann nur einem Konfigurationsprodukt zugeordnet werden.');
+        }
+        if ($this->product !== null && $this->product !== $product) {
+            throw new \DomainException('Ein Konfigurator kann nicht einem anderen Produkt zugeordnet werden.');
+        }
+
         $this->product = $product;
         $this->touch();
+        if ($product->getConfigurator() !== $this) {
+            $product->attachConfigurator($this);
+        }
     }
 
     /** @return Collection<int, ConfiguratorSection> */

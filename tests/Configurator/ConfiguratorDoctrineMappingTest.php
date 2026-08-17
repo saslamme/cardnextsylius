@@ -11,6 +11,7 @@ use App\Entity\Configurator\ConfiguratorLeadTime;
 use App\Entity\Configurator\ConfiguratorPriceRule;
 use App\Entity\Configurator\ConfiguratorSection;
 use App\Entity\Configurator\ConfiguratorValue;
+use App\Entity\Product\Product;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +20,7 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
 {
     public function testPhysicalColumnNamesMatchTheDeployedConfiguratorSchema(): void
     {
-        $driver = new AttributeDriver([\dirname(__DIR__, 2).'/src/Entity/Configurator']);
+        $driver = new AttributeDriver([\dirname(__DIR__, 2) . '/src/Entity/Configurator']);
 
         $columns = [
             Configurator::class => [
@@ -78,11 +79,26 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
             $metadata = new ClassMetadata($class);
             $driver->loadMetadataForClass($class, $metadata);
             foreach ($expected as $property => $columnName) {
-                self::assertSame($columnName, $metadata->getColumnName($property), $class.'::'.$property);
+                self::assertSame($columnName, $metadata->getColumnName($property), $class . '::' . $property);
             }
             foreach ($joinColumns[$class] as $property => $columnName) {
-                self::assertSame($columnName, $metadata->getSingleAssociationJoinColumnName($property), $class.'::'.$property);
+                self::assertSame($columnName, $metadata->getSingleAssociationJoinColumnName($property), $class . '::' . $property);
             }
         }
+    }
+
+    public function testProductConfiguratorMappingIsOneToOneAndPreventsAccidentalAggregateDeletion(): void
+    {
+        $configuratorMetadata = new ClassMetadata(Configurator::class);
+        (new AttributeDriver([\dirname(__DIR__, 2) . '/src/Entity/Configurator']))->loadMetadataForClass(Configurator::class, $configuratorMetadata);
+        $productMetadata = new ClassMetadata(Product::class);
+        (new AttributeDriver([\dirname(__DIR__, 2) . '/src/Entity/Product']))->loadMetadataForClass(Product::class, $productMetadata);
+
+        $owning = $configuratorMetadata->getAssociationMapping('product');
+        self::assertTrue($owning->isOneToOne());
+        self::assertTrue($owning->joinColumns[0]->unique);
+        self::assertSame('RESTRICT', $owning->joinColumns[0]->onDelete);
+        self::assertTrue($productMetadata->getAssociationMapping('configurator')->isOneToOne());
+        self::assertFalse($productMetadata->getAssociationMapping('configurator')->isCascadeRemove());
     }
 }
