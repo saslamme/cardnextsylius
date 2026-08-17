@@ -51,3 +51,23 @@ cardnext:
     percentage_base_options: Options
     percentage_base_subtotal: Subtotal
     flash: { created: Configurator created., updated: Configurator updated. }
+  configurator_path:
+    label: Configurator URL
+    help: 'Path without a domain, e.g. /plastic-cards/plastic-card-printing'
+    required: Every translation of a configurable product requires a configurator URL.
+    invalid: The path may only contain valid path segments and no domain, query, fragment, “..” or empty segment.
+    unique: This configurator URL is already used for this locale.
+    configurable_only: A configurator URL is only allowed for configurable products.
+  configurator_page:
+    kicker: Configurable product
+    stage: { kicker: Your configuration, title: Configure product, intro: Choose your options and calculate a non-binding price. }
+    trust: { calculation: Transparent calculation, production: Professional production, support: Personal advice }
+    process:
+      kicker: A clear workflow
+      title: How it works
+      step_1: Configure
+      step_2: Order
+      step_3: Supply artwork
+      step_4: Approve proof
+      step_5: Production & delivery
+    content: { kicker: Product information }

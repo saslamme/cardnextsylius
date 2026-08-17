@@ -51,3 +51,23 @@ cardnext:
     percentage_base_options: Optionen
     percentage_base_subtotal: Zwischensumme
     flash: { created: Konfigurator wurde angelegt., updated: Konfigurator wurde aktualisiert. }
+  configurator_path:
+    label: Konfigurator-URL
+    help: 'Pfad ohne Domain, z. B. /plastikkarten/plastikkarten-bedrucken'
+    required: Für ein Konfigurationsprodukt muss in jeder Übersetzung eine Konfigurator-URL eingetragen sein.
+    invalid: Der Pfad darf nur gültige Pfadsegmente enthalten und keine Domain, Query, Fragmente, „..“ oder leeren Segmente verwenden.
+    unique: Diese Konfigurator-URL wird in dieser Sprache bereits verwendet.
+    configurable_only: Eine Konfigurator-URL ist nur für Konfigurationsprodukte zulässig.
+  configurator_page:
+    kicker: Konfigurationsprodukt
+    stage: { kicker: Ihre Konfiguration, title: Produkt konfigurieren, intro: Stellen Sie Ihr Produkt zusammen und lassen Sie den Preis unverbindlich berechnen. }
+    trust: { calculation: Transparente Kalkulation, production: Professionelle Fertigung, support: Persönliche Beratung }
+    process:
+      kicker: Klarer Ablauf
+      title: So funktioniert es
+      step_1: Konfigurieren
+      step_2: Bestellen
+      step_3: Druckdaten übermitteln
+      step_4: Freigabe
+      step_5: Produktion & Versand
+    content: { kicker: Produktinformationen }

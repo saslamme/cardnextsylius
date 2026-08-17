@@ -1,5 +1,5 @@
 <article class="cn-product-card" {{ sylius_test_html_attribute('product', product.code) }}>
-    <a class="cn-product-card__media" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}" tabindex="-1" aria-hidden="true">
+    <a class="cn-product-card__media" href="{{ cardnext_product_url(product) }}" tabindex="-1" aria-hidden="true">
         {% if product.images|length > 0 %}
             {{ component('sylius_shop:main_image', {
                 product: product,
@@ -22,7 +22,7 @@
         <div class="cn-product-card__code">{{ product.code }}</div>
 
         <h2 class="cn-product-card__title">
-            <a href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}" {{ sylius_test_html_attribute('product-name', product.name) }}>
+            <a href="{{ cardnext_product_url(product) }}" {{ sylius_test_html_attribute('product-name', product.name) }}>
                 {{ product.name }}
             </a>
         </h2>
@@ -46,7 +46,7 @@
                 {% endif %}
             </div>
 
-            <a class="cn-link cn-link--arrow cn-link--small" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}">
+            <a class="cn-link cn-link--arrow cn-link--small" href="{{ cardnext_product_url(product) }}">
                 {{ product.isConfigurable ? 'Konfigurieren' : 'Details' }}
             </a>
         </div>

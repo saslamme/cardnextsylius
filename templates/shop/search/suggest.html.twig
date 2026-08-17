@@ -11,10 +11,7 @@
 
         <a
             class="cn-search-suggest__product"
-            href="{{ path('sylius_shop_product_show', {
-                '_locale': product.translation.locale,
-                'slug': product.slug
-            }) }}"
+            href="{{ cardnext_product_url(product) }}"
         >
             <span class="cn-search-suggest__media">
                 {{ component('sylius_shop:main_image', {

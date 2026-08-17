@@ -1,0 +1,63 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% block title %}{{ product.metaTitle ?: product.name }}{% endblock %}
+
+{% block metatags %}
+    {{ parent() }}
+    {% if product.metaDescription %}<meta name="description" content="{{ product.metaDescription }}">{% endif %}
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ absolute_url(cardnext_product_url(product)) }}">
+{% endblock %}
+
+{% block content %}
+<main class="cn-configurator-page">
+    <section class="cn-configurator-hero">
+        <div class="cn-container cn-configurator-hero__grid">
+            <div class="cn-configurator-hero__copy">
+                <span class="cn-kicker">{{ 'cardnext.configurator_page.kicker'|trans }}</span>
+                <h1 class="cn-title cn-title--page">{{ product.name }}</h1>
+                {% if product.shortDescription %}<div class="cn-configurator-hero__intro">{{ product.shortDescription|raw }}</div>{% endif %}
+                <ul class="cn-configurator-hero__trust">
+                    <li>{{ 'cardnext.configurator_page.trust.calculation'|trans }}</li>
+                    <li>{{ 'cardnext.configurator_page.trust.production'|trans }}</li>
+                    <li>{{ 'cardnext.configurator_page.trust.support'|trans }}</li>
+                </ul>
+            </div>
+            {% if product.images|length > 0 %}
+                <div class="cn-configurator-hero__visual">{{ component('sylius_shop:main_image', {product: product, class: 'cn-configurator-hero__image'}) }}</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="cn-configurator-stage" aria-labelledby="configuration-heading">
+        <div class="cn-container">
+            <div class="cn-configurator-stage__heading">
+                <span class="cn-kicker">{{ 'cardnext.configurator_page.stage.kicker'|trans }}</span>
+                <h2 id="configuration-heading">{{ 'cardnext.configurator_page.stage.title'|trans }}</h2>
+                <p>{{ 'cardnext.configurator_page.stage.intro'|trans }}</p>
+            </div>
+            {{ component('cardnext:configurator:product', {product: product}) }}
+        </div>
+    </section>
+
+    <section class="cn-configurator-process" aria-labelledby="process-heading">
+        <div class="cn-container">
+            <span class="cn-kicker">{{ 'cardnext.configurator_page.process.kicker'|trans }}</span>
+            <h2 id="process-heading">{{ 'cardnext.configurator_page.process.title'|trans }}</h2>
+            <ol class="cn-configurator-process__steps">
+                {% for step in 1..5 %}<li><span>0{{ step }}</span><strong>{{ ('cardnext.configurator_page.process.step_' ~ step)|trans }}</strong></li>{% endfor %}
+            </ol>
+        </div>
+    </section>
+
+    {% if product.description %}
+        <section class="cn-configurator-content">
+            <div class="cn-container cn-configurator-content__inner">
+                <span class="cn-kicker">{{ 'cardnext.configurator_page.content.kicker'|trans }}</span>
+                <h2>{{ product.name }}</h2>
+                <div class="cn-rich-text">{{ product.description|raw }}</div>
+            </div>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}
