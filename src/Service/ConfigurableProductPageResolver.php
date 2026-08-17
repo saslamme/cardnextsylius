@@ -27,7 +27,10 @@ final readonly class ConfigurableProductPageResolver
             ->andWhere('translation.configuratorPath = :path')
             ->andWhere('product.enabled = true')
             ->andWhere('product.productKind = :kind')
-            ->setParameters(['channel' => $channel, 'locale' => $locale, 'path' => trim($path, '/'), 'kind' => 'configurable'])
+            ->setParameter('channel', $channel)
+            ->setParameter('locale', $locale)
+            ->setParameter('path', trim($path, '/'))
+            ->setParameter('kind', 'configurable')
             ->getQuery()
             ->getOneOrNullResult();
 
