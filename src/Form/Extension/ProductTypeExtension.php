@@ -32,6 +32,13 @@ final class ProductTypeExtension extends AbstractTypeExtension
                     'Konfigurationsprodukt' => ProductKind::CONFIGURABLE,
                 ],
                 'choice_value' => static fn (?ProductKind $kind): ?string => $kind?->value,
+                'placeholder' => false,
+                'required' => true,
+                // ChoiceType's default empty value is an empty string, which is
+                // transformed to null before the property mapper calls the
+                // non-nullable setter. Keep the entity's domain default even
+                // when a browser omits or submits an empty value.
+                'empty_data' => ProductKind::STANDARD->value,
                 'disabled' => $product?->getId() !== null,
                 'help' => $product?->getId() !== null
                     ? 'Der Produkttyp ist nach der Erstellung gesperrt, damit keine Konfigurationsdaten verloren gehen.'

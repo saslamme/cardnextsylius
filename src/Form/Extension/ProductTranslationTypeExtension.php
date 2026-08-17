@@ -19,14 +19,24 @@ final class ProductTranslationTypeExtension extends AbstractTypeExtension
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event): void {
             $translation = $event->getData();
-            if (!$translation instanceof ProductTranslation || !($translation->getTranslatable() instanceof Product) || !$translation->getTranslatable()->isConfigurable()) {
+            if (!$translation instanceof ProductTranslation || !($translation->getTranslatable() instanceof Product)) {
+                return;
+            }
+
+            $product = $translation->getTranslatable();
+            if ($product->getId() !== null && !$product->isConfigurable()) {
                 return;
             }
 
             $event->getForm()->add('configuratorPath', TextType::class, [
                 'label' => 'cardnext.configurator_path.label',
-                'help' => 'cardnext.configurator_path.help',
-                'required' => true,
+                'help' => $product->getId() === null
+                    ? 'Nur bei Konfigurationsprodukten erforderlich. Für Standardprodukte leer lassen.'
+                    : 'cardnext.configurator_path.help',
+                // For a new product the final kind is selected in the parent
+                // form. Conditional requiredness remains enforced by the
+                // ProductTranslation domain validator after mapping.
+                'required' => $product->isConfigurable(),
                 'attr' => ['placeholder' => '/plastikkarten/plastikkarten-bedrucken', 'autocomplete' => 'off'],
             ]);
         });
