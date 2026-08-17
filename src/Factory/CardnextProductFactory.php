@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Factory;
+
+use App\Entity\Product\Product;
+use App\Enum\Product\ProductKind;
+use Sylius\Component\Product\Factory\ProductFactoryInterface;
+use Sylius\Component\Product\Model\ProductInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
+
+#[AsDecorator('sylius.factory.product')]
+final class CardnextProductFactory implements ProductFactoryInterface
+{
+    public function __construct(#[AutowireDecorated] private readonly ProductFactoryInterface $inner)
+    {
+    }
+
+    public function createNew(): ProductInterface
+    {
+        return $this->inner->createNew();
+    }
+
+    public function createWithVariant(): ProductInterface
+    {
+        return $this->inner->createWithVariant();
+    }
+
+    public function createConfigurableWithVariant(): ProductInterface
+    {
+        $product = $this->inner->createWithVariant();
+        if (!$product instanceof Product) {
+            throw new \LogicException(sprintf('Cardnext configurable products must use %s.', Product::class));
+        }
+
+        $product->setProductKind(ProductKind::CONFIGURABLE);
+
+        return $product;
+    }
+}

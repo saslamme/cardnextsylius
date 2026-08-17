@@ -1,4 +1,9 @@
 cardnext:
+  admin:
+    product_create:
+      standard: Standard product
+      variant: Variant product
+      configuration: Configuration product
   configurator:
     title: Configurators
     create: Create configurator

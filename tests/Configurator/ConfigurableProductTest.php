@@ -88,7 +88,7 @@ final class ConfigurableProductTest extends TestCase
         $card = file_get_contents(__DIR__ . '/../../templates/shop/category/product_card.html.twig');
 
         self::assertStringContainsString('Konfigurationsprodukt', (string) $form);
-        self::assertStringContainsString("'disabled' => \$product?->getId() !== null", (string) $form);
+        self::assertStringContainsString("'disabled' => true", (string) $form);
         self::assertStringContainsString('current_product.isConfigurable', (string) $action);
         self::assertStringContainsString('product.isConfigurable', (string) $summary);
         self::assertStringContainsString('@SyliusShop/product/show/content/info/summary.html.twig', (string) $summary);

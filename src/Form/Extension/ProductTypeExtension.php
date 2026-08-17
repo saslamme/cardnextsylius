@@ -39,10 +39,13 @@ final class ProductTypeExtension extends AbstractTypeExtension
                 // non-nullable setter. Keep the entity's domain default even
                 // when a browser omits or submits an empty value.
                 'empty_data' => ProductKind::STANDARD->value,
-                'disabled' => $product?->getId() !== null,
-                'help' => $product?->getId() !== null
-                    ? 'Der Produkttyp ist nach der Erstellung gesperrt, damit keine Konfigurationsdaten verloren gehen.'
-                    : 'Konfigurationsprodukte erhalten beim Speichern automatisch genau einen Konfigurator.',
+                // The create route is the authority for the product kind. This
+                // field only communicates that choice and never trusts POSTed
+                // data. Persisted products retain the same invariant.
+                'disabled' => true,
+                'help' => $product?->isConfigurable()
+                    ? 'Konfigurationsprodukt: Beim Speichern wird automatisch genau ein Konfigurator angelegt. Wählen Sie mindestens einen Verkaufskanal, damit das Produkt öffentlich erreichbar ist.'
+                    : 'Der Produkttyp wurde durch den gewählten Erstellen-Ablauf festgelegt und kann nicht geändert werden.',
             ]);
         };
         $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($addProductKind): void {
