@@ -1,0 +1,53 @@
+cardnext:
+  configurator:
+    title: Configurators
+    create: Create configurator
+    edit: Edit
+    delete: Delete
+    delete_confirm: Really delete?
+    save: Save
+    name: Name
+    code: Code
+    product: Product
+    status: Status
+    enabled: Enabled
+    disabled: Disabled
+    sections: Sections
+    fields: Fields
+    values: Values
+    type: Type
+    required: Required
+    position: Position
+    description: Description
+    help: Help text
+    step: Step
+    color: Color
+    color_icon: Color / icon
+    search: Search name or code
+    all_statuses: All statuses
+    filter: Filter
+    empty: No configurators yet.
+    from: from
+    global: Global / all channels
+    source: Source
+    currency: Currency
+    charge: Charge
+    tier: Quantity tier
+    amount: Amount
+    minimum_quantity: Minimum quantity
+    maximum_quantity: Maximum quantity (empty = unlimited)
+    multiplier_field: Multiplier field
+    percentage_base: Percentage base
+    channel_help: A channel-specific rule overrides the global rule of the same dimension.
+    tabs: { master: Master data, structure: Structure, prices: Prices }
+    section: { create: Create section, empty: No sections yet. }
+    field: { create: Create field, empty: No fields yet. }
+    value: { create: Create value }
+    price: { create: Create price rule, base: BASE, empty: No price rules yet. }
+    field_type: { single_choice: Single choice, multiple_choice: Multiple choice, boolean: Yes/No, integer: Integer, decimal: Decimal, text: Text, quantity: Quantity, upload: File }
+    price_type: { unit: Price per unit, fixed: Fixed amount, percent: Percentage surcharge }
+    multiplier: { none: No multiplier, quantity: Quantity, field_value: Field value }
+    percentage_base_base: Base price
+    percentage_base_options: Options
+    percentage_base_subtotal: Subtotal
+    flash: { created: Configurator created., updated: Configurator updated. }

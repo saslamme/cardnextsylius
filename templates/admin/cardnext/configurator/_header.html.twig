@@ -1,0 +1,6 @@
+<div class="page-header mb-3"><div class="row align-items-center"><div class="col"><div class="page-pretitle">{{ 'cardnext.configurator.title'|trans }}</div><h2 class="page-title">{{ configurator.name }}</h2><div class="text-secondary"><code>{{ configurator.code }}</code> · <span class="badge {{ configurator.enabled ? 'bg-green-lt' : 'bg-secondary-lt' }}">{{ (configurator.enabled ? 'cardnext.configurator.enabled' : 'cardnext.configurator.disabled')|trans }}</span></div></div></div></div>
+<div class="nav nav-tabs mb-4">
+ <a class="nav-link {{ tab == 'master' ? 'active' }}" href="{{ path('cardnext_admin_configurator_update', {id: configurator.id}) }}">{{ 'cardnext.configurator.tabs.master'|trans }}</a>
+ <a class="nav-link {{ tab == 'structure' ? 'active' }}" href="{{ path('cardnext_admin_configurator_structure', {id: configurator.id}) }}">{{ 'cardnext.configurator.tabs.structure'|trans }}</a>
+ <a class="nav-link {{ tab == 'prices' ? 'active' }}" href="{{ path('cardnext_admin_configurator_prices', {id: configurator.id}) }}">{{ 'cardnext.configurator.tabs.prices'|trans }}</a>
+</div>
