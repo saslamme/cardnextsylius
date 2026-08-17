@@ -1,5 +1,5 @@
 {% if products|length > 0 %}
 <div class="cn-product-grid cn-product-grid--4 cn-product-grid--lined">
-{% for product in products %}{{ component('sylius_shop:product:card', {product: product, template: 'shop/category/product_card.html.twig', hookableMetadata: hookable_metadata|default(null)}) }}{% endfor %}
+{% for product in products %}{{ component('cardnext:product:card', {product: product}) }}{% endfor %}
 </div>
 {% else %}<div class="cn-panel">Noch keine Produkte für diesen Verkaufskanal veröffentlicht.</div>{% endif %}

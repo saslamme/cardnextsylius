@@ -1,6 +1,3 @@
-{% set variant = variant|default(product.variants|first) %}
-{% set channel_pricing = variant ? variant.channelPricings[sylius.channel.code]|default(null) : null %}
-
 <article class="cn-product-card" {{ sylius_test_html_attribute('product', product.code) }}>
     <a class="cn-product-card__media" href="{{ path('sylius_shop_product_show', {'slug': product.slug}) }}" tabindex="-1" aria-hidden="true">
         {% if product.images|length > 0 %}
