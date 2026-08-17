@@ -376,14 +376,15 @@ final class ConfiguratorAdminController extends AbstractController
     private function applyConfigurator(Configurator $c, Request $r, EntityManagerInterface $em): void
     {
         $c->setEnabled($r->request->getBoolean('enabled'));
-        $id = $r->request->getInt('product_id');
-        $c->setProduct($id > 0 ? $em->find(Product::class, $id) : null);
+        $id = $this->optionalPositiveInt($r, 'product_id', 'Die Produkt-ID ist ungültig.');
+        $product = $id === null ? null : ($em->find(Product::class, $id) ?? throw new \DomainException('Das gewählte Produkt existiert nicht.'));
+        $c->setProduct($product);
     }
 
     private function applySection(ConfiguratorSection $s, Request $r): void
     {
         $s->setDescription($this->nullable($r, 'description'));
-        $s->setPosition($r->request->getInt('position'));
+        $s->setPosition($this->nonNegativeInt($r, 'position', 0, 'Die Position muss eine nicht negative ganze Zahl sein.'));
         $s->setEnabled($r->request->getBoolean('enabled'));
     }
 
@@ -392,7 +393,7 @@ final class ConfiguratorAdminController extends AbstractController
         $f->setDescription($this->nullable($r, 'description'));
         $f->setHelpText($this->nullable($r, 'help_text'));
         $f->setRequired($r->request->getBoolean('required'));
-        $f->setPosition($r->request->getInt('position'));
+        $f->setPosition($this->nonNegativeInt($r, 'position', 0, 'Die Position muss eine nicht negative ganze Zahl sein.'));
         $f->setEnabled($r->request->getBoolean('enabled'));
         $f->setMinimumValue($this->nullable($r, 'minimum_value'));
         $f->setMaximumValue($this->nullable($r, 'maximum_value'));
@@ -402,7 +403,7 @@ final class ConfiguratorAdminController extends AbstractController
     private function applyValue(ConfiguratorValue $v, Request $r): void
     {
         $v->setDescription($this->nullable($r, 'description'));
-        $v->setPosition($r->request->getInt('position'));
+        $v->setPosition($this->nonNegativeInt($r, 'position', 0, 'Die Position muss eine nicht negative ganze Zahl sein.'));
         $v->setEnabled($r->request->getBoolean('enabled'));
         $color = $this->nullable($r, 'color_hex');
         if ($color !== null && preg_match('/^#[0-9A-Fa-f]{6}$/D', $color) !== 1) {
@@ -414,27 +415,77 @@ final class ConfiguratorAdminController extends AbstractController
 
     private function applyPriceRule(ConfiguratorPriceRule $rule, Request $r, EntityManagerInterface $em): void
     {
-        $valueId = $r->request->getInt('value_id');
-        if ($valueId > 0) {
+        $valueId = $this->optionalPositiveInt($r, 'value_id', 'Die Wert-ID ist ungültig.');
+        if ($valueId !== null) {
             $value = $em->find(ConfiguratorValue::class, $valueId) ?? throw new \DomainException('Der gewählte Wert existiert nicht.');
             $rule->setValue($value);
-        } $channelId = $r->request->getInt('channel_id');
-        if ($channelId > 0) {
+        } else {
+            $rule->setValue(null);
+        }
+        $channelId = $this->optionalPositiveInt($r, 'channel_id', 'Die Channel-ID ist ungültig.');
+        if ($channelId !== null) {
             $channel = $em->find(\App\Entity\Channel\Channel::class, $channelId) ?? throw new \DomainException('Der gewählte Channel existiert nicht.');
             $rule->setChannel($channel);
-        } $rule->setLabel($this->nullable($r, 'label'));
-        $max = $r->request->get('maximum_quantity');
-        $rule->setQuantityRange($r->request->getInt('minimum_quantity'), $max === null || $max === '' ? null : (int) $max);
+        } else {
+            $rule->setChannel(null);
+        }
+        $rule->setLabel($this->nullable($r, 'label'));
+        $minimum = $this->requiredPositiveInt($r, 'minimum_quantity', 'Die Mindestmenge muss eine ganze Zahl größer oder gleich 1 sein.');
+        $maximum = $this->optionalPositiveInt($r, 'maximum_quantity', 'Die Höchstmenge muss eine ganze Zahl größer oder gleich 1 sein.');
+        $rule->setQuantityRange($minimum, $maximum);
         $multiplier = MultiplierType::from($this->required($r, 'multiplier_type'));
-        $fieldId = $r->request->getInt('multiplier_field_id');
-        $field = $fieldId > 0 ? ($em->find(ConfiguratorField::class, $fieldId) ?? throw new \DomainException('Das Multiplikatorfeld existiert nicht.')) : null;
+        $fieldId = $this->optionalPositiveInt($r, 'multiplier_field_id', 'Die Multiplikatorfeld-ID ist ungültig.');
+        $field = $fieldId !== null ? ($em->find(ConfiguratorField::class, $fieldId) ?? throw new \DomainException('Das Multiplikatorfeld existiert nicht.')) : null;
         $rule->setMultiplier($multiplier, $field);
         if ($rule->getPriceType() === PriceType::PERCENT) {
             $rule->setPercentageBase(PercentageBase::from($this->required($r, 'percentage_base')));
         } elseif ($r->request->get('percentage_base')) {
             throw new \DomainException('Eine Prozentbasis ist nur für prozentuale Regeln zulässig.');
-        } $rule->setPriority($r->request->getInt('priority'));
+        } $rule->setPriority($this->nonNegativeInt($r, 'priority', 0, 'Die Priorität muss eine nicht negative ganze Zahl sein.'));
         $rule->setEnabled($r->request->getBoolean('enabled'));
+    }
+
+    private function optionalPositiveInt(Request $request, string $key, string $error): ?int
+    {
+        $parameters = $request->request->all();
+        if (!array_key_exists($key, $parameters) || $parameters[$key] === null || $parameters[$key] === '') {
+            return null;
+        }
+
+        $value = $parameters[$key];
+        if ((!is_int($value) && (!is_string($value) || preg_match('/^[1-9][0-9]*$/D', $value) !== 1)) || (is_int($value) && $value < 1)) {
+            throw new \DomainException($error);
+        }
+
+        if (is_string($value) && filter_var($value, \FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
+            throw new \DomainException($error);
+        }
+
+        return (int) $value;
+    }
+
+    private function requiredPositiveInt(Request $request, string $key, string $error): int
+    {
+        return $this->optionalPositiveInt($request, $key, $error) ?? throw new \DomainException($error);
+    }
+
+    private function nonNegativeInt(Request $request, string $key, int $default, string $error): int
+    {
+        $parameters = $request->request->all();
+        if (!array_key_exists($key, $parameters) || $parameters[$key] === null || $parameters[$key] === '') {
+            return $default;
+        }
+
+        $value = $parameters[$key];
+        if ((!is_int($value) && (!is_string($value) || preg_match('/^(0|[1-9][0-9]*)$/D', $value) !== 1)) || (is_int($value) && $value < 0)) {
+            throw new \DomainException($error);
+        }
+
+        if (is_string($value) && filter_var($value, \FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false) {
+            throw new \DomainException($error);
+        }
+
+        return (int) $value;
     }
 
     private function required(Request $r, string $key): string
@@ -444,7 +495,7 @@ final class ConfiguratorAdminController extends AbstractController
             throw new \DomainException(sprintf('%s ist erforderlich.', $key));
         }
 
-return $value;
+        return $value;
     }
 
     private function nullable(Request $r, string $key): ?string
@@ -460,7 +511,7 @@ return $value;
             throw $this->createAccessDeniedException('Ungültiger CSRF-Token.');
         }
 
-return true;
+        return true;
     }
 
     private function assertSame(object $expected, object $actual): void
