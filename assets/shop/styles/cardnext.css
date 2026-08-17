@@ -4514,7 +4514,10 @@ tbody td:nth-child(2) {
 .cn-account__breadcrumbs > .col-12 { width: auto; padding: 0; }
 .cn-account__breadcrumbs .breadcrumb { margin-bottom: 0; white-space: nowrap; overflow-x: auto; }
 .cn-account__layout { display: grid; grid-template-columns: 230px minmax(0,1fr); gap: 44px; align-items: start; }
-.cn-account__sidebar, .cn-account__main { min-width: 0; padding-top: 36px; }
+.cn-account__layout > :not(.cn-account__sidebar):not(.cn-account__main) { grid-column: 1 / -1; }
+.cn-account__sidebar { grid-column: 1; }
+.cn-account__main { grid-column: 2; }
+.cn-account__sidebar, .cn-account__main { min-width: 0; }
 .cn-account__header { margin-bottom: 22px; }
 .cn-account__header > .mb-4 { margin-bottom: 0 !important; }
 .cn-account__header h1, .cn-account__header .h1 { margin: 0 0 7px; color: var(--cn-ink); font-size: clamp(1.8rem,2.4vw,2.5rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.12; }
@@ -4542,7 +4545,7 @@ tbody td:nth-child(2) {
 .cn-dashboard__quick-links a { min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 15px 16px; color: var(--cn-ink); border-right: 1px solid var(--cn-border); text-decoration: none; transition: color var(--cn-transition),background var(--cn-transition); }
 .cn-dashboard__quick-links a:last-child { border-right: 0; }
 .cn-dashboard__quick-links a:hover { color: var(--cn-primary-hover); background: var(--cn-surface-softer); }
-.cn-dashboard__quick-links strong { font-size: .74rem; }
+.cn-dashboard__quick-links strong { overflow-wrap: anywhere; font-size: .74rem; }
 .cn-dashboard__quick-links span { color: var(--cn-muted); font-size: .66rem; font-weight: 650; }
 .cn-account__main form { width: min(100%,740px); padding: 26px; background: #fff; border: 1px solid var(--cn-border); border-radius: 8px; box-shadow: none; }
 .cn-account__main form form { width: 100%; padding: 0; border: 0; }
@@ -4591,9 +4594,10 @@ tbody td:nth-child(2) {
 }
 @media (max-width: 767.98px) {
     .cn-account { padding-bottom: 56px; }
-    .cn-account__layout { display: block; }
-    .cn-account__sidebar { padding-top: 24px; }
-    .cn-account__main { padding-top: 28px; }
+    .cn-account__layout { grid-template-columns: minmax(0,1fr); gap: 0; }
+    .cn-account__layout > :not(.cn-account__sidebar):not(.cn-account__main), .cn-account__sidebar, .cn-account__main { grid-column: 1; }
+    .cn-account__sidebar { margin-top: 24px; }
+    .cn-account__main { margin-top: 28px; }
     .cn-account-nav__links { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
     .cn-account-nav__head { padding: 14px 16px 11px; }
     .cn-account-nav__link { min-width: 0; }
