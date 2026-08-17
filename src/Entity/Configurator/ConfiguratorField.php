@@ -14,46 +14,46 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name:'IDX_CN_CFG_FIELD_PARENT', columns:['section_id', 'position', 'enabled'])]
 class ConfiguratorField
 {
-    #[ORM\Id,ORM\GeneratedValue,ORM\Column]
+    #[ORM\Id,ORM\GeneratedValue,ORM\Column(name:'id')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity:ConfiguratorSection::class, inversedBy:'fields'),ORM\JoinColumn(nullable:false, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:ConfiguratorSection::class, inversedBy:'fields'),ORM\JoinColumn(name:'section_id', nullable:false, onDelete:'CASCADE')]
     private ConfiguratorSection $section;
 
-    #[ORM\ManyToOne(targetEntity: Configurator::class), ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(targetEntity: Configurator::class), ORM\JoinColumn(name: 'configurator_id', nullable: false, onDelete: 'CASCADE')]
     private Configurator $configurator;
 
-    #[ORM\Column(length:100)]
+    #[ORM\Column(name:'code', length:100)]
     private string $code;
 
-    #[ORM\Column(length:255)]
+    #[ORM\Column(name:'name', length:255)]
     private string $name;
 
-    #[ORM\Column(type:'text', nullable:true)]
+    #[ORM\Column(name:'description', type:'text', nullable:true)]
     private ?string $description = null;
 
-    #[ORM\Column(type:'text', nullable:true)]
+    #[ORM\Column(name:'help_text', type:'text', nullable:true)]
     private ?string $helpText = null;
 
-    #[ORM\Column(enumType:FieldType::class, length:30)]
+    #[ORM\Column(name:'type', enumType:FieldType::class, length:30)]
     private FieldType $type;
 
-    #[ORM\Column(options:['default' => false])]
+    #[ORM\Column(name:'required', options:['default' => false])]
     private bool $required = false;
 
-    #[ORM\Column]
+    #[ORM\Column(name:'position')]
     private int $position = 0;
 
-    #[ORM\Column(options:['default' => true])]
+    #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
 
-    #[ORM\Column(type:'string', length:64, nullable:true)]
+    #[ORM\Column(name:'minimum_value', type:'string', length:64, nullable:true)]
     private ?string $minimumValue = null;
 
-    #[ORM\Column(type:'string', length:64, nullable:true)]
+    #[ORM\Column(name:'maximum_value', type:'string', length:64, nullable:true)]
     private ?string $maximumValue = null;
 
-    #[ORM\Column(type:'string', length:64, nullable:true)]
+    #[ORM\Column(name:'step', type:'string', length:64, nullable:true)]
     private ?string $step = null;
 
 /** @var Collection<int,ConfiguratorValue> */ #[ORM\OneToMany(mappedBy:'field', targetEntity:ConfiguratorValue::class, cascade:['persist'], orphanRemoval:true),ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]

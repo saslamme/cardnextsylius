@@ -15,58 +15,58 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass:ConfiguratorPriceRuleRepository::class)] #[ORM\Table(name:'cardnext_configurator_price_rule')] #[ORM\Index(name:'IDX_CN_CFG_RULE_LOOKUP', columns:['configurator_id', 'value_id', 'channel_id', 'currency_code', 'minimum_quantity', 'maximum_quantity', 'enabled'])]
 class ConfiguratorPriceRule
 {
-    #[ORM\Id,ORM\GeneratedValue,ORM\Column]
+    #[ORM\Id,ORM\GeneratedValue,ORM\Column(name:'id')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity:Configurator::class),ORM\JoinColumn(nullable:false, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:Configurator::class),ORM\JoinColumn(name:'configurator_id', nullable:false, onDelete:'CASCADE')]
     private Configurator $configurator;
 
-    #[ORM\ManyToOne(targetEntity:ConfiguratorValue::class),ORM\JoinColumn(nullable:true, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:ConfiguratorValue::class),ORM\JoinColumn(name:'value_id', nullable:true, onDelete:'CASCADE')]
     private ?ConfiguratorValue $value = null;
 
-    #[ORM\ManyToOne(targetEntity:Channel::class),ORM\JoinColumn(nullable:true, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:Channel::class),ORM\JoinColumn(name:'channel_id', nullable:true, onDelete:'CASCADE')]
     private ?Channel $channel = null;
 
-    #[ORM\Column(length:3)]
+    #[ORM\Column(name:'currency_code', length:3)]
     private string $currencyCode;
 
-    #[ORM\Column(length:100)]
+    #[ORM\Column(name:'charge_code', length:100)]
     private string $chargeCode;
 
-    #[ORM\Column(length:255, nullable:true)]
+    #[ORM\Column(name:'label', length:255, nullable:true)]
     private ?string $label = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name:'minimum_quantity')]
     private int $minimumQuantity = 1;
 
-    #[ORM\Column(nullable:true)]
+    #[ORM\Column(name:'maximum_quantity', nullable:true)]
     private ?int $maximumQuantity = null;
 
-    #[ORM\Column(enumType:PriceType::class, length:20)]
+    #[ORM\Column(name:'price_type', enumType:PriceType::class, length:20)]
     private PriceType $priceType;
 
-/** Minor units for UNIT/FIXED; basis points for PERCENT. */ #[ORM\Column(type:'bigint')]
+/** Minor units for UNIT/FIXED; basis points for PERCENT. */ #[ORM\Column(name:'amount', type:'bigint')]
     private int $amount;
 
-    #[ORM\Column(enumType:MultiplierType::class, length:20)]
+    #[ORM\Column(name:'multiplier_type', enumType:MultiplierType::class, length:20)]
     private MultiplierType $multiplierType = MultiplierType::NONE;
 
-    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class),ORM\JoinColumn(nullable:true, onDelete:'CASCADE')]
+    #[ORM\ManyToOne(targetEntity:ConfiguratorField::class),ORM\JoinColumn(name:'multiplier_field_id', nullable:true, onDelete:'CASCADE')]
     private ?ConfiguratorField $multiplierField = null;
 
-    #[ORM\Column(enumType:PercentageBase::class, length:20, nullable:true)]
+    #[ORM\Column(name:'percentage_base', enumType:PercentageBase::class, length:20, nullable:true)]
     private ?PercentageBase $percentageBase = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name:'priority')]
     private int $priority = 0;
 
-    #[ORM\Column(options:['default' => true])]
+    #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
 
-    #[ORM\Column(type:'datetime_immutable')]
+    #[ORM\Column(name:'created_at', type:'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type:'datetime_immutable')]
+    #[ORM\Column(name:'updated_at', type:'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
     public function __construct(Configurator $c, string $currency, string $charge, PriceType $type, int $amount)

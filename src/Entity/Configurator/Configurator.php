@@ -14,26 +14,26 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'cardnext_configurator')]
 class Configurator
 {
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column(name: 'id')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, unique: true)]
+    #[ORM\Column(name: 'code', length: 100, unique: true)]
     private string $code;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'name', length: 255)]
     private string $name;
 
-    #[ORM\Column(options: ['default' => true])]
+    #[ORM\Column(name: 'enabled', options: ['default' => true])]
     private bool $enabled = true;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
-    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(name: 'product_id', nullable: true, onDelete: 'SET NULL')]
     private ?Product $product = null;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
     /** @var Collection<int, ConfiguratorSection> */
