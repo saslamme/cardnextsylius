@@ -12,7 +12,7 @@ use App\Enum\Configurator\PriceType;
 use App\Repository\Configurator\ConfiguratorPriceRuleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass:ConfiguratorPriceRuleRepository::class)] #[ORM\Table(name:'cardnext_configurator_price_rule')] #[ORM\Index(name:'IDX_CN_CFG_RULE_LOOKUP', columns:['configurator_id', 'value_id', 'channel_id', 'currency_code', 'minimum_quantity', 'maximum_quantity', 'enabled'])]
+#[ORM\Entity(repositoryClass:ConfiguratorPriceRuleRepository::class)] #[ORM\Table(name:'cardnext_configurator_price_rule')] #[ORM\Index(name:'IDX_CN_CFG_RULE_LOOKUP', columns:['configurator_id', 'value_id', 'channel_id', 'currency_code', 'minimum_quantity', 'maximum_quantity', 'enabled'])] #[ORM\Index(name:'IDX_CN_CFG_RULE_LEAD', columns:['lead_time_id'])]
 class ConfiguratorPriceRule
 {
     #[ORM\Id,ORM\GeneratedValue,ORM\Column(name:'id')]
@@ -23,6 +23,9 @@ class ConfiguratorPriceRule
 
     #[ORM\ManyToOne(targetEntity:ConfiguratorValue::class),ORM\JoinColumn(name:'value_id', nullable:true, onDelete:'CASCADE')]
     private ?ConfiguratorValue $value = null;
+
+    #[ORM\ManyToOne(targetEntity:ConfiguratorLeadTime::class),ORM\JoinColumn(name:'lead_time_id', nullable:true, onDelete:'CASCADE')]
+    private ?ConfiguratorLeadTime $leadTime = null;
 
     #[ORM\ManyToOne(targetEntity:Channel::class),ORM\JoinColumn(name:'channel_id', nullable:true, onDelete:'CASCADE')]
     private ?Channel $channel = null;
@@ -109,7 +112,27 @@ class ConfiguratorPriceRule
         if ($v !== null && $v->getField()->getSection()->getConfigurator() !== $this->configurator) {
             throw new \DomainException('Price rule value belongs to another configurator.');
         }
+        if ($v !== null && $this->leadTime !== null) {
+            throw new \DomainException('A price rule cannot target both a value and a lead time.');
+        }
         $this->value = $v;
+        $this->touch();
+    }
+
+    public function getLeadTime(): ?ConfiguratorLeadTime
+    {
+        return $this->leadTime;
+    }
+
+    public function setLeadTime(?ConfiguratorLeadTime $leadTime): void
+    {
+        if ($leadTime !== null && $leadTime->getConfigurator() !== $this->configurator) {
+            throw new \DomainException('Price rule lead time belongs to another configurator.');
+        }
+        if ($leadTime !== null && $this->value !== null) {
+            throw new \DomainException('A price rule cannot target both a value and a lead time.');
+        }
+        $this->leadTime = $leadTime;
         $this->touch();
     }
 
@@ -276,6 +299,9 @@ class ConfiguratorPriceRule
         if ($this->value !== null) {
             $field = $this->value->getField();
             $source = implode('/', [$field->getSection()->getCode(), $field->getCode(), $this->value->getCode()]);
+        }
+        if ($this->leadTime !== null) {
+            $source = 'lead_time/' . $this->leadTime->getCode();
         }
         $multiplier = $this->multiplierField === null ? '-' : implode('/', [$this->multiplierField->getSection()->getCode(), $this->multiplierField->getCode()]);
 

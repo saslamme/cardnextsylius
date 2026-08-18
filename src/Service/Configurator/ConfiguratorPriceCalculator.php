@@ -47,10 +47,18 @@ final readonly class ConfiguratorPriceCalculator
         }
 
         $values = $this->selectedValues($model, $configuration->selections);
+        $leadTime = null;
+        foreach ($model->getLeadTimes() as $candidate) {
+            if ($candidate->isEnabled() && $candidate->getCode() === $configuration->leadTimeCode) {
+                $leadTime = $candidate;
+            }
+        }
         $ids = array_values(array_filter(array_map(static fn (ConfiguratorValue $value): ?int => $value->getId(), $values)));
-        $candidates = $this->rules->findApplicable($model, $ids, $channel, $currencyCode, $configuration->quantity);
+        $candidates = $this->rules->findApplicable($model, $ids, $channel, $currencyCode, $configuration->quantity, $leadTime?->getId());
 
-        return $this->calculateRules($configuration, $candidates, $channel->getCode(), $currencyCode);
+        $result = $this->calculateRules($configuration, $candidates, $channel->getCode(), $currencyCode);
+
+        return new ConfiguratorPriceResult($result->quantity, $result->currencyCode, $result->baseUnitAmount, $result->optionsUnitAmount, $result->unitAmount, $result->unitTotal, $result->fixedTotal, $result->percentageTotal, $result->total, $result->breakdown, $leadTime?->getCode(), $leadTime?->getName(), $leadTime?->getWorkingDays());
     }
 
     /** @param iterable<ConfiguratorPriceRule> $rules */
@@ -69,7 +77,7 @@ final readonly class ConfiguratorPriceCalculator
                 continue;
             }
 
-            $isBase = $rule->getValue() === null;
+            $isBase = $rule->getValue() === null && $rule->getLeadTime() === null;
             if ($isBase && $rule->getPriceType() === PriceType::UNIT) {
                 $hasBase = true;
             }
@@ -140,8 +148,9 @@ final readonly class ConfiguratorPriceCalculator
     private function line(ConfiguratorPriceRule $rule, int $multiplier, int $amount, ?int $base = null): PriceBreakdownLine
     {
         $value = $rule->getValue();
+        $leadTime = $rule->getLeadTime();
 
-        return new PriceBreakdownLine($value ? 'value' : 'configurator', $value?->getCode() ?? $rule->getConfigurator()->getCode(), $value?->getField()->getCode(), $value?->getCode(), $rule->getChargeCode(), $rule->getPriceType()->value, $rule->getLabel(), $rule->getPriceType() === PriceType::UNIT ? $rule->getAmount() : null, $base, $multiplier, $amount);
+        return new PriceBreakdownLine($leadTime ? 'lead_time' : ($value ? 'value' : 'configurator'), $leadTime?->getCode() ?? $value?->getCode() ?? $rule->getConfigurator()->getCode(), $value?->getField()->getCode(), $value?->getCode(), $rule->getChargeCode(), $rule->getPriceType()->value, $rule->getLabel() ?? $leadTime?->getName(), $rule->getPriceType() === PriceType::UNIT ? $rule->getAmount() : null, $base, $multiplier, $amount);
     }
 
     /** @param array<string, mixed> $selections @return list<ConfiguratorValue> */
