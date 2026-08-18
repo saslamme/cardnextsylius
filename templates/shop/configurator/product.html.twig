@@ -1,5 +1,5 @@
 {% if configurator %}
-    <section class="cn-configurator" data-configurator data-endpoint="{{ path('cardnext_shop_configuration_calculate', {productCode: product.code}) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
+    <section class="cn-configurator" data-configurator data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
         <div class="cn-configurator__layout">
             <form class="cn-configurator__form" data-configurator-form novalidate>
                 <div class="cn-configurator__section">

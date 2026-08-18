@@ -40,6 +40,7 @@
                         </div>
                     </div>
                 </div>
+                    {{ component('cardnext:taxon:configurators', {taxon: taxon}) }}
                 {% if resources.data|length > 0 %}
                     <div class="cn-product-grid cn-product-grid--lined" {{ sylius_test_html_attribute('products') }}>{% for product in resources.data %}{{ component('cardnext:product:card', {product: product}) }}{% endfor %}</div>
                     <div class="mt-4">{{ pagination.simple(resources.data) }}</div>

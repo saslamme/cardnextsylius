@@ -60,7 +60,7 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
         ];
 
         $joinColumns = [
-            Configurator::class => ['product' => 'product_id'],
+            Configurator::class => [],
             ConfiguratorSection::class => ['configurator' => 'configurator_id'],
             ConfiguratorField::class => ['section' => 'section_id', 'configurator' => 'configurator_id'],
             ConfiguratorValue::class => ['field' => 'field_id'],
@@ -87,18 +87,14 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
         }
     }
 
-    public function testProductConfiguratorMappingIsOneToOneAndDeletesTheAggregate(): void
+    public function testProductAndConfiguratorMappingsAreIndependent(): void
     {
         $configuratorMetadata = new ClassMetadata(Configurator::class);
         (new AttributeDriver([\dirname(__DIR__, 2) . '/src/Entity/Configurator']))->loadMetadataForClass(Configurator::class, $configuratorMetadata);
         $productMetadata = new ClassMetadata(Product::class);
         (new AttributeDriver([\dirname(__DIR__, 2) . '/src/Entity/Product']))->loadMetadataForClass(Product::class, $productMetadata);
 
-        $owning = $configuratorMetadata->getAssociationMapping('product');
-        self::assertTrue($owning->isOneToOne());
-        self::assertTrue($owning->joinColumns[0]->unique);
-        self::assertSame('RESTRICT', $owning->joinColumns[0]->onDelete);
-        self::assertTrue($productMetadata->getAssociationMapping('configurator')->isOneToOne());
-        self::assertTrue($productMetadata->getAssociationMapping('configurator')->isCascadeRemove());
+        self::assertFalse($configuratorMetadata->hasAssociation('product'));
+        self::assertFalse($productMetadata->hasAssociation('configurator'));
     }
 }

@@ -1,7 +1,0 @@
-{% if product.isConfigurable %}
-    <div class="cn-configurable-summary" {{ attributes }}>
-        {{ component('cardnext:configurator:product', {product: product}) }}
-    </div>
-{% else %}
-    {% include '@SyliusShop/product/show/content/info/summary.html.twig' %}
-{% endif %}

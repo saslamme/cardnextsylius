@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repository\Configurator;
 
+use App\Entity\Channel\Channel;
 use App\Entity\Configurator\Configurator;
-use App\Entity\Product\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -32,20 +32,32 @@ class ConfiguratorRepository extends ServiceEntityRepository
         return $configurator;
     }
 
-    public function findEnabledByProduct(Product $product): ?Configurator
+    /** @return array{0: Configurator, 1: \App\Entity\Configurator\ConfiguratorTranslation}|null */
+    public function findPublicByPath(string $path, string $locale, Channel $channel): ?array
     {
-        $configurator = $this->createGraphQueryBuilder()
-            ->andWhere('c.product = :product')
+        $row = $this->createQueryBuilder('c')
+            ->addSelect('translation')
+            ->innerJoin('c.translations', 'translation')
+            ->innerJoin('c.channels', 'channel', 'WITH', 'channel = :channel')
             ->andWhere('c.enabled = true')
-            ->setParameter('product', $product)
+            ->andWhere('translation.locale = :locale')
+            ->andWhere('translation.path = :path')
+            ->setParameter('channel', $channel)
+            ->setParameter('locale', $locale)
+            ->setParameter('path', trim($path, '/'))
             ->getQuery()
             ->getOneOrNullResult();
-
-        if ($configurator !== null) {
-            $this->initializeDependencies($configurator);
+        if (!$row instanceof Configurator) {
+            return null;
         }
 
-        return $configurator;
+        return [$row, $row->getTranslation($locale)];
+    }
+
+    /** @return list<Configurator> */
+    public function findPublicByTaxon(\App\Entity\Taxonomy\Taxon $taxon, string $locale, Channel $channel): array
+    {
+        return $this->createQueryBuilder('c')->addSelect('translation', 'images')->innerJoin('c.translations', 'translation', 'WITH', 'translation.locale = :locale')->innerJoin('c.channels', 'channel', 'WITH', 'channel = :channel')->innerJoin('c.taxonAssignments', 'assignment', 'WITH', 'assignment.taxon = :taxon')->leftJoin('c.images', 'images', 'WITH', 'images.enabled = true')->where('c.enabled = true')->setParameter('locale', $locale)->setParameter('channel', $channel)->setParameter('taxon', $taxon)->orderBy('assignment.position', 'ASC')->getQuery()->getResult();
     }
 
     private function createGraphQueryBuilder(): \Doctrine\ORM\QueryBuilder

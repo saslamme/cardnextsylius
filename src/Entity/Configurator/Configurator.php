@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Configurator;
 
-use App\Entity\Product\Product;
+use App\Entity\Channel\Channel;
 use App\Repository\Configurator\ConfiguratorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,14 +21,29 @@ class Configurator
     private string $code;
 
     #[ORM\Column(name: 'name', length: 255)]
-    private string $name;
+    private string $internalName;
 
     #[ORM\Column(name: 'enabled', options: ['default' => true])]
     private bool $enabled = true;
 
-    #[ORM\OneToOne(targetEntity: Product::class, inversedBy: 'configurator')]
-    #[ORM\JoinColumn(name: 'product_id', nullable: true, unique: true, onDelete: 'RESTRICT')]
-    private ?Product $product = null;
+    /** @var Collection<int, ConfiguratorTranslation> */
+    #[ORM\OneToMany(mappedBy: 'configurator', targetEntity: ConfiguratorTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $translations;
+
+    /** @var Collection<int, Channel> */
+    #[ORM\ManyToMany(targetEntity: Channel::class)]
+    #[ORM\JoinTable(name: 'cardnext_configurator_channel')]
+    private Collection $channels;
+
+    /** @var Collection<int, ConfiguratorImage> */
+    #[ORM\OneToMany(mappedBy: 'configurator', targetEntity: ConfiguratorImage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    private Collection $images;
+
+    /** @var Collection<int, ConfiguratorTaxon> */
+    #[ORM\OneToMany(mappedBy: 'configurator', targetEntity: ConfiguratorTaxon::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    private Collection $taxonAssignments;
 
     #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
@@ -54,11 +69,15 @@ class Configurator
     public function __construct(string $code, string $name)
     {
         $this->code = $code;
-        $this->name = $name;
+        $this->internalName = $name;
         $this->createdAt = $this->updatedAt = new \DateTimeImmutable();
         $this->sections = new ArrayCollection();
         $this->dependencies = new ArrayCollection();
         $this->leadTimes = new ArrayCollection();
+        $this->translations = new ArrayCollection();
+        $this->channels = new ArrayCollection();
+        $this->images = new ArrayCollection();
+        $this->taxonAssignments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -73,12 +92,12 @@ class Configurator
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->internalName;
     }
 
     public function setName(string $name): void
     {
-        $this->name = $name;
+        $this->internalName = $name;
         $this->touch();
     }
 
@@ -93,24 +112,81 @@ class Configurator
         $this->touch();
     }
 
-    public function getProduct(): ?Product
+    /** @return Collection<int, ConfiguratorTranslation> */
+    public function getTranslations(): Collection
     {
-        return $this->product;
+        return $this->translations;
     }
 
-    public function assignToProduct(Product $product): void
+    public function addTranslation(ConfiguratorTranslation $translation): void
     {
-        if (!$product->isConfigurable()) {
-            throw new \DomainException('Ein Konfigurator kann nur einem Konfigurationsprodukt zugeordnet werden.');
+        if (!$this->translations->contains($translation)) {
+            $this->translations->add($translation);
+            $translation->setConfigurator($this);
+            $this->touch();
         }
-        if ($this->product !== null && $this->product !== $product) {
-            throw new \DomainException('Ein Konfigurator kann nicht einem anderen Produkt zugeordnet werden.');
+    }
+
+    public function getTranslation(string $locale): ?ConfiguratorTranslation
+    {
+        foreach ($this->translations as $translation) {
+            if ($translation->getLocale() === $locale) {
+                return $translation;
+            }
         }
 
-        $this->product = $product;
-        $this->touch();
-        if ($product->getConfigurator() !== $this) {
-            $product->attachConfigurator($this);
+return null;
+    }
+
+    /** @return Collection<int, Channel> */
+    public function getChannels(): Collection
+    {
+        return $this->channels;
+    }
+
+    public function addChannel(Channel $channel): void
+    {
+        if (!$this->channels->contains($channel)) {
+            $this->channels->add($channel);
+            $this->touch();
+        }
+    }
+
+    public function removeChannel(Channel $channel): void
+    {
+        $this->channels->removeElement($channel);
+    }
+
+    public function hasChannel(Channel $channel): bool
+    {
+        return $this->channels->contains($channel);
+    }
+
+    /** @return Collection<int, ConfiguratorImage> */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(ConfiguratorImage $image): void
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setConfigurator($this);
+        }
+    }
+
+    /** @return Collection<int, ConfiguratorTaxon> */
+    public function getTaxonAssignments(): Collection
+    {
+        return $this->taxonAssignments;
+    }
+
+    public function addTaxonAssignment(ConfiguratorTaxon $assignment): void
+    {
+        if (!$this->taxonAssignments->contains($assignment)) {
+            $this->taxonAssignments->add($assignment);
+            $assignment->setConfigurator($this);
         }
     }
 
