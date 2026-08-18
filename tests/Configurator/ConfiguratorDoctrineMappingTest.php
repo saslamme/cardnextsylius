@@ -25,6 +25,7 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
         $columns = [
             Configurator::class => [
                 'id' => 'id', 'code' => 'code', 'name' => 'name', 'enabled' => 'enabled',
+                'shippingRequired' => 'shipping_required',
                 'createdAt' => 'created_at', 'updatedAt' => 'updated_at',
             ],
             ConfiguratorSection::class => [
@@ -60,7 +61,7 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
         ];
 
         $joinColumns = [
-            Configurator::class => [],
+            Configurator::class => ['taxCategory' => 'tax_category_id'],
             ConfiguratorSection::class => ['configurator' => 'configurator_id'],
             ConfiguratorField::class => ['section' => 'section_id', 'configurator' => 'configurator_id'],
             ConfiguratorValue::class => ['field' => 'field_id'],

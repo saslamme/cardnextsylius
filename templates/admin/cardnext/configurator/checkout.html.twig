@@ -1,0 +1,23 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% set page_title = 'Verkauf & Versand' %}
+{% block cardnext_content %}
+{% set tab = 'checkout' %}{% include 'admin/cardnext/configurator/_header.html.twig' %}
+<form method="post" class="card card-body">
+ <input type="hidden" name="_token" value="{{ csrf_token('checkout-'~configurator.id) }}">
+ <h3>Verkauf &amp; Versand</h3>
+ <div class="mb-3">
+  <label class="form-label" for="tax-category">Steuerkategorie</label>
+  <select id="tax-category" class="form-select" name="tax_category_id">
+   <option value="">Keine Steuerkategorie</option>
+   {% for taxCategory in taxCategories %}<option value="{{ taxCategory.id }}" {{ configurator.taxCategory and configurator.taxCategory.id == taxCategory.id ? 'selected' }}>{{ taxCategory.name }} ({{ taxCategory.code }})</option>{% endfor %}
+  </select>
+  <div class="form-hint">Bestimmt, welche Steuerregeln im Checkout für diesen Konfigurator angewendet werden.</div>
+ </div>
+ <label class="form-check mb-3">
+  <input class="form-check-input" type="checkbox" name="shipping_required" value="1" {{ configurator.shippingRequired ? 'checked' }}>
+  <span class="form-check-label">Versand erforderlich</span>
+  <span class="form-hint">Aktivieren, wenn die konfigurierte Ware physisch versendet werden muss.</span>
+ </label>
+ <div><button class="btn btn-primary">Speichern</button></div>
+</form>
+{% endblock %}

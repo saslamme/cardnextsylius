@@ -46,6 +46,12 @@ class ConfiguredOrderItem
     #[ORM\Column(name: 'working_days', nullable: true)]
     private ?int $workingDays = null;
 
+    #[ORM\Column(name: 'tax_category_code', length: 255, nullable: true)]
+    private ?string $taxCategoryCode = null;
+
+    #[ORM\Column(name: 'shipping_required', options: ['default' => true])]
+    private bool $shippingRequired = true;
+
     #[ORM\Column(name: 'configuration_hash', length: 64)]
     private string $configurationHash;
 
@@ -89,7 +95,7 @@ class ConfiguredOrderItem
     private \DateTimeImmutable $updatedAt;
 
     /** @param array<string,mixed> $selections @param array<string,mixed> $breakdown @param array<string,mixed> $canonical */
-    public function __construct(string $configuratorCode, string $configuratorName, string $localeCode, string $channelCode, string $currencyCode, int $quantity, string $configurationHash, array $selections, array $breakdown, array $canonical, int $baseUnitAmount, int $optionsUnitAmount, int $unitAmount, int $unitTotal, int $fixedTotal, int $percentageTotal, int $total, ?string $leadTimeCode = null, ?string $leadTimeName = null, ?int $workingDays = null)
+    public function __construct(string $configuratorCode, string $configuratorName, string $localeCode, string $channelCode, string $currencyCode, int $quantity, string $configurationHash, array $selections, array $breakdown, array $canonical, int $baseUnitAmount, int $optionsUnitAmount, int $unitAmount, int $unitTotal, int $fixedTotal, int $percentageTotal, int $total, ?string $leadTimeCode = null, ?string $leadTimeName = null, ?int $workingDays = null, ?string $taxCategoryCode = null, bool $shippingRequired = true)
     {
         $this->configuratorCode = $configuratorCode;
         $this->configuratorName = $configuratorName;
@@ -111,6 +117,8 @@ class ConfiguredOrderItem
         $this->leadTimeCode = $leadTimeCode;
         $this->leadTimeName = $leadTimeName;
         $this->workingDays = $workingDays;
+        $this->taxCategoryCode = $taxCategoryCode;
+        $this->shippingRequired = $shippingRequired;
         $this->createdAt = $this->updatedAt = new \DateTimeImmutable();
     }
 
@@ -172,6 +180,16 @@ class ConfiguredOrderItem
     public function getWorkingDays(): ?int
     {
         return $this->workingDays;
+    }
+
+    public function getTaxCategoryCode(): ?string
+    {
+        return $this->taxCategoryCode;
+    }
+
+    public function isShippingRequired(): bool
+    {
+        return $this->shippingRequired;
     }
 
     public function getConfigurationHash(): string
@@ -264,6 +282,8 @@ class ConfiguredOrderItem
         $this->leadTimeCode = $fresh->leadTimeCode;
         $this->leadTimeName = $fresh->leadTimeName;
         $this->workingDays = $fresh->workingDays;
+        $this->taxCategoryCode = $fresh->taxCategoryCode;
+        $this->shippingRequired = $fresh->shippingRequired;
         $this->updatedAt = new \DateTimeImmutable();
     }
 }
