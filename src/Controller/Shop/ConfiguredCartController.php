@@ -12,7 +12,7 @@ use App\Repository\Configurator\ConfiguratorRepository;
 use App\Service\Configurator\ConfiguratorPriceCalculator;
 use App\Service\Configurator\ConfiguredOrderItemSnapshotFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Sylius\Component\Cart\Context\CartContextInterface;
+use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
