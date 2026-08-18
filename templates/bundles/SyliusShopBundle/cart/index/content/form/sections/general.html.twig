@@ -2,7 +2,37 @@
 <div class="cn-cart-layout">
     <section class="cn-cart-layout__main position-relative">
         {{ loader.render() }}
-        <div class="cn-cart-products">{% hook 'general#left' %}</div>
+        <div class="cn-cart-products">
+            {% hook 'general#left' %}
+            {% for item in cart.configuredItems %}
+                <article class="card mt-3 p-3" data-configured-order-item="{{ item.id }}">
+                    <h2 class="h5">{{ item.configuratorName }}</h2>
+                    <p><strong>{{ item.quantity }} Stück</strong></p>
+                    <dl class="row mb-2">
+                        {% for selection in item.selectionsSnapshot %}
+                            <dt class="col-sm-5">{{ selection.fieldName }}</dt>
+                            <dd class="col-sm-7">
+                                {% if selection.values is defined %}{{ selection.values|map(value => value.name)|join(', ') }}{% elseif selection.value is iterable %}{{ selection.value.name }}{% else %}{{ selection.value }}{% endif %}
+                            </dd>
+                        {% endfor %}
+                        {% if item.leadTimeName %}<dt class="col-sm-5">Produktionszeit</dt><dd class="col-sm-7">{{ item.leadTimeName }}{% if item.workingDays %}, ca. {{ item.workingDays }} Arbeitstage{% endif %}</dd>{% endif %}
+                    </dl>
+                    <p class="fw-bold">Gesamt: {{ item.total|sylius_format_money(item.currencyCode, item.localeCode) }}</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <form method="post" action="{{ path('cardnext_shop_configured_item_quantity', {id: item.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('configured_item_' ~ item.id) }}">
+                            <input class="form-control d-inline-block" style="width:8rem" type="number" min="1" name="quantity" value="{{ item.quantity }}" aria-label="Menge">
+                            <button class="btn btn-outline-primary" type="submit">Menge aktualisieren</button>
+                        </form>
+                        <form method="post" action="{{ path('cardnext_shop_configured_item_remove', {id: item.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('configured_item_' ~ item.id) }}">
+                            <button class="btn btn-outline-danger" type="submit">Entfernen</button>
+                        </form>
+                        <a class="btn btn-link" href="{{ path('cardnext_shop_configurator_page', {configuratorPath: item.configuratorCode}) }}">Konfiguration bearbeiten</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
     </section>
     <aside class="cn-cart-layout__sidebar">
         <div class="cn-cart-sidebar">{% hook 'general#right' %}</div>
