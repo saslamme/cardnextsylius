@@ -15,20 +15,7 @@ final class ConfiguratorAggregateDeleter
 
     public function delete(Configurator $configurator): void
     {
-        $product = $configurator->getProduct();
-        if ($product !== null && !$product->isConfigurable()) {
-            throw new \DomainException('Ein mit einem Standardprodukt verknüpfter Konfigurator kann nicht gelöscht werden.');
-        }
-
-        $this->entityManager->wrapInTransaction(function () use ($configurator, $product): void {
-            if ($product !== null) {
-                // Product owns the aggregate lifecycle. Cascade remove deletes the configurator first;
-                // its database foreign keys remove only configurator-owned child records.
-                $this->entityManager->remove($product);
-
-                return;
-            }
-
+        $this->entityManager->wrapInTransaction(function () use ($configurator): void {
             $this->entityManager->remove($configurator);
         });
     }

@@ -1,12 +1,12 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 
-{% block title %}{{ product.metaTitle ?: product.name }}{% endblock %}
+{% block title %}{{ translation.metaTitle ?: translation.name }}{% endblock %}
 
 {% block metatags %}
     {{ parent() }}
-    {% if product.metaDescription %}<meta name="description" content="{{ product.metaDescription }}">{% endif %}
+    {% if translation.metaDescription %}<meta name="description" content="{{ translation.metaDescription }}">{% endif %}
     <meta name="robots" content="index,follow">
-    <link rel="canonical" href="{{ absolute_url(cardnext_product_url(product)) }}">
+    <link rel="canonical" href="{{ absolute_url(path('cardnext_shop_configurator_page', {_locale: translation.locale, configuratorPath: translation.path})) }}">
 {% endblock %}
 
 {% block content %}
@@ -15,16 +15,16 @@
         <div class="cn-container cn-configurator-hero__grid">
             <div class="cn-configurator-hero__copy">
                 <span class="cn-kicker">{{ 'cardnext.configurator_page.kicker'|trans }}</span>
-                <h1 class="cn-title cn-title--page">{{ product.name }}</h1>
-                {% if product.shortDescription %}<div class="cn-configurator-hero__intro">{{ product.shortDescription|raw }}</div>{% endif %}
+                <h1 class="cn-title cn-title--page">{{ translation.name }}</h1>
+                {% if translation.shortDescription %}<div class="cn-configurator-hero__intro">{{ translation.shortDescription|raw }}</div>{% endif %}
                 <ul class="cn-configurator-hero__trust">
                     <li>{{ 'cardnext.configurator_page.trust.calculation'|trans }}</li>
                     <li>{{ 'cardnext.configurator_page.trust.production'|trans }}</li>
                     <li>{{ 'cardnext.configurator_page.trust.support'|trans }}</li>
                 </ul>
             </div>
-            {% if product.images|length > 0 %}
-                <div class="cn-configurator-hero__visual">{{ component('sylius_shop:main_image', {product: product, class: 'cn-configurator-hero__image'}) }}</div>
+            {% if configurator.images|length > 0 %}
+                <div class="cn-configurator-hero__visual"><img class="cn-configurator-hero__image" src="{{ asset((configurator.images|first).path) }}" alt="{{ (configurator.images|first).altText ?: translation.name }}"></div>
             {% endif %}
         </div>
     </section>
@@ -36,7 +36,7 @@
                 <h2 id="configuration-heading">{{ 'cardnext.configurator_page.stage.title'|trans }}</h2>
                 <p>{{ 'cardnext.configurator_page.stage.intro'|trans }}</p>
             </div>
-            {{ component('cardnext:configurator:product', {product: product}) }}
+            {{ component('cardnext:configurator', {configurator: configurator}) }}
         </div>
     </section>
 
@@ -50,12 +50,12 @@
         </div>
     </section>
 
-    {% if product.description %}
+    {% if translation.description %}
         <section class="cn-configurator-content">
             <div class="cn-container cn-configurator-content__inner">
                 <span class="cn-kicker">{{ 'cardnext.configurator_page.content.kicker'|trans }}</span>
-                <h2>{{ product.name }}</h2>
-                <div class="cn-rich-text">{{ product.description|raw }}</div>
+                <h2>{{ translation.name }}</h2>
+                <div class="cn-rich-text">{{ translation.description|raw }}</div>
             </div>
         </section>
     {% endif %}

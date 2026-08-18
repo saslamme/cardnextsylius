@@ -15,13 +15,3 @@ sylius_twig_hooks:
             content:
                 template: 'shop/layout/footer/content.html.twig'
                 priority: 0
-
-        'sylius_admin.product.create.content.form.sections.translations':
-            configurator_path:
-                template: 'admin/product/form/sections/translations/configurator_path.html.twig'
-                priority: 350
-
-        'sylius_admin.product.update.content.form.sections.translations':
-            configurator_path:
-                template: 'admin/product/form/sections/translations/configurator_path.html.twig'
-                priority: 350

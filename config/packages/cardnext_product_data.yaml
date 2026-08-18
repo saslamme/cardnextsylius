@@ -19,8 +19,3 @@ sylius_twig_hooks:
             cardnext_product_data:
                 template: 'admin/cardnext/product/section.html.twig'
                 priority: 50
-
-        'sylius_admin.product.update.content.header.title_block.actions':
-            cardnext_configurator:
-                template: 'admin/cardnext/product/configurator_action.html.twig'
-                priority: 50

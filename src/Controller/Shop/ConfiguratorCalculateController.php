@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Shop;
 
 use App\Dto\Configurator\ConfiguratorConfiguration;
-use App\Entity\Product\Product;
 use App\Exception\Configurator\InvalidConfigurationException;
 use App\Exception\Configurator\MissingPriceRuleException;
 use App\Repository\Configurator\ConfiguratorRepository;
 use App\Service\Configurator\ConfiguratorPriceCalculator;
-use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,21 +21,16 @@ final class ConfiguratorCalculateController extends AbstractController
 {
     public function __construct(
         private readonly ConfiguratorRepository $configurators,
-        private readonly EntityManagerInterface $entityManager,
         private readonly ConfiguratorPriceCalculator $calculator,
         private readonly ChannelContextInterface $channelContext,
         private readonly CurrencyContextInterface $currencyContext,
     ) {
     }
 
-    #[Route('/products/{productCode}/configuration/calculate', name: 'cardnext_shop_configuration_calculate', methods: ['POST'])]
-    public function __invoke(Request $request, string $productCode): JsonResponse
+    #[Route('/configurators/{configuratorCode}/calculate', name: 'cardnext_shop_configurator_calculate', methods: ['POST'])]
+    public function __invoke(Request $request, string $configuratorCode): JsonResponse
     {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['code' => $productCode]);
-        if (!$product instanceof Product || !$product->isConfigurable()) {
-            return $this->error(null, 'Dieses Konfigurationsprodukt ist nicht verfügbar.', Response::HTTP_NOT_FOUND);
-        }
-        $configurator = $this->configurators->findEnabledByProduct($product);
+        $configurator = $this->configurators->findEnabledByCode($configuratorCode);
         if ($configurator === null) {
             return $this->error(null, 'Der Konfigurator ist nicht verfügbar.', Response::HTTP_NOT_FOUND);
         }
@@ -55,6 +48,9 @@ final class ConfiguratorCalculateController extends AbstractController
         }
 
         $channel = $this->channelContext->getChannel();
+        if (!$channel instanceof \App\Entity\Channel\Channel || !$configurator->hasChannel($channel)) {
+            return $this->error(null, 'Der Konfigurator ist in diesem Verkaufskanal nicht verfügbar.', Response::HTTP_NOT_FOUND);
+        }
         $channelCode = $channel->getCode();
         $currencyCode = $this->currencyContext->getCurrencyCode();
         if ($channelCode === null) {

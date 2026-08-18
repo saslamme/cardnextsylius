@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Channel\Channel;
 use App\Entity\Configurator\Configurator;
 use App\Entity\Configurator\ConfiguratorField;
 use App\Entity\Configurator\ConfiguratorPriceRule;
 use App\Entity\Configurator\ConfiguratorSection;
+use App\Entity\Configurator\ConfiguratorTranslation;
 use App\Entity\Configurator\ConfiguratorValue;
 use App\Enum\Configurator\FieldType;
 use App\Enum\Configurator\MultiplierType;
@@ -33,9 +35,9 @@ final class ConfiguratorAdminController extends AbstractController
     {
         $page = max(1, $request->query->getInt('page', 1));
         $search = trim((string) $request->query->get('q'));
-        $qb = $em->createQueryBuilder()->select('c', 'p', 'COUNT(DISTINCT s.id) AS sectionCount', 'COUNT(DISTINCT f.id) AS fieldCount', 'COUNT(DISTINCT v.id) AS valueCount', 'COUNT(DISTINCT r.id) AS priceRuleCount')->from(Configurator::class, 'c')->leftJoin('c.product', 'p')->leftJoin('c.sections', 's')->leftJoin('s.fields', 'f')->leftJoin('f.values', 'v')->leftJoin(ConfiguratorPriceRule::class, 'r', 'WITH', 'r.configurator = c')->groupBy('c.id', 'p.id')->orderBy('p.code', 'ASC');
+        $qb = $em->createQueryBuilder()->select('c', 'COUNT(DISTINCT s.id) AS sectionCount', 'COUNT(DISTINCT f.id) AS fieldCount', 'COUNT(DISTINCT v.id) AS valueCount', 'COUNT(DISTINCT r.id) AS priceRuleCount')->from(Configurator::class, 'c')->leftJoin('c.sections', 's')->leftJoin('s.fields', 'f')->leftJoin('f.values', 'v')->leftJoin(ConfiguratorPriceRule::class, 'r', 'WITH', 'r.configurator = c')->groupBy('c.id')->orderBy('c.code', 'ASC');
         if ($search !== '') {
-            $qb->andWhere('LOWER(c.name) LIKE :q OR LOWER(c.code) LIKE :q')->setParameter('q', '%' . mb_strtolower($search) . '%');
+            $qb->andWhere('LOWER(c.internalName) LIKE :q OR LOWER(c.code) LIKE :q')->setParameter('q', '%' . mb_strtolower($search) . '%');
         }
         if ($request->query->has('enabled') && $request->query->get('enabled') !== '') {
             $qb->andWhere('c.enabled = :enabled')->setParameter('enabled', $request->query->getBoolean('enabled'));
@@ -47,10 +49,24 @@ final class ConfiguratorAdminController extends AbstractController
         return $this->render('admin/cardnext/configurator/index.html.twig', compact('rows', 'page', 'total', 'search'));
     }
 
-    #[Route('/new', name: 'create', methods: ['GET'])]
-    public function create(): Response
+    #[Route('/new', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $em): Response
     {
-        return $this->redirectToRoute('sylius_admin_product_create');
+        if ($request->isMethod('POST') && $this->validToken($request, 'configurator-create')) {
+            try {
+                $configurator = new Configurator($this->required($request, 'code'), $this->required($request, 'name'));
+                $configurator->setEnabled($request->request->getBoolean('enabled'));
+                $this->applyCatalogData($configurator, $request, $em);
+                $em->persist($configurator);
+                $em->flush();
+
+                return $this->redirectToRoute('cardnext_admin_configurator_update', ['id' => $configurator->getId()]);
+            } catch (\Throwable $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+        }
+
+        return $this->render('admin/cardnext/configurator/form.html.twig', ['configurator' => null, 'channels' => $em->getRepository(Channel::class)->findAll()]);
     }
 
     #[Route('/{id}/edit', name: 'update', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
@@ -60,6 +76,7 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $configurator->setName($this->required($request, 'name'));
                 $configurator->setEnabled($request->request->getBoolean('enabled'));
+                $this->applyCatalogData($configurator, $request, $em);
                 $em->flush();
                 $this->addFlash('success', 'cardnext.configurator.flash.updated');
             } catch (\Throwable $exception) {
@@ -67,7 +84,36 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/form.html.twig', compact('configurator'));
+        return $this->render('admin/cardnext/configurator/form.html.twig', ['configurator' => $configurator, 'channels' => $em->getRepository(Channel::class)->findAll()]);
+    }
+
+    private function applyCatalogData(Configurator $configurator, Request $request, EntityManagerInterface $em): void
+    {
+        $locale = trim((string) $request->request->get('locale'));
+        $path = trim((string) $request->request->get('path'));
+        $publicName = trim((string) $request->request->get('translation_name'));
+        if ($locale !== '' || $path !== '' || $publicName !== '') {
+            if ($locale === '' || $path === '' || $publicName === '') {
+                throw new \InvalidArgumentException('Locale, öffentlicher Name und Pfad müssen gemeinsam angegeben werden.');
+            }
+            $translation = $configurator->getTranslation($locale) ?? new ConfiguratorTranslation($locale, $publicName, $path);
+            $translation->setName($publicName);
+            $translation->setPath($path);
+            $translation->setShortDescription($request->request->get('short_description'));
+            $translation->setDescription($request->request->get('description'));
+            $translation->setMetaTitle($request->request->get('meta_title'));
+            $translation->setMetaDescription($request->request->get('meta_description'));
+            $configurator->addTranslation($translation);
+        }
+        foreach ($configurator->getChannels()->toArray() as $channel) {
+            $configurator->removeChannel($channel);
+        }
+        foreach ((array) $request->request->all('channels') as $id) {
+            $channel = $em->find(Channel::class, (int) $id);
+            if ($channel instanceof Channel) {
+                $configurator->addChannel($channel);
+            }
+        }
     }
 
     #[Route('/{id}/structure', name: 'structure', requirements: ['id' => '\\d+'], methods: ['GET'])]

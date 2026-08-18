@@ -40,13 +40,13 @@ final class ConfiguratorAdminControllerInputTest extends TestCase
         self::assertStringNotContainsString('product-search', $template);
     }
 
-    public function testConfiguratorCreateRedirectsToProductWorkflow(): void
+    public function testConfiguratorCreateBuildsStandaloneAggregate(): void
     {
         $controller = file_get_contents(__DIR__ . '/../../src/Controller/Admin/ConfiguratorAdminController.php');
 
         self::assertIsString($controller);
-        self::assertStringContainsString("redirectToRoute('sylius_admin_product_create')", $controller);
-        self::assertStringNotContainsString("new Configurator($this->required", $controller);
+        self::assertStringNotContainsString("redirectToRoute('sylius_admin_product_create')", $controller);
+        self::assertStringContainsString("new Configurator($this->required", $controller);
     }
 
     public function testEmptyOptionalPriceRuleIdsAreAccepted(): void

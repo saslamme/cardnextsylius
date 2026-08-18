@@ -16,7 +16,8 @@ final class ConfiguratorPageArchitectureTest extends KernelTestCase
 
         self::assertStringContainsString('cn-configurator-page', $page);
         self::assertStringContainsString('cn-configurator-process', $page);
-        self::assertStringContainsString('product.description|raw', $page);
+        self::assertStringContainsString('translation.description|raw', $page);
+        self::assertStringNotContainsString('product.', $page);
         self::assertStringContainsString('rel="canonical"', $page);
         self::assertStringNotContainsString('cn-product-layout', $page);
         self::assertStringNotContainsString('add_to_cart', $page);

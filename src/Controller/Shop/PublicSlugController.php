@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Shop;
 
-use App\Entity\Product\Product;
-use App\Entity\Product\ProductTranslation;
-use App\Service\ProductPublicUrlGenerator;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Repository\ProductRepositoryInterface;
@@ -28,7 +25,6 @@ final readonly class PublicSlugController
         private LocaleContextInterface $localeContext,
         #[Autowire(service: 'sylius.controller.product')]
         private ResourceController $productController,
-        private ProductPublicUrlGenerator $publicUrlGenerator,
     ) {
     }
 
@@ -54,11 +50,6 @@ final readonly class PublicSlugController
 
         $product = $this->productRepository->findOneByChannelAndSlug($channel, $locale, $slug);
         if ($product !== null) {
-            $translation = $product instanceof Product ? $product->getTranslation($locale) : null;
-            if ($product instanceof Product && $product->isConfigurable() && $translation instanceof ProductTranslation && $translation->getConfiguratorPath() !== null) {
-                return new Response('', Response::HTTP_MOVED_PERMANENTLY, ['Location' => $this->publicUrlGenerator->generate($product, $locale)]);
-            }
-
             $request->attributes->set('_sylius', [
                 'template' => '@SyliusShop/product/show.html.twig',
                 'repository' => [
