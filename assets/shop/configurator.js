@@ -34,6 +34,8 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
     const submit = root.querySelector('[data-configurator-submit]');
     const price = root.querySelector('.cn-configurator__price');
     let controller;
+    let calculatedPayload;
+    const addButton = root.querySelector('[data-configurator-add]');
     const dependencies = JSON.parse(root.dataset.dependencies || '[]').sort((a, b) => a.priority - b.priority);
 
     const dependencyMatches = ({sourceFieldCode, operator, expectedValues}) => {
@@ -104,6 +106,8 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
     };
 
     const calculate = async () => {
+        calculatedPayload = undefined;
+        if (addButton) addButton.disabled = true;
         applyDependencies();
         clearErrors();
         const quantity = Number.parseInt(root.querySelector('[data-configurator-quantity]').value, 10);
@@ -154,6 +158,8 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
             }
             root.querySelector('[data-configurator-placeholder]').classList.add('d-none');
             root.querySelector('[data-configurator-result]').classList.remove('d-none');
+            calculatedPayload = {quantity, leadTimeCode: root.querySelector('input[name="leadTimeCode"]:checked')?.value, selections};
+            if (addButton) addButton.disabled = false;
         } catch (error) {
             if (error.name !== 'AbortError') {
                 showErrors([{field: null, message: 'Der Preisservice ist derzeit nicht erreichbar.'}]);
@@ -168,4 +174,12 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
     form.addEventListener('submit', (event) => { event.preventDefault(); calculate(); });
     form.addEventListener('change', () => { applyDependencies(); debouncedCalculate(); });
     form.addEventListener('input', () => { applyDependencies(); debouncedCalculate(); });
+    addButton?.addEventListener('click', async () => {
+        if (!calculatedPayload) return;
+        addButton.disabled = true;
+        const response = await fetch(root.dataset.cartEndpoint, {method: 'POST', headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': root.dataset.cartToken}, body: JSON.stringify(calculatedPayload)});
+        const data = await response.json();
+        if (response.ok && data.ok) window.location.assign(data.cartUrl);
+        else { showErrors([{field: null, message: data.message || 'Der Artikel konnte nicht hinzugefügt werden.'}]); addButton.disabled = false; }
+    });
 });

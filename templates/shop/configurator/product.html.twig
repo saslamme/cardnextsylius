@@ -1,5 +1,5 @@
 {% if configurator %}
-    <section class="cn-configurator" data-configurator data-dependencies="{{ computed.dependencies|json_encode|e('html_attr') }}" data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
+    <section class="cn-configurator" data-configurator data-dependencies="{{ computed.dependencies|json_encode|e('html_attr') }}" data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" data-cart-endpoint="{{ path('cardnext_shop_configurator_cart_add', {configuratorCode: configurator.code}) }}" data-cart-token="{{ csrf_token('configured_cart_add_' ~ configurator.code) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
         <div class="cn-configurator__layout">
             <form class="cn-configurator__form" data-configurator-form novalidate>
                 <div class="cn-configurator__section">
@@ -85,6 +85,7 @@
                     <div data-configurator-breakdown></div>
                     <div class="cn-configurator__total"><strong>Gesamt</strong><strong data-configurator-total></strong></div>
                     <small class="text-body-secondary">Alle Beträge für <span data-configurator-result-quantity></span> Stück.</small>
+                    <button class="btn btn-success mt-3" type="button" data-configurator-add disabled>In den Warenkorb</button>
                 </div>
             </aside>
         </div>
