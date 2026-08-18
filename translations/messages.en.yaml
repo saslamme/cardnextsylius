@@ -2,6 +2,8 @@ cardnext:
   order:
     configured_product: Configured product
     configured_items: Configured items
+    position: line
+    positions: lines
     production_time: Production time
     working_days: 'approx. %days% working days'
   admin:
