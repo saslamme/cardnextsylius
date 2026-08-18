@@ -50,3 +50,19 @@ sylius_twig_hooks:
             configured_items_total:
                 template: 'shop/checkout/complete/configured_items_total.html.twig'
                 priority: 450
+
+        # Sylius 2.2 renders only order.items in the native order item body.
+        'sylius_admin.order.show.content.sections.items':
+            configured_items:
+                template: 'admin/order/show/configured_items.html.twig'
+                priority: 50
+
+        'sylius_admin.order.show.content.sections.items.foot':
+            total:
+                template: 'admin/order/show/items_total.html.twig'
+                priority: 0
+
+        'sylius_admin.order.show.content.sections.summary':
+            configured_items_total:
+                template: 'admin/order/show/configured_items_total.html.twig'
+                priority: 250

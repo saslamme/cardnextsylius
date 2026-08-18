@@ -1,6 +1,7 @@
 {% extends '@SyliusCore/Email/orderConfirmation.html.twig' %}
 
 {% block body %}
+        {% import 'shared/order/_configured_item_snapshot.html.twig' as snapshot %}
         {% set is_de = localeCode starts with 'de' %}
         {% set order_url = sylius_bundle_loaded_checker('SyliusShopBundle')
             ? sylius_channel_url(
@@ -107,6 +108,32 @@
                                     </td>
                                 </tr>
                             {% endfor %}
+                            {% for item in order.configuredItems %}
+                                <tr>
+                                    <td style="padding:13px 12px 13px 0;border-top:1px solid #eef0f3;vertical-align:top;">
+                                        <div style="font-size:14px;font-weight:700;color:#05053f;">{{ item.configuratorName }}</div>
+                                        <div style="margin-top:3px;color:#7b8494;font-size:11px;">{{ 'cardnext.order.configured_product'|trans({}, null, localeCode) }}</div>
+                                        {{ snapshot.render(item.selectionsSnapshot, 'email') }}
+                                        {% if item.leadTimeName or item.workingDays %}
+                                            <div style="margin-top:7px;color:#667085;font-size:12px;">
+                                                <strong>{{ 'cardnext.order.production_time'|trans({}, null, localeCode) }}:</strong>
+                                                {% if item.leadTimeName %}{{ item.leadTimeName }}{% endif %}
+                                                {% if item.leadTimeName and item.workingDays %} &middot; {% endif %}
+                                                {% if item.workingDays %}{{ 'cardnext.order.working_days'|trans({'%days%': item.workingDays}, null, localeCode) }}{% endif %}
+                                            </div>
+                                        {% endif %}
+                                        <div style="margin-top:7px;color:#667085;font-size:12px;">
+                                            {{ 'sylius.ui.unit_price'|trans({}, null, localeCode) }}: {{ item.unitAmount|sylius_format_money(order.currencyCode, localeCode) }}
+                                        </div>
+                                    </td>
+                                    <td style="width:55px;padding:13px 8px;border-top:1px solid #eef0f3;text-align:center;vertical-align:top;color:#667085;font-size:13px;">
+                                        <span style="font-size:11px;">{{ 'sylius.ui.quantity'|trans({}, null, localeCode) }}:</span><br>{{ item.quantity }}
+                                    </td>
+                                    <td style="width:110px;padding:13px 0 13px 12px;border-top:1px solid #eef0f3;text-align:right;vertical-align:top;font-size:14px;font-weight:750;color:#05053f;">
+                                        <span style="color:#667085;font-size:11px;font-weight:400;">{{ 'sylius.ui.total'|trans({}, null, localeCode) }}:</span><br>{{ item.total|sylius_format_money(order.currencyCode, localeCode) }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
                         </table>
                     </div>
 
@@ -120,6 +147,17 @@
                                     {{ order.itemsTotal|sylius_format_money(order.currencyCode, localeCode) }}
                                 </td>
                             </tr>
+
+                            {% if order.configuredItems|length > 0 %}
+                                {% set configuredItemsTotal = 0 %}
+                                {% for item in order.configuredItems %}
+                                    {% set configuredItemsTotal = configuredItemsTotal + item.total %}
+                                {% endfor %}
+                                <tr>
+                                    <td style="padding:7px 0;color:#667085;font-size:13px;">{{ 'cardnext.order.configured_items'|trans({}, null, localeCode) }}</td>
+                                    <td style="padding:7px 0;text-align:right;color:#05053f;font-size:13px;">{{ configuredItemsTotal|sylius_format_money(order.currencyCode, localeCode) }}</td>
+                                </tr>
+                            {% endif %}
 
                             {% if order.shippingTotal != 0 %}
                                 <tr>

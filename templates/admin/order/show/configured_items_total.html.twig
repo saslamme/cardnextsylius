@@ -1,0 +1,13 @@
+{% import '@SyliusAdmin/shared/helper/money.html.twig' as money %}
+
+{% set order = hookable_metadata.context.resource %}
+{% if order.configuredItems|length > 0 %}
+    {% set configuredItemsTotal = 0 %}
+    {% for item in order.configuredItems %}
+        {% set configuredItemsTotal = configuredItemsTotal + item.total %}
+    {% endfor %}
+    <tr data-configured-items-total>
+        <td><strong>{{ 'cardnext.order.configured_items'|trans }}:</strong></td>
+        <td class="text-end">{{ money.format(configuredItemsTotal, order.currencyCode) }}</td>
+    </tr>
+{% endif %}
