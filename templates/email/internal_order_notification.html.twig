@@ -3,6 +3,12 @@
 {% set shipment = order.shipments|first %}
 {% set payment = order.payments|first %}
 {% set customer = order.customer %}
+{% set configuredItemsTotal = 0 %}
+{% import 'shared/order/_configured_item_snapshot.html.twig' as configuredItemSnapshot %}
+
+{% for configuredItem in order.configuredItems %}
+    {% set configuredItemsTotal = configuredItemsTotal + configuredItem.total %}
+{% endfor %}
 
 <div style="margin:0;padding:24px;background:#f5f6f8;font-family:Arial,Helvetica,sans-serif;color:#05053f;">
     <div style="max-width:720px;margin:0 auto;background:#fff;border:1px solid #e4e7ec;border-radius:10px;overflow:hidden;">
@@ -31,7 +37,7 @@
                     <td style="font-size:12px;color:#6d7b8d;text-align:right;">
                         Positionen
                         <div style="margin-top:3px;font-size:20px;font-weight:800;color:#05053f;">
-                            {{ order.items|length }}
+                            {{ order.items|length + order.configuredItems|length }}
                         </div>
                     </td>
                 </tr>
@@ -60,17 +66,55 @@
                         </td>
                     </tr>
                 {% endfor %}
+                {% for item in order.configuredItems %}
+                    <tr>
+                        <td style="padding:11px 10px 11px 0;border-top:1px solid #eef0f3;vertical-align:top;">
+                            <div style="font-size:13px;font-weight:700;">{{ item.configuratorName }}</div>
+                            <div style="margin-top:2px;font-size:11px;color:#7b8494;">Konfiguriertes Produkt</div>
+
+                            <div style="margin-top:7px;">
+                                {{ configuredItemSnapshot.render(item.selectionsSnapshot, 'email') }}
+                            </div>
+
+                            {% if item.leadTimeName or item.workingDays is not null %}
+                                <div style="margin-top:7px;font-size:11px;color:#7b8494;">Produktionszeit</div>
+                                <div style="margin-top:2px;font-size:12px;color:#05053f;">
+                                    {% if item.leadTimeName %}{{ item.leadTimeName }}{% endif %}{% if item.leadTimeName and item.workingDays is not null %} · {% endif %}{% if item.workingDays is not null %}ca. {{ item.workingDays }} Arbeitstage{% endif %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td style="width:100px;padding:11px 8px;border-top:1px solid #eef0f3;text-align:center;vertical-align:top;font-size:12px;color:#667085;">
+                            <div>{{ item.quantity }} ×</div>
+                            <div style="margin-top:3px;font-size:11px;white-space:nowrap;">
+                                {{ item.unitAmount|sylius_format_money(order.currencyCode, order.localeCode) }} / Stück
+                            </div>
+                        </td>
+                        <td style="width:110px;padding:11px 0 11px 10px;border-top:1px solid #eef0f3;text-align:right;vertical-align:top;font-size:13px;font-weight:700;">
+                            {{ item.total|sylius_format_money(order.currencyCode, order.localeCode) }}
+                        </td>
+                    </tr>
+                {% endfor %}
             </table>
         </div>
 
         <div style="padding:0 28px 24px;">
             <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-                <tr>
-                    <td style="padding:7px 0;font-size:12px;color:#667085;">Zwischensumme</td>
-                    <td style="padding:7px 0;text-align:right;font-size:12px;">
-                        {{ order.itemsTotal|sylius_format_money(order.currencyCode, order.localeCode) }}
-                    </td>
-                </tr>
+                {% if order.items|length > 0 %}
+                    <tr>
+                        <td style="padding:7px 0;font-size:12px;color:#667085;">Artikel</td>
+                        <td style="padding:7px 0;text-align:right;font-size:12px;">
+                            {{ order.itemsTotal|sylius_format_money(order.currencyCode, order.localeCode) }}
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if order.configuredItems|length > 0 %}
+                    <tr>
+                        <td style="padding:7px 0;font-size:12px;color:#667085;">Konfigurierte Artikel</td>
+                        <td style="padding:7px 0;text-align:right;font-size:12px;">
+                            {{ configuredItemsTotal|sylius_format_money(order.currencyCode, order.localeCode) }}
+                        </td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td style="padding:7px 0;font-size:12px;color:#667085;">Versand</td>
                     <td style="padding:7px 0;text-align:right;font-size:12px;">
