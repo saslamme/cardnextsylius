@@ -56,4 +56,9 @@ class Order extends BaseOrder implements OrderInterface
     {
         return !$this->configuredItems->isEmpty();
     }
+
+    public function isEmpty(): bool
+    {
+        return parent::isEmpty() && $this->configuredItems->isEmpty();
+    }
 }
