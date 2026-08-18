@@ -1,0 +1,34 @@
+{% import '@SyliusAdmin/shared/helper/money.html.twig' as money %}
+{% import 'shared/order/_configured_item_snapshot.html.twig' as snapshot %}
+
+{% set order = hookable_metadata.context.resource %}
+
+{% if order.configuredItems|length > 0 %}
+    <tbody data-configured-order-items>
+        {% for item in order.configuredItems %}
+            <tr data-configured-order-item="{{ item.id }}">
+                <td>
+                    <div class="fw-bold">{{ item.configuratorName }}</div>
+                    <span class="badge bg-blue-lt mb-2">{{ 'cardnext.order.configured_product'|trans }}</span>
+                    {{ snapshot.render(item.selectionsSnapshot, 'admin') }}
+                    {% if item.leadTimeName or item.workingDays %}
+                        <div class="small text-secondary mt-2">
+                            <span class="fw-semibold">{{ 'cardnext.order.production_time'|trans }}:</span>
+                            {% if item.leadTimeName %}{{ item.leadTimeName }}{% endif %}
+                            {% if item.leadTimeName and item.workingDays %} &middot; {% endif %}
+                            {% if item.workingDays %}{{ 'cardnext.order.working_days'|trans({'%days%': item.workingDays}) }}{% endif %}
+                        </div>
+                    {% endif %}
+                </td>
+                <td class="text-end">{{ money.format(item.unitAmount, order.currencyCode) }}</td>
+                <td class="text-end">&mdash;</td>
+                <td class="text-end">&mdash;</td>
+                <td class="text-end">{{ money.format(item.unitAmount, order.currencyCode) }}</td>
+                <td class="text-end">{{ item.quantity }}</td>
+                <td class="text-end">{{ money.format(item.total, order.currencyCode) }}</td>
+                <td class="text-end">&mdash;</td>
+                <td class="text-end fw-medium">{{ money.format(item.total, order.currencyCode) }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+{% endif %}

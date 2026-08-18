@@ -1,0 +1,45 @@
+{% macro render(snapshot, style) %}
+    {% if snapshot is iterable %}
+        {% for key, entry in snapshot %}
+            {% set label = null %}
+            {% set values = [] %}
+
+            {% if entry is iterable %}
+                {% set label = entry.label|default(entry.fieldName|default(null)) %}
+
+                {% if entry.values is defined and entry.values is iterable %}
+                    {% for value in entry.values %}
+                        {% if value is iterable %}
+                            {% set name = value.name|default(value.label|default(null)) %}
+                            {% if name is not null and name is not same as('') %}
+                                {% set values = values|merge([name]) %}
+                            {% endif %}
+                        {% elseif value is not null and value is not same as('') %}
+                            {% set values = values|merge([value]) %}
+                        {% endif %}
+                    {% endfor %}
+                {% elseif entry.value is defined %}
+                    {% if entry.value is iterable %}
+                        {% set name = entry.value.name|default(entry.value.label|default(null)) %}
+                        {% if name is not null and name is not same as('') %}
+                            {% set values = [name] %}
+                        {% endif %}
+                    {% elseif entry.value is not null and entry.value is not same as('') %}
+                        {% set values = [entry.value] %}
+                    {% endif %}
+                {% endif %}
+            {% elseif entry is not null and entry is not same as('') %}
+                {% set label = key %}
+                {% set values = [entry] %}
+            {% endif %}
+
+            {% if label is not null and label is not same as('') and values|length > 0 %}
+                {% if style == 'email' %}
+                    <div style="margin-top:3px;color:#667085;font-size:12px;"><strong>{{ label }}:</strong> {{ values|join(', ') }}</div>
+                {% else %}
+                    <div class="small"><span class="fw-semibold">{{ label }}:</span> {{ values|join(', ') }}</div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}

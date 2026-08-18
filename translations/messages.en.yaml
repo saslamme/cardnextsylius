@@ -1,4 +1,9 @@
 cardnext:
+  order:
+    configured_product: Configured product
+    configured_items: Configured items
+    production_time: Production time
+    working_days: 'approx. %days% working days'
   admin:
     product_create:
       standard: Standard product
