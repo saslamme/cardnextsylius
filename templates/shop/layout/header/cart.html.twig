@@ -1,5 +1,6 @@
 {# Rendered with Sylius\Bundle\ShopBundle\Twig\Component\Common\CartComponent #}
 <div class="cardnext-cart-component cn-shop-header__cart" {{ attributes }}>
+    {% set cartPositionCount = cart.items|length + cart.configuredItems|length %}
     <button
         type="button"
         class="cn-shop-header__action"
@@ -15,9 +16,9 @@
                 <circle cx="9.5" cy="19" r="1"/>
                 <circle cx="17" cy="19" r="1"/>
             </svg>
-            {% if cart.totalQuantity > 0 %}
-                <span class="cardnext-cart-badge" {{ sylius_test_html_attribute('cart-quantity', cart.totalQuantity) }}>
-                    {{ cart.totalQuantity }}
+            {% if cartPositionCount > 0 %}
+                <span class="cardnext-cart-badge" {{ sylius_test_html_attribute('cart-quantity', cartPositionCount) }}>
+                    {{ cartPositionCount }}
                 </span>
             {% endif %}
         </span>
