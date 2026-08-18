@@ -16,6 +16,7 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +25,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ConfiguredCartController extends AbstractController
 {
-    public function __construct(private readonly ConfiguratorRepository $configurators, private readonly ConfiguratorPriceCalculator $calculator, private readonly ConfiguredOrderItemSnapshotFactory $factory, private readonly CartContextInterface $cartContext, private readonly ChannelContextInterface $channelContext, private readonly CurrencyContextInterface $currencyContext, private readonly LocaleContextInterface $localeContext, private readonly EntityManagerInterface $em)
+    public function __construct(private readonly ConfiguratorRepository $configurators, private readonly ConfiguratorPriceCalculator $calculator, private readonly ConfiguredOrderItemSnapshotFactory $factory, private readonly CartContextInterface $cartContext, private readonly ChannelContextInterface $channelContext, private readonly CurrencyContextInterface $currencyContext, private readonly LocaleContextInterface $localeContext, private readonly EntityManagerInterface $em, private readonly OrderProcessorInterface $orderProcessor)
     {
     }
 
@@ -49,6 +50,7 @@ final class ConfiguredCartController extends AbstractController
             return $this->json(['ok' => false], 500);
         }
         $cart->addConfiguredItem($item);
+        $this->orderProcessor->process($cart);
         $this->em->persist($cart);
         $this->em->flush();
 
@@ -69,6 +71,7 @@ final class ConfiguredCartController extends AbstractController
             $this->addFlash('error', 'Die Konfiguration kann für diese Menge derzeit nicht berechnet werden.');
         } else {
             $item->replacePricing($fresh);
+            $this->orderProcessor->process($item->getOrder());
             $this->em->flush();
         }
 
@@ -82,7 +85,9 @@ final class ConfiguredCartController extends AbstractController
         if (!$this->isCsrfTokenValid('configured_item_' . $item->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
-        $this->em->remove($item);
+        $order = $item->getOrder();
+        $order->removeConfiguredItem($item);
+        $this->orderProcessor->process($order);
         $this->em->flush();
 
         return $this->redirectToRoute('sylius_shop_cart_summary');
