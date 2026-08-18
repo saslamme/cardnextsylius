@@ -12,23 +12,33 @@ use Twig\TwigFunction;
 
 final class CartBadgeTemplateTest extends TestCase
 {
-    #[DataProvider('quantities')]
-    public function testBadgeIsOnlyRenderedForNonEmptyCarts(int $quantity, bool $badgeExpected): void
+    #[DataProvider('cartPositions')]
+    public function testBadgeCountsCartPositions(array $items, array $configuredItems, ?int $expectedCount): void
     {
         $twig = new Environment(new FilesystemLoader(dirname(__DIR__, 2).'/templates'));
         $twig->addFunction(new TwigFunction('sylius_test_html_attribute', static fn (): string => '', ['is_safe' => ['html']]));
 
         $html = $twig->render('shop/layout/header/cart.html.twig', [
             'attributes' => '',
-            'cart' => (object) ['totalQuantity' => $quantity],
+            'cart' => (object) ['items' => $items, 'configuredItems' => $configuredItems],
         ]);
 
-        self::assertSame($badgeExpected, str_contains($html, 'cardnext-cart-badge'));
+        if ($expectedCount === null) {
+            self::assertStringNotContainsString('cardnext-cart-badge', $html);
+
+            return;
+        }
+
+        self::assertStringContainsString('cardnext-cart-badge', $html);
+        self::assertMatchesRegularExpression('/cardnext-cart-badge[^>]*>\s*'.$expectedCount.'\s*</', $html);
     }
 
-    public static function quantities(): iterable
+    public static function cartPositions(): iterable
     {
-        yield 'empty cart' => [0, false];
-        yield 'cart with items' => [2, true];
+        yield 'empty cart' => [[], [], null];
+        yield 'one regular item' => [[new \stdClass()], [], 1];
+        yield 'one configured item' => [[], [new \stdClass()], 1];
+        yield 'mixed cart' => [[new \stdClass()], [new \stdClass()], 2];
+        yield 'four positions' => [[new \stdClass(), new \stdClass()], [new \stdClass(), new \stdClass()], 4];
     }
 }

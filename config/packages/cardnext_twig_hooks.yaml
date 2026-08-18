@@ -20,3 +20,13 @@ sylius_twig_hooks:
             configured_items_total:
                 template: 'shop/cart/configured_items_total.html.twig'
                 priority: 450
+
+        'sylius_shop.base.offcanvas.cart':
+            footer:
+                template: 'shop/layout/offcanvas/cart/footer.html.twig'
+                priority: 0
+
+        'sylius_shop.base.offcanvas.cart.body':
+            items:
+                template: 'shop/layout/offcanvas/cart/body/items.html.twig'
+                priority: 0

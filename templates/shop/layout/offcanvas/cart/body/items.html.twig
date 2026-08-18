@@ -1,0 +1,33 @@
+{% set cart = hookable_metadata.context.cart %}
+
+{% if cart.items|length == 0 and cart.configuredItems|length == 0 %}
+    {{ 'sylius.ui.your_cart_is_empty'|trans }}.
+{% else %}
+    <table class="table table-borderless align-middle">
+        <tbody>
+            {% for item in cart.items %}
+                {% hook 'items' with { item } %}
+            {% endfor %}
+            {% for item in cart.configuredItems %}
+                <tr data-configured-order-item="{{ item.id }}">
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="flex-shrink-0 overflow-hidden bg-light rounded-3 cn-configured-item__media" style="width: 3rem; aspect-ratio: 3/4;" aria-hidden="true">
+                                <svg viewBox="0 0 48 48" role="img" focusable="false">
+                                    <rect x="7" y="12" width="34" height="24" rx="3" />
+                                    <path d="M12 18h15M12 23h9M32 28a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 4c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ item.configuratorName }}</div>
+                                <small class="text-body-tertiary">Konfiguriertes Produkt</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-nowrap">{{ item.quantity }} Stück</td>
+                    <td class="text-end text-nowrap">{{ item.total|sylius_format_money(item.currencyCode, item.localeCode) }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
