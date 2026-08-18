@@ -52,6 +52,31 @@ class ConfiguratorImage
         return $this->path;
     }
 
+    public function setPath(string $path): void
+    {
+        $this->path = $path;
+    }
+
+    public function setType(?string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function setAltText(?string $altText): void
+    {
+        $this->altText = $altText;
+    }
+
+    public function setPosition(int $position): void
+    {
+        $this->position = $position;
+    }
+
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
+    }
+
     public function getType(): ?string
     {
         return $this->type;

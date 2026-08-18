@@ -60,6 +60,16 @@ class ConfiguratorTaxon
         return $this->position;
     }
 
+    public function setPosition(int $position): void
+    {
+        $this->position = $position;
+    }
+
+    public function setPrimary(bool $primary): void
+    {
+        $this->primary = $primary;
+    }
+
     public function isPrimary(): bool
     {
         return $this->primary;

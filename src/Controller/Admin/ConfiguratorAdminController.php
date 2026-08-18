@@ -6,15 +6,23 @@ namespace App\Controller\Admin;
 
 use App\Entity\Channel\Channel;
 use App\Entity\Configurator\Configurator;
+use App\Entity\Configurator\ConfiguratorDependency;
 use App\Entity\Configurator\ConfiguratorField;
+use App\Entity\Configurator\ConfiguratorImage;
+use App\Entity\Configurator\ConfiguratorLeadTime;
 use App\Entity\Configurator\ConfiguratorPriceRule;
 use App\Entity\Configurator\ConfiguratorSection;
+use App\Entity\Configurator\ConfiguratorTaxon;
 use App\Entity\Configurator\ConfiguratorTranslation;
 use App\Entity\Configurator\ConfiguratorValue;
+use App\Entity\Taxonomy\Taxon;
+use App\Enum\Configurator\DependencyEffect;
+use App\Enum\Configurator\DependencyOperator;
 use App\Enum\Configurator\FieldType;
 use App\Enum\Configurator\MultiplierType;
 use App\Enum\Configurator\PercentageBase;
 use App\Enum\Configurator\PriceType;
+use App\Service\CardnextMediaStorage;
 use App\Service\Configurator\Admin\DecimalAmountTransformer;
 use App\Service\Configurator\ConfiguratorAggregateDeleter;
 use App\Service\Configurator\PriceRuleOverlapValidator;
@@ -56,7 +64,6 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $configurator = new Configurator($this->required($request, 'code'), $this->required($request, 'name'));
                 $configurator->setEnabled($request->request->getBoolean('enabled'));
-                $this->applyCatalogData($configurator, $request, $em);
                 $em->persist($configurator);
                 $em->flush();
 
@@ -66,7 +73,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/form.html.twig', ['configurator' => null, 'channels' => $em->getRepository(Channel::class)->findAll()]);
+        return $this->render('admin/cardnext/configurator/form.html.twig', ['configurator' => null]);
     }
 
     #[Route('/{id}/edit', name: 'update', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
@@ -76,7 +83,6 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $configurator->setName($this->required($request, 'name'));
                 $configurator->setEnabled($request->request->getBoolean('enabled'));
-                $this->applyCatalogData($configurator, $request, $em);
                 $em->flush();
                 $this->addFlash('success', 'cardnext.configurator.flash.updated');
             } catch (\Throwable $exception) {
@@ -84,42 +90,166 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/form.html.twig', ['configurator' => $configurator, 'channels' => $em->getRepository(Channel::class)->findAll()]);
-    }
-
-    private function applyCatalogData(Configurator $configurator, Request $request, EntityManagerInterface $em): void
-    {
-        $locale = trim((string) $request->request->get('locale'));
-        $path = trim((string) $request->request->get('path'));
-        $publicName = trim((string) $request->request->get('translation_name'));
-        if ($locale !== '' || $path !== '' || $publicName !== '') {
-            if ($locale === '' || $path === '' || $publicName === '') {
-                throw new \InvalidArgumentException('Locale, öffentlicher Name und Pfad müssen gemeinsam angegeben werden.');
-            }
-            $translation = $configurator->getTranslation($locale) ?? new ConfiguratorTranslation($locale, $publicName, $path);
-            $translation->setName($publicName);
-            $translation->setPath($path);
-            $translation->setShortDescription($request->request->get('short_description'));
-            $translation->setDescription($request->request->get('description'));
-            $translation->setMetaTitle($request->request->get('meta_title'));
-            $translation->setMetaDescription($request->request->get('meta_description'));
-            $configurator->addTranslation($translation);
-        }
-        foreach ($configurator->getChannels()->toArray() as $channel) {
-            $configurator->removeChannel($channel);
-        }
-        foreach ((array) $request->request->all('channels') as $id) {
-            $channel = $em->find(Channel::class, (int) $id);
-            if ($channel instanceof Channel) {
-                $configurator->addChannel($channel);
-            }
-        }
+        return $this->render('admin/cardnext/configurator/form.html.twig', ['configurator' => $configurator]);
     }
 
     #[Route('/{id}/structure', name: 'structure', requirements: ['id' => '\\d+'], methods: ['GET'])]
     public function structure(Configurator $configurator): Response
     {
         return $this->render('admin/cardnext/configurator/structure.html.twig', compact('configurator'));
+    }
+
+    #[Route('/{id}/translations', name: 'translations', methods: ['GET'])]
+    public function translations(Configurator $configurator): Response
+    {
+        return $this->render('admin/cardnext/configurator/translations.html.twig', compact('configurator'));
+    }
+
+    #[Route('/{id}/translations/new', name: 'translation_create', methods: ['GET', 'POST'])]
+    #[Route('/{id}/translations/{translation}/edit', name: 'translation_update', methods: ['GET', 'POST'])]
+    public function translationForm(Configurator $configurator, Request $request, EntityManagerInterface $em, ?ConfiguratorTranslation $translation = null): Response
+    {
+        if ($translation !== null) {
+            $this->assertSame($configurator, $translation->getConfigurator());
+        }
+        if ($request->isMethod('POST') && $this->validToken($request, 'translation-' . ($translation?->getId() ?? 'new-' . $configurator->getId()))) {
+            try {
+                $locale = $translation?->getLocale() ?? $this->required($request, 'locale');
+                if ($translation === null && $configurator->getTranslation($locale) !== null) {
+                    throw new \DomainException('Für diese Locale existiert bereits eine Übersetzung.');
+                }
+                $path = $this->required($request, 'path');
+                $duplicate = $em->getRepository(ConfiguratorTranslation::class)->findOneBy(['locale' => $locale, 'path' => trim($path, '/')]);
+                if ($duplicate !== null && $duplicate !== $translation) {
+                    throw new \DomainException('Dieser Pfad ist in der gewählten Locale bereits vergeben.');
+                }
+                $translation ??= new ConfiguratorTranslation($locale, $this->required($request, 'name'), $path);
+                $translation->setName($this->required($request, 'name'));
+                $translation->setPath($path);
+                $translation->setShortDescription($this->nullable($request, 'short_description'));
+                $translation->setDescription($this->nullable($request, 'description'));
+                $translation->setMetaTitle($this->nullable($request, 'meta_title'));
+                $translation->setMetaDescription($this->nullable($request, 'meta_description'));
+                $configurator->addTranslation($translation);
+                $em->persist($translation);
+                $em->flush();
+
+                return $this->redirectToRoute('cardnext_admin_configurator_translations', ['id' => $configurator->getId()]);
+            } catch (\Throwable $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('admin/cardnext/configurator/translation_form.html.twig', compact('configurator', 'translation'));
+    }
+
+    #[Route('/{id}/translations/{translation}/delete', name: 'translation_delete', methods: ['POST'])]
+    public function translationDelete(Configurator $configurator, ConfiguratorTranslation $translation, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->assertSame($configurator, $translation->getConfigurator());
+        $this->validToken($request, 'translation-delete-' . $translation->getId());
+        $em->remove($translation);
+        $em->flush();
+
+        return $this->redirectToRoute('cardnext_admin_configurator_translations', ['id' => $configurator->getId()]);
+    }
+
+    #[Route('/{id}/channels', name: 'channels', methods: ['GET', 'POST'])]
+    public function channels(Configurator $configurator, Request $request, EntityManagerInterface $em): Response
+    {
+        $channels = $em->getRepository(Channel::class)->findBy([], ['code' => 'ASC']);
+        if ($request->isMethod('POST') && $this->validToken($request, 'channels-' . $configurator->getId())) {
+            foreach ($configurator->getChannels()->toArray() as $channel) {
+                $configurator->removeChannel($channel);
+            } foreach ($request->request->all('channels') as $id) {
+                $channel = $em->find(Channel::class, (int) $id);
+                if ($channel instanceof Channel) {
+                    $configurator->addChannel($channel);
+                }
+            } $em->flush();
+            $this->addFlash('success', 'Verkaufskanäle gespeichert.');
+        }
+
+        return $this->render('admin/cardnext/configurator/channels.html.twig', compact('configurator', 'channels'));
+    }
+
+    #[Route('/{id}/media', name: 'media', methods: ['GET', 'POST'])]
+    public function media(Configurator $configurator, Request $request, EntityManagerInterface $em, CardnextMediaStorage $storage): Response
+    {
+        if ($request->isMethod('POST') && $this->validToken($request, 'image-new-' . $configurator->getId())) {
+            try {
+                $file = $request->files->get('file');
+                if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
+                    throw new \DomainException('Bitte ein Bild auswählen.');
+                } $image = new ConfiguratorImage('');
+                $this->applyImage($image, $request);
+                $storage->uploadConfiguratorImage($image, $configurator->getCode(), $file);
+                $configurator->addImage($image);
+                $em->persist($image);
+                $em->flush();
+            } catch (\Throwable $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('admin/cardnext/configurator/media.html.twig', compact('configurator'));
+    }
+
+    #[Route('/{id}/media/{image}/edit', name: 'image_update', methods: ['POST'])]
+    public function imageUpdate(Configurator $configurator, ConfiguratorImage $image, Request $request, EntityManagerInterface $em): Response
+    {
+        if (!$configurator->getImages()->contains($image)) {
+            throw $this->createNotFoundException();
+        } $this->validToken($request, 'image-' . $image->getId());
+        $this->applyImage($image, $request);
+        $em->flush();
+
+        return $this->redirectToRoute('cardnext_admin_configurator_media', ['id' => $configurator->getId()]);
+    }
+
+    #[Route('/{id}/media/{image}/delete', name: 'image_delete', methods: ['POST'])]
+    public function imageDelete(Configurator $configurator, ConfiguratorImage $image, Request $request, EntityManagerInterface $em, CardnextMediaStorage $storage): Response
+    {
+        if (!$configurator->getImages()->contains($image)) {
+            throw $this->createNotFoundException();
+        } $this->validToken($request, 'image-delete-' . $image->getId());
+        $storage->removeConfiguratorImage($image);
+        $em->remove($image);
+        $em->flush();
+
+        return $this->redirectToRoute('cardnext_admin_configurator_media', ['id' => $configurator->getId()]);
+    }
+
+    #[Route('/{id}/taxons', name: 'taxons', methods: ['GET', 'POST'])]
+    public function taxons(Configurator $configurator, Request $request, EntityManagerInterface $em): Response
+    {
+        if ($request->isMethod('POST') && $this->validToken($request, 'taxon-new-' . $configurator->getId())) {
+            try {
+                $taxon = $em->find(Taxon::class, $this->requiredPositiveInt($request, 'taxon_id', 'Kategorie fehlt.')) ?? throw new \DomainException('Kategorie nicht gefunden.');
+                $assignment = new ConfiguratorTaxon($taxon);
+                $assignment->setPosition($this->nonNegativeInt($request, 'position', 0, 'Ungültige Position.'));
+                $assignment->setPrimary($request->request->getBoolean('primary'));
+                $configurator->addTaxonAssignment($assignment);
+                $em->persist($assignment);
+                $em->flush();
+            } catch (\Throwable $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+        $taxons = $em->getRepository(Taxon::class)->findBy([], ['code' => 'ASC']);
+
+        return $this->render('admin/cardnext/configurator/taxons.html.twig', compact('configurator', 'taxons'));
+    }
+
+    #[Route('/{id}/taxons/{assignment}/delete', name: 'taxon_delete', methods: ['POST'])]
+    public function taxonDelete(Configurator $configurator, ConfiguratorTaxon $assignment, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->assertSame($configurator, $assignment->getConfigurator());
+        $this->validToken($request, 'taxon-delete-' . $assignment->getId());
+        $em->remove($assignment);
+        $em->flush();
+
+        return $this->redirectToRoute('cardnext_admin_configurator_taxons', ['id' => $configurator->getId()]);
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
@@ -255,8 +385,9 @@ final class ConfiguratorAdminController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         $references = $em->createQueryBuilder()->select('COUNT(r.id)')->from(ConfiguratorPriceRule::class, 'r')->where('r.multiplierField = :field')->setParameter('field', $field)->getQuery()->getSingleScalarResult();
-        if (!$field->getValues()->isEmpty() || (int) $references > 0) {
-            $this->addFlash('error', sprintf('Dieses Feld besitzt noch Werte oder wird von %d Preisregeln verwendet.', $references));
+        $dependencies = $em->createQueryBuilder()->select('COUNT(d.id)')->from(ConfiguratorDependency::class, 'd')->where('d.sourceField = :field OR d.targetField = :field')->setParameter('field', $field)->getQuery()->getSingleScalarResult();
+        if (!$field->getValues()->isEmpty() || (int) $references > 0 || (int) $dependencies > 0) {
+            $this->addFlash('error', sprintf('Dieses Feld besitzt Werte oder wird von %d Preisregeln und %d Abhängigkeiten verwendet.', $references, $dependencies));
         } else {
             $em->remove($field);
             $em->flush();
@@ -389,6 +520,112 @@ final class ConfiguratorAdminController extends AbstractController
         sort($currencies);
 
         return $this->render('admin/cardnext/configurator/price_form.html.twig', ['configurator' => $configurator, 'values' => $values, 'fields' => $fields, 'channels' => $channels, 'currencies' => $currencies, 'price_types' => PriceType::cases(), 'multipliers' => MultiplierType::cases(), 'percentage_bases' => PercentageBase::cases(), 'amounts' => $amounts]);
+    }
+
+    #[Route('/{id}/dependencies', name: 'dependencies', methods: ['GET', 'POST'])]
+    public function dependencies(Configurator $configurator, Request $request, EntityManagerInterface $em): Response
+    {
+        $fields = $this->configuratorFields($configurator);
+        if ($request->isMethod('POST') && $this->validToken($request, 'dependency-new-' . $configurator->getId())) {
+            try {
+                $source = $em->find(ConfiguratorField::class, $this->requiredPositiveInt($request, 'source_field_id', 'Quellfeld fehlt.')) ?? throw new \DomainException('Quellfeld nicht gefunden.');
+                $this->assertSame($configurator, $source->getConfigurator());
+                $expected = array_values(array_filter(array_map('trim', explode(',', (string) $request->request->get('expected_values'))), static fn ($v) => $v !== ''));
+                $dependency = new ConfiguratorDependency($configurator, $source, DependencyOperator::from($this->required($request, 'operator')), $expected, DependencyEffect::from($this->required($request, 'effect')));
+                $targetId = $this->optionalPositiveInt($request, 'target_field_id', 'Ungültiges Zielfeld.');
+                if ($targetId !== null) {
+                    $target = $em->find(ConfiguratorField::class, $targetId) ?? throw new \DomainException('Zielfeld nicht gefunden.');
+                    $this->assertSame($configurator, $target->getConfigurator());
+                    $dependency->setTargetField($target);
+                } $dependency->setPriority($this->nonNegativeInt($request, 'priority', 0, 'Ungültige Priorität.'));
+                $dependency->setEnabled($request->request->getBoolean('enabled'));
+                $em->persist($dependency);
+                $em->flush();
+            } catch (\Throwable $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('admin/cardnext/configurator/dependencies.html.twig', ['configurator' => $configurator, 'fields' => $fields, 'operators' => DependencyOperator::cases(), 'effects' => DependencyEffect::cases()]);
+    }
+
+    #[Route('/{id}/dependencies/{dependency}/delete', name: 'dependency_delete', methods: ['POST'])]
+    public function dependencyDelete(Configurator $configurator, ConfiguratorDependency $dependency, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->assertSame($configurator, $dependency->getConfigurator());
+        $this->validToken($request, 'dependency-delete-' . $dependency->getId());
+        $em->remove($dependency);
+        $em->flush();
+
+        return $this->redirectToRoute('cardnext_admin_configurator_dependencies', ['id' => $configurator->getId()]);
+    }
+
+    #[Route('/{id}/lead-times', name: 'lead_times', methods: ['GET', 'POST'])]
+    public function leadTimes(Configurator $configurator, Request $request, EntityManagerInterface $em): Response
+    {
+        if ($request->isMethod('POST') && $this->validToken($request, 'lead-time-new-' . $configurator->getId())) {
+            try {
+                $leadTime = new ConfiguratorLeadTime($configurator, $this->required($request, 'code'), $this->required($request, 'name'), $this->nonNegativeInt($request, 'working_days', 0, 'Ungültige Werktage.'));
+                $this->applyLeadTime($leadTime, $request);
+                $em->persist($leadTime);
+                $em->flush();
+            } catch (\Throwable $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('admin/cardnext/configurator/lead_times.html.twig', compact('configurator'));
+    }
+
+    #[Route('/{id}/lead-times/{leadTime}/edit', name: 'lead_time_update', methods: ['POST'])]
+    public function leadTimeUpdate(Configurator $configurator, ConfiguratorLeadTime $leadTime, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->assertSame($configurator, $leadTime->getConfigurator());
+        $this->validToken($request, 'lead-time-' . $leadTime->getId());
+        $leadTime->setName($this->required($request, 'name'));
+        $this->applyLeadTime($leadTime, $request);
+        $em->flush();
+
+        return $this->redirectToRoute('cardnext_admin_configurator_lead_times', ['id' => $configurator->getId()]);
+    }
+
+    #[Route('/{id}/lead-times/{leadTime}/delete', name: 'lead_time_delete', methods: ['POST'])]
+    public function leadTimeDelete(Configurator $configurator, ConfiguratorLeadTime $leadTime, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->assertSame($configurator, $leadTime->getConfigurator());
+        $this->validToken($request, 'lead-time-delete-' . $leadTime->getId());
+        $em->remove($leadTime);
+        $em->flush();
+
+        return $this->redirectToRoute('cardnext_admin_configurator_lead_times', ['id' => $configurator->getId()]);
+    }
+
+    private function configuratorFields(Configurator $configurator): array
+    {
+        $fields = [];
+        foreach ($configurator->getSections() as $section) {
+            foreach ($section->getFields() as $field) {
+                $fields[] = $field;
+            }
+        }
+
+        return $fields;
+    }
+
+    private function applyImage(ConfiguratorImage $image, Request $request): void
+    {
+        $image->setType($this->nullable($request, 'type'));
+        $image->setAltText($this->nullable($request, 'alt_text'));
+        $image->setPosition($this->nonNegativeInt($request, 'position', 0, 'Ungültige Position.'));
+        $image->setEnabled($request->request->getBoolean('enabled'));
+    }
+
+    private function applyLeadTime(ConfiguratorLeadTime $leadTime, Request $request): void
+    {
+        $leadTime->setDescription($this->nullable($request, 'description'));
+        $leadTime->setWorkingDays($this->nonNegativeInt($request, 'working_days', 0, 'Ungültige Werktage.'));
+        $leadTime->setPosition($this->nonNegativeInt($request, 'position', 0, 'Ungültige Position.'));
+        $leadTime->setEnabled($request->request->getBoolean('enabled'));
     }
 
     private function applySection(ConfiguratorSection $s, Request $r): void
