@@ -65,23 +65,24 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-document.addEventListener('click', async (event) => {
-    const button = event.target.closest('[data-configured-item-action]');
-    if (!button || button.disabled) return;
-
-    const row = button.closest('[data-configured-order-item]');
-    const endpoint = button.dataset.endpoint;
-    const token = button.dataset.csrfToken;
-    if (!row || !endpoint || !token) return;
+const submitConfiguredItemAction = async (control, action) => {
+    const row = control.closest('[data-configured-order-item]');
+    const endpoint = control.dataset.endpoint;
+    const token = control.dataset.csrfToken;
+    if (!row || !endpoint || !token || control.dataset.busy === 'true') return;
 
     const body = new URLSearchParams({ _token: token });
-    if (button.dataset.configuredItemAction === 'quantity') {
-        const quantity = row.querySelector('[data-configured-item-quantity]')?.value;
+    if (action === 'quantity') {
+        const quantity = control.value;
         if (!quantity) return;
         body.set('quantity', quantity);
     }
 
-    button.disabled = true;
+    const errorMessage = row.querySelector('[data-configured-item-error]');
+    control.dataset.busy = 'true';
+    control.disabled = true;
+    control.setAttribute('aria-busy', 'true');
+    if (errorMessage) errorMessage.hidden = true;
     try {
         const response = await fetch(endpoint, {
             method: 'POST',
@@ -91,9 +92,36 @@ document.addEventListener('click', async (event) => {
         if (!response.ok) throw new Error(`Configured cart action failed (${response.status})`);
         window.location.reload();
     } catch (error) {
-        button.disabled = false;
+        control.disabled = false;
+        control.removeAttribute('aria-busy');
+        delete control.dataset.busy;
+        if (errorMessage) {
+            errorMessage.textContent = action === 'quantity'
+                ? 'Die Menge konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.'
+                : 'Der Artikel konnte nicht entfernt werden. Bitte versuchen Sie es erneut.';
+            errorMessage.hidden = false;
+        }
         window.console.error(error);
     }
+};
+
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-configured-item-action="remove"]');
+    if (!button || button.disabled) return;
+    submitConfiguredItemAction(button, 'remove');
+});
+
+document.addEventListener('change', (event) => {
+    const input = event.target.closest('[data-configured-item-quantity]');
+    if (!input || input.value === input.dataset.initialValue) return;
+    submitConfiguredItemAction(input, 'quantity');
+});
+
+document.addEventListener('keydown', (event) => {
+    const input = event.target.closest('[data-configured-item-quantity]');
+    if (!input || event.key !== 'Enter') return;
+    event.preventDefault();
+    submitConfiguredItemAction(input, 'quantity');
 });
 // Cardnext desktop mega menu
 (() => {

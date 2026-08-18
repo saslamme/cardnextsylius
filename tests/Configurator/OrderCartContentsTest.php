@@ -60,6 +60,8 @@ final class OrderCartContentsTest extends TestCase
         self::assertStringContainsString('{% set cart = hookable_metadata.context.resource %}', $template);
         self::assertStringContainsString('{% for item in cart.configuredItems %}', $template);
         self::assertStringContainsString('{{ item.configuratorName }}', $template);
+        self::assertStringContainsString('Konfiguriertes Produkt', $template);
+        self::assertStringContainsString('data-configured-item-media', $template);
         self::assertStringContainsString('value="{{ item.quantity }}"', $template);
         self::assertStringContainsString('item.selectionsSnapshot', $template);
         self::assertStringContainsString('entry.values|map(value => value.name)|join', $template);
@@ -71,6 +73,8 @@ final class OrderCartContentsTest extends TestCase
         self::assertStringContainsString('item.total|sylius_format_money', $template);
         self::assertStringContainsString("path('cardnext_shop_configured_item_quantity'", $template);
         self::assertStringContainsString("path('cardnext_shop_configured_item_remove'", $template);
+        self::assertStringContainsString('data-csrf-token=', $template);
+        self::assertStringNotContainsString('>Aktualisieren</button>', $template);
         self::assertStringNotContainsString('<form', $template);
         self::assertStringNotContainsString('cardnext_shop_configurator_page', $template);
     }
@@ -83,6 +87,10 @@ final class OrderCartContentsTest extends TestCase
         self::assertStringContainsString('hookable_metadata.context.form.items', $template);
         self::assertStringContainsString("{% hook 'body' with { form: form_item, item, index } %}", $template);
         self::assertStringContainsString('data-configured-cart-items', $template);
+
+        preg_match('/<tr class="cn-configured-item".*?<\/tr>/s', $template, $configuredRow);
+        self::assertArrayHasKey(0, $configuredRow);
+        self::assertSame(5, substr_count($configuredRow[0], '<td'));
     }
 
     public function testCartSummarySeparatesConfiguredItemsFromSyliusItemsSubtotal(): void
@@ -106,6 +114,10 @@ final class OrderCartContentsTest extends TestCase
 
         self::assertStringContainsString("fetch(endpoint", $javascript);
         self::assertStringContainsString("body.set('quantity', quantity)", $javascript);
+        self::assertStringContainsString("document.addEventListener('change'", $javascript);
+        self::assertStringContainsString("event.key !== 'Enter'", $javascript);
+        self::assertStringContainsString("event.preventDefault()", $javascript);
+        self::assertStringContainsString("control.disabled = true", $javascript);
         self::assertStringContainsString("window.location.reload()", $javascript);
     }
 
