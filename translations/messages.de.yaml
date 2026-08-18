@@ -2,6 +2,8 @@ cardnext:
   order:
     configured_product: Konfiguriertes Produkt
     configured_items: Konfigurierte Artikel
+    position: Position
+    positions: Positionen
     production_time: Produktionszeit
     working_days: 'ca. %days% Arbeitstage'
   admin:
