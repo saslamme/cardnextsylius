@@ -8,8 +8,10 @@ sylius_grid:
                             links:
                                 simple:
                                     label: cardnext.admin.product_create.standard
+                                    route: sylius_admin_product_create_simple
                                 configurable:
                                     label: cardnext.admin.product_create.variant
+                                    route: sylius_admin_product_create
                                 cardnext_configurable:
                                     label: cardnext.admin.product_create.configuration
                                     route: cardnext_admin_product_create_configurable
