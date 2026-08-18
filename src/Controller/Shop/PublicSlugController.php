@@ -39,6 +39,7 @@ final readonly class PublicSlugController
             $taxonRoot = $taxon->getRoot();
 
             if ($menuTaxon !== null && $taxonRoot !== null && $taxonRoot->getCode() === $menuTaxon->getCode()) {
+                $request->attributes->set('cardnext_taxon', $taxon);
                 $request->attributes->set('_sylius', [
                     'template' => '@SyliusShop/product/index.html.twig',
                     'grid' => 'sylius_shop_product',

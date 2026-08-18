@@ -8,5 +8,5 @@ sylius_twig_hooks:
                 component: 'sylius_shop:product:summary'
                 props:
                     product: '@=_context.product'
-                    template: 'shop/product/configurable_summary.html.twig'
+                    template: '@SyliusShop/product/show/content/info/summary.html.twig'
                 priority: 100

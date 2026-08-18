@@ -5,6 +5,7 @@
 {% set current_sorting = app.request.query.all('sorting') %}
 {% set current_limit = app.request.query.get('limit', 9) %}
 {% set result_count = resources.data.nbResults %}
+{% set cardnext_taxon = app.request.attributes.get('cardnext_taxon') %}
 {% block content %}
 <main class="cn-page" id="main-content">
     {{ component('sylius_shop:product:show:breadcrumbs', {template: 'shop/category/breadcrumbs.html.twig'}) }}
@@ -40,7 +41,9 @@
                         </div>
                     </div>
                 </div>
-                    {{ component('cardnext:taxon:configurators', {taxon: taxon}) }}
+                {% if cardnext_taxon %}
+                    {{ component('cardnext:taxon:configurators', {taxon: cardnext_taxon}) }}
+                {% endif %}
                 {% if resources.data|length > 0 %}
                     <div class="cn-product-grid cn-product-grid--lined" {{ sylius_test_html_attribute('products') }}>{% for product in resources.data %}{{ component('cardnext:product:card', {product: product}) }}{% endfor %}</div>
                     <div class="mt-4">{{ pagination.simple(resources.data) }}</div>
