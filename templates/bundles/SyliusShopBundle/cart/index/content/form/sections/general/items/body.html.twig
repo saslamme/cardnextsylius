@@ -12,27 +12,33 @@
     <tbody data-configured-cart-items>
         {% for item in cart.configuredItems %}
             <tr class="cn-configured-item" data-configured-order-item="{{ item.id }}">
-                <td class="cn-configured-item__remove">
+                <td class="cn-configured-item__remove" data-configured-item-column="remove">
                     <button
-                        class="cn-configured-item__remove-button"
+                        class="btn btn-sm btn-transparent px-2"
                         type="button"
                         aria-label="{{ item.configuratorName }} entfernen"
                         data-configured-item-action="remove"
                         data-endpoint="{{ path('cardnext_shop_configured_item_remove', {id: item.id}) }}"
                         data-csrf-token="{{ csrf_token('configured_item_' ~ item.id) }}"
-                    ><span aria-hidden="true">&times;</span></button>
+                    >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                            <path d="M3 3l10 10M13 3 3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </button>
                 </td>
-                <td class="cn-configured-item__product">
-                    <div class="cn-configured-item__product-info">
-                        <div class="cn-configured-item__media" data-configured-item-media aria-hidden="true">
-                            <svg viewBox="0 0 48 48" role="img" focusable="false">
-                                <rect x="7" y="12" width="34" height="24" rx="3" />
-                                <path d="M12 18h15M12 23h9M32 28a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 4c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
-                            </svg>
+                <td class="cn-configured-item__product" data-configured-item-column="product">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="flex-shrink-0 align-self-start align-self-md-auto" style="width: 6rem;">
+                            <div class="overflow-auto bg-light rounded-3 cn-configured-item__media" style="aspect-ratio: 3/4;" data-configured-item-media aria-hidden="true">
+                                <svg viewBox="0 0 48 48" role="img" focusable="false">
+                                    <rect x="7" y="12" width="34" height="24" rx="3" />
+                                    <path d="M12 18h15M12 23h9M32 28a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 4c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
+                                </svg>
+                            </div>
                         </div>
                         <div class="cn-configured-item__content">
-                            <strong class="cn-configured-item__name">{{ item.configuratorName }}</strong>
-                            <span class="cn-configured-item__type">Konfiguriertes Produkt</span>
+                            <div class="h6">{{ item.configuratorName }}</div>
+                            <small class="text-body-tertiary">Konfiguriertes Produkt</small>
                             <dl class="cn-configured-item__snapshot">
                                 {% for entry in item.selectionsSnapshot %}
                                     <dt>{{ entry.fieldName }}</dt>
@@ -58,14 +64,15 @@
                         </div>
                     </div>
                 </td>
-                <td class="cn-configured-item__unit-price text-end">
+                <td class="text-center" data-configured-item-column="subscription" aria-label="Kein Abonnement"></td>
+                <td class="cn-configured-item__unit-price text-black-50 text-end" data-configured-item-column="unit-price">
                     <span data-configured-item-unit-price>{{ item.unitAmount|sylius_format_money(item.currencyCode, item.localeCode) }}</span>
                     {% if item.fixedTotal > 0 or item.percentageTotal > 0 %}
                         <small class="cn-configured-item__price-note">zzgl. Einrichtungs-/Optionskosten</small>
                     {% endif %}
                 </td>
-                <td class="cn-configured-item__quantity-cell text-end">
-                    <div class="cn-configured-item__quantity">
+                <td class="cn-configured-item__quantity-cell text-end" data-configured-item-column="quantity">
+                    <div class="mt-3 field mb-3 required cn-configured-item__quantity">
                         <input
                             class="form-control"
                             type="number"
@@ -81,8 +88,8 @@
                         <span class="cn-configured-item__error" role="alert" data-configured-item-error hidden></span>
                     </div>
                 </td>
-                <td class="cn-configured-item__total text-end">
-                    <strong data-configured-item-total>{{ item.total|sylius_format_money(item.currencyCode, item.localeCode) }}</strong>
+                <td class="cn-configured-item__total text-end" data-configured-item-column="total">
+                    <span data-configured-item-total>{{ item.total|sylius_format_money(item.currencyCode, item.localeCode) }}</span>
                 </td>
             </tr>
         {% endfor %}
