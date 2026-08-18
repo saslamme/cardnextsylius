@@ -43,6 +43,10 @@ final class ConfiguratorCalculateController extends AbstractController
 
         $quantity = $payload['quantity'] ?? null;
         $selections = $payload['selections'] ?? null;
+        $leadTimeCode = $payload['leadTimeCode'] ?? null;
+        if ($leadTimeCode !== null && !is_string($leadTimeCode)) {
+            return $this->error('leadTime', 'Die Produktionszeit hat ein ungültiges Format.');
+        }
         if (!is_int($quantity) || !is_array($selections) || !array_is_list($selections) && array_filter(array_keys($selections), 'is_string') !== array_keys($selections)) {
             return $this->error(null, 'Menge und Auswahl haben ein ungültiges Format.');
         }
@@ -59,7 +63,7 @@ final class ConfiguratorCalculateController extends AbstractController
 
         try {
             $result = $this->calculator->calculate(
-                new ConfiguratorConfiguration($configurator->getCode(), $quantity, $currencyCode, $channelCode, $selections),
+                new ConfiguratorConfiguration($configurator->getCode(), $quantity, $currencyCode, $channelCode, $selections, [], $leadTimeCode),
                 $channel,
                 $currencyCode,
             );

@@ -9,6 +9,7 @@ use App\Entity\Channel\Channel;
 use App\Entity\Configurator\Configurator;
 use App\Entity\Configurator\ConfiguratorDependency;
 use App\Entity\Configurator\ConfiguratorField;
+use App\Entity\Configurator\ConfiguratorLeadTime;
 use App\Entity\Configurator\ConfiguratorPriceRule;
 use App\Entity\Configurator\ConfiguratorSection;
 use App\Entity\Configurator\ConfiguratorValue;
@@ -25,6 +26,7 @@ use App\Repository\Configurator\ConfiguratorRepository;
 use App\Service\Configurator\ConfigurationHashGenerator;
 use App\Service\Configurator\ConfiguratorPriceCalculator;
 use App\Service\Configurator\ConfiguratorValidator;
+use App\Service\Configurator\DependencyStateResolver;
 use App\Service\Configurator\PriceRuleOverlapValidator;
 use App\Service\Configurator\PriceRuleResolver;
 use PHPUnit\Framework\TestCase;
@@ -121,6 +123,42 @@ final class ConfiguratorCoreTest extends TestCase
         self::assertSame((new ConfigurationHashGenerator())->generate($a), (new ConfigurationHashGenerator())->generate($b));
         self::assertSame((new ConfigurationHashGenerator())->generate($a), (new ConfigurationHashGenerator())->generate(new ConfiguratorConfiguration('generic', 1, 'eur', 'DE', ['a' => ['x' => 2, 'y' => 1], 'b' => 2], ['a' => 2, 'z' => 1])));
         self::assertSame(67, ConfiguratorPriceCalculator::basisPoints(333, 2000));
+    }
+
+    public function testLeadTimeChangesHashAndIsAnExclusivePriceSource(): void
+    {
+        [$model,,$value] = $this->model();
+        $standard = new ConfiguratorLeadTime($model, 'standard', 'Standard', 10);
+        $express = new ConfiguratorLeadTime($model, 'express', 'Express', 5);
+        $configuration = new ConfiguratorConfiguration('generic', 1, 'EUR', 'DE', [], [], 'standard');
+        $other = new ConfiguratorConfiguration('generic', 1, 'EUR', 'DE', [], [], 'express');
+        self::assertNotSame((new ConfigurationHashGenerator())->generate($configuration), (new ConfigurationHashGenerator())->generate($other));
+
+        $rule = $this->rule($model, null, PriceType::PERCENT, 2500);
+        $rule->setLeadTime($express);
+        self::assertSame('lead_time/express', explode('|', $rule->dimensionKey())[1]);
+        $this->expectException(\DomainException::class);
+        $rule->setValue($value);
+    }
+
+    public function testDependencyStateCoversGatesAndNumericComparisons(): void
+    {
+        [$model,$source] = $this->model();
+        $target = new ConfiguratorField('details', 'Details', FieldType::TEXT);
+        $source->getSection()->addField($target);
+        $show = new ConfiguratorDependency($model, $source, DependencyOperator::EQUALS, ['premium'], DependencyEffect::SHOW);
+        $show->setTargetField($target);
+        $disable = new ConfiguratorDependency($model, $source, DependencyOperator::EQUALS, ['premium'], DependencyEffect::DISABLE);
+        $disable->setTargetField($target);
+        $state = (new DependencyStateResolver())->resolve($model, ['finish' => 'premium'], [$show, $disable]);
+        self::assertTrue($state['details']['visible']);
+        self::assertFalse($state['details']['enabled']);
+
+        $count = new ConfiguratorField('design_count', 'Designs', FieldType::INTEGER);
+        $source->getSection()->addField($count);
+        $numeric = new ConfiguratorDependency($model, $count, DependencyOperator::GREATER_THAN_OR_EQUAL, [3], DependencyEffect::REQUIRE);
+        $numeric->setTargetField($target);
+        self::assertTrue((new DependencyStateResolver())->matches($numeric, ['design_count' => 3]));
     }
 
     public function testUnitFieldValueAndQuantitySemantics(): void

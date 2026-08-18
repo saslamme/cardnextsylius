@@ -65,3 +65,17 @@ section/field/value graph and one fetches dependencies with their source and
 target associations. Applicable price rules are fetched in one query using
 association identities, preventing both N+1 loading and a dependency/value
 cartesian product.
+
+## Storefront calculation API
+
+`POST /configurators/{configuratorCode}/calculate` accepts the unambiguous
+`leadTimeCode` property alongside `quantity` and `selections`:
+
+```json
+{"quantity": 250, "leadTimeCode": "standard", "selections": {"finish": "matte"}}
+```
+
+When enabled lead times exist, `leadTimeCode` is required and must identify an
+enabled lead time belonging to that configurator. Validation failures use the
+response field `leadTime`. Configurators without enabled lead times continue to
+accept requests without this property.

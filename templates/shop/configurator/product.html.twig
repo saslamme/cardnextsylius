@@ -1,5 +1,5 @@
 {% if configurator %}
-    <section class="cn-configurator" data-configurator data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
+    <section class="cn-configurator" data-configurator data-dependencies="{{ computed.dependencies|json_encode|e('html_attr') }}" data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
         <div class="cn-configurator__layout">
             <form class="cn-configurator__form" data-configurator-form novalidate>
                 <div class="cn-configurator__section">
@@ -26,7 +26,7 @@
                                             <div class="cn-configurator__choices">
                                                 {% for value in field.values %}
                                                     {% if value.enabled %}
-                                                        <label class="cn-configurator__choice" for="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}">
+                                                        <label class="cn-configurator__choice" data-configurator-value="{{ value.code }}" for="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}">
                                                             <input class="form-check-input" id="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}" name="selection[{{ field.code }}]{{ field.type.value == 'multiple_choice' ? '[]' : '' }}" value="{{ value.code }}" type="{{ field.type.value == 'single_choice' ? 'radio' : 'checkbox' }}"{% if field.required and field.type.value == 'single_choice' %} required{% endif %}>
                                                             {% if value.imagePath %}<img src="{{ asset(value.imagePath) }}" alt="" loading="lazy">{% endif %}
                                                             <span class="cn-configurator__choice-copy">
@@ -59,6 +59,20 @@
                     {% endif %}
                 {% endfor %}
 
+                {% set activeLeadTimes = configurator.leadTimes|filter(leadTime => leadTime.enabled) %}
+                {% if activeLeadTimes|length %}
+                    <fieldset class="cn-configurator__section" data-configurator-lead-times>
+                        <legend>Produktionszeit</legend>
+                        {% for leadTime in activeLeadTimes %}
+                            <label class="cn-configurator__choice" for="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}">
+                                <input class="form-check-input" id="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}" name="leadTimeCode" value="{{ leadTime.code }}" type="radio" required>
+                                <span class="cn-configurator__choice-copy"><strong>{{ leadTime.name }}</strong>{% if leadTime.description %}<small>{{ leadTime.description }}</small>{% endif %}<small>ca. {{ leadTime.workingDays }} Arbeitstage</small></span>
+                            </label>
+                        {% endfor %}
+                        <div class="invalid-feedback" data-field-error="leadTime"></div>
+                    </fieldset>
+                {% endif %}
+
                 <div class="alert alert-danger d-none" role="alert" data-configurator-errors></div>
                 <button class="btn btn-primary" type="submit" data-configurator-submit>Preis berechnen</button>
             </form>
@@ -67,6 +81,7 @@
                 <h3 data-configurator-price-title>Preis</h3>
                 <p class="text-body-secondary" data-configurator-placeholder>Füllen Sie die Konfiguration aus, um den Preis zu berechnen.</p>
                 <div class="d-none" data-configurator-result>
+                    <p class="d-none" data-configurator-lead-time-result><strong>Produktionszeit:</strong> <span></span></p>
                     <div data-configurator-breakdown></div>
                     <div class="cn-configurator__total"><strong>Gesamt</strong><strong data-configurator-total></strong></div>
                     <small class="text-body-secondary">Alle Beträge für <span data-configurator-result-quantity></span> Stück.</small>

@@ -10,12 +10,14 @@ use App\Dto\Configurator\ValidationResult;
 use App\Entity\Configurator\Configurator;
 use App\Entity\Configurator\ConfiguratorDependency;
 use App\Entity\Configurator\ConfiguratorField;
-use App\Enum\Configurator\DependencyEffect;
-use App\Enum\Configurator\DependencyOperator;
 use App\Enum\Configurator\FieldType;
 
 final class ConfiguratorValidator
 {
+    public function __construct(private readonly ?DependencyStateResolver $dependencyStateResolver = null)
+    {
+    }
+
     /** @param iterable<ConfiguratorDependency> $dependencies */
     public function validate(ConfiguratorConfiguration $cfg, Configurator $model, iterable $dependencies = []): ValidationResult
     {
@@ -24,6 +26,17 @@ final class ConfiguratorValidator
             $errors[] = new ValidationError(null, 'configurator_unavailable', 'Configurator does not exist or is disabled.');
         }if ($cfg->quantity < 1) {
             $errors[] = new ValidationError('quantity', 'invalid_quantity', 'Quantity must be at least one.');
+        }
+        $dependencyList = is_array($dependencies) ? $dependencies : iterator_to_array((static function () use ($dependencies): \Generator { yield from $dependencies; })());
+        $state = ($this->dependencyStateResolver ?? new DependencyStateResolver())->resolve($model, $cfg->selections, $dependencyList);
+        $enabledLeadTimes = array_values(array_filter($model->getLeadTimes()->toArray(), static fn ($leadTime) => $leadTime->isEnabled()));
+        if ($enabledLeadTimes !== []) {
+            $leadTime = array_values(array_filter($enabledLeadTimes, static fn ($candidate) => $candidate->getCode() === $cfg->leadTimeCode));
+            if ($leadTime === []) {
+                $errors[] = new ValidationError('leadTime', 'invalid_lead_time', 'An enabled production lead time must be selected.');
+            }
+        } elseif ($cfg->leadTimeCode !== null) {
+            $errors[] = new ValidationError('leadTime', 'invalid_lead_time', 'Lead time does not belong to the configurator or is disabled.');
         }
         $fields = [];
         foreach ($model->getSections() as $section) {
@@ -41,39 +54,47 @@ final class ConfiguratorValidator
 
                 continue;
             }
-            $this->validateSelection($field, $selection, $errors);
-        }foreach ($fields as $code => [$field,$sectionEnabled]) {
-            if ($sectionEnabled && $field->isEnabled() && $field->isRequired() && !$this->hasSelection($cfg, $code)) {
-                $errors[] = new ValidationError($code, 'required', 'A selection is required.');
+            $fieldState = $state[$code];
+            if (!$fieldState['visible'] || !$fieldState['enabled']) {
+                $forbidden = false;
+                foreach ($dependencyList as $dependency) {
+                    if ($dependency->isEnabled() && $dependency->getEffect()->value === 'forbid' && $dependency->getTargetField()?->getCode() === $code && $this->dependencyStateResolverOrDefault()->matches($dependency, $cfg->selections)) {
+                        $forbidden = true;
+                    }
+                }
+                $errors[] = new ValidationError($code, $forbidden ? 'dependency_forbidden' : 'dependency_unavailable', $forbidden ? 'Selection is forbidden by a dependency.' : 'Field is hidden or disabled by a dependency.');
+
+                continue;
             }
-        }foreach ($dependencies as $dependency) {
-            if ($dependency->isEnabled() && $this->matches($dependency, $cfg->selections)) {
-                $target = $dependency->getTargetField()?->getCode();
-                $targetSelected = $this->dependencyTargetSelected($dependency, $cfg);
-                if ($dependency->getEffect() === DependencyEffect::REQUIRE && $target !== null && !$targetSelected) {
-                    $errors[] = new ValidationError($target, 'dependency_required', $dependency->getTargetValue() === null ? 'Field is required by a dependency.' : 'Specific value is required by a dependency.');
+            $this->validateSelection($field, $selection, $errors);
+            foreach ((array) $selection as $selectedValue) {
+                $valueState = is_string($selectedValue) ? ($fieldState['values'][$selectedValue] ?? null) : null;
+                if ($valueState !== null && (!$valueState['visible'] || !$valueState['enabled'])) {
+                    $errors[] = new ValidationError($code, 'dependency_forbidden', 'Value is hidden, disabled, or forbidden by a dependency.', ['value' => $selectedValue]);
                 }
-                if ($dependency->getEffect() === DependencyEffect::FORBID && $target !== null && $targetSelected) {
-                    $errors[] = new ValidationError($target, 'dependency_forbidden', $dependency->getTargetValue() === null ? 'Selection is forbidden by a dependency.' : 'Specific value is forbidden by a dependency.');
+            }
+        }foreach ($fields as $code => [$field,$sectionEnabled]) {
+            if ($sectionEnabled && $field->isEnabled() && $state[$code]['required'] && !$this->hasSelection($cfg, $code)) {
+                $dependencyRequired = false;
+                foreach ($dependencyList as $dependency) {
+                    if ($dependency->isEnabled() && $dependency->getEffect()->value === 'require' && $dependency->getTargetField()?->getCode() === $code && $this->dependencyStateResolverOrDefault()->matches($dependency, $cfg->selections)) {
+                        $dependencyRequired = true;
+                    }
                 }
+                $errors[] = new ValidationError($code, $dependencyRequired ? 'dependency_required' : 'required', $dependencyRequired ? 'Field is required by a dependency.' : 'A selection is required.');
+            }
+        }
+        foreach ($dependencyList as $dependency) {
+            if (!$dependency->isEnabled() || !$this->dependencyStateResolverOrDefault()->matches($dependency, $cfg->selections) || $dependency->getEffect()->value !== 'require' || $dependency->getTargetValue() === null) {
+                continue;
+            }
+            $code = $dependency->getTargetField()?->getCode();
+            if ($code !== null && !in_array($dependency->getTargetValue()->getCode(), (array) ($cfg->selections[$code] ?? []), true)) {
+                $errors[] = new ValidationError($code, 'dependency_required', 'Specific value is required by a dependency.');
             }
         }
 
         return new ValidationResult($errors);
-    }
-
-    private function dependencyTargetSelected(ConfiguratorDependency $dependency, ConfiguratorConfiguration $cfg): bool
-    {
-        $fieldCode = $dependency->getTargetField()?->getCode();
-        if ($fieldCode === null || !$this->hasSelection($cfg, $fieldCode)) {
-            return false;
-        }
-        $targetValue = $dependency->getTargetValue();
-        if ($targetValue === null) {
-            return true;
-        }
-
-        return in_array($targetValue->getCode(), (array) $cfg->selections[$fieldCode], true);
     }
 
     /** @param list<ValidationError> $errors */
@@ -176,18 +197,8 @@ final class ConfiguratorValidator
         return array_key_exists($code, $c->selections) && $c->selections[$code] !== null && $c->selections[$code] !== '' && $c->selections[$code] !== [];
     }
 
-    /** @param array<string,mixed> $s */
-    private function matches(ConfiguratorDependency $d, array $s): bool
+    private function dependencyStateResolverOrDefault(): DependencyStateResolver
     {
-        $code = $d->getSourceField()->getCode();
-        if (!array_key_exists($code, $s) || $s[$code] === null || $s[$code] === '' || $s[$code] === []) {
-            return false;
-        }
-        $actual = $s[$code];
-        $expected = $d->getExpectedValues();
-
-        return match ($d->getOperator()) {
-            DependencyOperator::EQUALS => in_array($actual, $expected, true),DependencyOperator::NOT_EQUALS => !in_array($actual, $expected, true),DependencyOperator::IN => count(array_intersect((array) $actual, $expected)) > 0,DependencyOperator::NOT_IN => count(array_intersect((array) $actual, $expected)) === 0,DependencyOperator::GREATER_THAN => is_numeric($actual) && (float) $actual > (float) $expected[0],DependencyOperator::GREATER_THAN_OR_EQUAL => is_numeric($actual) && (float) $actual >= (float) $expected[0],DependencyOperator::LESS_THAN => is_numeric($actual) && (float) $actual < (float) $expected[0],DependencyOperator::LESS_THAN_OR_EQUAL => is_numeric($actual) && (float) $actual <= (float) $expected[0],DependencyOperator::IS_SELECTED => true
-        };
+        return $this->dependencyStateResolver ?? new DependencyStateResolver();
     }
 }
