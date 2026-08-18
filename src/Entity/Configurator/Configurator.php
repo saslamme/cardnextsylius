@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity\Configurator;
 
 use App\Entity\Channel\Channel;
+use App\Entity\Taxation\TaxCategory;
 use App\Repository\Configurator\ConfiguratorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,6 +26,13 @@ class Configurator
 
     #[ORM\Column(name: 'enabled', options: ['default' => true])]
     private bool $enabled = true;
+
+    #[ORM\ManyToOne(targetEntity: TaxCategory::class)]
+    #[ORM\JoinColumn(name: 'tax_category_id', nullable: true, onDelete: 'SET NULL')]
+    private ?TaxCategory $taxCategory = null;
+
+    #[ORM\Column(name: 'shipping_required', options: ['default' => true])]
+    private bool $shippingRequired = true;
 
     /** @var Collection<int, ConfiguratorTranslation> */
     #[ORM\OneToMany(mappedBy: 'configurator', targetEntity: ConfiguratorTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -109,6 +117,28 @@ class Configurator
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
+        $this->touch();
+    }
+
+    public function getTaxCategory(): ?TaxCategory
+    {
+        return $this->taxCategory;
+    }
+
+    public function setTaxCategory(?TaxCategory $taxCategory): void
+    {
+        $this->taxCategory = $taxCategory;
+        $this->touch();
+    }
+
+    public function isShippingRequired(): bool
+    {
+        return $this->shippingRequired;
+    }
+
+    public function setShippingRequired(bool $shippingRequired): void
+    {
+        $this->shippingRequired = $shippingRequired;
         $this->touch();
     }
 

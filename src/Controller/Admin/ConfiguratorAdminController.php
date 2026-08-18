@@ -16,6 +16,7 @@ use App\Entity\Configurator\ConfiguratorTaxon;
 use App\Entity\Configurator\ConfiguratorTranslation;
 use App\Entity\Configurator\ConfiguratorValue;
 use App\Entity\Taxonomy\Taxon;
+use App\Entity\Taxation\TaxCategory;
 use App\Enum\Configurator\DependencyEffect;
 use App\Enum\Configurator\DependencyOperator;
 use App\Enum\Configurator\FieldType;
@@ -171,6 +172,35 @@ final class ConfiguratorAdminController extends AbstractController
         }
 
         return $this->render('admin/cardnext/configurator/channels.html.twig', compact('configurator', 'channels'));
+    }
+
+    #[Route('/{id}/checkout', name: 'checkout', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
+    public function checkout(Configurator $configurator, Request $request, EntityManagerInterface $em): Response
+    {
+        $taxCategories = $em->getRepository(TaxCategory::class)->findBy([], ['name' => 'ASC', 'code' => 'ASC']);
+        if ($request->isMethod('POST') && $this->validToken($request, 'checkout-' . $configurator->getId())) {
+            try {
+                $taxCategoryId = trim((string) $request->request->get('tax_category_id', ''));
+                $taxCategory = null;
+                if ($taxCategoryId !== '') {
+                    if (!ctype_digit($taxCategoryId) || (int) $taxCategoryId < 1) {
+                        throw new \DomainException('Ungültige Steuerkategorie.');
+                    }
+                    $taxCategory = $em->find(TaxCategory::class, (int) $taxCategoryId);
+                    if (!$taxCategory instanceof TaxCategory) {
+                        throw new \DomainException('Steuerkategorie nicht gefunden.');
+                    }
+                }
+                $configurator->setTaxCategory($taxCategory);
+                $configurator->setShippingRequired($request->request->getBoolean('shipping_required'));
+                $em->flush();
+                $this->addFlash('success', 'Verkauf & Versand gespeichert.');
+            } catch (\Throwable $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
+        }
+
+        return $this->render('admin/cardnext/configurator/checkout.html.twig', compact('configurator', 'taxCategories'));
     }
 
     #[Route('/{id}/media', name: 'media', methods: ['GET', 'POST'])]

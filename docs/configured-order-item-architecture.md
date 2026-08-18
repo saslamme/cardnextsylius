@@ -15,7 +15,9 @@ ConfiguredOrderItem ✕ Product
 ConfiguredOrderItem ✕ ProductVariant
 ```
 
-The snapshot contains localized field/value labels, canonical selections for an explicit cart quantity recalculation, the existing `ConfigurationHashGenerator` result and all calculated minor-unit amounts. It has no configurator foreign key, so catalog renames, pricing changes, and deletion cannot rewrite historical lines. Identical hashes remain separate lines in preparation for line-specific artwork.
+The snapshot contains localized field/value labels, canonical selections for an explicit cart quantity recalculation, the existing `ConfigurationHashGenerator` result, all calculated minor-unit amounts, `taxCategoryCode`, and `shippingRequired`. The current tax category relation belongs only to the `Configurator`; the configured order item deliberately snapshots its code rather than retaining a Doctrine relation. Both checkout metadata values are copied server-side and refreshed with pricing while the line is still in the cart.
+
+It has no configurator foreign key and no Product or ProductVariant dependency, so catalog renames, pricing or checkout metadata changes, and deletion cannot rewrite historical lines. Identical hashes remain separate lines in preparation for line-specific artwork.
 
 ## Sylius 2.2 integration findings
 
