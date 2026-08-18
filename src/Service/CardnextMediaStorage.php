@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Configurator\ConfiguratorImage;
 use App\Entity\Product\Manufacturer;
 use App\Entity\Product\ProductDocument;
 use Symfony\Component\Filesystem\Filesystem;
@@ -65,6 +66,23 @@ final readonly class CardnextMediaStorage
         $document->setOriginalFilename($originalFilename);
         $document->setMimeType($mimeType);
         $document->setFileSize($fileSize ?: null);
+    }
+
+    public function uploadConfiguratorImage(ConfiguratorImage $image, string $configuratorCode, UploadedFile $file): void
+    {
+        $extension = match ($file->getMimeType()) {
+            'image/png' => 'png', 'image/jpeg' => 'jpg', 'image/webp' => 'webp',
+            default => throw new \InvalidArgumentException('Nicht unterstütztes Bildformat.'),
+        };
+        $directory = self::PUBLIC_PREFIX . 'configurators/' . strtolower((string) $this->slugger->slug($configuratorCode));
+        $filename = bin2hex(random_bytes(8)) . '.' . $extension;
+        $this->move($file, $directory, $filename, $image->getPath() ?: null);
+        $image->setPath($directory . '/' . $filename);
+    }
+
+    public function removeConfiguratorImage(ConfiguratorImage $image): void
+    {
+        $this->removePublicFile($image->getPath());
     }
 
     public function removeManufacturerLogo(Manufacturer $manufacturer): void

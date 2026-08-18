@@ -135,7 +135,7 @@ class Configurator
             }
         }
 
-return null;
+        return null;
     }
 
     /** @return Collection<int, Channel> */

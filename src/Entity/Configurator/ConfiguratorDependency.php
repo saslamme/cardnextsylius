@@ -41,6 +41,11 @@ class ConfiguratorDependency
     #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
     /** @param list<string|int|bool> $expected */
     public function __construct(Configurator $c, ConfiguratorField $source, DependencyOperator $op, array $expected, DependencyEffect $effect)
     {
