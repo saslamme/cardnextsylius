@@ -1,0 +1,12 @@
+{% import "@SyliusShop/shared/macro/money.html.twig" as money %}
+{% set order = hookable_metadata.context.order %}
+{% set positionCount = order.items|length + order.configuredItems|length %}
+
+<div class="mb-4">
+    <h1 class="h2">{{ 'sylius.ui.summary_of_your_order'|trans }} #{{ order.number }}</h1>
+    <div>
+        {{ order.checkoutCompletedAt|date }}
+        {{ money.convertAndFormat(order.total) }}
+        {{ positionCount }} {{ 'sylius.ui.items'|trans|lower }}
+    </div>
+</div>
