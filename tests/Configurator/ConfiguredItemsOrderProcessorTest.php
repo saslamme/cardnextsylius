@@ -11,6 +11,7 @@ use App\Entity\Order\OrderItem;
 use App\Entity\Order\OrderItemUnit;
 use App\OrderProcessing\ConfiguredItemsOrderProcessor;
 use PHPUnit\Framework\TestCase;
+use Sylius\Component\Order\Model\Order as GenericSyliusOrder;
 
 final class ConfiguredItemsOrderProcessorTest extends TestCase
 {
@@ -111,6 +112,25 @@ final class ConfiguredItemsOrderProcessorTest extends TestCase
 
         $this->assertConfiguredAdjustment($order, 67000);
         self::assertSame(67000, $order->getTotal());
+    }
+
+    public function testItLeavesAnOrderWithoutConfiguredItemsContractUntouched(): void
+    {
+        $order = new GenericSyliusOrder();
+
+        $this->processor->process($order);
+
+        self::assertSame(0, $order->getTotal());
+        self::assertCount(0, $order->getAdjustments());
+    }
+
+    public function testProcessorContainsNoPaymentProviderIntegration(): void
+    {
+        $source = strtolower((string) file_get_contents(__DIR__ . '/../../src/OrderProcessing/ConfiguredItemsOrderProcessor.php'));
+
+        foreach (['mollie', 'paypal', 'stripe', 'adyen', 'payum'] as $provider) {
+            self::assertStringNotContainsString($provider, $source);
+        }
     }
 
     private function assertConfiguredAdjustment(Order $order, int $amount): void

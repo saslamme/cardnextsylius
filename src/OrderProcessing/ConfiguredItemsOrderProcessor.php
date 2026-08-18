@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\OrderProcessing;
 
 use App\Entity\Order\Adjustment;
-use App\Entity\Order\Order;
+use App\Entity\Order\ConfiguredItemsAwareOrderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -17,11 +17,14 @@ final class ConfiguredItemsOrderProcessor implements OrderProcessorInterface
 
     public function process(OrderInterface $order): void
     {
-        if (!$order instanceof Order) {
+        if (!$order instanceof ConfiguredItemsAwareOrderInterface) {
             return;
         }
         $order->removeAdjustments(self::ADJUSTMENT_TYPE);
-        $total = array_sum(array_map(static fn ($item): int => $item->getTotal(), $order->getConfiguredItems()->toArray()));
+        $total = 0;
+        foreach ($order->getConfiguredItems() as $item) {
+            $total += $item->getTotal();
+        }
         if ($total === 0) {
             return;
         }
