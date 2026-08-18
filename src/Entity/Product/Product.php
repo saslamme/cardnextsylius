@@ -39,7 +39,7 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\Column(name: 'product_kind', length: 20, enumType: ProductKind::class, options: ['default' => 'standard'])]
     private ProductKind $productKind = ProductKind::STANDARD;
 
-    #[ORM\OneToOne(mappedBy: 'product', targetEntity: Configurator::class, cascade: ['persist'])]
+    #[ORM\OneToOne(mappedBy: 'product', targetEntity: Configurator::class, cascade: ['persist', 'remove'])]
     private ?Configurator $configurator = null;
 
     /** @var Collection<int, ProductCompatibility> */

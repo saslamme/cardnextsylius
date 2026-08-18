@@ -87,7 +87,7 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
         }
     }
 
-    public function testProductConfiguratorMappingIsOneToOneAndPreventsAccidentalAggregateDeletion(): void
+    public function testProductConfiguratorMappingIsOneToOneAndDeletesTheAggregate(): void
     {
         $configuratorMetadata = new ClassMetadata(Configurator::class);
         (new AttributeDriver([\dirname(__DIR__, 2) . '/src/Entity/Configurator']))->loadMetadataForClass(Configurator::class, $configuratorMetadata);
@@ -99,6 +99,6 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
         self::assertTrue($owning->joinColumns[0]->unique);
         self::assertSame('RESTRICT', $owning->joinColumns[0]->onDelete);
         self::assertTrue($productMetadata->getAssociationMapping('configurator')->isOneToOne());
-        self::assertFalse($productMetadata->getAssociationMapping('configurator')->isCascadeRemove());
+        self::assertTrue($productMetadata->getAssociationMapping('configurator')->isCascadeRemove());
     }
 }

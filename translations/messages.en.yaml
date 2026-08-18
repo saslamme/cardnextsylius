@@ -10,6 +10,7 @@ cardnext:
     edit: Edit
     delete: Delete
     delete_confirm: Really delete?
+    delete_product_confirm: This configuration product, including its configurator, structure and price rules, will be permanently deleted.
     save: Save
     name: Name
     code: Code
@@ -55,10 +56,10 @@ cardnext:
     percentage_base_base: Base price
     percentage_base_options: Options
     percentage_base_subtotal: Subtotal
-    flash: { created: Configurator created., updated: Configurator updated. }
+    flash: { created: Configurator created., updated: Configurator updated., deleted: Configuration product deleted completely., delete_blocked: Deletion was blocked to protect linked product or order data. }
   configurator_path:
     label: Configurator URL
-    help: 'Path without a domain, e.g. /plastic-cards/plastic-card-printing'
+    help: 'Relative path of the dedicated configurator page, e.g. plastic-cards/custom-printed-cards. Without domain and without a leading slash.'
     required: Every translation of a configurable product requires a configurator URL.
     invalid: The path may only contain valid path segments and no domain, query, fragment, “..” or empty segment.
     unique: This configurator URL is already used for this locale.

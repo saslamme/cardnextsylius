@@ -14,6 +14,7 @@ use App\Enum\Configurator\MultiplierType;
 use App\Enum\Configurator\PercentageBase;
 use App\Enum\Configurator\PriceType;
 use App\Service\Configurator\Admin\DecimalAmountTransformer;
+use App\Service\Configurator\ConfiguratorAggregateDeleter;
 use App\Service\Configurator\PriceRuleOverlapValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
@@ -76,23 +77,18 @@ final class ConfiguratorAdminController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
-    public function delete(Configurator $configurator, Request $request, EntityManagerInterface $em): Response
+    public function delete(Configurator $configurator, Request $request, ConfiguratorAggregateDeleter $aggregateDeleter): Response
     {
         if (!$this->validToken($request, 'configurator-delete-' . $configurator->getId())) {
             throw $this->createAccessDeniedException();
         }
-        if ($configurator->getProduct() !== null) {
-            $this->addFlash('error', 'Der Konfigurator ist fester Bestandteil seines Konfigurationsprodukts und kann nicht separat gelöscht werden.');
 
-            return $this->redirectToRoute('cardnext_admin_configurator_update', ['id' => $configurator->getId()]);
+        try {
+            $aggregateDeleter->delete($configurator);
+            $this->addFlash('success', 'cardnext.configurator.flash.deleted');
+        } catch (\Throwable) {
+            $this->addFlash('error', 'cardnext.configurator.flash.delete_blocked');
         }
-        if (!$configurator->getSections()->isEmpty() || $em->getRepository(ConfiguratorPriceRule::class)->count(['configurator' => $configurator]) > 0) {
-            $this->addFlash('error', 'Der Konfigurator enthält noch Struktur- oder Preisdaten und kann nicht gelöscht werden.');
-
-            return $this->redirectToRoute('cardnext_admin_configurator_update', ['id' => $configurator->getId()]);
-        }
-        $em->remove($configurator);
-        $em->flush();
 
         return $this->redirectToRoute('cardnext_admin_configurator_index');
     }

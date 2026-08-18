@@ -10,6 +10,7 @@ cardnext:
     edit: Bearbeiten
     delete: Löschen
     delete_confirm: Wirklich löschen?
+    delete_product_confirm: Dieses Konfigurationsprodukt einschließlich Konfigurator, Struktur und Preisregeln wird dauerhaft gelöscht.
     save: Speichern
     name: Name
     code: Code
@@ -55,10 +56,10 @@ cardnext:
     percentage_base_base: Basispreis
     percentage_base_options: Optionen
     percentage_base_subtotal: Zwischensumme
-    flash: { created: Konfigurator wurde angelegt., updated: Konfigurator wurde aktualisiert. }
+    flash: { created: Konfigurator wurde angelegt., updated: Konfigurator wurde aktualisiert., deleted: Konfigurationsprodukt wurde vollständig gelöscht., delete_blocked: Die Löschung wurde zum Schutz verknüpfter Produkt- oder Bestelldaten abgebrochen. }
   configurator_path:
     label: Konfigurator-URL
-    help: 'Pfad ohne Domain, z. B. /plastikkarten/plastikkarten-bedrucken'
+    help: 'Relativer Pfad der eigenständigen Konfigurator-Seite, z. B. plastikkarten/plastikkarten-bedrucken. Ohne Domain und ohne führenden Schrägstrich.'
     required: Für ein Konfigurationsprodukt muss in jeder Übersetzung eine Konfigurator-URL eingetragen sein.
     invalid: Der Pfad darf nur gültige Pfadsegmente enthalten und keine Domain, Query, Fragmente, „..“ oder leeren Segmente verwenden.
     unique: Diese Konfigurator-URL wird in dieser Sprache bereits verwendet.
