@@ -1,0 +1,41 @@
+{% set order = hookable_metadata.context.order %}
+
+{% if order.configuredItems|length > 0 %}
+    <tbody data-configured-checkout-review>
+        {% for item in order.configuredItems %}
+            <tr data-configured-order-item="{{ item.id }}">
+                <td>
+                    <div class="fw-semibold">{{ item.configuratorName }}</div>
+                    <small class="text-body-tertiary">Konfiguriertes Produkt</small>
+                    {% if item.selectionsSnapshot|length > 0 %}
+                        <dl class="row small mb-0 mt-2">
+                            {% for entry in item.selectionsSnapshot %}
+                                <dt class="col-5">{{ entry.fieldName }}</dt>
+                                <dd class="col-7 mb-1">
+                                    {% if entry.values is defined %}
+                                        {{ entry.values|map(value => value.name)|join(', ') }}
+                                    {% elseif entry.value is iterable %}
+                                        {{ entry.value.name }}
+                                    {% else %}
+                                        {{ entry.value }}
+                                    {% endif %}
+                                </dd>
+                            {% endfor %}
+                        </dl>
+                    {% endif %}
+                    {% if item.leadTimeName or item.workingDays %}
+                        <small class="d-block mt-2 text-body-tertiary">
+                            Produktionszeit:
+                            {% if item.leadTimeName %}{{ item.leadTimeName }}{% endif %}
+                            {% if item.leadTimeName and item.workingDays %} &middot; {% endif %}
+                            {% if item.workingDays %}ca. {{ item.workingDays }} Arbeitstage{% endif %}
+                        </small>
+                    {% endif %}
+                </td>
+                <td class="text-end">{{ item.unitAmount|sylius_format_money(item.currencyCode, item.localeCode) }}</td>
+                <td class="text-end">{{ item.quantity }}</td>
+                <td class="text-end fw-medium">{{ item.total|sylius_format_money(item.currencyCode, item.localeCode) }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+{% endif %}
