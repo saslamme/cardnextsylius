@@ -32,7 +32,7 @@ final class ProductTranslationTypeExtension extends AbstractTypeExtension
                 'label' => 'cardnext.configurator_path.label',
                 'help' => 'cardnext.configurator_path.help',
                 'required' => true,
-                'attr' => ['placeholder' => '/plastikkarten/plastikkarten-bedrucken', 'autocomplete' => 'off'],
+                'attr' => ['placeholder' => 'plastikkarten/plastikkarten-bedrucken', 'autocomplete' => 'off'],
             ]);
         });
     }
