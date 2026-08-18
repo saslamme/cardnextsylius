@@ -30,3 +30,23 @@ sylius_twig_hooks:
             items:
                 template: 'shop/layout/offcanvas/cart/body/items.html.twig'
                 priority: 0
+
+        'sylius_shop.checkout.common.sidebar.summary.items':
+            configured_items:
+                template: 'shop/checkout/sidebar/configured_items.html.twig'
+                priority: -100
+
+        'sylius_shop.checkout.common.sidebar.summary.total':
+            configured_items_total:
+                template: 'shop/checkout/sidebar/configured_items_total.html.twig'
+                priority: 350
+
+        'sylius_shop.shared.order.show.summary.table':
+            configured_items:
+                template: 'shop/checkout/complete/configured_items.html.twig'
+                priority: 50
+
+        'sylius_shop.shared.order.show.summary.table_summary':
+            configured_items_total:
+                template: 'shop/checkout/complete/configured_items_total.html.twig'
+                priority: 450

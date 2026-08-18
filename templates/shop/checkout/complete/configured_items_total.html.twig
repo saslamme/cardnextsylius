@@ -1,0 +1,12 @@
+{% set order = hookable_metadata.context.order %}
+{% set configuredItemsTotal = 0 %}
+{% for item in order.configuredItems %}
+    {% set configuredItemsTotal = configuredItemsTotal + item.total %}
+{% endfor %}
+
+{% if order.configuredItems|length > 0 %}
+    <tr>
+        <td class="text-end w-75">Konfigurierte Artikel:</td>
+        <td class="text-end">{{ configuredItemsTotal|sylius_format_money(order.currencyCode, order.localeCode) }}</td>
+    </tr>
+{% endif %}

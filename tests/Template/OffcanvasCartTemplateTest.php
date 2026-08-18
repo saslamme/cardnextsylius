@@ -12,7 +12,7 @@ final class OffcanvasCartTemplateTest extends TestCase
     public function testConfiguredItemsOverrideTheSyliusOffcanvasHooks(): void
     {
         $root = dirname(__DIR__, 2);
-        $hooks = Yaml::parseFile($root.'/config/packages/cardnext_twig_hooks.yaml')['sylius_twig_hooks']['hooks'];
+        $hooks = Yaml::parseFile($root . '/config/packages/cardnext_twig_hooks.yaml')['sylius_twig_hooks']['hooks'];
 
         self::assertSame(
             'shop/layout/offcanvas/cart/body/items.html.twig',
@@ -26,7 +26,7 @@ final class OffcanvasCartTemplateTest extends TestCase
 
     public function testItemsTemplateHandlesRegularConfiguredAndEmptyCarts(): void
     {
-        $template = file_get_contents(dirname(__DIR__, 2).'/templates/shop/layout/offcanvas/cart/body/items.html.twig');
+        $template = file_get_contents(dirname(__DIR__, 2) . '/templates/shop/layout/offcanvas/cart/body/items.html.twig');
         self::assertIsString($template);
 
         self::assertStringContainsString('cart.items|length == 0 and cart.configuredItems|length == 0', $template);
@@ -37,14 +37,13 @@ final class OffcanvasCartTemplateTest extends TestCase
         self::assertStringContainsString('item.total|sylius_format_money(item.currencyCode, item.localeCode)', $template);
     }
 
-    public function testFooterAddsConfiguredTotalsWithoutReplacingTheRegularPricePath(): void
+    public function testFooterUsesTheNativeOrderTotal(): void
     {
-        $template = file_get_contents(dirname(__DIR__, 2).'/templates/shop/layout/offcanvas/cart/footer.html.twig');
+        $template = file_get_contents(dirname(__DIR__, 2) . '/templates/shop/layout/offcanvas/cart/footer.html.twig');
         self::assertIsString($template);
 
-        self::assertStringContainsString('configuredItemsTotal = configuredItemsTotal + item.total', $template);
-        self::assertStringContainsString('cart.itemsTotal + configuredItemsTotal', $template);
-        self::assertStringContainsString('money.convertAndFormat(cart.itemsTotal)', $template);
+        self::assertStringContainsString('money.convertAndFormat(cart.total)', $template);
+        self::assertStringNotContainsString('cart.itemsTotal + configuredItemsTotal', $template);
         self::assertStringContainsString("path('sylius_shop_cart_summary')", $template);
         self::assertStringContainsString("path('sylius_shop_checkout_start')", $template);
     }

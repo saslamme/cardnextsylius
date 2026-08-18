@@ -1,0 +1,17 @@
+{% set order = hookable_metadata.context.order %}
+
+{% for item in order.configuredItems %}
+    <div class="border-top py-3" data-configured-checkout-item="{{ item.id }}">
+        <div class="d-flex justify-content-between gap-3">
+            <div>
+                <div class="fw-semibold">{{ item.configuratorName }}</div>
+                <small class="text-body-tertiary">Konfiguriertes Produkt</small>
+                {% if item.leadTimeName %}<small class="d-block text-body-tertiary">{{ item.leadTimeName }}</small>{% endif %}
+            </div>
+            <div class="text-end text-nowrap">
+                <small class="d-block text-body-tertiary">{{ item.quantity }} Stück</small>
+                <span class="fw-medium">{{ item.total|sylius_format_money(item.currencyCode, item.localeCode) }}</span>
+            </div>
+        </div>
+    </div>
+{% endfor %}

@@ -61,4 +61,19 @@ class Order extends BaseOrder implements OrderInterface, ConfiguredItemsAwareOrd
     {
         return parent::isEmpty() && $this->configuredItems->isEmpty();
     }
+
+    public function isShippingRequired(): bool
+    {
+        if (parent::isShippingRequired()) {
+            return true;
+        }
+
+        foreach ($this->configuredItems as $configuredItem) {
+            if ($configuredItem->isShippingRequired()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

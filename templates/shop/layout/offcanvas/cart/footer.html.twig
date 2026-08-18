@@ -1,21 +1,12 @@
 {% import "@SyliusShop/shared/macro/money.html.twig" as money %}
 
 {% set cart = hookable_metadata.context.cart %}
-{% set configuredItemsTotal = 0 %}
-{% for item in cart.configuredItems %}
-    {% set configuredItemsTotal = configuredItemsTotal + item.total %}
-{% endfor %}
-
 <div class="p-3 pb-5">
     <div class="offcanvas-footer">
         <div class="d-flex justify-content-between py-4">
             <div class="h5">{{ 'sylius.ui.subtotal'|trans }}:</div>
             <div class="h5 text-end">
-                {% if configuredItemsTotal > 0 %}
-                    {{ (cart.itemsTotal + configuredItemsTotal)|sylius_format_money(cart.currencyCode, cart.localeCode) }}
-                {% else %}
-                    {{ money.convertAndFormat(cart.itemsTotal) }}
-                {% endif %}
+                {{ money.convertAndFormat(cart.total) }}
             </div>
         </div>
         <div class="d-grid gap-2 pb-3">
