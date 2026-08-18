@@ -8,6 +8,7 @@ use App\Entity\Order\ConfiguredOrderItem;
 use App\Entity\Order\Order;
 use App\Entity\Order\OrderItem;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Yaml;
 
 final class OrderCartContentsTest extends TestCase
 {
@@ -62,6 +63,10 @@ final class OrderCartContentsTest extends TestCase
         self::assertStringContainsString('{{ item.configuratorName }}', $template);
         self::assertStringContainsString('Konfiguriertes Produkt', $template);
         self::assertStringContainsString('data-configured-item-media', $template);
+        self::assertStringContainsString('style="width: 6rem;"', $template);
+        self::assertStringContainsString('style="aspect-ratio: 3/4;"', $template);
+        self::assertStringContainsString('class="h6"', $template);
+        self::assertStringContainsString('class="text-body-tertiary"', $template);
         self::assertStringContainsString('value="{{ item.quantity }}"', $template);
         self::assertStringContainsString('item.selectionsSnapshot', $template);
         self::assertStringContainsString('entry.values|map(value => value.name)|join', $template);
@@ -90,7 +95,31 @@ final class OrderCartContentsTest extends TestCase
 
         preg_match('/<tr class="cn-configured-item".*?<\/tr>/s', $template, $configuredRow);
         self::assertArrayHasKey(0, $configuredRow);
-        self::assertSame(5, substr_count($configuredRow[0], '<td'));
+        self::assertSame(6, substr_count($configuredRow[0], '<td'));
+
+        preg_match_all('/data-configured-item-column="([^"]+)"/', $configuredRow[0], $columns);
+        self::assertSame(
+            ['remove', 'product', 'subscription', 'unit-price', 'quantity', 'total'],
+            $columns[1],
+            'Configured rows must match the six current cart header columns.',
+        );
+
+        preg_match_all('/<td\b[^>]*>(.*?)<\/td>/s', $configuredRow[0], $cells);
+        self::assertStringContainsString('item.unitAmount|sylius_format_money', $cells[1][3]);
+        self::assertStringContainsString('data-configured-item-quantity', $cells[1][4]);
+        self::assertStringContainsString('item.total|sylius_format_money', $cells[1][5]);
+    }
+
+    public function testCurrentSyliusAndMollieCartHeaderHasSixColumns(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $sylius = Yaml::parseFile($root . '/vendor/sylius/sylius/src/Sylius/Bundle/ShopBundle/Resources/config/app/twig_hooks/cart/index.yaml');
+        $mollie = Yaml::parseFile($root . '/vendor/sylius/mollie-plugin/config/twig_hooks/shop/cart/index.yaml');
+        $hook = 'sylius_shop.cart.index.content.form.sections.general.items.head';
+        $columns = array_merge($sylius['sylius_twig_hooks']['hooks'][$hook], $mollie['sylius_twig_hooks']['hooks'][$hook]);
+        uasort($columns, static fn (array $left, array $right): int => $right['priority'] <=> $left['priority']);
+
+        self::assertSame(['remove', 'item', 'recurring', 'unit_price', 'quantity', 'total'], array_keys($columns));
     }
 
     public function testCartSummarySeparatesConfiguredItemsFromSyliusItemsSubtotal(): void
