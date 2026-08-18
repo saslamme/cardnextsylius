@@ -15,3 +15,8 @@ sylius_twig_hooks:
             content:
                 template: 'shop/layout/footer/content.html.twig'
                 priority: 0
+
+        'sylius_shop.cart.index.content.form.sections.general.summary':
+            configured_items_total:
+                template: 'shop/cart/configured_items_total.html.twig'
+                priority: 450

@@ -64,6 +64,37 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 });
+
+document.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-configured-item-action]');
+    if (!button || button.disabled) return;
+
+    const row = button.closest('[data-configured-order-item]');
+    const endpoint = button.dataset.endpoint;
+    const token = button.dataset.csrfToken;
+    if (!row || !endpoint || !token) return;
+
+    const body = new URLSearchParams({ _token: token });
+    if (button.dataset.configuredItemAction === 'quantity') {
+        const quantity = row.querySelector('[data-configured-item-quantity]')?.value;
+        if (!quantity) return;
+        body.set('quantity', quantity);
+    }
+
+    button.disabled = true;
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            body,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
+        if (!response.ok) throw new Error(`Configured cart action failed (${response.status})`);
+        window.location.reload();
+    } catch (error) {
+        button.disabled = false;
+        window.console.error(error);
+    }
+});
 // Cardnext desktop mega menu
 (() => {
     const nav = document.querySelector('[data-cn-mega-nav]');
