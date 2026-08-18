@@ -11,50 +11,60 @@
 {% if cart.configuredItems|length > 0 %}
     <tbody data-configured-cart-items>
         {% for item in cart.configuredItems %}
-            <tr data-configured-order-item="{{ item.id }}">
-                <td>
+            <tr class="cn-configured-item" data-configured-order-item="{{ item.id }}">
+                <td class="cn-configured-item__remove">
                     <button
-                        class="btn btn-sm btn-transparent px-2"
+                        class="cn-configured-item__remove-button"
                         type="button"
                         aria-label="{{ item.configuratorName }} entfernen"
                         data-configured-item-action="remove"
                         data-endpoint="{{ path('cardnext_shop_configured_item_remove', {id: item.id}) }}"
                         data-csrf-token="{{ csrf_token('configured_item_' ~ item.id) }}"
-                    >&times;</button>
+                    ><span aria-hidden="true">&times;</span></button>
                 </td>
-                <td>
-                    <strong class="d-block">{{ item.configuratorName }}</strong>
-                    <span class="text-black-50 d-block mb-2">Konfiguriertes Produkt</span>
-                    <dl class="cn-configured-item__snapshot mb-0">
-                        {% for entry in item.selectionsSnapshot %}
-                            <dt>{{ entry.fieldName }}</dt>
-                            <dd>
-                                {% if entry.values is defined %}
-                                    {{ entry.values|map(value => value.name)|join(', ') }}
-                                {% elseif entry.value is iterable %}
-                                    {{ entry.value.name }}
-                                {% else %}
-                                    {{ entry.value }}
+                <td class="cn-configured-item__product">
+                    <div class="cn-configured-item__product-info">
+                        <div class="cn-configured-item__media" data-configured-item-media aria-hidden="true">
+                            <svg viewBox="0 0 48 48" role="img" focusable="false">
+                                <rect x="7" y="12" width="34" height="24" rx="3" />
+                                <path d="M12 18h15M12 23h9M32 28a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 4c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
+                            </svg>
+                        </div>
+                        <div class="cn-configured-item__content">
+                            <strong class="cn-configured-item__name">{{ item.configuratorName }}</strong>
+                            <span class="cn-configured-item__type">Konfiguriertes Produkt</span>
+                            <dl class="cn-configured-item__snapshot">
+                                {% for entry in item.selectionsSnapshot %}
+                                    <dt>{{ entry.fieldName }}</dt>
+                                    <dd>
+                                        {% if entry.values is defined %}
+                                            {{ entry.values|map(value => value.name)|join(', ') }}
+                                        {% elseif entry.value is iterable %}
+                                            {{ entry.value.name }}
+                                        {% else %}
+                                            {{ entry.value }}
+                                        {% endif %}
+                                    </dd>
+                                {% endfor %}
+                                {% if item.leadTimeName or item.workingDays %}
+                                    <dt>Produktionszeit</dt>
+                                    <dd>
+                                        {% if item.leadTimeName %}{{ item.leadTimeName }}{% endif %}
+                                        {% if item.leadTimeName and item.workingDays %} &middot; {% endif %}
+                                        {% if item.workingDays %}ca. {{ item.workingDays }} Arbeitstage{% endif %}
+                                    </dd>
                                 {% endif %}
-                            </dd>
-                        {% endfor %}
-                        {% if item.leadTimeName or item.workingDays %}
-                            <dt>Produktionszeit</dt>
-                            <dd>
-                                {% if item.leadTimeName %}{{ item.leadTimeName }}{% endif %}
-                                {% if item.leadTimeName and item.workingDays %} &middot; {% endif %}
-                                {% if item.workingDays %}ca. {{ item.workingDays }} Arbeitstage{% endif %}
-                            </dd>
-                        {% endif %}
-                    </dl>
+                            </dl>
+                        </div>
+                    </div>
                 </td>
-                <td class="text-black-50 text-end">
+                <td class="cn-configured-item__unit-price text-end">
                     <span data-configured-item-unit-price>{{ item.unitAmount|sylius_format_money(item.currencyCode, item.localeCode) }}</span>
                     {% if item.fixedTotal > 0 or item.percentageTotal > 0 %}
-                        <small class="d-block">zzgl. Einrichtungs-/Optionskosten</small>
+                        <small class="cn-configured-item__price-note">zzgl. Einrichtungs-/Optionskosten</small>
                     {% endif %}
                 </td>
-                <td class="text-end">
+                <td class="cn-configured-item__quantity-cell text-end">
                     <div class="cn-configured-item__quantity">
                         <input
                             class="form-control"
@@ -64,17 +74,14 @@
                             value="{{ item.quantity }}"
                             aria-label="Menge für {{ item.configuratorName }}"
                             data-configured-item-quantity
-                        >
-                        <button
-                            class="btn btn-sm btn-outline-primary"
-                            type="button"
-                            data-configured-item-action="quantity"
                             data-endpoint="{{ path('cardnext_shop_configured_item_quantity', {id: item.id}) }}"
                             data-csrf-token="{{ csrf_token('configured_item_' ~ item.id) }}"
-                        >Aktualisieren</button>
+                            data-initial-value="{{ item.quantity }}"
+                        >
+                        <span class="cn-configured-item__error" role="alert" data-configured-item-error hidden></span>
                     </div>
                 </td>
-                <td class="text-end">
+                <td class="cn-configured-item__total text-end">
                     <strong data-configured-item-total>{{ item.total|sylius_format_money(item.currencyCode, item.localeCode) }}</strong>
                 </td>
             </tr>
