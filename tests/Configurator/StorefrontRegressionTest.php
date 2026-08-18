@@ -66,6 +66,37 @@ final class StorefrontRegressionTest extends TestCase
         }
     }
 
+    public function testDependencyCleanupRunsOnlyAfterAllRulesHaveBeenApplied(): void
+    {
+        $javascript = $this->readProjectFile('assets/shop/configurator.js');
+        $applyDependenciesStart = strpos($javascript, 'const applyDependencies = () =>');
+        $applyRuleStart = strpos($javascript, 'const applyRule = (rule, active) =>');
+        self::assertIsInt($applyDependenciesStart);
+        self::assertIsInt($applyRuleStart);
+
+        $applyDependencies = substr($javascript, $applyDependenciesStart, $applyRuleStart - $applyDependenciesStart);
+        $matchingRules = strpos($applyDependencies, 'dependencies.filter(dependencyMatches)');
+        $cleanup = strpos($applyDependencies, 'if (!controlIsEffective(control)) clearControl(control);');
+        self::assertIsInt($matchingRules);
+        self::assertIsInt($cleanup);
+        self::assertGreaterThan($matchingRules, $cleanup);
+
+        $applyRuleEnd = strpos($javascript, "\n    };", $applyRuleStart);
+        self::assertIsInt($applyRuleEnd);
+        $applyRule = substr($javascript, $applyRuleStart, $applyRuleEnd - $applyRuleStart);
+        self::assertStringNotContainsString('clearControl', $applyRule);
+    }
+
+    public function testIncompleteConfigurationsAreInvalidatedBeforePriceRequests(): void
+    {
+        $javascript = $this->readProjectFile('assets/shop/configurator.js');
+
+        self::assertStringContainsString('const incompleteConfigurationErrors = () =>', $javascript);
+        self::assertStringContainsString('const invalidateResult = () =>', $javascript);
+        self::assertStringContainsString('if (requiredErrors.length)', $javascript);
+        self::assertStringContainsString('form.addEventListener(\'submit\', (event) => { event.preventDefault(); calculate(true); });', $javascript);
+    }
+
     private function readProjectFile(string $path): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $path);

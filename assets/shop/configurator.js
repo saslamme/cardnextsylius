@@ -52,6 +52,21 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         return operator === 'greater_than' ? number > expected : operator === 'greater_than_or_equal' ? number >= expected : operator === 'less_than' ? number < expected : number <= expected;
     };
 
+    const clearControl = (control) => {
+        if (['radio', 'checkbox'].includes(control.type)) {
+            control.checked = false;
+        } else {
+            control.value = '';
+        }
+    };
+
+    const controlIsEffective = (control) => {
+        const field = control.closest('[data-configurator-field]');
+        const value = control.closest('[data-configurator-value]');
+
+        return !control.disabled && !field?.hidden && !value?.hidden;
+    };
+
     const applyDependencies = () => {
         root.querySelectorAll('[data-configurator-field]').forEach((field) => {
             field.hidden = false;
@@ -60,6 +75,10 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         });
         dependencies.filter((rule) => ['show', 'enable'].includes(rule.effect)).forEach((rule) => applyRule(rule, false));
         dependencies.filter(dependencyMatches).forEach((rule) => applyRule(rule, true));
+
+        root.querySelectorAll('[data-configurator-field] input').forEach((control) => {
+            if (!controlIsEffective(control)) clearControl(control);
+        });
     };
 
     const applyRule = (rule, active) => {
@@ -73,7 +92,6 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         if (rule.effect === 'enable') controls.forEach((control) => { control.disabled = !active; });
         if (['disable', 'forbid'].includes(rule.effect) && active) controls.forEach((control) => { control.disabled = true; });
         if (rule.effect === 'require') controls.forEach((control) => { control.required = active; });
-        if (target.hidden || controls.some((control) => control.disabled)) controls.forEach((control) => { control.checked = false; if (!['radio', 'checkbox'].includes(control.type)) control.value = ''; });
     };
 
     root.querySelectorAll('[data-configurator-field] input').forEach((input) => { input.dataset.baseRequired = String(input.required); });
@@ -105,11 +123,64 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         }
     };
 
-    const calculate = async () => {
+    const incompleteConfigurationErrors = () => {
+        const errors = [];
+        const quantity = root.querySelector('[data-configurator-quantity]');
+        if (!quantity || quantity.value === '' || !quantity.validity.valid) {
+            errors.push({field: 'quantity', message: 'Bitte geben Sie eine gültige Menge ein.'});
+        }
+
+        root.querySelectorAll('[data-configurator-field]:not([hidden])').forEach((field) => {
+            const controls = [...field.querySelectorAll('input')].filter(controlIsEffective);
+            const required = controls.filter((control) => control.required);
+            if (!required.length) return;
+
+            const type = field.dataset.fieldType;
+            const complete = type === 'single_choice'
+                ? controls.some((control) => control.checked)
+                : required.every((control) => {
+                    if (['radio', 'checkbox'].includes(control.type)) return control.checked;
+
+                    return control.value !== '' && control.validity.valid;
+                });
+            if (!complete) {
+                errors.push({field: field.dataset.configuratorField, message: 'Bitte füllen Sie dieses Pflichtfeld aus.'});
+            }
+        });
+
+        const leadTimes = root.querySelector('[data-configurator-lead-times]');
+        if (leadTimes && !leadTimes.hidden) {
+            const requiredLeadTimes = [...leadTimes.querySelectorAll('input[name="leadTimeCode"][required]')]
+                .filter((control) => !control.disabled);
+            if (requiredLeadTimes.length && !requiredLeadTimes.some((control) => control.checked)) {
+                errors.push({field: 'leadTime', message: 'Bitte wählen Sie eine Produktionszeit aus.'});
+            }
+        }
+
+        return errors;
+    };
+
+    const invalidateResult = () => {
         calculatedPayload = undefined;
+        controller?.abort();
+        controller = undefined;
         if (addButton) addButton.disabled = true;
+        root.querySelector('[data-configurator-placeholder]')?.classList.remove('d-none');
+        root.querySelector('[data-configurator-result]')?.classList.add('d-none');
+    };
+
+    const calculate = async (showRequiredErrors = false) => {
+        invalidateResult();
         applyDependencies();
         clearErrors();
+        const requiredErrors = incompleteConfigurationErrors();
+        if (requiredErrors.length) {
+            if (showRequiredErrors) showErrors(requiredErrors);
+            submit.disabled = false;
+            price.setAttribute('aria-busy', 'false');
+
+            return;
+        }
         const quantity = Number.parseInt(root.querySelector('[data-configurator-quantity]').value, 10);
         const selections = {};
         root.querySelectorAll('[data-configurator-field]:not([hidden])').forEach((field) => {
@@ -170,10 +241,16 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         }
     };
 
-    const debouncedCalculate = debounce(calculate, 450);
-    form.addEventListener('submit', (event) => { event.preventDefault(); calculate(); });
-    form.addEventListener('change', () => { applyDependencies(); debouncedCalculate(); });
-    form.addEventListener('input', () => { applyDependencies(); debouncedCalculate(); });
+    const debouncedCalculate = debounce(() => calculate(), 450);
+    const configurationChanged = () => {
+        applyDependencies();
+        clearErrors();
+        invalidateResult();
+        debouncedCalculate();
+    };
+    form.addEventListener('submit', (event) => { event.preventDefault(); calculate(true); });
+    form.addEventListener('change', configurationChanged);
+    form.addEventListener('input', configurationChanged);
     addButton?.addEventListener('click', async () => {
         if (!calculatedPayload) return;
         addButton.disabled = true;
