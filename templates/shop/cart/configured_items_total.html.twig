@@ -1,0 +1,14 @@
+{% set cart = hookable_metadata.context.cart %}
+{% set configuredItemsTotal = 0 %}
+{% for item in cart.configuredItems %}
+    {% set configuredItemsTotal = configuredItemsTotal + item.total %}
+{% endfor %}
+
+{% if cart.configuredItems|length > 0 %}
+    {% set configuredCurrency = cart.configuredItems.first.currencyCode %}
+    {% set configuredLocale = cart.configuredItems.first.localeCode %}
+    <div class="hstack gap-2 mb-2" data-configured-items-total>
+        <div>Konfigurierte Artikel:</div>
+        <div class="ms-auto text-end">{{ configuredItemsTotal|sylius_format_money(configuredCurrency, configuredLocale) }}</div>
+    </div>
+{% endif %}

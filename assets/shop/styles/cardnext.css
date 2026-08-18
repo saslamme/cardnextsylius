@@ -4389,6 +4389,11 @@ tbody td:nth-child(2) {
 .cn-cart-items__table .form-control,.cn-cart-items__table input[type=number]{width:76px;min-height:42px;padding-inline:10px;text-align:center}
 .cn-cart-items__table a{color:var(--cn-commerce-ink);font-weight:700;text-decoration:none}
 .cn-cart-items__table a:hover{color:var(--cn-commerce-primary)}
+.cn-configured-item__snapshot{display:grid;grid-template-columns:minmax(110px,.65fr) minmax(150px,1fr);gap:3px 12px;font-size:.72rem;line-height:1.45}
+.cn-configured-item__snapshot dt{color:var(--cn-commerce-muted);font-weight:650}
+.cn-configured-item__snapshot dd{margin:0}
+.cn-configured-item__quantity{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.cn-configured-item__quantity .btn{font-size:.66rem}
 .cn-cart-products>:not(.cn-cart-items){margin-top:16px}
 .cn-cart-summary{box-shadow:0 10px 28px rgba(20,39,63,.045)}
 .cn-cart-summary__body{padding:15px 19px 17px}
