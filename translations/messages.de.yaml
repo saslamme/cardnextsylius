@@ -13,6 +13,24 @@ cardnext:
       configuration: Konfigurationsprodukt
   configurator:
     title: Konfiguratoren
+    form: { title: Produkt konfigurieren, intro: Der Preis aktualisiert sich automatisch. }
+    section: { basic: Basis, create: Bereich anlegen, empty: Noch keine Bereiche vorhanden. }
+    quantity: Menge
+    choose: Bitte auswählen
+    yes: Ja
+    upload_later: Der Dateiupload erfolgt nach der Bestellung.
+    production_time: Produktionszeit
+    working_days: Arbeitstage
+    summary: Ihre Konfiguration
+    incomplete: Unvollständig
+    total: Gesamtpreis
+    placeholder: Füllen Sie die Pflichtfelder aus, um den Preis automatisch zu berechnen.
+    per_piece: pro Stück
+    shipping_note: Zuzüglich Versand und ggf. gesetzlicher Umsatzsteuer.
+    add_to_cart: In den Warenkorb
+    price_details: Preisdetails
+    awaiting_price: Preis wird berechnet
+    assurance: { calculation: Serverseitig und verbindlich kalkuliert, checkout: Sichere Bestellabwicklung }
     create: Konfigurator anlegen
     edit: Bearbeiten
     delete: Löschen
@@ -53,7 +71,6 @@ cardnext:
     percentage_base: Prozentbasis
     channel_help: Eine Channel-spezifische Preisregel überschreibt die globale Regel derselben Preisdimension.
     tabs: { master: Stammdaten, structure: Struktur, prices: Preise }
-    section: { create: Bereich anlegen, empty: Noch keine Bereiche vorhanden. }
     field: { create: Feld anlegen, empty: Noch keine Felder vorhanden. }
     value: { create: Wert anlegen }
     price: { create: Preisregel anlegen, base: BASIS, empty: Noch keine Preisregeln vorhanden. }
@@ -73,6 +90,7 @@ cardnext:
     configurable_only: Eine Konfigurator-URL ist nur für Konfigurationsprodukte zulässig.
   configurator_page:
     kicker: Konfigurationsprodukt
+    breadcrumb: { home: Start }
     stage: { kicker: Ihre Konfiguration, title: Produkt konfigurieren, intro: Stellen Sie Ihr Produkt zusammen und lassen Sie den Preis unverbindlich berechnen. }
     trust: { calculation: Transparente Kalkulation, production: Professionelle Fertigung, support: Persönliche Beratung }
     process:

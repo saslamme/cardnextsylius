@@ -11,8 +11,10 @@
 
 {% block content %}
 <main class="cn-configurator-page">
-    <section class="cn-configurator-hero">
-        <div class="cn-container cn-configurator-hero__grid">
+    <div class="cn-container">
+        <nav class="cn-configurator-breadcrumb" aria-label="Breadcrumb"><a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.configurator_page.breadcrumb.home'|trans }}</a><span aria-hidden="true">›</span>{{ translation.name }}</nav>
+        <section class="cn-configurator-hero">
+            {% if configurator.images|length > 0 %}<div class="cn-configurator-hero__visual"><img class="cn-configurator-hero__image" src="{{ asset((configurator.images|first).path) }}" alt="{{ (configurator.images|first).altText ?: translation.name }}"></div>{% endif %}
             <div class="cn-configurator-hero__copy">
                 <span class="cn-kicker">{{ 'cardnext.configurator_page.kicker'|trans }}</span>
                 <h1 class="cn-title cn-title--page">{{ translation.name }}</h1>
@@ -23,22 +25,11 @@
                     <li>{{ 'cardnext.configurator_page.trust.support'|trans }}</li>
                 </ul>
             </div>
-            {% if configurator.images|length > 0 %}
-                <div class="cn-configurator-hero__visual"><img class="cn-configurator-hero__image" src="{{ asset((configurator.images|first).path) }}" alt="{{ (configurator.images|first).altText ?: translation.name }}"></div>
-            {% endif %}
-        </div>
-    </section>
-
-    <section class="cn-configurator-stage" aria-labelledby="configuration-heading">
-        <div class="cn-container">
-            <div class="cn-configurator-stage__heading">
-                <span class="cn-kicker">{{ 'cardnext.configurator_page.stage.kicker'|trans }}</span>
-                <h2 id="configuration-heading">{{ 'cardnext.configurator_page.stage.title'|trans }}</h2>
-                <p>{{ 'cardnext.configurator_page.stage.intro'|trans }}</p>
-            </div>
+        </section>
+        <section class="cn-configurator-stage" aria-label="{{ 'cardnext.configurator_page.stage.title'|trans }}">
             {{ component('cardnext:configurator', {configurator: configurator}) }}
-        </div>
-    </section>
+        </section>
+    </div>
 
     <section class="cn-configurator-process" aria-labelledby="process-heading">
         <div class="cn-container">

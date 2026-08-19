@@ -13,6 +13,24 @@ cardnext:
       configuration: Configuration product
   configurator:
     title: Configurators
+    form: { title: Configure product, intro: The price updates automatically. }
+    section: { basic: Basics, create: Create section, empty: No sections yet. }
+    quantity: Quantity
+    choose: Please choose
+    yes: Yes
+    upload_later: Files can be uploaded after ordering.
+    production_time: Production time
+    working_days: working days
+    summary: Your configuration
+    incomplete: Incomplete
+    total: Total price
+    placeholder: Complete all required fields to calculate the price automatically.
+    per_piece: per piece
+    shipping_note: Shipping and applicable taxes are added separately.
+    add_to_cart: Add to cart
+    price_details: Price details
+    awaiting_price: Calculating price
+    assurance: { calculation: Authoritative server-side calculation, checkout: Secure checkout }
     create: Create configurator
     edit: Edit
     delete: Delete
@@ -53,7 +71,6 @@ cardnext:
     percentage_base: Percentage base
     channel_help: A channel-specific rule overrides the global rule of the same dimension.
     tabs: { master: Master data, structure: Structure, prices: Prices }
-    section: { create: Create section, empty: No sections yet. }
     field: { create: Create field, empty: No fields yet. }
     value: { create: Create value }
     price: { create: Create price rule, base: BASE, empty: No price rules yet. }
@@ -73,6 +90,7 @@ cardnext:
     configurable_only: A configurator URL is only allowed for configurable products.
   configurator_page:
     kicker: Configurable product
+    breadcrumb: { home: Home }
     stage: { kicker: Your configuration, title: Configure product, intro: Choose your options and calculate a non-binding price. }
     trust: { calculation: Transparent calculation, production: Professional production, support: Personal advice }
     process:
