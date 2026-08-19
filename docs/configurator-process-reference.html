@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cardnext – Bestellablauf</title>
+<style>
+:root{
+    --cn-primary:#E95126;
+    --cn-ink:#20272D;
+    --cn-text:#5f6970;
+    --cn-surface:#eef0f1;
+    --cn-container:1580px;
+    --cn-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{font-size:16px}
+body{
+    margin:0;
+    min-width:320px;
+    color:var(--cn-text);
+    background:#fff;
+    font-family:var(--cn-font);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+}
+.cn-container{
+    width:100%;
+    max-width:var(--cn-container);
+    margin-inline:auto;
+    padding-inline:28px;
+}
+.cn-process{
+    padding:62px 0 54px;
+    background:var(--cn-surface);
+}
+.cn-process__title{
+    max-width:1020px;
+    margin:0 auto 50px;
+    color:var(--cn-ink);
+    font-size:clamp(2rem,2.65vw,3rem);
+    font-weight:800;
+    line-height:1.08;
+    letter-spacing:-.045em;
+    text-align:center;
+}
+.cn-process__grid{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:38px;
+    align-items:start;
+}
+.cn-process__step{min-width:0}
+.cn-process__icon{
+    height:170px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    margin-bottom:20px;
+}
+.cn-process__icon svg{
+    display:block;
+    width:auto;
+    height:124px;
+    max-width:100%;
+    overflow:visible;
+}
+.cn-process__step:nth-child(3) .cn-process__icon svg{height:118px}
+.cn-process__step:nth-child(5) .cn-process__icon svg{height:120px}
+.cn-process__step h3{
+    margin:0 0 9px;
+    color:var(--cn-ink);
+    font-size:1.04rem;
+    font-weight:800;
+    line-height:1.25;
+    letter-spacing:-.012em;
+}
+.cn-process__step p{
+    max-width:255px;
+    margin:0;
+    color:var(--cn-text);
+    font-size:.82rem;
+    line-height:1.7;
+}
+.cn-process__num{margin-right:.28rem}
+
+@media(max-width:1320px){
+    .cn-process__grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:34px 38px;
+    }
+}
+@media(max-width:860px){
+    .cn-container{padding-inline:20px}
+    .cn-process{padding:48px 0 40px}
+    .cn-process__title{margin-bottom:36px}
+    .cn-process__grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:30px 26px;
+    }
+    .cn-process__icon{height:145px}
+    .cn-process__icon svg{height:106px}
+}
+@media(max-width:560px){
+    .cn-process__grid{
+        grid-template-columns:1fr;
+        gap:26px;
+    }
+    .cn-process__step{
+        display:grid;
+        grid-template-columns:112px minmax(0,1fr);
+        gap:18px;
+        align-items:center;
+    }
+    .cn-process__icon{
+        height:auto;
+        margin:0;
+    }
+    .cn-process__icon svg{
+        width:100px;
+        height:auto !important;
+    }
+    .cn-process__step p{max-width:none}
+}
+</style>
+</head>
+<body>
+
+<section class="cn-process" aria-labelledby="process-heading">
+<div class="cn-container">
+
+<h2 class="cn-process__title" id="process-heading">
+So funktioniert Ihre Bestellung individuell bedruckter Plastikkarten
+</h2>
+
+<div class="cn-process__grid">
+
+<!-- 1. KONFIGURIEREN -->
+<article class="cn-process__step">
+<div class="cn-process__icon" aria-hidden="true">
+<svg viewBox="0 0 126 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- device body -->
+    <path d="M104.8 8H21.2C14.5 8 9 13.5 9 20.2v67.6C9 94.5 14.5 100 21.2 100h83.6c6.7 0 12.2-5.5 12.2-12.2V20.2C117 13.5 111.5 8 104.8 8Zm6.7 79.8c0 3.7-3 6.7-6.7 6.7H21.2c-3.7 0-6.7-3-6.7-6.7V20.2c0-3.7 3-6.7 6.7-6.7h83.6c3.7 0 6.7 3 6.7 6.7v67.6Z" fill="#20272D"/>
+    <!-- rows -->
+    <path d="M46 26h47v4H46v-4Zm0 19h47v4H46v-4Zm0 19h47v4H46v-4Zm0 19h31v4H46v-4Z" fill="#20272D"/>
+    <path d="M46 33h29v2H46v-2Zm0 19h36v2H46v-2Zm0 19h25v2H46v-2Z" fill="#20272D"/>
+    <!-- switches / selected controls -->
+    <path d="M24 22h13c4.4 0 8 3.6 8 8s-3.6 8-8 8H24c-4.4 0-8-3.6-8-8s3.6-8 8-8Zm13 5H24a3 3 0 0 0 0 6h13a3 3 0 0 0 0-6ZM24 41h13c4.4 0 8 3.6 8 8s-3.6 8-8 8H24c-4.4 0-8-3.6-8-8s3.6-8 8-8Zm0 5a3 3 0 1 0 0 6h13a3 3 0 1 0 0-6H24ZM24 60h13c4.4 0 8 3.6 8 8s-3.6 8-8 8H24c-4.4 0-8-3.6-8-8s3.6-8 8-8Zm13 5H24a3 3 0 0 0 0 6h13a3 3 0 0 0 0-6Z" fill="#E95126"/>
+    <!-- quantity/price accent -->
+    <path d="M84 78h23v13H84V78Zm5 4v5h13v-5H89Z" fill="#E95126"/>
+</svg>
+</div>
+<h3><span class="cn-process__num">1.</span>Konfigurieren</h3>
+<p>Wählen Sie Material, Druck, Menge und Produktionszeit für Ihre Karten aus.</p>
+</article>
+
+<!-- 2. BESTELLEN -->
+<article class="cn-process__step">
+<div class="cn-process__icon" aria-hidden="true">
+<svg viewBox="0 0 126 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- order window -->
+    <path d="M94.5 7H21.5C14.6 7 9 12.6 9 19.5v69C9 95.4 14.6 101 21.5 101h73c6.9 0 12.5-5.6 12.5-12.5v-69C107 12.6 101.4 7 94.5 7Zm7 81.5c0 3.9-3.1 7-7 7h-73c-3.9 0-7-3.1-7-7v-69c0-3.9 3.1-7 7-7h73c3.9 0 7 3.1 7 7v69Z" fill="#20272D"/>
+    <!-- order lines -->
+    <path d="M42 25h42v4H42v-4Zm0 15h49v4H42v-4Zm0 15h37v4H42v-4Z" fill="#20272D"/>
+    <path d="M23 21h12v12H23V21Zm4 4v4h4v-4h-4ZM23 36h12v12H23V36Zm4 4v4h4v-4h-4ZM23 51h12v12H23V51Zm4 4v4h4v-4h-4Z" fill="#20272D"/>
+    <!-- orange verified check -->
+    <path d="m24 25 4 4 8-10 3.5 2.8L28.2 36 20.5 28.5 24 25Z" fill="#E95126"/>
+    <!-- cart accent -->
+    <path d="M82.5 67C93.3 67 102 75.7 102 86.5S93.3 106 82.5 106 63 97.3 63 86.5 71.7 67 82.5 67Z" fill="#E95126"/>
+    <path d="M70 76h5l2.5 12H91l3-9H77v-4h22l-5 18H74L70 76Zm10 21.5a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4Zm12 0a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4Z" fill="#fff"/>
+</svg>
+</div>
+<h3><span class="cn-process__num">2.</span>Bestellen</h3>
+<p>Prüfen Sie Ihre Konfiguration und schließen Sie die Bestellung bequem online ab.</p>
+</article>
+
+<!-- 3. DRUCKDATEN -->
+<article class="cn-process__step">
+<div class="cn-process__icon" aria-hidden="true">
+<svg viewBox="0 0 138 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- rear card -->
+    <path d="M41.1 12.3 101.7 4c6-.8 11.5 3.4 12.3 9.4l8.8 63.7c.8 6-3.4 11.5-9.4 12.3l-60.6 8.3c-6 .8-11.5-3.4-12.3-9.4l-8.8-63.7c-.8-6 3.4-11.5 9.4-12.3Zm.7 5.2c-3.1.4-5.3 3.3-4.9 6.4l8.8 63.7c.4 3.1 3.3 5.3 6.4 4.9l60.6-8.3c3.1-.4 5.3-3.3 4.9-6.4l-8.8-63.7c-.4-3.1-3.3-5.3-6.4-4.9l-60.6 8.3Z" fill="#E95126"/>
+    <!-- front card -->
+    <path d="M21.5 20h61C89.4 20 95 25.6 95 32.5v57C95 96.4 89.4 102 82.5 102h-61C14.6 102 9 96.4 9 89.5v-57C9 25.6 14.6 20 21.5 20Zm0 5.5c-3.9 0-7 3.1-7 7v57c0 3.9 3.1 7 7 7h61c3.9 0 7-3.1 7-7v-57c0-3.9-3.1-7-7-7h-61Z" fill="#20272D"/>
+    <!-- artwork preview -->
+    <path d="M25 36h54v31H25V36Zm5 5v21h44V41H30Z" fill="#20272D"/>
+    <path d="M33 54c7-7 15-10 24-8.5 5.5.9 10.5 3.5 15 8.5l-3.8 3.3c-3.7-4.1-7.6-6.3-12-7-7.3-1.2-13.6 1-19.7 7L33 54Z" fill="#E95126"/>
+    <path d="M28 78h36v4H28v-4Zm0 9h24v4H28v-4Z" fill="#20272D"/>
+    <!-- upload arrow -->
+    <path d="M103 31h5v25h10L105.5 70 93 56h10V31Z" fill="#E95126"/>
+</svg>
+</div>
+<h3><span class="cn-process__num">3.</span>Druckdaten</h3>
+<p>Nach der Bestellung übermitteln Sie Ihre Druckdaten für die weitere Bearbeitung.</p>
+</article>
+
+<!-- 4. FREIGABE -->
+<article class="cn-process__step">
+<div class="cn-process__icon" aria-hidden="true">
+<svg viewBox="0 0 126 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- proof sheet -->
+    <path d="M88.5 7H22.5C15.6 7 10 12.6 10 19.5v69C10 95.4 15.6 101 22.5 101h66c6.9 0 12.5-5.6 12.5-12.5v-69C101 12.6 95.4 7 88.5 7Zm7 81.5c0 3.9-3.1 7-7 7h-66c-3.9 0-7-3.1-7-7v-69c0-3.9 3.1-7 7-7h66c3.9 0 7 3.1 7 7v69Z" fill="#20272D"/>
+    <!-- card preview -->
+    <path d="M25 24h45v26H25V24Zm5 5v16h35V29H30Z" fill="#20272D"/>
+    <path d="M33 39c7-5.5 15-6.4 25-2.4L56.1 41c-8-3.2-14.5-2.5-20.2 2L33 39Z" fill="#E95126"/>
+    <!-- text -->
+    <path d="M25 61h38v4H25v-4Zm0 10h30v4H25v-4Zm0 10h23v4H25v-4Z" fill="#20272D"/>
+    <!-- approval badge -->
+    <path d="M84 59.5c11.6 0 21 9.4 21 21s-9.4 21-21 21-21-9.4-21-21 9.4-21 21-21Z" fill="#E95126"/>
+    <path d="m73.5 81.3 7 7.2 14-17 4.2 3.4-17.7 21-11.7-11.4 4.2-3.2Z" fill="#fff"/>
+</svg>
+</div>
+<h3><span class="cn-process__num">4.</span>Freigabe</h3>
+<p>Sie erhalten einen Korrekturabzug und geben die Produktion erst dann frei.</p>
+</article>
+
+<!-- 5. VERSAND -->
+<article class="cn-process__step">
+<div class="cn-process__icon" aria-hidden="true">
+<svg viewBox="0 0 142 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- package body -->
+    <path d="M15 23h69v63H15V23Zm5.5 5.5v52h58v-52h-58Z" fill="#20272D"/>
+    <path d="M32 23 49.5 10 67 23h-9L49.5 17 41 23h-9Z" fill="#E95126"/>
+    <!-- truck cab -->
+    <path d="M84 43h25.5c3.4 0 6.6 1.8 8.3 4.8L132 72v14H84V43Zm5.5 5.5v32H126v-7l-13-22c-.8-1.4-2.1-2.1-3.5-2.1h-20Z" fill="#20272D"/>
+    <path d="M104 49h6l11 19h-17V49Zm5.5 5.5v8h2.2l-4.5-8h2.3Z" fill="#20272D"/>
+    <!-- wheels -->
+    <path d="M37 78c8.3 0 15 6.7 15 15s-6.7 15-15 15-15-6.7-15-15 6.7-15 15-15Zm0 5.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19ZM108 78c8.3 0 15 6.7 15 15s-6.7 15-15 15-15-6.7-15-15 6.7-15 15-15Zm0 5.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Z" fill="#20272D"/>
+    <!-- orange delivery accents -->
+    <path d="M2 42h28v5H2v-5Zm6 12h22v5H8v-5Zm6 12h16v5H14v-5Z" fill="#E95126"/>
+    <path d="M62 37 50 58h11l-7 22 22-31H65l8-12H62Z" fill="#E95126"/>
+</svg>
+</div>
+<h3><span class="cn-process__num">5.</span>Versand</h3>
+<p>Nach Produktion und Qualitätskontrolle werden Ihre Karten sicher versendet.</p>
+</article>
+
+</div>
+</div>
+</section>
+
+</body>
+</html>
