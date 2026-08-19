@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Cardnext – Plastikkarten konfigurieren</title>
+  <style>
+    :root {
+      --cn-primary: #e95126;
+      --cn-primary-hover: #cc3f19;
+      --cn-primary-soft: #fff4ef;
+      --cn-ink: #20272d;
+      --cn-text: #3e474e;
+      --cn-muted: #6f7a82;
+      --cn-subtle: #8d969c;
+      --cn-border: #dde2e5;
+      --cn-border-strong: #bcc4c9;
+      --cn-surface: #ffffff;
+      --cn-surface-soft: #f6f7f8;
+      --cn-success: #1f7a55;
+      --cn-danger: #b42318;
+      --cn-radius: 7px;
+      --cn-radius-lg: 10px;
+      --cn-shadow: 0 18px 44px rgba(32, 39, 45, .075);
+      --cn-shadow-soft: 0 8px 24px rgba(32, 39, 45, .055);
+      --cn-font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --cn-header-height: 70px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--cn-text);
+      background: #fff;
+      font-family: var(--cn-font);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid rgba(233,81,38,.22); outline-offset: 2px; }
+
+    .cn-shell {
+      width: min(1280px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .cn-header {
+      height: var(--cn-header-height);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,.975);
+      border-bottom: 1px solid var(--cn-border);
+      backdrop-filter: blur(12px);
+    }
+    .cn-header__inner {
+      width: min(1280px, calc(100% - 40px));
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .cn-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cn-ink);
+      font-weight: 850;
+      font-size: 1.1rem;
+      letter-spacing: -.03em;
+      text-decoration: none;
+    }
+    .cn-logo__mark {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--cn-primary);
+      border-radius: 6px;
+      box-shadow: 0 5px 14px rgba(233,81,38,.18);
+      font-size: .75rem;
+      letter-spacing: -.04em;
+    }
+    .cn-header__meta {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--cn-muted);
+      font-size: .76rem;
+    }
+    .cn-header__meta span { display: inline-flex; align-items: center; gap: 7px; }
+    .cn-header__meta svg { width: 15px; height: 15px; color: var(--cn-success); }
+
+    .cn-main { padding: 24px 0 88px; }
+    .cn-breadcrumbs {
+      margin: 0 0 22px;
+      color: var(--cn-subtle);
+      font-size: .74rem;
+    }
+    .cn-breadcrumbs a { text-decoration: none; }
+    .cn-breadcrumbs a:hover { color: var(--cn-primary-hover); }
+    .cn-breadcrumbs span { margin-inline: 7px; color: #bbc1c5; }
+
+    .cn-product-head {
+      display: grid;
+      grid-template-columns: 156px minmax(0, 1fr);
+      gap: 28px;
+      align-items: center;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--cn-border);
+    }
+    .cn-product-visual {
+      aspect-ratio: 1.5 / 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: linear-gradient(145deg, #fafbfb 0%, #f1f3f4 100%);
+      border: 1px solid var(--cn-border);
+      border-radius: var(--cn-radius-lg);
+    }
+    .cn-product-visual::after {
+      content: "";
+      position: absolute;
+      width: 76px;
+      aspect-ratio: 1.586 / 1;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(255,255,255,.68);
+      border: 1px solid rgba(204,210,214,.85);
+      border-radius: 6px;
+      transform: rotate(7deg);
+      box-shadow: 0 8px 18px rgba(32,39,45,.06);
+    }
+    .cn-card-preview {
+      width: 94px;
+      aspect-ratio: 1.586 / 1;
+      position: relative;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #d8dde0;
+      border-radius: 8px;
+      box-shadow: 0 12px 26px rgba(32,39,45,.13);
+      z-index: 1;
+      transform: rotate(-5deg);
+    }
+    .cn-card-preview::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, transparent 0 48%, rgba(233,81,38,.12) 48% 66%, transparent 66%),
+        linear-gradient(25deg, rgba(32,39,45,.06), transparent 48%);
+    }
+    .cn-card-preview::after {
+      content: "cardnext";
+      position: absolute;
+      left: 10px;
+      bottom: 8px;
+      color: var(--cn-ink);
+      font-size: .48rem;
+      font-weight: 850;
+      letter-spacing: -.04em;
+    }
+    .cn-kicker {
+      margin-bottom: 6px;
+      color: var(--cn-primary-hover);
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .cn-title {
+      margin: 0;
+      color: var(--cn-ink);
+      font-size: clamp(1.8rem, 3vw, 2.55rem);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+    }
+    .cn-product-copy {
+      max-width: 800px;
+      margin: 10px 0 0;
+      color: var(--cn-muted);
+      font-size: .9rem;
+      line-height: 1.65;
+    }
+    .cn-product-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-top: 12px;
+      color: var(--cn-muted);
+      font-size: .73rem;
+    }
+    .cn-product-points span { display: inline-flex; align-items: center; gap: 6px; }
+    .cn-product-points svg { width: 14px; height: 14px; color: var(--cn-success); }
+
+    .cn-config-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 48px;
+      align-items: start;
+      padding-top: 38px;
+    }
+
+    .cn-config {
+      min-width: 0;
+    }
+    .cn-config__intro {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+    .cn-config__intro h2 {
+      margin: 0;
+      color: var(--cn-ink);
+      font-size: 1.15rem;
+      font-weight: 820;
+      letter-spacing: -.02em;
+    }
+    .cn-config__intro p {
+      margin: 0;
+      color: var(--cn-muted);
+      font-size: .76rem;
+    }
+
+    .cn-config-panel {
+      border-top: 1px solid var(--cn-border-strong);
+    }
+    .cn-config-section {
+      padding: 27px 0;
+      border-bottom: 1px solid var(--cn-border);
+    }
+    .cn-config-section__head {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 18px;
+    }
+    .cn-config-section__head h3 {
+      margin: 0;
+      color: var(--cn-ink);
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: -.01em;
+    }
+    .cn-config-section__head p {
+      margin: 0;
+      color: var(--cn-muted);
+      font-size: .72rem;
+    }
+
+    .cn-field-list { display: grid; gap: 13px; }
+    .cn-field {
+      display: grid;
+      grid-template-columns: 205px minmax(0, 1fr);
+      gap: 18px;
+      align-items: center;
+      min-height: 48px;
+    }
+    .cn-field__label {
+      color: var(--cn-ink);
+      font-size: .79rem;
+      font-weight: 720;
+    }
+    .cn-field__hint {
+      display: block;
+      margin-top: 3px;
+      color: var(--cn-subtle);
+      font-size: .67rem;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .cn-control {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 42px 0 14px;
+      color: var(--cn-ink);
+      background: #fff;
+      border: 1px solid var(--cn-border-strong);
+      border-radius: 8px;
+      outline: 0;
+      font-size: .8rem;
+      box-shadow: none;
+      transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
+    }
+    .cn-control:hover { border-color: #aeb7bc; }
+    .cn-control:focus {
+      border-color: var(--cn-primary);
+      box-shadow: 0 0 0 3px rgba(233,81,38,.09);
+    }
+    select.cn-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236f7a82' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.7' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      background-size: 15px;
+    }
+
+    .cn-quantity { display: block; }
+    .cn-quantity .cn-control { padding-right: 13px; }
+
+    .cn-segmented {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 3px;
+      background: var(--cn-surface-soft);
+      border: 1px solid var(--cn-border);
+      border-radius: 8px;
+    }
+    .cn-segmented input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cn-segmented label {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 10px;
+      color: var(--cn-muted);
+      border-radius: 6px;
+      font-size: .75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .cn-segmented input:checked + label {
+      color: var(--cn-ink);
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(32,39,45,.08);
+    }
+    .cn-segmented input:focus-visible + label {
+      box-shadow: 0 0 0 3px rgba(233,81,38,.10);
+    }
+
+    .cn-extra {
+      margin-top: 18px;
+      border: 1px solid var(--cn-border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .cn-extra summary {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 14px;
+      color: var(--cn-ink);
+      font-size: .77rem;
+      font-weight: 750;
+      cursor: pointer;
+      list-style: none;
+      transition: background-color .16s ease;
+    }
+    .cn-extra summary:hover { background: #fbfcfc; }
+    .cn-extra summary::-webkit-details-marker { display: none; }
+    .cn-extra summary::after {
+      content: "+";
+      color: var(--cn-primary);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .cn-extra[open] summary::after { content: "−"; }
+    .cn-extra__copy {
+      color: var(--cn-muted);
+      font-size: .68rem;
+      font-weight: 500;
+    }
+    .cn-extra__body {
+      padding: 16px 14px 18px;
+      border-top: 1px solid var(--cn-border);
+      background: linear-gradient(180deg, #fcfdfd 0%, #f8f9fa 100%);
+    }
+
+    .cn-lead-times { display: grid; gap: 8px; }
+    .cn-lead-time { position: relative; }
+    .cn-lead-time input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cn-lead-time label {
+      min-height: 60px;
+      display: grid;
+      grid-template-columns: 19px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 13px;
+      background: #fff;
+      border: 1px solid var(--cn-border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+    }
+    .cn-lead-time__radio {
+      width: 17px;
+      height: 17px;
+      position: relative;
+      border: 1.5px solid #aab3b8;
+      border-radius: 50%;
+    }
+    .cn-lead-time label:hover { border-color: #b9c1c6; }
+    .cn-lead-time input:focus-visible + label { box-shadow: 0 0 0 3px rgba(233,81,38,.10); }
+    .cn-lead-time input:checked + label {
+      background: var(--cn-primary-soft);
+      border-color: rgba(233,81,38,.55);
+      box-shadow: inset 3px 0 0 var(--cn-primary);
+    }
+    .cn-lead-time input:checked + label .cn-lead-time__radio { border-color: var(--cn-primary); }
+    .cn-lead-time input:checked + label .cn-lead-time__radio::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      background: var(--cn-primary);
+      border-radius: 50%;
+    }
+    .cn-lead-time strong {
+      display: block;
+      color: var(--cn-ink);
+      font-size: .77rem;
+      line-height: 1.3;
+    }
+    .cn-lead-time small {
+      display: block;
+      margin-top: 2px;
+      color: var(--cn-muted);
+      font-size: .67rem;
+    }
+    .cn-lead-time__price {
+      color: var(--cn-ink);
+      font-size: .73rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .cn-badge {
+      display: inline-flex;
+      margin-left: 6px;
+      padding: 2px 5px;
+      color: var(--cn-success);
+      background: #edf8f2;
+      border-radius: 4px;
+      font-size: .58rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .035em;
+      vertical-align: 1px;
+    }
+
+    .cn-summary {
+      position: sticky;
+      top: calc(var(--cn-header-height) + 24px);
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--cn-border);
+      border-radius: 12px;
+      box-shadow: var(--cn-shadow);
+      isolation: isolate;
+    }
+    .cn-summary__top {
+      padding: 19px 19px 17px;
+      background: linear-gradient(180deg, #fcfdfd 0%, #f8f9fa 100%);
+      border-bottom: 1px solid var(--cn-border);
+    }
+    .cn-summary__topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .cn-summary__title {
+      margin: 0;
+      color: var(--cn-ink);
+      font-size: .9rem;
+      font-weight: 820;
+      letter-spacing: -.01em;
+    }
+    .cn-summary__state {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--cn-success);
+      font-size: .64rem;
+      font-weight: 780;
+      letter-spacing: .01em;
+    }
+    .cn-summary__state::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+    .cn-summary__selection {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .cn-summary__row {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto;
+      gap: 14px;
+      color: var(--cn-muted);
+      font-size: .69rem;
+    }
+    .cn-summary__row strong {
+      max-width: 210px;
+      color: var(--cn-ink);
+      font-weight: 720;
+      text-align: right;
+    }
+    .cn-summary__body { padding: 22px 19px 19px; }
+    .cn-summary__label {
+      color: var(--cn-muted);
+      font-size: .68rem;
+      font-weight: 650;
+    }
+    .cn-price-line {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 3px;
+    }
+    .cn-price {
+      color: var(--cn-ink);
+      font-size: clamp(2rem, 3vw, 2.45rem);
+      font-weight: 880;
+      line-height: 1;
+      letter-spacing: -.055em;
+    }
+    .cn-unit-price {
+      padding-bottom: 2px;
+      color: var(--cn-muted);
+      font-size: .68rem;
+      text-align: right;
+      line-height: 1.35;
+    }
+    .cn-summary__shipping {
+      margin: 8px 0 0;
+      color: var(--cn-muted);
+      font-size: .67rem;
+    }
+    .cn-delivery {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 17px;
+      padding: 11px 12px;
+      color: var(--cn-text);
+      background: var(--cn-surface-soft);
+      border: 1px solid #edf0f1;
+      border-radius: 8px;
+      font-size: .69rem;
+    }
+    .cn-delivery svg { width: 16px; height: 16px; flex: 0 0 auto; color: var(--cn-success); }
+    .cn-delivery strong { color: var(--cn-ink); }
+
+    .cn-btn-primary {
+      width: 100%;
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 16px;
+      padding: 0 18px;
+      color: #fff;
+      background: var(--cn-primary);
+      border: 1px solid var(--cn-primary);
+      border-radius: 8px;
+      box-shadow: 0 8px 18px rgba(233,81,38,.16);
+      font-size: .82rem;
+      font-weight: 800;
+      transition: background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
+    }
+    .cn-btn-primary:hover { background: var(--cn-primary-hover); border-color: var(--cn-primary-hover); transform: translateY(-1px); box-shadow: 0 10px 22px rgba(204,63,25,.20); }
+    .cn-btn-primary:active { transform: translateY(0); box-shadow: 0 5px 12px rgba(204,63,25,.15); }
+    .cn-btn-primary:disabled { opacity: .78; transform: none; box-shadow: none; }
+    .cn-btn-primary svg { width: 17px; height: 17px; }
+
+    .cn-price-details {
+      margin-top: 16px;
+      border-top: 1px solid var(--cn-border);
+    }
+    .cn-price-details summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 42px;
+      color: var(--cn-muted);
+      font-size: .67rem;
+      font-weight: 700;
+      cursor: pointer;
+      list-style: none;
+      transition: background-color .16s ease;
+    }
+    .cn-price-details summary::-webkit-details-marker { display: none; }
+    .cn-price-details summary::after { content: "+"; color: var(--cn-primary); font-size: .9rem; }
+    .cn-price-details[open] summary::after { content: "−"; }
+    .cn-price-details__body {
+      display: grid;
+      gap: 8px;
+      padding-bottom: 8px;
+    }
+    .cn-price-details__row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--cn-muted);
+      font-size: .66rem;
+    }
+    .cn-price-details__row strong { color: var(--cn-ink); font-weight: 700; }
+
+    .cn-assurance {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+      color: var(--cn-muted);
+      font-size: .66rem;
+    }
+    .cn-assurance span { display: flex; align-items: flex-start; gap: 7px; }
+    .cn-assurance svg { width: 13px; height: 13px; flex: 0 0 auto; margin-top: 1px; color: var(--cn-success); }
+
+    .cn-mobile-buybar { display: none; }
+    .cn-error {
+      display: none;
+      margin-top: 7px;
+      color: var(--cn-danger);
+      font-size: .68rem;
+    }
+    .cn-error.is-visible { display: block; }
+
+    @media (max-width: 1040px) {
+      .cn-config-layout { grid-template-columns: minmax(0,1fr) 340px; gap: 28px; }
+      .cn-field { grid-template-columns: 180px minmax(0,1fr); }
+    }
+
+    @media (max-width: 860px) {
+      .cn-header__meta span:nth-child(2) { display: none; }
+      .cn-product-head { grid-template-columns: 126px minmax(0,1fr); gap: 20px; }
+      .cn-config-layout { grid-template-columns: 1fr; }
+      .cn-summary { position: static; box-shadow: none; }
+      .cn-mobile-buybar {
+        position: fixed;
+        z-index: 60;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px max(14px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+        background: rgba(255,255,255,.97);
+        border-top: 1px solid var(--cn-border);
+        box-shadow: 0 -10px 30px rgba(32,39,45,.09);
+        backdrop-filter: blur(12px);
+      }
+      .cn-mobile-buybar__price { color: var(--cn-ink); font-size: 1.05rem; font-weight: 850; line-height: 1.1; }
+      .cn-mobile-buybar__price small { display: block; margin-top: 3px; color: var(--cn-muted); font-size: .59rem; font-weight: 600; }
+      .cn-mobile-buybar .cn-btn-primary { width: auto; min-height: 44px; margin: 0; padding-inline: 16px; }
+    }
+
+    @media (max-width: 640px) {
+      .cn-shell, .cn-header__inner { width: min(100% - 28px, 1280px); }
+      .cn-header { height: 62px; }
+      .cn-header__meta { display: none; }
+      .cn-main { padding-top: 18px; padding-bottom: 110px; }
+      .cn-breadcrumbs { margin-bottom: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .cn-product-head { grid-template-columns: 78px minmax(0,1fr); gap: 15px; padding-bottom: 22px; }
+      .cn-card-preview { width: 58px; border-radius: 5px; }
+      .cn-product-visual::after { display: none; }
+      .cn-title { font-size: 1.55rem; }
+      .cn-product-copy { font-size: .78rem; line-height: 1.5; }
+      .cn-product-points { display: none; }
+      .cn-config-layout { padding-top: 26px; }
+      .cn-config__intro { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .cn-config-section { padding: 22px 0; }
+      .cn-field { grid-template-columns: 1fr; gap: 6px; }
+      .cn-field-list { gap: 15px; }
+      .cn-extra__body .cn-field { gap: 6px; }
+      .cn-lead-time label { grid-template-columns: 18px minmax(0,1fr) auto; gap: 9px; }
+      .cn-summary__body { padding: 18px 16px 16px; }
+      .cn-summary__top { padding: 16px; }
+      .cn-mobile-buybar .cn-btn-primary span { display: none; }
+      .cn-mobile-buybar .cn-btn-primary::after { content: "Warenkorb"; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="cn-header">
+    <div class="cn-header__inner">
+      <a class="cn-logo" href="#" aria-label="Cardnext Startseite">
+        <span class="cn-logo__mark">cn</span>
+        cardnext
+      </a>
+      <div class="cn-header__meta" aria-label="Servicevorteile">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+          Preis aktualisiert sich automatisch
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16v10H4z"/><path d="M8 21h8M12 17v4"/></svg>
+          Druckdaten nach Bestellung
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="cn-main">
+    <div class="cn-shell">
+      <nav class="cn-breadcrumbs" aria-label="Breadcrumb">
+        <a href="#">Start</a><span>›</span><a href="#">Plastikkarten</a><span>›</span>Plastikkarten bedrucken
+      </nav>
+
+      <section class="cn-product-head" aria-labelledby="product-title">
+        <div class="cn-product-visual" aria-hidden="true">
+          <div class="cn-card-preview"></div>
+        </div>
+        <div>
+          <div class="cn-kicker">Individuelle Plastikkarten</div>
+          <h1 class="cn-title" id="product-title">Plastikkarten bedrucken</h1>
+          <p class="cn-product-copy">Wählen Sie Menge und Ausführung. Zusätzliche Optionen erscheinen nur, wenn Sie sie benötigen – der Preis aktualisiert sich automatisch.</p>
+          <div class="cn-product-points">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg> ab 100 Stück</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg> mehrere Produktionszeiten</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg> Druckfreigabe vor Produktion</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="cn-config-layout">
+        <section class="cn-config" aria-labelledby="config-title">
+          <div class="cn-config__intro">
+            <h2 id="config-title">Karten konfigurieren</h2>
+            <p>Die wichtigsten Optionen sind bereits vorausgewählt.</p>
+          </div>
+
+          <form class="cn-config-panel" id="configForm" novalidate>
+            <section class="cn-config-section" aria-labelledby="section-basic">
+              <div class="cn-config-section__head">
+                <h3 id="section-basic">Basis</h3>
+                <p>Menge und Grundausführung festlegen.</p>
+              </div>
+
+              <div class="cn-field-list">
+                <div class="cn-field">
+                  <label class="cn-field__label" for="quantity">Menge <span class="cn-field__hint">Mindestens 100 Stück</span></label>
+                  <div>
+                    <div class="cn-quantity">
+                      <input class="cn-control" id="quantity" name="quantity" type="number" inputmode="numeric" min="100" max="10000" step="50" value="500" aria-describedby="quantityError">
+                    </div>
+                    <div class="cn-error" id="quantityError" role="alert">Bitte wählen Sie eine Menge zwischen 100 und 10.000 Stück.</div>
+                  </div>
+                </div>
+
+                <div class="cn-field">
+                  <label class="cn-field__label" for="designs">Anzahl Designs <span class="cn-field__hint">Unterschiedliche Motive bei gleicher Ausführung</span></label>
+                  <select class="cn-control" id="designs" name="designs">
+                    <option value="1" selected>1 Design</option>
+                    <option value="2">2 Designs</option>
+                    <option value="3">3 Designs</option>
+                    <option value="4">4 Designs</option>
+                  </select>
+                </div>
+
+                <div class="cn-field">
+                  <span class="cn-field__label" id="print-label">Druck</span>
+                  <div class="cn-segmented" role="radiogroup" aria-labelledby="print-label">
+                    <input type="radio" name="print" id="printSingle" value="single">
+                    <label for="printSingle">Einseitig</label>
+                    <input type="radio" name="print" id="printDouble" value="double" checked>
+                    <label for="printDouble">Beidseitig</label>
+                  </div>
+                </div>
+
+                <div class="cn-field">
+                  <span class="cn-field__label" id="finish-label">Oberfläche</span>
+                  <div class="cn-segmented" role="radiogroup" aria-labelledby="finish-label">
+                    <input type="radio" name="finish" id="finishGloss" value="gloss">
+                    <label for="finishGloss">Glänzend</label>
+                    <input type="radio" name="finish" id="finishMatt" value="matt" checked>
+                    <label for="finishMatt">Matt</label>
+                  </div>
+                </div>
+
+                <div class="cn-field">
+                  <label class="cn-field__label" for="format">Kartengröße</label>
+                  <select class="cn-control" id="format" name="format">
+                    <option value="cr80" selected>Standard – 85,6 × 54 mm (CR80)</option>
+                    <option value="cr100">CR100 – 99 × 67 mm</option>
+                    <option value="custom">Sonderformat – auf Anfrage</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <section class="cn-config-section" aria-labelledby="section-options">
+              <div class="cn-config-section__head">
+                <h3 id="section-options">Personalisierung & Extras</h3>
+                <p>Nur auswählen, was Sie tatsächlich benötigen.</p>
+              </div>
+
+              <div class="cn-field-list">
+                <div class="cn-field">
+                  <label class="cn-field__label" for="personalization">Personalisierung <span class="cn-field__hint">Nummern, Namen oder variable Daten</span></label>
+                  <select class="cn-control" id="personalization" name="personalization">
+                    <option value="none" selected>Keine Personalisierung</option>
+                    <option value="numbering">Fortlaufende Nummerierung</option>
+                    <option value="data">Namen / variable Datensätze</option>
+                    <option value="barcode">Barcode / QR-Code</option>
+                  </select>
+                </div>
+
+                <div class="cn-field" id="startNumberRow" hidden>
+                  <label class="cn-field__label" for="startNumber">Startnummer</label>
+                  <input class="cn-control" id="startNumber" name="startNumber" type="text" value="000001" inputmode="numeric">
+                </div>
+              </div>
+
+              <details class="cn-extra" id="extraOptions">
+                <summary>
+                  <span>Weitere Optionen <span class="cn-extra__copy">Magnetstreifen, RFID, Signaturfeld, Lochung</span></span>
+                </summary>
+                <div class="cn-extra__body">
+                  <div class="cn-field-list">
+                    <div class="cn-field">
+                      <label class="cn-field__label" for="magstripe">Magnetstreifen</label>
+                      <select class="cn-control" id="magstripe" name="magstripe">
+                        <option value="none" selected>Kein Magnetstreifen</option>
+                        <option value="loco">LoCo Magnetstreifen</option>
+                        <option value="hico">HiCo Magnetstreifen</option>
+                      </select>
+                    </div>
+
+                    <div class="cn-field">
+                      <label class="cn-field__label" for="technology">Technologie</label>
+                      <select class="cn-control" id="technology" name="technology">
+                        <option value="none" selected>Keine Technologie</option>
+                        <option value="rfid">RFID / NFC</option>
+                        <option value="contact">Kontaktchip</option>
+                      </select>
+                    </div>
+
+                    <div class="cn-field">
+                      <label class="cn-field__label" for="signature">Signaturfeld</label>
+                      <select class="cn-control" id="signature" name="signature">
+                        <option value="none" selected>Kein Signaturfeld</option>
+                        <option value="yes">Signaturfeld hinzufügen</option>
+                      </select>
+                    </div>
+
+                    <div class="cn-field">
+                      <label class="cn-field__label" for="punch">Lochung</label>
+                      <select class="cn-control" id="punch" name="punch">
+                        <option value="none" selected>Keine Lochung</option>
+                        <option value="round">Rundloch</option>
+                        <option value="slot">Langloch</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </section>
+
+            <section class="cn-config-section" aria-labelledby="section-time">
+              <div class="cn-config-section__head">
+                <h3 id="section-time">Produktionszeit</h3>
+                <p>Die Zeit beginnt nach Freigabe Ihrer Druckdaten.</p>
+              </div>
+
+              <div class="cn-lead-times">
+                <div class="cn-lead-time">
+                  <input type="radio" name="leadtime" id="leadStandard" value="standard" checked>
+                  <label for="leadStandard">
+                    <span class="cn-lead-time__radio" aria-hidden="true"></span>
+                    <span><strong>Standard <span class="cn-badge">Empfohlen</span></strong><small>ca. 8–10 Arbeitstage</small></span>
+                    <span class="cn-lead-time__price">inklusive</span>
+                  </label>
+                </div>
+                <div class="cn-lead-time">
+                  <input type="radio" name="leadtime" id="leadExpress" value="express">
+                  <label for="leadExpress">
+                    <span class="cn-lead-time__radio" aria-hidden="true"></span>
+                    <span><strong>Express</strong><small>ca. 5 Arbeitstage</small></span>
+                    <span class="cn-lead-time__price">+ 25,00 €</span>
+                  </label>
+                </div>
+                <div class="cn-lead-time">
+                  <input type="radio" name="leadtime" id="leadPriority" value="priority">
+                  <label for="leadPriority">
+                    <span class="cn-lead-time__radio" aria-hidden="true"></span>
+                    <span><strong>Priority</strong><small>ca. 2 Arbeitstage</small></span>
+                    <span class="cn-lead-time__price">+ 65,00 €</span>
+                  </label>
+                </div>
+              </div>
+            </section>
+          </form>
+        </section>
+
+        <aside class="cn-summary" id="summary" aria-live="polite" aria-busy="false">
+          <div class="cn-summary__top">
+            <div class="cn-summary__topline">
+              <h2 class="cn-summary__title">Ihre Konfiguration</h2>
+              <span class="cn-summary__state" id="priceState">Aktuell</span>
+            </div>
+            <div class="cn-summary__selection">
+              <div class="cn-summary__row"><span>Menge</span><strong id="sumQuantity">500 Stück</strong></div>
+              <div class="cn-summary__row"><span>Ausführung</span><strong id="sumExecution">Beidseitig · Matt</strong></div>
+              <div class="cn-summary__row"><span>Format</span><strong id="sumFormat">CR80 Standard</strong></div>
+              <div class="cn-summary__row"><span>Personalisierung</span><strong id="sumPersonalization">Keine</strong></div>
+              <div class="cn-summary__row" id="sumExtrasRow" hidden><span>Extras</span><strong id="sumExtras">–</strong></div>
+            </div>
+          </div>
+
+          <div class="cn-summary__body">
+            <div class="cn-summary__label">Gesamtpreis</div>
+            <div class="cn-price-line">
+              <div class="cn-price" id="totalPrice">170,00 €</div>
+              <div class="cn-unit-price"><strong id="unitPrice">0,34 €</strong><br>pro Stück</div>
+            </div>
+            <p class="cn-summary__shipping">Versandkosten werden im Checkout berechnet.</p>
+
+            <div class="cn-delivery">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h11v10H3z"/><path d="M14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+              <span><strong id="deliveryTitle">Standardproduktion</strong><br><span id="deliveryText">ca. 8–10 Arbeitstage nach Druckfreigabe</span></span>
+            </div>
+
+            <button class="cn-btn-primary" type="button" id="addToCart">
+              <span>In den Warenkorb</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h2l2 10h9l2-7H7"/><circle cx="10" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg>
+            </button>
+
+            <details class="cn-price-details">
+              <summary>Preisdetails</summary>
+              <div class="cn-price-details__body">
+                <div class="cn-price-details__row"><span>Basispreis</span><strong id="detailBase">144,00 €</strong></div>
+                <div class="cn-price-details__row"><span>Ausführung & Optionen</span><strong id="detailOptions">26,00 €</strong></div>
+                <div class="cn-price-details__row"><span>Produktionszeit</span><strong id="detailLead">0,00 €</strong></div>
+              </div>
+            </details>
+
+            <div class="cn-assurance">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Druckdaten können nach der Bestellung übermittelt werden.</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Produktion startet erst nach Ihrer Druckfreigabe.</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Ihre Auswahl wird mit der Bestellung gespeichert.</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div class="cn-mobile-buybar" aria-label="Mobile Bestellleiste">
+    <div class="cn-mobile-buybar__price"><span id="mobileTotal">170,00 €</span><small><span id="mobileUnit">0,34 €</span> / Stück</small></div>
+    <button class="cn-btn-primary" type="button" id="mobileAdd"><span>In den Warenkorb</span></button>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const money = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+      const integer = new Intl.NumberFormat('de-DE');
+      const form = document.getElementById('configForm');
+      const quantityInput = document.getElementById('quantity');
+      const quantityError = document.getElementById('quantityError');
+      const priceState = document.getElementById('priceState');
+      const summary = document.getElementById('summary');
+
+      const labels = {
+        print: { single: 'Einseitig', double: 'Beidseitig' },
+        finish: { gloss: 'Glänzend', matt: 'Matt' },
+        format: { cr80: 'CR80 Standard', cr100: 'CR100', custom: 'Sonderformat' },
+        personalization: { none: 'Keine', numbering: 'Nummerierung', data: 'Variable Daten', barcode: 'Barcode / QR-Code' },
+        magstripe: { none: '', loco: 'LoCo Magnetstreifen', hico: 'HiCo Magnetstreifen' },
+        technology: { none: '', rfid: 'RFID / NFC', contact: 'Kontaktchip' },
+        signature: { none: '', yes: 'Signaturfeld' },
+        punch: { none: '', round: 'Rundloch', slot: 'Langloch' },
+        leadtime: { standard: 'Standardproduktion', express: 'Expressproduktion', priority: 'Priority-Produktion' }
+      };
+
+      const getRadio = name => form.querySelector(`input[name="${name}"]:checked`)?.value;
+      const get = id => document.getElementById(id);
+      const valueOf = id => get(id).value;
+
+      function quantityBase(qty) {
+        const tiers = [
+          [100, 72], [250, 104], [500, 144], [1000, 208], [2500, 370], [5000, 620], [10000, 1040]
+        ];
+        const exact = tiers.find(([q]) => q === qty);
+        if (exact) return exact[1];
+
+        const lower = [...tiers].reverse().find(([q]) => q <= qty) || tiers[0];
+        const upper = tiers.find(([q]) => q >= qty) || tiers[tiers.length - 1];
+        if (lower[0] === upper[0]) return lower[1];
+        const ratio = (qty - lower[0]) / (upper[0] - lower[0]);
+        return lower[1] + (upper[1] - lower[1]) * ratio;
+      }
+
+      function validateQuantity() {
+        const qty = Number(quantityInput.value);
+        const valid = Number.isInteger(qty) && qty >= 100 && qty <= 10000;
+        quantityInput.setAttribute('aria-invalid', String(!valid));
+        quantityError.classList.toggle('is-visible', !valid);
+        return valid;
+      }
+
+      function calculate() {
+        const qty = Math.max(100, Math.min(10000, Number(quantityInput.value) || 100));
+        const designs = Number(valueOf('designs'));
+        const print = getRadio('print');
+        const finish = getRadio('finish');
+        const format = valueOf('format');
+        const personalization = valueOf('personalization');
+        const magstripe = valueOf('magstripe');
+        const technology = valueOf('technology');
+        const signature = valueOf('signature');
+        const punch = valueOf('punch');
+        const leadtime = getRadio('leadtime');
+
+        let base = quantityBase(qty);
+        let options = 0;
+        if (designs > 1) options += (designs - 1) * 12;
+        if (print === 'double') options += 18;
+        if (finish === 'matt') options += 8;
+        if (format === 'cr100') options += 28;
+        if (format === 'custom') options += 55;
+        if (personalization === 'numbering') options += 24;
+        if (personalization === 'data') options += 54;
+        if (personalization === 'barcode') options += 42;
+        if (magstripe === 'loco') options += 29;
+        if (magstripe === 'hico') options += 39;
+        if (technology === 'rfid') options += 95;
+        if (technology === 'contact') options += 110;
+        if (signature === 'yes') options += 16;
+        if (punch !== 'none') options += 12;
+
+        const lead = leadtime === 'express' ? 25 : leadtime === 'priority' ? 65 : 0;
+        return { qty, base, options, lead, total: base + options + lead, print, finish, format, personalization, magstripe, technology, signature, punch, leadtime };
+      }
+
+      function updateSummary() {
+        const startNumberRow = get('startNumberRow');
+        startNumberRow.hidden = valueOf('personalization') !== 'numbering';
+
+        if (!validateQuantity()) {
+          priceState.textContent = 'Eingabe prüfen';
+          priceState.style.color = 'var(--cn-danger)';
+          return;
+        }
+
+        priceState.textContent = 'Aktuell';
+        priceState.style.color = '';
+        summary.setAttribute('aria-busy', 'true');
+
+        const result = calculate();
+        const extras = [
+          labels.magstripe[result.magstripe],
+          labels.technology[result.technology],
+          labels.signature[result.signature],
+          labels.punch[result.punch]
+        ].filter(Boolean);
+
+        get('sumQuantity').textContent = `${integer.format(result.qty)} Stück`;
+        get('sumExecution').textContent = `${labels.print[result.print]} · ${labels.finish[result.finish]}`;
+        get('sumFormat').textContent = labels.format[result.format];
+        get('sumPersonalization').textContent = labels.personalization[result.personalization];
+        get('sumExtrasRow').hidden = extras.length === 0;
+        get('sumExtras').textContent = extras.join(' · ');
+
+        get('totalPrice').textContent = money.format(result.total);
+        get('unitPrice').textContent = money.format(result.total / result.qty);
+        get('mobileTotal').textContent = money.format(result.total);
+        get('mobileUnit').textContent = money.format(result.total / result.qty);
+        get('detailBase').textContent = money.format(result.base);
+        get('detailOptions').textContent = money.format(result.options);
+        get('detailLead').textContent = money.format(result.lead);
+
+        get('deliveryTitle').textContent = labels.leadtime[result.leadtime];
+        get('deliveryText').textContent = result.leadtime === 'standard'
+          ? 'ca. 8–10 Arbeitstage nach Druckfreigabe'
+          : result.leadtime === 'express'
+            ? 'ca. 5 Arbeitstage nach Druckfreigabe'
+            : 'ca. 2 Arbeitstage nach Druckfreigabe';
+
+        requestAnimationFrame(() => summary.setAttribute('aria-busy', 'false'));
+      }
+
+      form.addEventListener('change', updateSummary);
+      form.addEventListener('input', event => {
+        if (event.target === quantityInput || event.target.id === 'startNumber') updateSummary();
+      });
+
+      const addAction = () => {
+        if (!validateQuantity()) {
+          quantityInput.focus();
+          return;
+        }
+        // Production integration point:
+        // replace this visual feedback with the existing server-authoritative Cardnext cart endpoint.
+        const buttons = [get('addToCart'), get('mobileAdd')];
+        buttons.forEach(button => {
+          button.disabled = true;
+          button.dataset.original = button.innerHTML;
+        });
+        get('addToCart').firstElementChild.textContent = 'Zum Warenkorb hinzugefügt';
+        get('mobileAdd').textContent = 'Hinzugefügt';
+        window.setTimeout(() => {
+          buttons.forEach(button => {
+            button.disabled = false;
+            if (button.dataset.original) button.innerHTML = button.dataset.original;
+          });
+        }, 1200);
+      };
+
+      get('addToCart').addEventListener('click', addAction);
+      get('mobileAdd').addEventListener('click', addAction);
+
+      updateSummary();
+    })();
+  </script>
+</body>
+</html>
