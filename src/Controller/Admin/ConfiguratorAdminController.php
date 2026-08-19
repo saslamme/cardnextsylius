@@ -438,11 +438,14 @@ final class ConfiguratorAdminController extends AbstractController
     public function valueCreate(Configurator $configurator, ConfiguratorField $field, Request $request, EntityManagerInterface $em): Response
     {
         $this->assertChoiceField($configurator, $field);
-        if ($request->isMethod('POST') && $this->validToken($request, 'value-create-' . $field->getId())) {
+        if ($request->isMethod('POST') && !$this->validToken($request, 'value-create-' . $field->getId())) {
+            throw $this->createAccessDeniedException();
+        }
+        if ($request->isMethod('POST')) {
             try {
                 $value = new ConfiguratorValue($this->required($request, 'code'), $this->required($request, 'name'));
-                $this->applyValue($value, $request);
                 $field->addValue($value);
+                $this->applyValue($value, $request);
                 $em->persist($value);
                 $em->flush();
 
@@ -460,7 +463,10 @@ final class ConfiguratorAdminController extends AbstractController
     {
         $this->assertChoiceField($configurator, $field);
         $this->assertSame($field, $value->getField());
-        if ($request->isMethod('POST') && $this->validToken($request, 'value-' . $value->getId())) {
+        if ($request->isMethod('POST') && !$this->validToken($request, 'value-' . $value->getId())) {
+            throw $this->createAccessDeniedException();
+        }
+        if ($request->isMethod('POST')) {
             try {
                 $value->setName($this->required($request, 'name'));
                 $this->applyValue($value, $request);
@@ -682,6 +688,7 @@ final class ConfiguratorAdminController extends AbstractController
         $v->setDescription($this->nullable($r, 'description'));
         $v->setPosition($this->nonNegativeInt($r, 'position', 0, 'Die Position muss eine nicht negative ganze Zahl sein.'));
         $v->setEnabled($r->request->getBoolean('enabled'));
+        $v->setPreselected($r->request->getBoolean('preselected'));
         $color = $this->nullable($r, 'color_hex');
         if ($color !== null && preg_match('/^#[0-9A-Fa-f]{6}$/D', $color) !== 1) {
             throw new \DomainException('Die Farbe muss im Format #RRGGBB angegeben werden.');

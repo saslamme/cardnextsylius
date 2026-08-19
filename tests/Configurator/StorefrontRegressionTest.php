@@ -119,6 +119,32 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringNotContainsString('quantityBase', $javascript);
     }
 
+    public function testAllChoicePresentationsRenderConfiguredPreselections(): void
+    {
+        $template = $this->readProjectFile('templates/shop/configurator/product.html.twig');
+
+        self::assertStringContainsString("{% if value.preselected %} selected{% endif %}", $template);
+        self::assertStringContainsString("{% if value.preselected %} checked{% endif %}", $template);
+        self::assertStringContainsString("field.type.value == 'single_choice' and activeValues|length == 2", $template);
+        self::assertStringContainsString("visualValues = activeValues|filter(value => value.imagePath or value.colorHex or value.icon)", $template);
+        self::assertStringContainsString("field.type.value == 'multiple_choice' ? '[]' : ''", $template);
+        self::assertStringContainsString('<option value="">', $template, 'The empty option must remain when no default is configured.');
+    }
+
+    public function testDependenciesSanitizeDefaultsBeforeInitialServerCalculation(): void
+    {
+        $javascript = $this->readProjectFile('assets/shop/configurator.js');
+
+        $initialDependencies = strpos($javascript, "    applyDependencies();\n\n    const clearErrors");
+        $initialCalculation = strpos($javascript, 'updateSelectionSummary(); debouncedCalculate();');
+        self::assertIsInt($initialDependencies);
+        self::assertIsInt($initialCalculation);
+        self::assertLessThan($initialCalculation, $initialDependencies);
+        self::assertStringContainsString('if (!controlIsEffective(control)) clearControl(control);', $javascript);
+        self::assertStringContainsString('fetch(root.dataset.endpoint', $javascript);
+        self::assertStringNotContainsString('ConfiguratorPriceCalculator', $javascript);
+    }
+
     public function testConfiguratorHeroWithoutImageUsesOneColumn(): void
     {
         $template = $this->readProjectFile('templates/shop/configurator/page.html.twig');

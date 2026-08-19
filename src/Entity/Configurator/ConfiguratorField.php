@@ -234,6 +234,9 @@ class ConfiguratorField
             }
             $this->values->add($v);
             $v->setField($this);
+            if ($v->isPreselected()) {
+                $v->setPreselected(true);
+            }
         }
     }
 
