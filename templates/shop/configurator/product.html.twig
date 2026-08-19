@@ -58,7 +58,8 @@
                                             {% elseif field.type.value == 'boolean' %}
                                                 <label class="cn-configurator__switch"><input id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="checkbox" role="switch"><span>{{ 'cardnext.configurator.yes'|trans }}</span></label>
                                             {% elseif field.type.value in ['integer', 'quantity', 'decimal'] %}
-                                                <input class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="number"{% if field.minimumValue is not null %} min="{{ field.minimumValue }}"{% endif %}{% if field.maximumValue is not null %} max="{{ field.maximumValue }}"{% endif %} step="{{ field.step ?? (field.type.value == 'decimal' ? 'any' : '1') }}"{% if field.required %} required{% endif %}>
+                                                {% set fixedNumericValue = field.minimumValue is not null and field.maximumValue is not null and field.minimumValue == field.maximumValue %}
+                                                <input class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="number"{% if field.minimumValue is not null %} min="{{ field.minimumValue }}"{% endif %}{% if field.maximumValue is not null %} max="{{ field.maximumValue }}"{% endif %} step="{{ field.step ?? (field.type.value == 'decimal' ? 'any' : '1') }}"{% if fixedNumericValue %} value="{{ field.minimumValue }}" readonly{% endif %}{% if field.required %} required{% endif %}>
                                             {% elseif field.type.value == 'text' %}
                                                 <input class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="text"{% if field.required %} required{% endif %}>
                                             {% elseif field.type.value == 'upload' %}
@@ -81,7 +82,7 @@
                         <div class="cn-configurator__section-head"><legend>{{ 'cardnext.configurator.production_time'|trans }}</legend></div>
                         <div class="cn-configurator__lead-times">
                             {% for leadTime in activeLeadTimes %}
-                                <div class="cn-configurator__lead-time"><input id="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}" name="leadTimeCode" value="{{ leadTime.code }}" type="radio" required><label for="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}"><i aria-hidden="true"></i><span><strong>{{ leadTime.name }}</strong>{% if leadTime.description %}<small>{{ leadTime.description }}</small>{% endif %}</span><b>{{ leadTime.workingDays }} {{ 'cardnext.configurator.working_days'|trans }}</b></label></div>
+                                <div class="cn-configurator__lead-time"><input id="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}" name="leadTimeCode" value="{{ leadTime.code }}" type="radio"{% if leadTime.preselected %} checked{% endif %} required><label for="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}"><i aria-hidden="true"></i><span><strong>{{ leadTime.name }}</strong>{% if leadTime.description %}<small>{{ leadTime.description }}</small>{% endif %}</span><b>{{ leadTime.workingDays }} {{ 'cardnext.configurator.working_days'|trans }}</b></label></div>
                             {% endfor %}
                         </div>
                         <div class="cn-configurator__error" data-field-error="leadTime"></div>

@@ -34,6 +34,9 @@ class ConfiguratorLeadTime
     #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
 
+    #[ORM\Column(name: 'preselected', options: ['default' => false])]
+    private bool $preselected = false;
+
     public function __construct(Configurator $c, string $code, string $name, int $days)
     {
         if ($days < 0) {
@@ -111,5 +114,28 @@ class ConfiguratorLeadTime
     public function setEnabled(bool $value): void
     {
         $this->enabled = $value;
+        if (!$value) {
+            $this->preselected = false;
+        }
+    }
+
+    public function isPreselected(): bool
+    {
+        return $this->preselected;
+    }
+
+    public function setPreselected(bool $preselected): void
+    {
+        if ($preselected && !$this->enabled) {
+            throw new \DomainException('A disabled lead time cannot be preselected.');
+        }
+
+        if ($preselected) {
+            foreach ($this->configurator->getLeadTimes() as $sibling) {
+                $sibling->preselected = false;
+            }
+        }
+
+        $this->preselected = $preselected;
     }
 }

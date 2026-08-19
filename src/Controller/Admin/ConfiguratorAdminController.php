@@ -662,6 +662,7 @@ final class ConfiguratorAdminController extends AbstractController
         $leadTime->setWorkingDays($this->nonNegativeInt($request, 'working_days', 0, 'Ungültige Werktage.'));
         $leadTime->setPosition($this->nonNegativeInt($request, 'position', 0, 'Ungültige Position.'));
         $leadTime->setEnabled($request->request->getBoolean('enabled'));
+        $leadTime->setPreselected($request->request->getBoolean('preselected'));
     }
 
     private function applySection(ConfiguratorSection $s, Request $r): void
