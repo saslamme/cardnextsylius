@@ -855,12 +855,99 @@ body.cn-nav-open { overflow: hidden; }
 .cn-configurator-stage__heading p { margin: 0; color: var(--cn-muted); }
 .cn-configurator-page .cn-configurator { padding: 0; }
 .cn-configurator-page .cn-configurator__layout { grid-template-columns: minmax(0, 1.6fr) minmax(320px, .7fr); }
-.cn-configurator-process { padding: 58px 0; color: #fff; background: var(--cn-ink); }
-.cn-configurator-process h2 { margin: 7px 0 28px; color: #fff; }
-.cn-configurator-process__steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.24); }
-.cn-configurator-process__steps li { min-width: 0; padding: 20px 18px 4px 0; }
-.cn-configurator-process__steps span { display: block; margin-bottom: 10px; color: var(--cn-primary); font-size: .72rem; font-weight: 800; letter-spacing: .12em; }
-.cn-configurator-process__steps strong { font-size: .86rem; line-height: 1.4; }
+.cn-configurator-process {
+    padding: 62px 0 54px;
+    background: #eef0f1;
+}
+.cn-configurator-process__title {
+    max-width: 1020px;
+    margin: 0 auto 50px;
+    color: var(--cn-ink);
+    font-size: clamp(2rem, 2.65vw, 3rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -.045em;
+    text-align: center;
+}
+.cn-configurator-process__steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 38px;
+    align-items: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.cn-configurator-process__step { min-width: 0; }
+.cn-configurator-process__icon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 170px;
+    margin-bottom: 20px;
+}
+.cn-configurator-process__icon svg {
+    display: block;
+    width: auto;
+    height: 124px;
+    max-width: 100%;
+    overflow: visible;
+}
+.cn-configurator-process__step:nth-child(3) .cn-configurator-process__icon svg { height: 118px; }
+.cn-configurator-process__step:nth-child(5) .cn-configurator-process__icon svg { height: 120px; }
+.cn-configurator-process__copy h3 {
+    margin: 0 0 9px;
+    color: var(--cn-ink);
+    font-size: 1.04rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -.012em;
+}
+.cn-configurator-process__number { margin-right: .28rem; }
+.cn-configurator-process__copy p {
+    max-width: 255px;
+    margin: 0;
+    color: var(--cn-muted);
+    font-size: .82rem;
+    line-height: 1.7;
+}
+@media (max-width: 1320px) {
+    .cn-configurator-process__steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 34px 38px;
+    }
+}
+@media (max-width: 860px) {
+    .cn-configurator-process { padding: 48px 0 40px; }
+    .cn-configurator-process__title { margin-bottom: 36px; }
+    .cn-configurator-process__steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 30px 26px;
+    }
+    .cn-configurator-process__icon { height: 145px; }
+    .cn-configurator-process__icon svg { height: 106px; }
+}
+@media (max-width: 560px) {
+    .cn-configurator-process__steps {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 26px;
+    }
+    .cn-configurator-process__step {
+        display: grid;
+        grid-template-columns: 112px minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
+    }
+    .cn-configurator-process__icon {
+        height: auto;
+        margin: 0;
+    }
+    .cn-configurator-process__icon svg {
+        width: 100px;
+        height: auto !important;
+    }
+    .cn-configurator-process__copy p { max-width: none; }
+}
 .cn-configurator-content { padding: 68px 0 78px; background: #fff; }
 .cn-configurator-content__inner { max-width: 920px; }
 .cn-configurator-content h2 { margin: 7px 0 22px; color: var(--cn-ink); }
@@ -868,11 +955,10 @@ body.cn-nav-open { overflow: hidden; }
     .cn-configurator-hero__grid, .cn-configurator-page .cn-configurator__layout { grid-template-columns: minmax(0, 1fr); }
     .cn-configurator-hero__visual { max-width: 560px; }
     .cn-configurator-page .cn-configurator__price { position: static; }
-    .cn-configurator-process__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 575.98px) {
     .cn-configurator-hero__trust { display: grid; gap: 8px; }
-    .cn-configurator-page .cn-configurator__choices, .cn-configurator-process__steps { grid-template-columns: minmax(0, 1fr); }
+    .cn-configurator-page .cn-configurator__choices { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 479.98px) {
     .cn-cluster > .cn-btn { width: 100%; }

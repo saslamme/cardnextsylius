@@ -94,11 +94,20 @@ cardnext:
     stage: { kicker: Your configuration, title: Configure product, intro: Choose your options and calculate a non-binding price. }
     trust: { calculation: Transparent calculation, production: Professional production, support: Personal advice }
     process:
-      kicker: A clear workflow
-      title: How it works
-      step_1: Configure
-      step_2: Order
-      step_3: Supply artwork
-      step_4: Approve proof
-      step_5: Production & delivery
+      title: How your custom printed plastic card order works
+      step_1:
+        title: Configure
+        description: Select the material, print, quantity and production time for your cards.
+      step_2:
+        title: Order
+        description: Review your configuration and conveniently complete your order online.
+      step_3:
+        title: Artwork
+        description: After ordering, submit your artwork for further processing.
+      step_4:
+        title: Approval
+        description: You will receive a proof and production will only begin after your approval.
+      step_5:
+        title: Shipping
+        description: After production and quality control, your cards will be shipped securely.
     content: { kicker: Product information }

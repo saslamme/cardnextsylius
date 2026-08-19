@@ -130,6 +130,35 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringContainsString('.cn-configurator-page .cn-configurator-hero--with-image { grid-template-columns: 78px minmax(0,1fr); }', $stylesheet);
     }
 
+    public function testConfiguratorProcessMatchesApprovedInlineIllustrationLayout(): void
+    {
+        $template = $this->readProjectFile('templates/shop/configurator/page.html.twig');
+        $stylesheet = $this->readProjectFile('assets/shop/styles/cardnext.css');
+        $germanTranslations = $this->readProjectFile('translations/messages.de.yaml');
+        $englishTranslations = $this->readProjectFile('translations/messages.en.yaml');
+
+        self::assertStringContainsString('<section class="cn-configurator-process"', $template);
+        self::assertSame(5, substr_count($template, 'class="cn-configurator-process__step"'));
+        self::assertSame(5, substr_count($template, '<svg aria-hidden="true"'));
+        self::assertStringContainsString('fill="#20272D"', $template);
+        self::assertStringContainsString('fill="#E95126"', $template);
+        self::assertStringNotContainsString('<img', substr($template, strpos($template, '<section class="cn-configurator-process"')));
+        self::assertStringNotContainsString('font-awesome', strtolower($template));
+        self::assertStringNotContainsString('bootstrap-icons', strtolower($template));
+
+        foreach (range(1, 5) as $step) {
+            self::assertStringContainsString(sprintf('process.step_%d.description', $step), $template);
+            self::assertStringContainsString(sprintf('      step_%d:', $step), $germanTranslations);
+            self::assertStringContainsString(sprintf('      step_%d:', $step), $englishTranslations);
+        }
+
+        self::assertStringContainsString('background: #eef0f1;', $stylesheet);
+        self::assertStringContainsString('grid-template-columns: repeat(5, minmax(0, 1fr));', $stylesheet);
+        self::assertStringNotContainsString('border-top: 1px solid rgba(255,255,255,.24)', $stylesheet);
+        self::assertStringNotContainsString('background: var(--cn-ink);', substr($stylesheet, strpos($stylesheet, '.cn-configurator-process {'), 250));
+        self::assertStringNotContainsString('process.kicker', $template);
+    }
+
     private function readProjectFile(string $path): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $path);
