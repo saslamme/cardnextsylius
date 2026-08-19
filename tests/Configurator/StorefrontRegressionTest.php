@@ -119,6 +119,17 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringNotContainsString('quantityBase', $javascript);
     }
 
+    public function testConfiguratorHeroWithoutImageUsesOneColumn(): void
+    {
+        $template = $this->readProjectFile('templates/shop/configurator/page.html.twig');
+        $stylesheet = $this->readProjectFile('assets/shop/styles/cardnext.css');
+
+        self::assertStringContainsString("configurator.images|length > 0 ? ' cn-configurator-hero--with-image' : ''", $template);
+        self::assertStringContainsString('.cn-configurator-page .cn-configurator-hero { display: grid; grid-template-columns: minmax(0, 1fr);', $stylesheet);
+        self::assertStringContainsString('.cn-configurator-page .cn-configurator-hero--with-image { grid-template-columns: 156px minmax(0, 1fr); }', $stylesheet);
+        self::assertStringContainsString('.cn-configurator-page .cn-configurator-hero--with-image { grid-template-columns: 78px minmax(0,1fr); }', $stylesheet);
+    }
+
     private function readProjectFile(string $path): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $path);

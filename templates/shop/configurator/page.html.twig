@@ -13,7 +13,7 @@
 <main class="cn-configurator-page">
     <div class="cn-container">
         <nav class="cn-configurator-breadcrumb" aria-label="Breadcrumb"><a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.configurator_page.breadcrumb.home'|trans }}</a><span aria-hidden="true">›</span>{{ translation.name }}</nav>
-        <section class="cn-configurator-hero">
+        <section class="cn-configurator-hero{{ configurator.images|length > 0 ? ' cn-configurator-hero--with-image' : '' }}">
             {% if configurator.images|length > 0 %}<div class="cn-configurator-hero__visual"><img class="cn-configurator-hero__image" src="{{ asset((configurator.images|first).path) }}" alt="{{ (configurator.images|first).altText ?: translation.name }}"></div>{% endif %}
             <div class="cn-configurator-hero__copy">
                 <span class="cn-kicker">{{ 'cardnext.configurator_page.kicker'|trans }}</span>
