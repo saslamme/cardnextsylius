@@ -43,6 +43,8 @@ cardnext:
     status: Status
     enabled: Aktiv
     disabled: Inaktiv
+    preselected: Vorausgewählt
+    preselected_help: Dieser Wert wird beim Öffnen des Konfigurators automatisch ausgewählt.
     sections: Bereiche
     fields: Felder
     values: Werte

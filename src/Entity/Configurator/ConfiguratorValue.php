@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Configurator;
 
+use App\Enum\Configurator\FieldType;
 use App\Repository\Configurator\ConfiguratorValueRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -31,6 +32,9 @@ class ConfiguratorValue
 
     #[ORM\Column(name:'enabled', options:['default' => true])]
     private bool $enabled = true;
+
+    #[ORM\Column(name:'preselected', options:['default' => false])]
+    private bool $preselected = false;
 
     #[ORM\Column(name:'color_hex', length:7, nullable:true)]
     private ?string $colorHex = null;
@@ -117,6 +121,29 @@ class ConfiguratorValue
     public function setEnabled(bool $v): void
     {
         $this->enabled = $v;
+        if (!$v) {
+            $this->preselected = false;
+        }
+    }
+
+    public function isPreselected(): bool
+    {
+        return $this->preselected;
+    }
+
+    public function setPreselected(bool $preselected): void
+    {
+        $this->preselected = $preselected && $this->enabled;
+
+        if (!$this->preselected || !$this->hasField() || $this->field->getType() !== FieldType::SINGLE_CHOICE) {
+            return;
+        }
+
+        foreach ($this->field->getValues() as $sibling) {
+            if ($sibling !== $this) {
+                $sibling->preselected = false;
+            }
+        }
     }
 
     public function setPosition(int $v): void

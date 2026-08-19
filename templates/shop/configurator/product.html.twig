@@ -43,13 +43,13 @@
                                             {% if selectChoice %}
                                                 <select class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]"{% if field.required %} required{% endif %}>
                                                     <option value="">{{ 'cardnext.configurator.choose'|trans }}</option>
-                                                    {% for value in activeValues %}<option value="{{ value.code }}" data-configurator-value="{{ value.code }}">{{ value.name }}</option>{% endfor %}
+                                                    {% for value in activeValues %}<option value="{{ value.code }}" data-configurator-value="{{ value.code }}"{% if value.preselected %} selected{% endif %}>{{ value.name }}</option>{% endfor %}
                                                 </select>
                                             {% elseif field.type.value in ['single_choice', 'multiple_choice'] %}
                                                 <div class="{{ segmented ? 'cn-configurator__segmented' : 'cn-configurator__choices' }}"{% if field.type.value == 'single_choice' %} role="radiogroup" aria-labelledby="configurator-label-{{ configurator.code }}-{{ field.code }}"{% endif %}>
                                                     {% for value in activeValues %}
                                                         <label class="cn-configurator__choice" data-configurator-value="{{ value.code }}" for="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}">
-                                                            <input id="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}" name="selection[{{ field.code }}]{{ field.type.value == 'multiple_choice' ? '[]' : '' }}" value="{{ value.code }}" type="{{ field.type.value == 'single_choice' ? 'radio' : 'checkbox' }}"{% if field.required and field.type.value == 'single_choice' %} required{% endif %}>
+                                                            <input id="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}" name="selection[{{ field.code }}]{{ field.type.value == 'multiple_choice' ? '[]' : '' }}" value="{{ value.code }}" type="{{ field.type.value == 'single_choice' ? 'radio' : 'checkbox' }}"{% if value.preselected %} checked{% endif %}{% if field.required and field.type.value == 'single_choice' %} required{% endif %}>
                                                             {% if value.imagePath %}<img src="{{ asset(value.imagePath) }}" alt="" loading="lazy">{% endif %}
                                                             <span class="cn-configurator__choice-copy"><strong>{% if value.colorHex %}<i class="cn-configurator__swatch" style="--choice-color: {{ value.colorHex }}"></i>{% endif %}{% if value.icon %}<span class="cn-configurator__icon" aria-hidden="true">{{ value.icon }}</span>{% endif %}{{ value.name }}</strong>{% if value.description %}<small>{{ value.description }}</small>{% endif %}</span>
                                                         </label>

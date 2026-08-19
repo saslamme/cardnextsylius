@@ -40,7 +40,7 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
             ],
             ConfiguratorValue::class => [
                 'id' => 'id', 'code' => 'code', 'name' => 'name', 'description' => 'description',
-                'position' => 'position', 'enabled' => 'enabled', 'colorHex' => 'color_hex',
+                'position' => 'position', 'enabled' => 'enabled', 'preselected' => 'preselected', 'colorHex' => 'color_hex',
                 'imagePath' => 'image_path', 'icon' => 'icon',
             ],
             ConfiguratorPriceRule::class => [
@@ -86,6 +86,10 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
                 self::assertSame($columnName, $metadata->getSingleAssociationJoinColumnName($property), $class . '::' . $property);
             }
         }
+
+        $valueMetadata = new ClassMetadata(ConfiguratorValue::class);
+        $driver->loadMetadataForClass(ConfiguratorValue::class, $valueMetadata);
+        self::assertFalse($valueMetadata->getFieldMapping('preselected')->options['default']);
     }
 
     public function testProductAndConfiguratorMappingsAreIndependent(): void
