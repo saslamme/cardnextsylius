@@ -94,11 +94,20 @@ cardnext:
     stage: { kicker: Ihre Konfiguration, title: Produkt konfigurieren, intro: Stellen Sie Ihr Produkt zusammen und lassen Sie den Preis unverbindlich berechnen. }
     trust: { calculation: Transparente Kalkulation, production: Professionelle Fertigung, support: Persönliche Beratung }
     process:
-      kicker: Klarer Ablauf
-      title: So funktioniert es
-      step_1: Konfigurieren
-      step_2: Bestellen
-      step_3: Druckdaten übermitteln
-      step_4: Freigabe
-      step_5: Produktion & Versand
+      title: So funktioniert Ihre Bestellung individuell bedruckter Plastikkarten
+      step_1:
+        title: Konfigurieren
+        description: Wählen Sie Material, Druck, Menge und Produktionszeit für Ihre Karten aus.
+      step_2:
+        title: Bestellen
+        description: Prüfen Sie Ihre Konfiguration und schließen Sie die Bestellung bequem online ab.
+      step_3:
+        title: Druckdaten
+        description: Nach der Bestellung übermitteln Sie Ihre Druckdaten für die weitere Bearbeitung.
+      step_4:
+        title: Freigabe
+        description: Sie erhalten einen Korrekturabzug und geben die Produktion erst dann frei.
+      step_5:
+        title: Versand
+        description: Nach Produktion und Qualitätskontrolle werden Ihre Karten sicher versendet.
     content: { kicker: Produktinformationen }
