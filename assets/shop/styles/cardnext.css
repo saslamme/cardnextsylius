@@ -4712,7 +4712,8 @@ tbody td:nth-child(2) {
 .cn-configurator-page .cn-configurator-breadcrumb { margin-bottom: 20px; color: var(--cn-muted); font-size: .74rem; }
 .cn-configurator-page .cn-configurator-breadcrumb a { text-decoration: none; }
 .cn-configurator-page .cn-configurator-breadcrumb span { margin: 0 8px; color: var(--cn-border-strong); }
-.cn-configurator-page .cn-configurator-hero { display: grid; grid-template-columns: 156px minmax(0, 1fr); gap: 28px; align-items: center; padding: 0 0 30px; background: #fff; border-bottom: 1px solid var(--cn-border); }
+.cn-configurator-page .cn-configurator-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: center; padding: 0 0 30px; background: #fff; border-bottom: 1px solid var(--cn-border); }
+.cn-configurator-page .cn-configurator-hero--with-image { grid-template-columns: 156px minmax(0, 1fr); }
 .cn-configurator-page .cn-configurator-hero__visual { width: 156px; aspect-ratio: 1.5; padding: 12px; background: var(--cn-surface-softer); border: 1px solid var(--cn-border); border-radius: 10px; }
 .cn-configurator-page .cn-configurator-hero__image { width: 100%; max-height: 82px; object-fit: contain; }
 .cn-configurator-page .cn-configurator-hero__copy h1 { margin: 5px 0 9px; font-size: clamp(1.8rem, 3vw, 2.55rem); line-height: 1.08; letter-spacing: -.045em; }
@@ -4819,7 +4820,8 @@ tbody td:nth-child(2) {
 @media (max-width: 640px) {
     .cn-configurator-page { padding-top: 16px; padding-bottom: 42px; }
     .cn-configurator-page .cn-configurator-breadcrumb { margin-bottom: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .cn-configurator-page .cn-configurator-hero { grid-template-columns: 78px minmax(0,1fr); gap: 15px; padding-bottom: 22px; }
+    .cn-configurator-page .cn-configurator-hero { grid-template-columns: minmax(0,1fr); gap: 15px; padding-bottom: 22px; }
+    .cn-configurator-page .cn-configurator-hero--with-image { grid-template-columns: 78px minmax(0,1fr); }
     .cn-configurator-page .cn-configurator-hero__visual { width: 78px; padding: 7px; }
     .cn-configurator-page .cn-configurator-hero__copy h1 { font-size: 1.55rem; }
     .cn-configurator-page .cn-configurator-hero__intro { font-size: .78rem; line-height: 1.5; }
