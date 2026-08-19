@@ -185,6 +185,28 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringNotContainsString('process.kicker', $template);
     }
 
+    public function testConfiguredLeadTimeAndFixedNumericDefaultsUseTheExistingInitialCalculation(): void
+    {
+        $template = $this->readProjectFile('templates/shop/configurator/product.html.twig');
+        $javascript = $this->readProjectFile('assets/shop/configurator.js');
+
+        self::assertStringContainsString('{% if leadTime.preselected %} checked{% endif %}', $template);
+        self::assertStringNotContainsString('activeLeadTimes|first', $template);
+        self::assertStringContainsString('field.minimumValue == field.maximumValue', $template);
+        self::assertStringContainsString('value="{{ field.minimumValue }}" readonly', $template);
+        self::assertStringNotContainsString('value="{{ field.minimumValue }}" disabled', $template);
+        self::assertStringContainsString("root.querySelector('input[name=\"leadTimeCode\"]:checked')?.value", $javascript);
+        self::assertStringContainsString('selections[field.dataset.configuratorField] = value', $javascript);
+    }
+
+    public function testNormalNumericInputsRemainEditable(): void
+    {
+        $template = $this->readProjectFile('templates/shop/configurator/product.html.twig');
+
+        self::assertStringContainsString('{% if fixedNumericValue %} value="{{ field.minimumValue }}" readonly{% endif %}', $template);
+        self::assertStringNotContainsString('readonly{% endif %} disabled', $template);
+    }
+
     private function readProjectFile(string $path): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $path);

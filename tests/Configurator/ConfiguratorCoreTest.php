@@ -576,6 +576,50 @@ final class ConfiguratorCoreTest extends TestCase
         return [$m, $f, $v];
     }
 
+    public function testLeadTimePreselectionIsExclusiveAndDisabledLeadTimesCannotRemainDefaults(): void
+    {
+        $model = new Configurator('defaults', 'Defaults');
+        $standard = new ConfiguratorLeadTime($model, 'standard', 'Standard', 10);
+        $express = new ConfiguratorLeadTime($model, 'express', 'Express', 5);
+
+        self::assertFalse($standard->isPreselected());
+        $standard->setPreselected(true);
+        self::assertTrue($standard->isPreselected());
+        $express->setPreselected(true);
+        self::assertFalse($standard->isPreselected());
+        self::assertTrue($express->isPreselected());
+
+        $express->setEnabled(false);
+        self::assertFalse($express->isPreselected());
+        $this->expectException(\DomainException::class);
+        $express->setPreselected(true);
+    }
+
+    /** @dataProvider fixedNumericValues */
+    public function testFixedNumericConstraintsAcceptOnlyTheirConfiguredValue(FieldType $type, string $fixed, mixed $valid, mixed $tampered): void
+    {
+        $model = new Configurator('fixed', 'Fixed');
+        $section = new ConfiguratorSection('fields', 'Fields');
+        $model->addSection($section);
+        $field = new ConfiguratorField('generic_numeric', 'Generic numeric', $type);
+        $section->addField($field);
+        $field->setMinimumValue($fixed);
+        $field->setMaximumValue($fixed);
+        $validator = new ConfiguratorValidator();
+
+        self::assertTrue($validator->validate(new ConfiguratorConfiguration('fixed', 1, 'EUR', 'DE', ['generic_numeric' => $valid]), $model)->isValid());
+        $result = $validator->validate(new ConfiguratorConfiguration('fixed', 1, 'EUR', 'DE', ['generic_numeric' => $tampered]), $model);
+        self::assertFalse($result->isValid());
+        self::assertContains($result->errors[0]->errorCode, ['above_maximum', 'below_minimum']);
+    }
+
+    public static function fixedNumericValues(): iterable
+    {
+        yield 'integer' => [FieldType::INTEGER, '1', 1, 2];
+        yield 'quantity' => [FieldType::QUANTITY, '1', 1, 2];
+        yield 'decimal' => [FieldType::DECIMAL, '1.25', '1.25', '2.0'];
+    }
+
     private function model(): array
     {
         $m = new Configurator('generic', 'Generic');

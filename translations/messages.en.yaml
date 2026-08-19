@@ -12,6 +12,10 @@ cardnext:
       variant: Variant product
       configuration: Configuration product
   configurator:
+    lead_time:
+      preselected: Preselected
+      preselected_help: This production time is automatically selected when the configurator is opened.
+    fixed_numeric_help: If minimum and maximum are identical, the value is fixed in the storefront.
     title: Configurators
     form: { title: Configure product, intro: The price updates automatically. }
     section: { basic: Basics, create: Create section, empty: No sections yet. }
