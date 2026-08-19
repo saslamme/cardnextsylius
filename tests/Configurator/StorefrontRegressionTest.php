@@ -94,7 +94,29 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringContainsString('const incompleteConfigurationErrors = () =>', $javascript);
         self::assertStringContainsString('const invalidateResult = () =>', $javascript);
         self::assertStringContainsString('if (requiredErrors.length)', $javascript);
-        self::assertStringContainsString('form.addEventListener(\'submit\', (event) => { event.preventDefault(); calculate(true); });', $javascript);
+        self::assertStringContainsString("form.addEventListener('change', configurationChanged)", $javascript);
+        self::assertStringContainsString('const debouncedCalculate = debounce(calculate, 450);', $javascript);
+    }
+
+    public function testConfiguratorUsesReferenceControlsAndAutomaticServerPricing(): void
+    {
+        $template = $this->readProjectFile('templates/shop/configurator/product.html.twig');
+        $javascript = $this->readProjectFile('assets/shop/configurator.js');
+
+        self::assertStringContainsString('<select class="cn-configurator__control"', $template);
+        self::assertStringContainsString('cn-configurator__segmented', $template);
+        self::assertStringContainsString('cn-configurator__choices', $template);
+        self::assertStringContainsString("field.type.value == 'boolean'", $template);
+        self::assertStringContainsString('cn-configurator__buybar', $template);
+        self::assertStringContainsString('cn-configurator__price', $template);
+        self::assertStringNotContainsString('data-configurator-submit', $template);
+        self::assertStringNotContainsString('Preis berechnen', $template);
+        self::assertStringNotContainsString('cn-step', $template);
+        self::assertStringNotContainsString('cn-presets', $template);
+        self::assertStringContainsString("control.tagName === 'SELECT'", $javascript);
+        self::assertStringContainsString('calculatedPayload = undefined', $javascript);
+        self::assertStringContainsString('data.total / 100', $javascript);
+        self::assertStringNotContainsString('quantityBase', $javascript);
     }
 
     private function readProjectFile(string $path): string
