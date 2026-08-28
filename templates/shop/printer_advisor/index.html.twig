@@ -1,0 +1,72 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% block content %}
+<main class="cn-page cn-advisor" id="main-content" data-printer-advisor>
+    <section class="cn-advisor__hero cn-container">
+        <p class="cn-advisor__eyebrow">Kartendrucker-Berater</p>
+        <h1>Welcher Kartendrucker passt zu Ihnen?</h1>
+        <p>Beantworten Sie fünf kurze Fragen und erhalten Sie eine Empfehlung passend zu Druckvolumen, Funktionen und Budget.</p>
+        <button class="cn-btn cn-btn--primary" type="button" data-advisor-start>Beratung starten</button>
+        <small>Dauer: ca. 1 Minute</small>
+    </section>
+
+    <section class="cn-container cn-advisor__workspace" data-advisor-workspace hidden>
+        <div class="cn-advisor__wizard">
+            <div class="cn-advisor__progress"><div data-advisor-progress></div></div>
+            <p class="cn-advisor__step-count" data-advisor-count>Schritt 1 von 5</p>
+            {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endif %}
+            <form method="post" action="{{ path('cardnext_shop_printer_advisor', {'_locale': app.request.locale}) }}" data-advisor-form>
+                <input type="hidden" name="_token" value="{{ csrf_token('printer_advisor') }}">
+                {% set steps = [
+                    ['volume', 'Wie viele Karten möchten Sie ungefähr drucken?', {'under_500': 'Weniger als 500 Karten pro Jahr', '500_2000': '500–2.000 Karten pro Jahr', '2000_10000': '2.000–10.000 Karten pro Jahr', 'over_10000': 'Mehr als 10.000 Karten pro Jahr'}],
+                    ['sides', 'Sollen die Karten ein- oder beidseitig bedruckt werden?', {'single': 'Einseitig', 'duplex': 'Beidseitig', 'unsure': 'Noch nicht sicher'}],
+                    ['encoding', 'Benötigen Sie eine elektronische Kodierung?', {'none': 'Nein', 'magnetic': 'Magnetstreifen', 'contact_chip': 'Kontaktchip', 'rfid_nfc': 'RFID / NFC'}],
+                    ['requirement', 'Welche Anforderungen sind Ihnen besonders wichtig?', {'standard': 'Standard-Kartendruck', 'durability': 'Besonders haltbare Karten', 'lamination': 'Laminierung / Schutz', 'retransfer': 'Hochwertige randlose bzw. Retransfer-Ausgabe', 'speed': 'Hohe Druckgeschwindigkeit'}],
+                    ['budget', 'In welchem Investitionsrahmen möchten Sie bleiben?', {'under_1000': 'Bis ca. 1.000 €', '1000_2000': '1.000–2.000 €', '2000_4000': '2.000–4.000 €', 'secondary': 'Budget ist zweitrangig'}]
+                ] %}
+                {% for step in steps %}
+                    <fieldset class="cn-advisor__step" data-advisor-step="{{ loop.index0 }}">
+                        <legend>{{ step[1] }}</legend>
+                        <div class="cn-advisor__choices">
+                        {% for value, label in step[2] %}
+                            <label><input type="radio" name="advisor[{{ step[0] }}]" value="{{ value }}" required{% if answers and attribute(answers, step[0]) == value %} checked{% endif %}><span>{{ label }}</span></label>
+                        {% endfor %}
+                        </div>
+                    </fieldset>
+                {% endfor %}
+                <div class="cn-advisor__actions">
+                    <button class="cn-btn cn-btn--secondary" type="button" data-advisor-back>Zurück</button>
+                    <button class="cn-btn cn-btn--primary" type="button" data-advisor-next>Weiter</button>
+                    <button class="cn-btn cn-btn--primary" type="submit" data-advisor-submit>Empfehlung anzeigen</button>
+                </div>
+            </form>
+        </div>
+        <aside class="cn-panel cn-advisor__summary" aria-live="polite"><h2>Ihre Auswahl</h2><dl data-advisor-summary><div><dt>Noch keine Auswahl</dt><dd>Wählen Sie links Ihre Anforderungen.</dd></div></dl></aside>
+    </section>
+
+    <section class="cn-container cn-advisor__results" data-advisor-results aria-live="polite">
+    {% if recommendations is not null %}
+        <h2>Ihre persönlichen Empfehlungen</h2>
+        {% if recommendations|length %}
+            <div class="cn-advisor__result-grid">
+            {% for recommendation in recommendations %}
+                <article class="cn-panel cn-advisor__result">
+                    <strong class="cn-advisor__badge">{{ recommendation.label }}</strong>
+                    <div class="cn-advisor__image">{% if recommendation.product.images|length %}{{ component('sylius_shop:main_image', {product: recommendation.product, class: 'img-fluid', filter: 'cardnext_product_card'}) }}{% else %}<span>Produktbild folgt</span>{% endif %}</div>
+                    {% if recommendation.product.manufacturer %}<p class="cn-advisor__manufacturer">{{ recommendation.product.manufacturer.name }}</p>{% endif %}
+                    <h3>{{ recommendation.product.name }}</h3>
+                    {% if recommendation.product.model %}<p>{{ recommendation.product.model }}</p>{% endif %}
+                    <p class="cn-advisor__price">{{ (recommendation.price / 100)|format_currency(channel.baseCurrency.code) }}</p>
+                    <p>Dieser Drucker passt besonders gut, weil er {{ recommendation.reasons|join(', ') }}.</p>
+                    <ul>{% for reason in recommendation.reasons %}<li>{{ reason|capitalize }}</li>{% endfor %}</ul>
+                    <a class="cn-btn cn-btn--primary" href="{{ recommendation.url }}" data-advisor-event="advisor_product_clicked">Zum Produkt</a>
+                </article>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div class="cn-panel cn-advisor__empty"><h3>Für diese Kombination empfehlen wir eine persönliche Beratung.</h3><p>Ihre technischen Anforderungen wurden nicht abgeschwächt. Gemeinsam finden wir eine passende Lösung für Druckvolumen, Funktionen und Budget.</p><a class="cn-btn cn-btn--primary" href="mailto:info@cardnext.de?subject=Kartendrucker-Beratung" data-advisor-event="advisor_contact_clicked">Persönliche Beratung anfragen</a></div>
+        {% endif %}
+    {% endif %}
+    </section>
+</main>
+{% endblock %}

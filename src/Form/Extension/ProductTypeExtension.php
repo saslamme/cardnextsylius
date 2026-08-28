@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Extension;
 
 use App\Entity\Product\Manufacturer;
+use App\Form\Type\PrinterAdvisorProfileType;
 use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -76,6 +77,11 @@ final class ProductTypeExtension extends AbstractTypeExtension
                     'step' => 1,
                 ],
             ]);
+
+        $builder->add('printerAdvisorProfile', PrinterAdvisorProfileType::class, [
+            'required' => false,
+            'label' => 'Kartendrucker-Berater',
+        ]);
     }
 
     public static function getExtendedTypes(): iterable

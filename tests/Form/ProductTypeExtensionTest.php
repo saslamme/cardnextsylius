@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Form;
 
 use App\Form\Extension\ProductTypeExtension;
+use App\Form\Type\PrinterAdvisorProfileType;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -36,6 +37,7 @@ final class ProductTypeExtensionTest extends TestCase
             'dataQualityStatus' => ChoiceType::class,
             'homepageFeatured' => CheckboxType::class,
             'homepagePosition' => IntegerType::class,
+            'printerAdvisorProfile' => PrinterAdvisorProfileType::class,
         ], $fieldTypes);
     }
 

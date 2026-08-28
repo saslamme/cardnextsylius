@@ -5,6 +5,19 @@
 
 <div class="tab-pane" id="product-cardnext-data" role="tabpanel" tabindex="0">
     <div class="card mb-3">
+        <div class="card-header"><div><h2 class="card-title mb-1">Kartendrucker-Berater</h2><div class="text-secondary small">Nur aktivierte, technisch vollständig geprüfte Drucker werden empfohlen.</div></div></div>
+        <div class="card-body">
+            {{ form_errors(hookable_metadata.context.form.printerAdvisorProfile) }}
+            <div class="row g-3">
+                {% for field in hookable_metadata.context.form.printerAdvisorProfile %}
+                    <div class="{{ field.vars.block_prefixes|last == 'checkbox' ? 'col-12 col-md-6' : 'col-12 col-md-4' }}">{{ form_row(field) }}</div>
+                {% endfor %}
+            </div>
+            <div class="alert alert-info mt-3 mb-0">Preise, Sales-Channel-Zuordnung und Kaufbarkeit werden automatisch aus den aktiven Varianten übernommen. Technische Werte werden nicht aus Produktnamen abgeleitet.</div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
         <div class="card-header">
             <div>
                 <h2 class="card-title mb-1">Cardnext Produktdaten</h2>
