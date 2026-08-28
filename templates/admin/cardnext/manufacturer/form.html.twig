@@ -30,6 +30,10 @@
                     <div class="card-body">
                         {{ form_row(form.name) }}
                         {{ form_row(form.code) }}
+                        {{ form_row(form.slug) }}
+                        {% if form.slug.vars.value %}
+                            <div class="form-hint mb-3">/{{ app.request.locale }}/marken/{{ form.slug.vars.value }}</div>
+                        {% endif %}
                         {{ form_row(form.website) }}
 
                         <div class="row g-3">
@@ -69,6 +73,27 @@
                         {% endif %}
 
                         {{ form_row(form.logo) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-12 col-xl-6">
+                <div class="card h-100">
+                    <div class="card-header"><h3 class="card-title">Markenübersicht</h3></div>
+                    <div class="card-body">
+                        {{ form_row(form.featured) }}
+                        {{ form_row(form.featuredPosition) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-6">
+                <div class="card h-100">
+                    <div class="card-header"><h3 class="card-title">Suchmaschinenoptimierung</h3></div>
+                    <div class="card-body">
+                        {{ form_row(form.seoTitle) }}
+                        {{ form_row(form.seoDescription) }}
                     </div>
                 </div>
             </div>
