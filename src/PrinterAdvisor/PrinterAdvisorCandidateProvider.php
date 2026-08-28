@@ -30,10 +30,8 @@ final readonly class PrinterAdvisorCandidateProvider
             ->leftJoin('product.manufacturer', 'manufacturer')
             ->leftJoin('product.translations', 'translations')
             ->andWhere('product.enabled = true')
-            ->andWhere('product.availableOn IS NULL OR product.availableOn <= :now')
             ->setParameter('channel', $channel)
             ->setParameter('channelCode', $channel->getCode())
-            ->setParameter('now', new \DateTimeImmutable())
             ->orderBy('profile.priority', 'DESC')
             ->getQuery()->getResult();
 
