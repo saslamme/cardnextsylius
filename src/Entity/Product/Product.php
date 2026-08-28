@@ -34,6 +34,9 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\Column(name: 'homepage_position', options: ['default' => 100])]
     private int $homepagePosition = 100;
 
+    #[ORM\OneToOne(mappedBy: 'product', targetEntity: PrinterAdvisorProfile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private ?PrinterAdvisorProfile $printerAdvisorProfile = null;
+
     /** @var Collection<int, ProductCompatibility> */
     #[ORM\OneToMany(mappedBy: 'sourceProduct', targetEntity: ProductCompatibility::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
@@ -116,6 +119,19 @@ class Product extends BaseProduct implements ProductInterface
     public function setHomepagePosition(int $homepagePosition): void
     {
         $this->homepagePosition = max(0, $homepagePosition);
+    }
+
+    public function getPrinterAdvisorProfile(): ?PrinterAdvisorProfile
+    {
+        return $this->printerAdvisorProfile;
+    }
+
+    public function setPrinterAdvisorProfile(?PrinterAdvisorProfile $profile): void
+    {
+        $this->printerAdvisorProfile = $profile;
+        if ($profile !== null && $profile->getProduct() !== $this) {
+            $profile->setProduct($this);
+        }
     }
 
     /** @return Collection<int, ProductDocument> */

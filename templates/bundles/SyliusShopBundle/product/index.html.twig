@@ -23,6 +23,13 @@
                 </form>
             </aside>
             <div>
+                {% if cardnext_taxon and cardnext_taxon.code == 'card_printers' %}
+                    <aside class="cn-panel mb-4" aria-label="Kartendrucker-Beratung">
+                        <h2>Welcher Kartendrucker passt zu mir?</h2>
+                        <p>In etwa 1 Minute zur passenden Empfehlung.</p>
+                        <a class="cn-btn cn-btn--primary" href="{{ path('cardnext_shop_printer_advisor', {'_locale': app.request.locale}) }}">Kartendrucker-Berater starten</a>
+                    </aside>
+                {% endif %}
                 <div class="cn-toolbar">
                     <div class="cn-toolbar__count"><strong>{{ result_count }} {{ result_count == 1 ? 'Produkt' : 'Produkte' }}</strong></div>
                     <div class="cn-toolbar__actions">

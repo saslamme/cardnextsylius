@@ -6,3 +6,4 @@ import './styles/cardnext.css';
 import './cardnext.js';
 import './product-tabs.js';
 import './configurator.js';
+import './printer-advisor.js';
