@@ -13,6 +13,9 @@
                 <div class="page-pretitle">Inhalte</div>
                 <h2 class="page-title">Rechtstexte</h2>
             </div>
+            <div class="col-auto ms-auto">
+                <a class="btn btn-primary" href="{{ path('cardnext_admin_legal_page_create') }}">Rechtstext anlegen</a>
+            </div>
         </div>
     </div>
 
@@ -28,6 +31,11 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <span class="badge bg-secondary-lt mb-2">{{ page.localeCode }}</span>
+                        <div class="mb-2">
+                            {% for channel in page.channels %}
+                                <span class="badge bg-blue-lt">{{ channel.name|default(channel.code) }}</span>
+                            {% endfor %}
+                        </div>
                         <h3 class="card-title mb-2">{{ page.title }}</h3>
                         <div class="text-secondary small">
                             Zuletzt geändert: {{ page.updatedAt|date('d.m.Y H:i') }}
@@ -36,8 +44,7 @@
 
                     <div class="card-footer d-flex gap-2">
                         <a class="btn btn-primary" href="{{ path('cardnext_admin_legal_page_edit', {
-                            localeCode: page.localeCode,
-                            code: page.code
+                            id: page.id
                         }) }}">
                             Bearbeiten
                         </a>

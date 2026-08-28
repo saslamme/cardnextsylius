@@ -30,17 +30,35 @@ final class LegalPageAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/cardnext/legal-pages/{localeCode}/{code}/edit', name: 'cardnext_admin_legal_page_edit', methods: ['GET', 'POST'])]
+    #[Route('/admin/cardnext/legal-pages/new', name: 'cardnext_admin_legal_page_create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $page = new LegalPage();
+        $form = $this->createForm(LegalPageType::class, $page);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($page);
+            $entityManager->flush();
+            $this->addFlash('success', sprintf('%s wurde angelegt.', $page->getTitle()));
+
+            return $this->redirectToRoute('cardnext_admin_legal_page_index');
+        }
+
+        return $this->render('admin/cardnext/legal/edit.html.twig', [
+            'form' => $form,
+            'page' => $page,
+            'page_title' => 'Rechtstext anlegen',
+        ]);
+    }
+
+    #[Route('/admin/cardnext/legal-pages/{id}/edit', name: 'cardnext_admin_legal_page_edit', methods: ['GET', 'POST'], requirements: ['id' => '\\d+'])]
     public function edit(
-        string $localeCode,
-        string $code,
+        int $id,
         Request $request,
         EntityManagerInterface $entityManager,
     ): Response {
-        $page = $entityManager->getRepository(LegalPage::class)->findOneBy([
-            'localeCode' => $localeCode,
-            'code' => $code,
-        ]);
+        $page = $entityManager->getRepository(LegalPage::class)->find($id);
 
         if (!$page instanceof LegalPage) {
             throw $this->createNotFoundException('Rechtstext wurde nicht gefunden.');
