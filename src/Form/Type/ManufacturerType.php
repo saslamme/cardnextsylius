@@ -28,6 +28,7 @@ final class ManufacturerType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Name',
             ])
+            ->add('slug', TextType::class, ['label' => 'URL-Slug', 'help' => 'Stabile, eindeutige URL, z. B. hid-fargo.'])
             ->add('website', UrlType::class, [
                 'label' => 'Website',
                 'required' => false,
@@ -40,6 +41,10 @@ final class ManufacturerType extends AbstractType
             ->add('position', IntegerType::class, [
                 'label' => 'Sortierung',
             ])
+            ->add('featured', CheckboxType::class, ['label' => 'Beliebte Marke', 'required' => false])
+            ->add('featuredPosition', IntegerType::class, ['label' => 'Position bei beliebten Marken'])
+            ->add('seoTitle', TextType::class, ['label' => 'SEO-Titel', 'required' => false])
+            ->add('seoDescription', TextareaType::class, ['label' => 'SEO-Beschreibung', 'required' => false, 'attr' => ['rows' => 3]])
             ->add('enabled', CheckboxType::class, [
                 'label' => 'Aktiv',
                 'required' => false,

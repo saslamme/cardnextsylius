@@ -4912,6 +4912,51 @@ tbody td:nth-child(2) {
 .cn-advisor-guide__copy li { position: relative; padding-left: 22px; color: var(--cn-text); font-size: .94rem; line-height: 1.78; }
 .cn-advisor-guide__copy li::before { position: absolute; top: .72em; left: 0; width: 6px; height: 6px; background: var(--cn-primary); border-radius: 50%; content: ""; }
 .cn-advisor-guide__advisor-note { margin-top: 24px; padding: 16px 18px; color: var(--cn-text); background: var(--cn-surface); border: 1px solid var(--cn-border); border-left: 3px solid var(--cn-primary); border-radius: var(--cn-radius); box-shadow: none; font-size: .84rem; font-weight: 600; line-height: 1.65; }
+
+/* Manufacturer directory */
+html { scroll-behavior: smooth; }
+.cn-brands { padding: 42px 0 var(--cn-section-space); color: var(--cn-text); }
+.cn-brands__header { max-width: 720px; margin-bottom: 26px; }
+.cn-brands__header h1 { margin: 7px 0 8px; }
+.cn-brands__header p { margin: 0; color: var(--cn-muted); line-height: 1.65; }
+.cn-brand-search { position: relative; max-width: 620px; margin-bottom: 18px; }
+.cn-brand-search input { width: 100%; min-height: 48px; padding: 0 48px 0 16px; color: var(--cn-ink); background: var(--cn-surface); border: 1px solid var(--cn-border-strong); border-radius: var(--cn-radius); }
+.cn-brand-search input:focus { border-color: var(--cn-primary); outline: 3px solid var(--cn-primary-soft); }
+.cn-brand-search > span { position: absolute; top: 50%; right: 17px; color: var(--cn-primary-hover); font-size: 1.25rem; transform: translateY(-50%); }
+.cn-brand-alphabet { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 8px; white-space: nowrap; }
+.cn-brand-alphabet a, .cn-brand-alphabet span { width: 34px; height: 34px; display: inline-grid; flex: 0 0 34px; place-items: center; border: 1px solid var(--cn-border); color: var(--cn-ink); text-decoration: none; font-size: .75rem; font-weight: 800; }
+.cn-brand-alphabet a:hover { color: var(--cn-primary-hover); border-color: var(--cn-primary); }
+.cn-brand-alphabet span { color: var(--cn-subtle); background: var(--cn-surface-softer); }
+.cn-brand-section { margin-top: 48px; }
+.cn-brand-section > h2 { margin-bottom: 20px; }
+.cn-brand-cards { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; }
+.cn-brand-card { overflow: hidden; color: var(--cn-ink); background: var(--cn-surface); border: 1px solid var(--cn-border); border-radius: var(--cn-radius); text-decoration: none; }
+.cn-brand-card:hover { color: var(--cn-primary-hover); border-color: var(--cn-border-strong); }
+.cn-brand-card__media { min-height: 150px; display: grid; padding: 28px; place-items: center; background: var(--cn-surface-softer); border-bottom: 1px solid var(--cn-border); }
+.cn-brand-card__media strong, .cn-brand-detail__logo strong { font-size: 1.3rem; font-weight: 800; letter-spacing: -.03em; }
+.cn-brand-card__logo { max-width: 170px; max-height: 80px; object-fit: contain; }
+.cn-brand-card__body { display: grid; gap: 18px; padding: 18px; }
+.cn-brand-card__body > span { display: flex; justify-content: space-between; color: var(--cn-muted); font-size: .78rem; font-weight: 700; }
+.cn-brand-card__body b { color: var(--cn-primary); }
+.cn-brand-index { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 38px 44px; }
+.cn-brand-index__group { scroll-margin-top: 30px; }
+.cn-brand-index__group h3 { margin: 0; padding-bottom: 10px; color: var(--cn-primary-hover); border-bottom: 2px solid var(--cn-border-strong); }
+.cn-brand-index__link { min-height: 48px; display: flex; align-items: center; justify-content: space-between; color: var(--cn-ink); border-bottom: 1px solid var(--cn-border); text-decoration: none; }
+.cn-brand-index__link:hover { color: var(--cn-primary-hover); }
+.cn-brand-empty { margin: 24px 0; color: var(--cn-muted); }
+.cn-brand-cta { display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-top: 56px; padding: 28px 32px; color: #fff; background: var(--cn-ink); border-radius: var(--cn-radius); }
+.cn-brand-cta h2 { margin: 5px 0 7px; font-size: 1.3rem; }.cn-brand-cta p { max-width: 720px; margin: 0; color: #cbd0d3; }
+.cn-brand-detail .cn-breadcrumbs { display: flex; gap: 9px; margin-bottom: 24px; }
+.cn-brand-detail__header { max-width: 780px; }.cn-brand-detail__header > .cn-link { display: inline-block; margin-bottom: 22px; }
+.cn-brand-detail__logo { width: 230px; min-height: 120px; display: grid; margin-bottom: 22px; padding: 22px; place-items: center; background: var(--cn-surface-softer); border: 1px solid var(--cn-border); border-radius: var(--cn-radius); }
+.cn-brand-detail__logo img { max-width: 180px; max-height: 75px; object-fit: contain; }
+.cn-brand-detail__header h1 { margin: 5px 0 10px; }.cn-brand-detail__description { line-height: 1.7; }
+.cn-brand-areas { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); border-top: 1px solid var(--cn-border); }
+.cn-brand-areas a { min-height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; color: var(--cn-ink); border-right: 1px solid var(--cn-border); border-bottom: 1px solid var(--cn-border); text-decoration: none; font-weight: 700; }
+.cn-brand-areas a:hover { color: var(--cn-primary-hover); }.cn-brand-areas span { color: var(--cn-primary); }
+.cn-brand-pagination { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 28px; }
+@media (max-width: 1024px) { .cn-brand-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }.cn-brand-index { grid-template-columns: repeat(2,minmax(0,1fr)); }.cn-brand-areas { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 640px) { .cn-brands { padding-top: 28px; padding-bottom: var(--cn-section-space-mobile); }.cn-brand-cards,.cn-brand-index,.cn-brand-areas { grid-template-columns: 1fr; }.cn-brand-cta { align-items: flex-start; flex-direction: column; padding: 24px 20px; }.cn-brand-section { margin-top: 38px; } }
 .cn-advisor-guide__cta { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); gap: 2rem; align-items: center; margin-top: 68px; padding: clamp(2rem, 5vw, 4rem); color: #fff; background: var(--cn-ink); border-radius: var(--cn-radius); }
 .cn-advisor-guide__cta h2 { color: #fff; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.14; }
 .cn-advisor-guide__cta p:not(.cn-advisor-guide__eyebrow) { color: rgba(255,255,255,.72); }

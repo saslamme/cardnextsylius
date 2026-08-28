@@ -15,7 +15,7 @@
                 <li><a href="{{ path('sylius_shop_contact_request') }}">Beratung</a></li><li><a href="{{ path('sylius_shop_homepage') }}#downloads">Downloads</a></li><li><a href="{{ path('sylius_shop_cart_summary') }}">Warenkorb</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">Kontakt</a></li>
             </ul></div>
             <div><div class="cn-footer__title">Cardnext</div><ul class="cn-footer__links">
-                <li><a href="{{ path('sylius_shop_homepage') }}#company">Über uns</a></li><li><a href="{{ path('sylius_shop_homepage') }}#brands">Marken</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">Kontakt</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">Mein Konto</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">Anmelden</a></li>{% endif %}
+                <li><a href="{{ path('sylius_shop_homepage') }}#company">Über uns</a></li><li><a href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}">Marken</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">Kontakt</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">Mein Konto</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">Anmelden</a></li>{% endif %}
             </ul></div>
         </div>
         <div class="cn-footer__bottom"><span>© {{ 'now'|date('Y') }} Cardnext</span>

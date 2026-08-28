@@ -1,0 +1,17 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% block title %}Marken & Hersteller für Kartendruck, RFID & Auto-ID | Cardnext{% endblock %}
+{% block metatags %}{{ parent() }}<meta name="description" content="Entdecken Sie Hersteller für Kartendrucker, RFID, Barcode-Scanner und Auto-ID bei Cardnext. Alle Marken übersichtlich von A bis Z."><link rel="canonical" href="{{ absolute_url(path('cardnext_shop_brands', {_locale: app.request.locale})) }}">{% endblock %}
+{% block content %}
+<main class="cn-brands" data-cn-brands>
+ <div class="cn-container">
+  <header class="cn-brands__header"><span class="cn-kicker">Marken & Hersteller</span><h1 class="cn-title cn-title--section">Technologie namhafter Hersteller</h1><p>Entdecken Sie Kartendrucker, RFID-Lösungen, Barcode-Scanner und Zubehör nach Hersteller.</p></header>
+  <div class="cn-brand-search"><label class="visually-hidden" for="brand-search">Hersteller suchen</label><input id="brand-search" type="search" placeholder="Hersteller suchen …" autocomplete="off" data-cn-brand-search><span aria-hidden="true">⌕</span></div>
+  {% set alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'|split('') %}
+  <nav class="cn-brand-alphabet" aria-label="Marken alphabetisch auswählen">{% for letter in alphabet %}{% if groups[letter] is defined %}<a href="#brands-{{ letter|lower }}">{{ letter }}</a>{% else %}<span aria-disabled="true">{{ letter }}</span>{% endif %}{% endfor %}</nav>
+  <p class="cn-brand-empty" data-cn-brand-empty hidden>Keine passende Marke gefunden.</p>
+  {% if featured %}<section class="cn-brand-section" data-cn-brand-featured><h2 class="cn-title cn-title--sm">Beliebte Marken</h2><div class="cn-brand-cards">{% for brand in featured %}<a class="cn-brand-card" href="{{ path('cardnext_shop_brand_show', {_locale: app.request.locale, slug: brand.slug}) }}" data-cn-brand-name="{{ brand.name|lower }}"><span class="cn-brand-card__media">{% if brand.logoPath %}<img class="cn-brand-card__logo" src="{{ asset(brand.logoPath) }}" alt="{{ brand.name }} Logo">{% else %}<strong>{{ brand.name }}</strong>{% endif %}</span><span class="cn-brand-card__body"><strong>{{ brand.name }}</strong><span>Marke entdecken <b aria-hidden="true">→</b></span></span></a>{% endfor %}</div></section>{% endif %}
+  <section class="cn-brand-section"><h2 class="cn-title cn-title--sm">Alle Marken von A–Z</h2><div class="cn-brand-index">{% for letter, brands in groups %}<section id="brands-{{ letter|lower }}" class="cn-brand-index__group" data-cn-brand-group><h3>{{ letter }}</h3>{% for brand in brands %}<a class="cn-brand-index__link" href="{{ path('cardnext_shop_brand_show', {_locale: app.request.locale, slug: brand.slug}) }}" data-cn-brand-name="{{ brand.name|lower }}"><span>{{ brand.name }}</span><span aria-hidden="true">→</span></a>{% endfor %}</section>{% endfor %}</div></section>
+  <aside class="cn-brand-cta"><div><span class="cn-kicker">Hersteller & Produkte</span><h2>Sie suchen eine bestimmte Marke?</h2><p>Nicht jedes Produkt ist bereits online gelistet. Wir helfen bei der Auswahl passender Hardware, Verbrauchsmaterialien und Komponenten.</p></div><a class="cn-btn cn-btn--primary" href="{{ path('sylius_shop_contact_request') }}">Produkt anfragen</a></aside>
+ </div>
+</main>
+{% endblock %}
