@@ -29,10 +29,12 @@ final class CardnextProductSearch
     ) {
     }
 
-    public function search(string $query, string $localeCode, int $limit = 48): array
+    public function search(string $query, string $localeCode, int $limit = 48, int $offset = 0): array
     {
+        $limit = max(1, $limit);
+        $offset = max(0, $offset);
         $originalQuery = $this->cleanQuery($query);
-        $result = $this->strictSearch($originalQuery, $localeCode, $limit);
+        $result = $this->strictSearch($originalQuery, $localeCode, $limit, $offset);
 
         $result['correctedQuery'] = null;
         $result['fuzzy'] = false;
@@ -50,7 +52,7 @@ final class CardnextProductSearch
             return $result;
         }
 
-        $corrected = $this->strictSearch($correctedQuery, $localeCode, $limit);
+        $corrected = $this->strictSearch($correctedQuery, $localeCode, $limit, $offset);
 
         if ($corrected['total'] === 0) {
             return $result;
@@ -63,7 +65,7 @@ final class CardnextProductSearch
         return $corrected;
     }
 
-    private function strictSearch(string $query, string $localeCode, int $limit = 48): array
+    private function strictSearch(string $query, string $localeCode, int $limit = 48, int $offset = 0): array
     {
         $query = $this->cleanQuery($query);
 
@@ -269,6 +271,7 @@ final class CardnextProductSearch
                 m.code
             ORDER BY search_score DESC, pt.name ASC
             LIMIT {$limit}
+            OFFSET {$offset}
         ";
 
         $rows = $this->connection->fetchAllAssociative($sql, $parameters);

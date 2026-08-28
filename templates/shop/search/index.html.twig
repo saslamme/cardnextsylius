@@ -11,8 +11,10 @@
                 <span class="cn-kicker">Produktsuche</span>
 
                 {% if query %}
-                    <h1 class="cn-title cn-title--section">Ergebnisse für „{{ query }}“</h1>
-                    <p class="cn-search-page__count">{{ total }} Treffer</p>
+                    <div class="cn-search-page__heading">
+                        <h1 class="cn-title cn-title--section">Ergebnisse für „{{ query }}“</h1>
+                        <p class="cn-search-page__count">{{ total }} Treffer</p>
+                    </div>
                 {% else %}
                     <h1 class="cn-title cn-title--section">Produkte durchsuchen</h1>
                     <p class="cn-search-page__count">Suche nach Produktname, Artikelnummer oder Hersteller.</p>
@@ -20,21 +22,39 @@
             </header>
 
             {% if query and products|length > 0 %}
-                <div class="cn-products cn-search-page__products">
+                {% if correctedQuery %}
+                    <p class="cn-search-page__correction">Ergebnisse für <strong>„{{ correctedQuery }}“</strong></p>
+                {% endif %}
+                <div class="cn-search-page__toolbar">
+                    <strong>{{ total }} {{ total == 1 ? 'Produkt gefunden' : 'Produkte gefunden' }}</strong>
+                    {% if pageCount > 1 %}<span>Seite {{ page }} von {{ pageCount }}</span>{% endif %}
+                </div>
+                <div class="cn-search-page__products" {{ sylius_test_html_attribute('products') }}>
                     {% for product in products %}
-                        <div>
-                            {{ component('sylius_shop:product:card', {
-                                product: product,
-                                template: '@SyliusShop/product/common/card.html.twig',
-                                hookableMetadata: null
-                            }) }}
-                        </div>
+                        {{ component('cardnext:product:card', {product: product}) }}
                     {% endfor %}
                 </div>
+                {% if pageCount > 1 %}
+                    <nav class="cn-search-pagination" aria-label="Seitennavigation der Suchergebnisse">
+                        {% if page > 1 %}
+                            <a class="cn-btn cn-btn--secondary cn-btn--small" href="{{ path('cardnext_shop_search', {_locale: app.request.locale, q: query, page: page - 1}) }}" rel="prev">← Zurück</a>
+                        {% endif %}
+                        <span>Seite {{ page }} von {{ pageCount }}</span>
+                        {% if page < pageCount %}
+                            <a class="cn-btn cn-btn--secondary cn-btn--small" href="{{ path('cardnext_shop_search', {_locale: app.request.locale, q: query, page: page + 1}) }}" rel="next">Weiter →</a>
+                        {% endif %}
+                    </nav>
+                {% endif %}
             {% elseif query %}
                 <div class="cn-search-empty">
-                    <h2>Keine passenden Produkte gefunden.</h2>
-                    <p>Versuchen Sie Hersteller, Modell oder Artikelnummer.</p>
+                    <h2>Keine passenden Produkte gefunden</h2>
+                    <p>Für „{{ query }}“ konnten wir keine Produkte finden.</p>
+                    <ul>
+                        <li>Schreibweise prüfen</li>
+                        <li>nach Hersteller suchen</li>
+                        <li>Artikelnummer verwenden</li>
+                    </ul>
+                    <a class="cn-btn cn-btn--primary cn-btn--small" href="{{ path('cardnext_shop_search', {_locale: app.request.locale}) }}">Neue Suche</a>
                 </div>
             {% endif %}
         </div>
