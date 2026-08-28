@@ -6,6 +6,7 @@ namespace App\Entity\Product;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_manufacturer')]
@@ -25,6 +26,12 @@ class Manufacturer
     private string $name = '';
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: 'Bitte geben Sie einen Slug ein.')]
+    #[Assert\Length(max: 255, maxMessage: 'Der Slug darf höchstens {{ limit }} Zeichen lang sein.')]
+    #[Assert\Regex(
+        pattern: '/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+        message: 'Der Slug darf nur Kleinbuchstaben, Ziffern und einzelne Bindestriche enthalten.',
+    )]
     private string $slug = '';
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -84,9 +91,15 @@ class Manufacturer
         return $this->slug;
     }
 
-    public function setSlug(string $slug): void
+    public function setSlug(?string $slug): void
     {
-        $this->slug = strtolower(trim($slug));
+        $slug = strtolower(trim((string) $slug));
+
+        // An empty form value must not destroy an existing, valid URL. The form
+        // supplies a generated slug for new manufacturers before validation.
+        if ($slug !== '') {
+            $this->slug = $slug;
+        }
     }
 
     public function isFeatured(): bool

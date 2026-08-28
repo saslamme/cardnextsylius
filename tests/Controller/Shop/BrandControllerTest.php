@@ -36,4 +36,20 @@ final class BrandControllerTest extends TestCase
         self::assertStringContainsString('v.enabled = 1', $catalog);
         self::assertStringContainsString('cp.price IS NOT NULL', $catalog);
     }
+
+    public function testBrandPagesUseTheSharedBreadcrumbStructure(): void
+    {
+        $index = file_get_contents(__DIR__ . '/../../../templates/shop/brand/index.html.twig');
+        $detail = file_get_contents(__DIR__ . '/../../../templates/shop/brand/show.html.twig');
+        $css = file_get_contents(__DIR__ . '/../../../assets/shop/styles/cardnext.css');
+
+        foreach ([$index, $detail] as $template) {
+            self::assertStringContainsString('cn-container cn-breadcrumbs__inner', $template);
+            self::assertStringContainsString('cn-breadcrumbs__sep', $template);
+            self::assertStringContainsString('aria-hidden="true"', $template);
+            self::assertStringContainsString('aria-current="page"', $template);
+        }
+
+        self::assertStringNotContainsString('.cn-brand-detail .cn-breadcrumbs', $css);
+    }
 }

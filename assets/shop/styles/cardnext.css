@@ -4946,7 +4946,6 @@ html { scroll-behavior: smooth; }
 .cn-brand-empty { margin: 24px 0; color: var(--cn-muted); }
 .cn-brand-cta { display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-top: 56px; padding: 28px 32px; color: #fff; background: var(--cn-ink); border-radius: var(--cn-radius); }
 .cn-brand-cta h2 { margin: 5px 0 7px; font-size: 1.3rem; }.cn-brand-cta p { max-width: 720px; margin: 0; color: #cbd0d3; }
-.cn-brand-detail .cn-breadcrumbs { display: flex; gap: 9px; margin-bottom: 24px; }
 .cn-brand-detail__header { max-width: 780px; }.cn-brand-detail__header > .cn-link { display: inline-block; margin-bottom: 22px; }
 .cn-brand-detail__logo { width: 230px; min-height: 120px; display: grid; margin-bottom: 22px; padding: 22px; place-items: center; background: var(--cn-surface-softer); border: 1px solid var(--cn-border); border-radius: var(--cn-radius); }
 .cn-brand-detail__logo img { max-width: 180px; max-height: 75px; object-fit: contain; }

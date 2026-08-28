@@ -13,11 +13,18 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints\File;
 
 final class ManufacturerType extends AbstractType
 {
+    public function __construct(private readonly SluggerInterface $slugger)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -28,7 +35,11 @@ final class ManufacturerType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Name',
             ])
-            ->add('slug', TextType::class, ['label' => 'URL-Slug', 'help' => 'Stabile, eindeutige URL, z. B. hid-fargo.'])
+            ->add('slug', TextType::class, [
+                'label' => 'URL-Slug',
+                'help' => 'Wird für die öffentliche Hersteller-URL verwendet, z. B. „hid-fargo“.',
+                'required' => false,
+            ])
             ->add('website', UrlType::class, [
                 'label' => 'Website',
                 'required' => false,
@@ -42,9 +53,21 @@ final class ManufacturerType extends AbstractType
                 'label' => 'Sortierung',
             ])
             ->add('featured', CheckboxType::class, ['label' => 'Beliebte Marke', 'required' => false])
-            ->add('featuredPosition', IntegerType::class, ['label' => 'Position bei beliebten Marken'])
-            ->add('seoTitle', TextType::class, ['label' => 'SEO-Titel', 'required' => false])
-            ->add('seoDescription', TextareaType::class, ['label' => 'SEO-Beschreibung', 'required' => false, 'attr' => ['rows' => 3]])
+            ->add('featuredPosition', IntegerType::class, [
+                'label' => 'Position bei beliebten Marken',
+                'help' => 'Bestimmt die Reihenfolge im Bereich „Beliebte Marken“. Kleinere Werte erscheinen zuerst.',
+            ])
+            ->add('seoTitle', TextType::class, [
+                'label' => 'SEO-Titel',
+                'help' => 'Optional. Wird als Seitentitel der Herstellerseite verwendet.',
+                'required' => false,
+            ])
+            ->add('seoDescription', TextareaType::class, [
+                'label' => 'SEO-Beschreibung',
+                'help' => 'Optional. Meta Description der Herstellerseite.',
+                'required' => false,
+                'attr' => ['rows' => 3],
+            ])
             ->add('enabled', CheckboxType::class, [
                 'label' => 'Aktiv',
                 'required' => false,
@@ -63,6 +86,28 @@ final class ManufacturerType extends AbstractType
                 ],
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+            $submitted = $event->getData();
+            if (!is_array($submitted)) {
+                return;
+            }
+
+            /** @var Manufacturer|null $manufacturer */
+            $manufacturer = $event->getForm()->getData();
+            $slug = trim((string) ($submitted['slug'] ?? ''));
+
+            if ($slug === '' && $manufacturer?->getSlug() !== '') {
+                $slug = $manufacturer->getSlug();
+            }
+
+            if ($slug === '') {
+                $slug = trim((string) ($submitted['name'] ?? '')) ?: trim((string) ($submitted['code'] ?? ''));
+            }
+
+            $submitted['slug'] = $slug === '' ? '' : $this->slugger->slug($slug)->lower()->toString();
+            $event->setData($submitted);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
