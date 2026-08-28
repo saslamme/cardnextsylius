@@ -2,7 +2,7 @@
 
 {% block content %}
 <main class="cn-page cn-advisor" id="main-content" data-printer-advisor>
-    <section class="cn-advisor__hero cn-container">
+    <section class="cn-advisor__hero cn-container" id="kartendrucker-berater">
         <p class="cn-advisor__eyebrow">Kartendrucker-Berater</p>
         <h1>Welcher Kartendrucker passt zu Ihnen?</h1>
         <p>Beantworten Sie fünf kurze Fragen und erhalten Sie eine Empfehlung passend zu Druckvolumen, Funktionen und Budget.</p>
@@ -68,5 +68,7 @@
         {% endif %}
     {% endif %}
     </section>
+
+    {% include 'shop/printer_advisor/_guide.html.twig' %}
 </main>
 {% endblock %}
