@@ -34,6 +34,9 @@ final class ProductCardComponent
     #[ExposeInTemplate(name: 'channel_pricing')]
     public ?ChannelPricingInterface $channelPricing = null;
 
+    #[ExposeInTemplate(name: 'comparison_group')]
+    public ?string $comparisonGroup = null;
+
     public function __construct(private readonly ChannelContextInterface $channelContext)
     {
     }
@@ -43,6 +46,13 @@ final class ProductCardComponent
     {
         /** @var ChannelInterface $channel */
         $channel = $this->channelContext->getChannel();
+        $taxon = $this->product->getMainTaxon();
+        if ($taxon !== null) {
+            while ($taxon->getParent() !== null && $taxon->getParent()?->getCode() !== 'products') {
+                $taxon = $taxon->getParent();
+            }
+            $this->comparisonGroup = $taxon->getCode();
+        }
         $variants = array_values(array_filter(
             $this->product->getVariants()->toArray(),
             static fn (mixed $variant): bool => $variant instanceof ProductVariantInterface,

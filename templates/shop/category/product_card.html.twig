@@ -48,5 +48,6 @@
                 {{ 'Details' }}
             </a>
         </div>
+        <button class="cn-compare-toggle" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_group }}" data-compare-url="{{ path('cardnext_shop_product_compare', {_locale: app.request.locale}) }}" aria-pressed="false" aria-label="{{ product.name }} zum Vergleich hinzufügen">+ Vergleichen</button>
     </div>
 </article>

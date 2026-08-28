@@ -7,3 +7,4 @@ import './cardnext.js';
 import './product-tabs.js';
 import './configurator.js';
 import './printer-advisor.js';
+import './product-comparison.js';
