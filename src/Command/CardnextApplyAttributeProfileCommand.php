@@ -35,7 +35,10 @@ final class CardnextApplyAttributeProfileCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $productCode = (string) $input->getArgument('productCode');
+        $productCode = $input->getArgument('productCode');
+        if (!\is_string($productCode)) {
+            throw new \InvalidArgumentException('The product code must be a string.');
+        }
 
         /** @var Product|null $product */
         $product = $this->entityManager->getRepository(Product::class)->findOneBy(['code' => $productCode]);
