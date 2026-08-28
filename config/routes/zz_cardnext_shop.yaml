@@ -2,6 +2,11 @@
 # same flat URL; the Cardnext resolver decides whether the slug is a taxon or a
 # product before delegating to Sylius' unchanged resource controllers.
 
+cardnext_shop_product_compare:
+    path: /{_locale}/produktvergleich
+    controller: App\Controller\Shop\ProductComparisonController
+    methods: [GET]
+
 sylius_shop_product_index:
     path: /{_locale}/{slug}
     controller: App\Controller\Shop\PublicSlugController
