@@ -1,0 +1,39 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Controller\Shop;
+
+use PHPUnit\Framework\TestCase;
+
+final class BrandControllerTest extends TestCase
+{
+    public function testRoutesAndCardnextProductCardAreUsed(): void
+    {
+        $controller = file_get_contents(__DIR__ . '/../../../src/Controller/Shop/BrandController.php');
+        $detail = file_get_contents(__DIR__ . '/../../../templates/shop/brand/show.html.twig');
+
+        self::assertStringContainsString("/{_locale}/marken'", $controller);
+        self::assertStringContainsString("/{_locale}/marken/{slug}'", $controller);
+        self::assertStringContainsString("component('cardnext:product:card'", $detail);
+        self::assertStringNotContainsString('@SyliusShop/product/common/card.html.twig', $detail);
+    }
+
+    public function testBrandTemplatesNeverRenderProductCounts(): void
+    {
+        foreach (['index.html.twig', 'show.html.twig'] as $template) {
+            $contents = file_get_contents(__DIR__ . '/../../../templates/shop/brand/' . $template);
+            self::assertStringNotContainsString('productCount', $contents);
+            self::assertDoesNotMatchRegularExpression('/\{\{\s*(total|count)\s*\}\}/', $contents);
+        }
+    }
+
+    public function testCatalogQueryIsChannelAndAvailabilityAware(): void
+    {
+        $catalog = file_get_contents(__DIR__ . '/../../../src/Service/BrandCatalog.php');
+        self::assertStringContainsString('c.code = :channel', $catalog);
+        self::assertStringContainsString('p.enabled = 1', $catalog);
+        self::assertStringContainsString('v.enabled = 1', $catalog);
+        self::assertStringContainsString('cp.price IS NOT NULL', $catalog);
+    }
+}

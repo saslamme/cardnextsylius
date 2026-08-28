@@ -493,6 +493,7 @@ final readonly class CardnextProductCsvImporter
             $manufacturer = new Manufacturer();
             $manufacturer->setCode($manufacturerCode);
             $manufacturer->setName($manufacturerName);
+            $manufacturer->setSlug(strtolower((string) $this->slugger->slug($manufacturerName)));
             $manufacturer->setEnabled(
                 ($row['manufacturer_enabled'] ?? '') !== ''
                     ? $this->toBool($row['manufacturer_enabled'])

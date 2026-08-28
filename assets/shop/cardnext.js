@@ -2,6 +2,23 @@ const openButton = document.querySelector('[data-cardnext-menu-open]');
 const closeButton = document.querySelector('[data-cardnext-menu-close]');
 const overlay = document.querySelector('[data-cardnext-mobile-overlay]');
 
+const brandPage = document.querySelector('[data-cn-brands]');
+if (brandPage) {
+    const search = brandPage.querySelector('[data-cn-brand-search]');
+    const empty = brandPage.querySelector('[data-cn-brand-empty]');
+    search?.addEventListener('input', () => {
+        const query = search.value.trim().toLocaleLowerCase();
+        let matches = 0;
+        brandPage.querySelectorAll('[data-cn-brand-name]').forEach((item) => {
+            const visible = item.dataset.cnBrandName.includes(query);
+            item.hidden = !visible;
+            if (visible && item.closest('.cn-brand-index')) matches += 1;
+        });
+        brandPage.querySelectorAll('[data-cn-brand-group]').forEach((group) => { group.hidden = !group.querySelector('[data-cn-brand-name]:not([hidden])'); });
+        if (empty) empty.hidden = matches > 0;
+    });
+}
+
 const openMenu = () => {
     if (!overlay) return;
     overlay.hidden = false;

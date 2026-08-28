@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_manufacturer')]
 #[UniqueEntity(fields: ['code'], message: 'Dieser Hersteller-Code ist bereits vergeben.')]
+#[UniqueEntity(fields: ['slug'], message: 'Dieser Hersteller-Slug ist bereits vergeben.')]
 class Manufacturer
 {
     #[ORM\Id]
@@ -22,6 +23,9 @@ class Manufacturer
 
     #[ORM\Column(length: 255)]
     private string $name = '';
+
+    #[ORM\Column(length: 255, unique: true)]
+    private string $slug = '';
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $website = null;
@@ -37,6 +41,18 @@ class Manufacturer
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $enabled = true;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $featured = false;
+
+    #[ORM\Column(name: 'featured_position', options: ['default' => 100])]
+    private int $featuredPosition = 100;
+
+    #[ORM\Column(name: 'seo_title', length: 255, nullable: true)]
+    private ?string $seoTitle = null;
+
+    #[ORM\Column(name: 'seo_description', length: 320, nullable: true)]
+    private ?string $seoDescription = null;
 
     public function getId(): ?int
     {
@@ -61,6 +77,56 @@ class Manufacturer
     public function setName(string $name): void
     {
         $this->name = trim($name);
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = strtolower(trim($slug));
+    }
+
+    public function isFeatured(): bool
+    {
+        return $this->featured;
+    }
+
+    public function setFeatured(bool $featured): void
+    {
+        $this->featured = $featured;
+    }
+
+    public function getFeaturedPosition(): int
+    {
+        return $this->featuredPosition;
+    }
+
+    public function setFeaturedPosition(int $position): void
+    {
+        $this->featuredPosition = $position;
+    }
+
+    public function getSeoTitle(): ?string
+    {
+        return $this->seoTitle;
+    }
+
+    public function setSeoTitle(?string $value): void
+    {
+        $this->seoTitle = ($value = trim((string) $value)) !== '' ? $value : null;
+    }
+
+    public function getSeoDescription(): ?string
+    {
+        return $this->seoDescription;
+    }
+
+    public function setSeoDescription(?string $value): void
+    {
+        $this->seoDescription = ($value = trim((string) $value)) !== '' ? $value : null;
     }
 
     public function getWebsite(): ?string
