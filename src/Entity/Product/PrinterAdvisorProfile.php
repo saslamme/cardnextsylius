@@ -12,56 +12,56 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Table(name: 'cardnext_printer_advisor_profile')]
 class PrinterAdvisorProfile
 {
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column(name: 'id', type: 'integer')]
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'printerAdvisorProfile', targetEntity: Product::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private ?Product $product = null;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'enabled', options: ['default' => false])]
     private bool $enabled = false;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(name: 'priority', options: ['default' => 0])]
     #[Assert\Range(min: -100, max: 100)]
     private int $priority = 0;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(name: 'min_annual_volume', options: ['default' => 0])]
     #[Assert\PositiveOrZero]
     private int $minAnnualVolume = 0;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'max_annual_volume', nullable: true)]
     #[Assert\Positive]
     private ?int $maxAnnualVolume = null;
 
-    #[ORM\Column(options: ['default' => true])]
+    #[ORM\Column(name: 'single_sided', options: ['default' => true])]
     private bool $singleSided = true;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'duplex', options: ['default' => false])]
     private bool $duplex = false;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'magnetic_stripe', options: ['default' => false])]
     private bool $magneticStripe = false;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'contact_chip', options: ['default' => false])]
     private bool $contactChip = false;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'rfid_nfc', options: ['default' => false])]
     private bool $rfidNfc = false;
 
-    #[ORM\Column(options: ['default' => true])]
+    #[ORM\Column(name: 'direct_printing', options: ['default' => true])]
     private bool $directPrinting = true;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'retransfer', options: ['default' => false])]
     private bool $retransfer = false;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'lamination', options: ['default' => false])]
     private bool $lamination = false;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(name: 'high_durability', options: ['default' => false])]
     private bool $highDurability = false;
 
-    #[ORM\Column(type: 'smallint', options: ['default' => 1])]
+    #[ORM\Column(name: 'performance_class', type: 'smallint', options: ['default' => 1])]
     #[Assert\Range(min: 1, max: 5)]
     private int $performanceClass = 1;
 
