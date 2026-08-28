@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SearchController extends AbstractController
 {
+    private const int RESULTS_PER_PAGE = 24;
+
     #[Route('/{_locale}/suche', name: 'cardnext_shop_search', methods: ['GET'], priority: 120)]
     public function index(
         string $_locale,
@@ -34,12 +36,32 @@ final class SearchController extends AbstractController
             }
         }
 
-        $result = $search->search($query, $_locale, 48);
+        $page = max(1, $request->query->getInt('page', 1));
+        $result = $search->search(
+            $query,
+            $_locale,
+            self::RESULTS_PER_PAGE,
+            ($page - 1) * self::RESULTS_PER_PAGE,
+        );
+        $pageCount = max(1, (int) ceil($result['total'] / self::RESULTS_PER_PAGE));
+
+        if ($page > $pageCount) {
+            $page = $pageCount;
+            $result = $search->search(
+                $query,
+                $_locale,
+                self::RESULTS_PER_PAGE,
+                ($page - 1) * self::RESULTS_PER_PAGE,
+            );
+        }
 
         return $this->render('shop/search/index.html.twig', [
             'query' => $result['query'],
             'correctedQuery' => $result['correctedQuery'] ?? null,
             'total' => $result['total'],
+            'page' => $page,
+            'pageCount' => $pageCount,
+            'perPage' => self::RESULTS_PER_PAGE,
             'products' => $this->loadProductsInSearchOrder(
                 $result['products'],
                 $entityManager,
