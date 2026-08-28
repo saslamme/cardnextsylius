@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\Channel\Channel;
 use App\Entity\Content\LegalPage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,6 +31,12 @@ final class CardnextSetupLegalPagesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $repository = $this->entityManager->getRepository(LegalPage::class);
+        $defaultChannel = $this->entityManager->getRepository(Channel::class)->findOneBy(['code' => 'CARDNEXT_DE']);
+        if (!$defaultChannel instanceof Channel) {
+            $io->error('Der deutsche Hauptkanal CARDNEXT_DE fehlt. Bitte zuerst die Märkte einrichten.');
+
+            return Command::FAILURE;
+        }
 
         $definitions = [
             'imprint' => [
@@ -75,6 +82,7 @@ final class CardnextSetupLegalPagesCommand extends Command
             $page->setMetaTitle($definition['metaTitle']);
             $page->setMetaDescription($definition['metaDescription']);
             $page->setContent(trim($content));
+            $page->addChannel($defaultChannel);
 
             $this->entityManager->persist($page);
             ++$created;
