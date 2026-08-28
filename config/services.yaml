@@ -35,6 +35,10 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Form\Type\LegalPageType:
+        arguments:
+            $localeRepository: '@sylius.repository.locale'
+
     # Controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
