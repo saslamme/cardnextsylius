@@ -117,8 +117,7 @@ cardnext:
         title: Shipping
         description: After production and quality control, your cards will be shipped securely.
     content: { kicker: Product information }
-cardnext:
-    quote:
+  quote:
         cart: Quote cart
         header: 'Quote (%count%)'
         request: Quote request

@@ -117,8 +117,7 @@ cardnext:
         title: Versand
         description: Nach Produktion und Qualitätskontrolle werden Ihre Karten sicher versendet.
     content: { kicker: Produktinformationen }
-cardnext:
-    quote:
+  quote:
         cart: Angebotskorb
         header: 'Angebot (%count%)'
         request: Angebotsanfrage
