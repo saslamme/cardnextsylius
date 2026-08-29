@@ -44,6 +44,19 @@ class Quote
     #[ORM\Column(name: 'customer_purchase_order_number', length: 128, nullable: true)] private ?string $customerPurchaseOrderNumber = null;
     #[ORM\Column(name: 'quote_date', type: Types::DATE_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $quoteDate = null;
     #[ORM\Column(name: 'ready_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $readyAt = null;
+    #[ORM\Column(name: 'access_token_hash', length: 64, nullable: true)] private ?string $accessTokenHash = null;
+    #[ORM\Column(name: 'access_token_issued_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $accessTokenIssuedAt = null;
+    #[ORM\Column(name: 'first_sent_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $firstSentAt = null;
+    #[ORM\Column(name: 'last_sent_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $lastSentAt = null;
+    #[ORM\Column(name: 'send_count', options: ['default' => 0])] private int $sendCount = 0;
+    #[ORM\Column(name: 'first_viewed_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $firstViewedAt = null;
+    #[ORM\Column(name: 'last_viewed_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $lastViewedAt = null;
+    #[ORM\Column(name: 'view_count', options: ['default' => 0])] private int $viewCount = 0;
+    #[ORM\Column(name: 'accepted_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $acceptedAt = null;
+    #[ORM\Column(name: 'accepted_by_name', length: 255, nullable: true)] private ?string $acceptedByName = null;
+    #[ORM\Column(name: 'rejected_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $rejectedAt = null;
+    #[ORM\Column(name: 'rejected_by_name', length: 255, nullable: true)] private ?string $rejectedByName = null;
+    #[ORM\Column(name: 'rejection_reason', type: Types::TEXT, nullable: true)] private ?string $rejectionReason = null;
     #[ORM\Column(name: 'default_tax_rate', options: ['default' => 0])] private int $defaultTaxRate = 0;
     #[ORM\Column(name: 'tax_note', type: Types::TEXT, nullable: true)] private ?string $taxNote = null;
     #[ORM\Column(name: 'valid_until', type: Types::DATE_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $validUntil = null;
@@ -72,7 +85,9 @@ class Quote
     public function setQuoteRequest(QuoteRequest $value): void { $this->quoteRequest = $value; }
     public function getNumber(): string { return $this->number; } public function setNumber(string $value): void { $this->number = $value; }
     public function getVersion(): int { return $this->version; } public function setVersion(int $value): void { $this->version = $value; }
-    public function getStatus(): QuoteStatus { return $this->status; } public function setStatus(QuoteStatus $value): void { $this->status = $value; }
+    public function getStatus(): QuoteStatus { return $this->status; }
+    public function transitionTo(QuoteStatus $value): void { if (!$this->status->canTransitionTo($value)) throw new \DomainException('Invalid quote status transition.'); $this->status = $value; }
+    /** @internal Initial state is only set by factories/ORM. */ public function setStatus(QuoteStatus $value): void { $this->status = $value; }
     public function getChannelCode(): string { return $this->channelCode; } public function setChannelCode(string $value): void { $this->channelCode = $value; }
     public function getLocaleCode(): string { return $this->localeCode; } public function setLocaleCode(string $value): void { $this->localeCode = $value; }
     public function getCurrencyCode(): string { return $this->currencyCode; } public function setCurrencyCode(string $value): void { $this->currencyCode = $value; }
@@ -90,6 +105,18 @@ class Quote
     public function getCustomerPurchaseOrderNumber(): ?string { return $this->customerPurchaseOrderNumber; } public function setCustomerPurchaseOrderNumber(?string $v): void { $this->customerPurchaseOrderNumber=$v; }
     public function getQuoteDate(): ?\DateTimeImmutable { return $this->quoteDate; } public function setQuoteDate(?\DateTimeImmutable $v): void { $this->quoteDate=$v; }
     public function getReadyAt(): ?\DateTimeImmutable { return $this->readyAt; } public function setReadyAt(?\DateTimeImmutable $v): void { $this->readyAt=$v; }
+    public function getAccessTokenHash(): ?string { return $this->accessTokenHash; }
+    public function getAccessTokenIssuedAt(): ?\DateTimeImmutable { return $this->accessTokenIssuedAt; }
+    public function setPublicAccess(?string $hash, ?\DateTimeImmutable $issuedAt): void { $this->accessTokenHash=$hash; $this->accessTokenIssuedAt=$issuedAt; }
+    public function getFirstSentAt(): ?\DateTimeImmutable { return $this->firstSentAt; } public function getLastSentAt(): ?\DateTimeImmutable { return $this->lastSentAt; } public function getSendCount(): int { return $this->sendCount; }
+    public function recordSent(\DateTimeImmutable $now): void { if (!in_array($this->status,[QuoteStatus::Ready,QuoteStatus::Sent],true)) throw new \DomainException('Dieses Angebot kann nicht versendet werden.'); if ($this->firstSentAt===null) $this->firstSentAt=$now; $this->lastSentAt=$now; ++$this->sendCount; if ($this->status===QuoteStatus::Ready) $this->transitionTo(QuoteStatus::Sent); }
+    public function getFirstViewedAt(): ?\DateTimeImmutable { return $this->firstViewedAt; } public function getLastViewedAt(): ?\DateTimeImmutable { return $this->lastViewedAt; } public function getViewCount(): int { return $this->viewCount; }
+    public function recordViewed(\DateTimeImmutable $now): bool { $first=$this->firstViewedAt===null; if ($first) $this->firstViewedAt=$now; $this->lastViewedAt=$now; ++$this->viewCount; return $first; }
+    public function getAcceptedAt(): ?\DateTimeImmutable { return $this->acceptedAt; } public function getAcceptedByName(): ?string { return $this->acceptedByName; }
+    public function accept(string $name, \DateTimeImmutable $now): void { $name=trim($name); if ($name==='' || mb_strlen($name)>255) throw new \InvalidArgumentException('Invalid name.'); $this->transitionTo(QuoteStatus::Accepted); $this->acceptedAt=$now; $this->acceptedByName=$name; }
+    public function getRejectedAt(): ?\DateTimeImmutable { return $this->rejectedAt; } public function getRejectedByName(): ?string { return $this->rejectedByName; } public function getRejectionReason(): ?string { return $this->rejectionReason; }
+    public function reject(string $name, ?string $reason, \DateTimeImmutable $now): void { $name=trim($name); $reason=$reason===null?null:trim($reason); if ($name==='' || mb_strlen($name)>255 || ($reason!==null && mb_strlen($reason)>2000)) throw new \InvalidArgumentException('Invalid rejection data.'); $this->transitionTo(QuoteStatus::Rejected); $this->rejectedAt=$now; $this->rejectedByName=$name; $this->rejectionReason=$reason===''?null:$reason; }
+    public function isExpired(?\DateTimeImmutable $now=null): bool { return $this->validUntil!==null && ($now??new \DateTimeImmutable())->setTime(0,0)>$this->validUntil->setTime(0,0); }
     public function getDefaultTaxRate(): int { return $this->defaultTaxRate; } public function setDefaultTaxRate(int $v): void { if ($v < 0) throw new \InvalidArgumentException('Tax rate cannot be negative.'); $this->defaultTaxRate=$v; }
     public function getTaxNote(): ?string { return $this->taxNote; } public function setTaxNote(?string $v): void { $this->taxNote=$v; }
     public function getValidUntil(): ?\DateTimeImmutable { return $this->validUntil; } public function setValidUntil(?\DateTimeImmutable $value): void { $this->validUntil = $value; }

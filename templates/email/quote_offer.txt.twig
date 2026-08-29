@@ -1,0 +1,9 @@
+{{ 'quote_mail.greeting'|trans({'%name%':quote.customerContactName}) }}
+
+{{ 'quote_mail.offer'|trans({'%number%':quote.number}) }}
+{{ 'quote_public.total'|trans }}: {{ (quote.grandTotal/100)|format_currency(quote.currencyCode,locale=quote.localeCode) }}
+{% if quote.validUntil %}{{ 'quote_public.valid_until'|trans }}: {{ quote.validUntil|format_date(locale=quote.localeCode) }}
+{% endif %}{{ 'quote_mail.view'|trans }}: {{ publicUrl }}
+
+{{ 'quote_mail.attachment'|trans }}
+Cardnext
