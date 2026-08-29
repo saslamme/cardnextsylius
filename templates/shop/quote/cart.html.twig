@@ -1,9 +1,107 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 {% form_theme form '@SyliusShop/form/theme.html.twig' %}
-{% block content %}<main class="cn-quote cardnext-container">
-<nav class="cn-quote__breadcrumb" aria-label="Breadcrumb"><a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.quote.home'|trans }}</a> / {{ 'cardnext.quote.cart'|trans }}</nav>
-<header><div class="cn-eyebrow">{{ 'cardnext.quote.request'|trans }}</div><h1>{{ 'cardnext.quote.cart'|trans }}</h1><p>{{ 'cardnext.quote.intro'|trans }}</p></header>
-{% if items is empty %}<section class="cn-quote__empty"><h2>{{ 'cardnext.quote.empty'|trans }}</h2><p>{{ 'cardnext.quote.empty_help'|trans }}</p><a class="cn-btn cn-btn--primary" href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.quote.discover'|trans }}</a></section>
-{% else %}<div class="cn-quote__items" role="list">{% for row in items %}{% set variant=row.variant %}<article class="cn-quote-item" role="listitem"><div><strong>{{ variant.product.name }}</strong><small>{{ 'cardnext.quote.sku'|trans }}: {{ variant.code }}{% if variant.name %} · {{ variant.name }}{% endif %}</small></div><form method="post" action="{{ path('cardnext_shop_quote_cart_update',{_locale:app.request.locale}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quote_update') }}"><input type="hidden" name="variantCode" value="{{ variant.code }}"><label>{{ 'cardnext.quote.quantity'|trans }} <input type="number" name="quantity" min="1" max="100000" value="{{ row.quantity }}"></label><button class="cn-btn cn-btn--secondary" type="submit">{{ 'cardnext.quote.update'|trans }}</button></form><div>{{ row.unitPrice|sylius_format_money(currency) }}<br><strong>{{ row.lineTotal|sylius_format_money(currency) }}</strong></div><form method="post" action="{{ path('cardnext_shop_quote_cart_remove',{_locale:app.request.locale}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quote_remove') }}"><input type="hidden" name="variantCode" value="{{ variant.code }}"><button class="cn-link" type="submit">{{ 'cardnext.quote.remove'|trans }}</button></form></article>{% endfor %}</div>
-<p class="cn-quote__price-note">{{ 'cardnext.quote.price_note'|trans }}</p>
-<section class="cn-quote__form"><h2>{{ 'cardnext.quote.form.title'|trans }}</h2>{{ form_start(form,{'attr':{'data-cn-quote-submit':''}}) }}{{ form_errors(form) }}<h3>{{ 'cardnext.quote.form.company'|trans }}</h3><div class="cn-quote__form-grid">{{ form_row(form.company) }}{{ form_row(form.contactName) }}{{ form_row(form.email) }}{{ form_row(form.phone) }}{{ form_row(form.customerNumber) }}</div><h3>{{ 'cardnext.quote.form.address'|trans }}</h3><div class="cn-quote__form-grid">{{ form_row(form.street) }}{{ form_row(form.houseNumber) }}{{ form_row(form.postalCode) }}{{ form_row(form.city) }}{{ form_row(form.countryCode) }}</div><h3>{{ 'cardnext.quote.form.project'|trans }}</h3><div class="cn-quote__form-grid">{{ form_row(form.projectReference) }}{{ form_row(form.requestedDeliveryDate) }}{{ form_row(form.customerPurchaseOrderNumber) }}</div>{{ form_row(form.message) }}{{ form_row(form.needsAdvice) }}{{ form_row(form.needsCompatibilityCheck) }}<div class="cn-honeypot" aria-hidden="true">{{ form_row(form.website) }}</div><div class="cn-quote__privacy">{{ form_widget(form.privacyConsent) }} <label for="{{ form.privacyConsent.vars.id }}">{{ 'cardnext.quote.form.privacy_before'|trans }} <a href="{{ path('cardnext_shop_legal_privacy',{_locale:app.request.locale}) }}">{{ 'cardnext.quote.form.privacy_link'|trans }}</a>.</label>{{ form_errors(form.privacyConsent) }}</div>{{ form_rest(form) }}<button class="cn-btn cn-btn--primary" type="submit" data-cn-quote-submit-button>{{ 'cardnext.quote.submit'|trans }}</button>{{ form_end(form,{'render_rest':false}) }}</section>{% endif %}</main>{% endblock %}
+
+{% block content %}
+    <main class="cn-page cn-quote">
+        <nav class="cn-breadcrumbs" aria-label="Breadcrumb">
+            <div class="cn-container cn-breadcrumbs__inner">
+                <a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.quote.home'|trans }}</a>
+                <span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>
+                <span aria-current="page">{{ 'cardnext.quote.cart'|trans }}</span>
+            </div>
+        </nav>
+
+        <section class="cn-section">
+            <div class="cn-container cn-container--narrow">
+                <header class="cn-quote__header">
+                    <span class="cn-kicker">{{ 'cardnext.quote.request'|trans }}</span>
+                    <h1 class="cn-title cn-title--section">{{ 'cardnext.quote.cart'|trans }}</h1>
+                    <p class="cn-lead">{{ 'cardnext.quote.intro'|trans }}</p>
+                </header>
+
+                {% if items is empty %}
+                    <section class="cn-quote__empty">
+                        <h2 class="cn-title cn-title--sm">{{ 'cardnext.quote.empty'|trans }}</h2>
+                        <p>{{ 'cardnext.quote.empty_help'|trans }}</p>
+                        <a class="cn-btn cn-btn--primary" href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.quote.discover'|trans }}</a>
+                    </section>
+                {% else %}
+                    {% set quoteTotal = 0 %}
+                    {% for row in items %}{% set quoteTotal = quoteTotal + row.lineTotal %}{% endfor %}
+
+                    <div class="cn-quote__commerce">
+                        <div>
+                            <div class="cn-quote__items" role="list">
+                                {% for row in items %}
+                                    {% set variant = row.variant %}
+                                    <article class="cn-quote-item" role="listitem">
+                                        <a class="cn-quote-item__media" href="{{ cardnext_product_url(variant.product) }}" tabindex="-1" aria-hidden="true">
+                                            {% if variant.product.images|length > 0 %}
+                                                {{ component('sylius_shop:main_image', {product: variant.product, class: 'cn-quote-item__image', filter: 'cardnext_product_card'}) }}
+                                            {% else %}
+                                                <span class="cn-quote-item__placeholder">{{ 'cardnext.quote.image_pending'|trans }}</span>
+                                            {% endif %}
+                                        </a>
+                                        <div class="cn-quote-item__info">
+                                            {% if variant.product.manufacturer %}<span class="cn-kicker">{{ variant.product.manufacturer.name }}</span>{% endif %}
+                                            <h2 class="cn-title cn-title--sm"><a href="{{ cardnext_product_url(variant.product) }}">{{ variant.product.name }}</a></h2>
+                                            <p class="cn-meta">{{ 'cardnext.quote.sku'|trans }}: {{ variant.code }}{% if variant.name %} · {{ variant.name }}{% endif %}</p>
+                                            <div class="cn-quote-item__prices">
+                                                <span>{{ row.unitPrice|sylius_format_money(currency) }}</span>
+                                                <strong>{{ row.lineTotal|sylius_format_money(currency) }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="cn-quote-item__actions">
+                                            <form method="post" action="{{ path('cardnext_shop_quote_cart_update', {_locale: app.request.locale}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('quote_update') }}">
+                                                <input type="hidden" name="variantCode" value="{{ variant.code }}">
+                                                <label class="form-label" for="quote-quantity-{{ loop.index }}">{{ 'cardnext.quote.quantity'|trans }}</label>
+                                                <div class="cn-cluster">
+                                                    <input class="form-control" id="quote-quantity-{{ loop.index }}" type="number" name="quantity" min="1" max="100000" value="{{ row.quantity }}">
+                                                    <button class="cn-btn cn-btn--secondary cn-btn--small" type="submit">{{ 'cardnext.quote.update'|trans }}</button>
+                                                </div>
+                                            </form>
+                                            <form method="post" action="{{ path('cardnext_shop_quote_cart_remove', {_locale: app.request.locale}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('quote_remove') }}">
+                                                <input type="hidden" name="variantCode" value="{{ variant.code }}">
+                                                <button class="cn-link cn-link--small" type="submit">{{ 'cardnext.quote.remove'|trans }}</button>
+                                            </form>
+                                        </div>
+                                    </article>
+                                {% endfor %}
+                            </div>
+                            <p class="cn-quote__price-note">{{ 'cardnext.quote.price_note'|trans }}</p>
+                        </div>
+
+                        <aside class="cn-quote-summary" aria-labelledby="quote-summary-title">
+                            <h2 id="quote-summary-title" class="cn-title cn-title--sm">{{ 'cardnext.quote.summary'|trans }}</h2>
+                            <dl>
+                                <div><dt>{{ 'cardnext.quote.products'|trans }}</dt><dd>{{ items|length }}</dd></div>
+                                <div class="cn-quote-summary__total"><dt>{{ 'cardnext.quote.orientation_total'|trans }}</dt><dd>{{ quoteTotal|sylius_format_money(currency) }}</dd></div>
+                            </dl>
+                            <p class="cn-meta">{{ 'cardnext.quote.summary_note'|trans }}</p>
+                            <a class="cn-btn cn-btn--primary cn-btn--block" href="#quote-request-form">{{ 'cardnext.quote.continue'|trans }}</a>
+                        </aside>
+                    </div>
+
+                    <section class="cn-quote__form" id="quote-request-form">
+                        <div class="cn-quote__form-heading">
+                            <span class="cn-kicker">{{ 'cardnext.quote.request'|trans }}</span>
+                            <h2 class="cn-title cn-title--section">{{ 'cardnext.quote.form.title'|trans }}</h2>
+                        </div>
+                        {{ form_start(form, {'attr': {'class': 'cn-form', 'data-cn-quote-submit': ''}}) }}
+                            {{ form_errors(form) }}
+                            <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.company'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.company) }}{{ form_row(form.contactName) }}{{ form_row(form.email) }}{{ form_row(form.phone) }}{{ form_row(form.customerNumber) }}</div></fieldset>
+                            <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.address'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.street) }}{{ form_row(form.houseNumber) }}{{ form_row(form.postalCode) }}{{ form_row(form.city) }}{{ form_row(form.countryCode) }}</div></fieldset>
+                            <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.project'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.projectReference) }}{{ form_row(form.requestedDeliveryDate) }}{{ form_row(form.customerPurchaseOrderNumber) }}</div>{{ form_row(form.message) }}{{ form_row(form.needsAdvice) }}{{ form_row(form.needsCompatibilityCheck) }}</fieldset>
+                            <div class="cn-honeypot" aria-hidden="true">{{ form_row(form.website) }}</div>
+                            <div class="cn-quote__privacy form-check">{{ form_widget(form.privacyConsent, {'attr': {'class': 'form-check-input'}}) }} <label class="form-check-label" for="{{ form.privacyConsent.vars.id }}">{{ 'cardnext.quote.form.privacy_before'|trans }} <a href="{{ path('cardnext_shop_legal_privacy', {_locale: app.request.locale}) }}">{{ 'cardnext.quote.form.privacy_link'|trans }}</a>.</label>{{ form_errors(form.privacyConsent) }}</div>
+                            {{ form_rest(form) }}
+                            <button class="cn-btn cn-btn--primary" type="submit" data-cn-quote-submit-button>{{ 'cardnext.quote.submit'|trans }}</button>
+                        {{ form_end(form, {'render_rest': false}) }}
+                    </section>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+{% endblock %}

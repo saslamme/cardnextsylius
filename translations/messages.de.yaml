@@ -136,6 +136,12 @@ cardnext:
         update: Aktualisieren
         remove: Entfernen
         price_note: '* Die dargestellten Shoppreise dienen als Orientierung. Sie erhalten ein individuelles Angebot auf Basis von Menge, Verfügbarkeit und Projektumfang.'
+        image_pending: Produktbild folgt
+        summary: Zusammenfassung
+        products: Produkte
+        orientation_total: Orientierungswert
+        summary_note: Der endgültige Preis wird individuell für Ihre Anfrage ermittelt.
+        continue: Anfrage vervollständigen
         submit: Angebotsanfrage absenden
         validation:
             privacy: Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.

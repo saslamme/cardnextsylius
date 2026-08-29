@@ -136,6 +136,12 @@ cardnext:
         update: Update
         remove: Remove
         price_note: '* Displayed shop prices are indicative. Your individual quote will reflect quantity, availability and project scope.'
+        image_pending: Product image coming soon
+        summary: Summary
+        products: Products
+        orientation_total: Indicative total
+        summary_note: The final price will be calculated individually for your request.
+        continue: Complete request
         submit: Submit quote request
         validation:
             privacy: Please consent to the processing of your information.
