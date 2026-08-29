@@ -1,9 +1,149 @@
 <?php
 
 declare(strict_types=1);
-namespace App\Controller\Admin; use App\Entity\Quote\QuoteRequest; use App\Entity\Quote\QuoteRequestHistory; use App\Enum\Quote\QuoteRequestStatus; use Doctrine\ORM\EntityManagerInterface; use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; use Symfony\Component\HttpFoundation\{Request,Response}; use Symfony\Component\Routing\Attribute\Route;
-#[Route('/admin/cardnext/quotes',name:'cardnext_admin_quote_')]
-final class QuoteAdminController extends AbstractController {public function __construct(private EntityManagerInterface $em){}
- #[Route('',name:'index',methods:['GET'])] public function index(Request $r):Response{$this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');$qb=$this->em->getRepository(QuoteRequest::class)->createQueryBuilder('q')->orderBy('q.createdAt','DESC');if($status=$r->query->get('status'))$qb->andWhere('q.status = :status')->setParameter('status',$status);if($channel=$r->query->get('channel'))$qb->andWhere('q.channelCode = :channel')->setParameter('channel',$channel);return $this->render('admin/cardnext/quote/index.html.twig',['quotes'=>$qb->getQuery()->getResult(),'statuses'=>QuoteRequestStatus::cases()]);}
- #[Route('/{id}',name:'show',requirements:['id'=>'\\d+'],methods:['GET'])] public function show(QuoteRequest $quote):Response{$this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');return $this->render('admin/cardnext/quote/show.html.twig',['quote'=>$quote,'statuses'=>QuoteRequestStatus::cases()]);}
- #[Route('/{id}/status',name:'status',requirements:['id'=>'\\d+'],methods:['POST'])] public function status(QuoteRequest $quote,Request $r):Response{$this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS');if(!$this->isCsrfTokenValid('quote_status_'.$quote->getId(),(string)$r->request->get('_token')))throw $this->createAccessDeniedException();$next=QuoteRequestStatus::tryFrom((string)$r->request->get('status'));$old=$quote->getStatus();if(!$next||!$old->canTransitionTo($next))throw $this->createNotFoundException('Invalid quote status transition.');$quote->setStatus($next);$quote->addHistory(new QuoteRequestHistory('status_changed',$old->value,$next->value));$this->em->flush();return $this->redirectToRoute('cardnext_admin_quote_show',['id'=>$quote->getId()]);}}
+
+namespace App\Controller\Admin;
+
+use App\Entity\Quote\Quote;
+use App\Entity\Quote\QuoteItem;
+use App\Entity\Quote\QuoteRequest;
+use App\Entity\Quote\QuoteRequestHistory;
+use App\Entity\User\AdminUser;
+use App\Enum\Quote\QuoteItemType;
+use App\Enum\Quote\QuoteRequestStatus;
+use App\Enum\Quote\QuoteStatus;
+use App\Service\Quote\MinorUnitParser;
+use App\Service\Quote\QuoteCalculator;
+use App\Service\Quote\QuoteFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/admin/cardnext/quotes', name: 'cardnext_admin_quote_')]
+final class QuoteAdminController extends AbstractController
+{
+    public function __construct(private EntityManagerInterface $entityManager) {}
+
+    #[Route('', name: 'index', methods: ['GET'])]
+    public function index(Request $request): Response
+    {
+        $this->adminOnly();
+        $builder = $this->entityManager->getRepository(QuoteRequest::class)->createQueryBuilder('q')->orderBy('q.createdAt', 'DESC');
+        if ($status = $request->query->get('status')) $builder->andWhere('q.status = :status')->setParameter('status', $status);
+        if ($channel = $request->query->get('channel')) $builder->andWhere('q.channelCode = :channel')->setParameter('channel', $channel);
+
+        return $this->render('admin/cardnext/quote/index.html.twig', ['quotes' => $builder->getQuery()->getResult(), 'statuses' => QuoteRequestStatus::cases()]);
+    }
+
+    #[Route('/{id}', name: 'show', requirements: ['id' => '\\d+'], methods: ['GET'])]
+    public function show(QuoteRequest $quote): Response
+    {
+        $this->adminOnly();
+        return $this->render('admin/cardnext/quote/show.html.twig', ['quote' => $quote, 'statuses' => QuoteRequestStatus::cases()]);
+    }
+
+    #[Route('/{id}/offer', name: 'create', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function create(QuoteRequest $request, Request $httpRequest, QuoteFactory $factory): Response
+    {
+        $this->adminOnly();
+        $this->checkCsrf('quote_create_'.$request->getId(), $httpRequest);
+        $quote = $factory->createFromRequest($request, $this->admin());
+        return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
+    }
+
+    #[Route('/offer/{id}', name: 'edit', requirements: ['id' => '\\d+'], methods: ['GET'])]
+    public function edit(Quote $quote, MinorUnitParser $money): Response
+    {
+        $this->adminOnly();
+        return $this->render('admin/cardnext/quote/edit.html.twig', ['quote' => $quote, 'money' => $money]);
+    }
+
+    #[Route('/offer/{id}', name: 'update', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function update(Quote $quote, Request $request, MinorUnitParser $money, QuoteCalculator $calculator): Response
+    {
+        $this->adminOnly();
+        $this->checkCsrf('quote_edit_'.$quote->getId(), $request);
+        try {
+            foreach ($request->request->all('items') as $id => $values) {
+                if (!is_array($values)) throw new \InvalidArgumentException('Ungültige Positionsdaten.');
+                $item = $this->itemOf($quote, (int) $id);
+                $position = $values['position'] ?? null; $quantity = $values['quantity'] ?? null; $unitPrice = $values['unitPrice'] ?? null;
+                if (!is_scalar($position) || !is_scalar($quantity) || !is_scalar($unitPrice)) throw new \InvalidArgumentException('Ungültige Positionsdaten.');
+                $item->setPosition(max(1, (int) $position));
+                $item->setQuantity((int) $quantity);
+                $item->setUnitPrice($money->parse((string) $unitPrice));
+            }
+            $quote->setShippingTotal($money->parse((string) $request->request->get('shippingTotal', '0')));
+            $quote->setServiceTotal($money->parse((string) $request->request->get('serviceTotal', '0')));
+            $quote->setValidUntil(($date = $request->request->get('validUntil')) ? new \DateTimeImmutable((string) $date) : null);
+            $quote->setDeliveryTerms($this->nullable($request->request->get('deliveryTerms')));
+            $quote->setPaymentTerms($this->nullable($request->request->get('paymentTerms')));
+            $quote->setCustomerNote($this->nullable($request->request->get('customerNote')));
+            $quote->setInternalNote($this->nullable($request->request->get('internalNote')));
+            $quote->setUpdatedBy($this->admin());
+            $calculator->calculate($quote);
+            $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_updated', null, null, 'Angebot aktualisiert'));
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Angebot gespeichert.');
+        } catch (\InvalidArgumentException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
+        return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
+    }
+
+    #[Route('/offer/{id}/item', name: 'item_add', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function addItem(Quote $quote, Request $request, MinorUnitParser $money, QuoteCalculator $calculator): Response
+    {
+        $this->adminOnly(); $this->checkCsrf('quote_edit_'.$quote->getId(), $request);
+        try {
+            $item = new QuoteItem();
+            $item->setName(trim((string) $request->request->get('name')));
+            if ($item->getName() === '') throw new \InvalidArgumentException('Eine Bezeichnung ist erforderlich.');
+            $item->setDescription($this->nullable($request->request->get('description')));
+            $item->setQuantity((int) $request->request->get('quantity', 1));
+            $item->setUnitPrice($money->parse((string) $request->request->get('unitPrice', '0')));
+            $item->setPosition($quote->getItems()->count() + 1);
+            $item->setItemType(QuoteItemType::Custom);
+            $quote->addItem($item);
+            $calculator->calculate($quote);
+            $this->entityManager->flush();
+        } catch (\InvalidArgumentException $exception) { $this->addFlash('error', $exception->getMessage()); }
+        return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
+    }
+
+    #[Route('/offer/{quote}/item/{item}/remove', name: 'item_remove', methods: ['POST'])]
+    public function removeItem(Quote $quote, QuoteItem $item, Request $request, QuoteCalculator $calculator): Response
+    {
+        $this->adminOnly(); $this->checkCsrf('quote_edit_'.$quote->getId(), $request); $this->assertItem($quote, $item);
+        $quote->removeItem($item); $calculator->calculate($quote); $this->entityManager->flush();
+        return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
+    }
+
+    #[Route('/offer/{id}/ready', name: 'ready', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function ready(Quote $quote, Request $request, QuoteCalculator $calculator): Response
+    {
+        $this->adminOnly(); $this->checkCsrf('quote_edit_'.$quote->getId(), $request);
+        if ($quote->getItems()->isEmpty()) { $this->addFlash('error', 'Ein Angebot ohne Position kann nicht fertig markiert werden.'); }
+        else { $calculator->calculate($quote); $quote->setStatus(QuoteStatus::Ready); $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_marked_ready', null, null, 'Angebot fertig kalkuliert')); $this->entityManager->flush(); }
+        return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
+    }
+
+    #[Route('/{id}/status', name: 'status', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function status(QuoteRequest $quote, Request $request): Response
+    {
+        $this->adminOnly(); $this->checkCsrf('quote_status_'.$quote->getId(), $request);
+        $next = QuoteRequestStatus::tryFrom((string) $request->request->get('status')); $old = $quote->getStatus();
+        if (!$next || !$old->canTransitionTo($next)) throw $this->createNotFoundException('Invalid quote status transition.');
+        $quote->setStatus($next); $quote->addHistory(new QuoteRequestHistory('status_changed', $old->value, $next->value)); $this->entityManager->flush();
+        return $this->redirectToRoute('cardnext_admin_quote_show', ['id' => $quote->getId()]);
+    }
+
+    private function adminOnly(): void { $this->denyAccessUnlessGranted('ROLE_ADMINISTRATION_ACCESS'); }
+    private function admin(): ?AdminUser { $user = $this->getUser(); return $user instanceof AdminUser ? $user : null; }
+    private function checkCsrf(string $id, Request $request): void { $token = $request->request->get('_token'); if (!$this->isCsrfTokenValid($id, is_string($token) ? $token : '')) throw $this->createAccessDeniedException(); }
+    private function nullable(mixed $value): ?string { $value = is_scalar($value) ? trim((string) $value) : ''; return $value === '' ? null : $value; }
+    private function itemOf(Quote $quote, int $id): QuoteItem { foreach ($quote->getItems() as $item) if ($item->getId() === $id) return $item; throw $this->createNotFoundException(); }
+    private function assertItem(Quote $quote, QuoteItem $item): void { if ($item->getQuote() !== $quote) throw $this->createNotFoundException(); }
+}

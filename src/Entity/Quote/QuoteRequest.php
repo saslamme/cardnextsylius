@@ -53,7 +53,11 @@ class QuoteRequest
     #[ORM\OneToMany(mappedBy: 'quoteRequest', targetEntity: QuoteRequestItem::class, cascade: ['persist'], orphanRemoval: true)] #[ORM\OrderBy(['position' => 'ASC'])] private Collection $items;
     /** @var Collection<int, QuoteRequestHistory> */
     #[ORM\OneToMany(mappedBy: 'quoteRequest', targetEntity: QuoteRequestHistory::class, cascade: ['persist'], orphanRemoval: true)] #[ORM\OrderBy(['createdAt' => 'DESC'])] private Collection $history;
-    public function __construct() { $this->items = new ArrayCollection(); $this->history = new ArrayCollection(); $this->createdAt = $this->updatedAt = new \DateTimeImmutable(); }
+    /** @var Collection<int, Quote> */
+    #[ORM\OneToMany(mappedBy: 'quoteRequest', targetEntity: Quote::class)]
+    #[ORM\OrderBy(['version' => 'DESC'])]
+    private Collection $quotes;
+    public function __construct() { $this->items = new ArrayCollection(); $this->history = new ArrayCollection(); $this->quotes = new ArrayCollection(); $this->createdAt = $this->updatedAt = new \DateTimeImmutable(); }
     public function getId(): ?int { return $this->id; } public function getNumber(): string { return $this->number; } public function setNumber(string $v): void {$this->number=$v;}
     public function getStatus(): QuoteRequestStatus { return $this->status; } public function setStatus(QuoteRequestStatus $v): void {$this->status=$v;}
     public function getChannelCode(): string{return $this->channelCode;} public function setChannelCode(string $v):void{$this->channelCode=$v;} public function getLocaleCode():string{return $this->localeCode;} public function setLocaleCode(string $v):void{$this->localeCode=$v;} public function getCurrencyCode():string{return $this->currencyCode;} public function setCurrencyCode(string $v):void{$this->currencyCode=$v;}
@@ -66,5 +70,8 @@ class QuoteRequest
     public function getEstimatedSubtotal():?int{return $this->estimatedSubtotal;} public function setEstimatedSubtotal(?int $v):void{$this->estimatedSubtotal=$v;} public function getEstimatedTotal():?int{return $this->estimatedTotal;} public function setEstimatedTotal(?int $v):void{$this->estimatedTotal=$v;}
     /** @return Collection<int, QuoteRequestItem> */ public function getItems():Collection{return $this->items;} public function addItem(QuoteRequestItem $v):void{$this->items->add($v);$v->setQuoteRequest($this);}
     /** @return Collection<int, QuoteRequestHistory> */ public function getHistory():Collection{return $this->history;} public function addHistory(QuoteRequestHistory $v):void{$this->history->add($v);$v->setQuoteRequest($this);}
+    /** @return Collection<int, Quote> */ public function getQuotes(): Collection { return $this->quotes; }
+    public function addQuote(Quote $quote): void { if (!$this->quotes->contains($quote)) { $this->quotes->add($quote); $quote->setQuoteRequest($this); } }
+    public function getActiveQuote(): ?Quote { $quote = $this->quotes->first(); return $quote instanceof Quote ? $quote : null; }
     public function getCreatedAt():\DateTimeImmutable{return $this->createdAt;} public function getUpdatedAt():\DateTimeImmutable{return $this->updatedAt;} #[ORM\PreUpdate] public function touch():void{$this->updatedAt=new \DateTimeImmutable();}
 }
