@@ -13,19 +13,23 @@ final class QuoteCalculator
     {
         $subtotal = 0;
         $discountTotal = 0;
+        $taxBases = [];
 
         foreach ($quote->getItems() as $item) {
             $this->calculateItem($item);
             $subtotal += $item->getLineTotal();
             $discountTotal += $item->getLineDiscount();
+            $rate = $item->getTaxRate() ?? $quote->getDefaultTaxRate();
+            $taxBases[$rate] = ($taxBases[$rate] ?? 0) + $item->getLineTotal();
         }
 
         $quote->setSubtotal($subtotal);
         $quote->setDiscountTotal($discountTotal);
-        // Phase 2a is deliberately net-only. Tax calculation requires a concrete
-        // customer zone/tax category context and will be integrated in Phase 2b.
-        $quote->setTaxTotal(0);
-        $quote->setGrandTotal($subtotal + $quote->getShippingTotal() + $quote->getServiceTotal());
+        $taxBases[$quote->getDefaultTaxRate()] = ($taxBases[$quote->getDefaultTaxRate()] ?? 0) + $quote->getShippingTotal() + $quote->getServiceTotal();
+        $taxTotal = 0;
+        foreach ($taxBases as $rate => $base) $taxTotal += self::taxFor($base, (int) $rate);
+        $quote->setTaxTotal($taxTotal);
+        $quote->setGrandTotal($subtotal + $quote->getShippingTotal() + $quote->getServiceTotal() + $taxTotal);
     }
 
     public function calculateItem(QuoteItem $item): void
@@ -43,5 +47,11 @@ final class QuoteCalculator
         $item->setDiscountPercent($original !== null && $original > 0
             ? intdiv(max(0, $original - $item->getUnitPrice()) * 10000 + intdiv($original, 2), $original)
             : null);
+    }
+
+    public static function taxFor(int $netAmount, int $taxRate): int
+    {
+        if ($netAmount < 0 || $taxRate < 0) throw new \InvalidArgumentException('Tax basis and rate cannot be negative.');
+        return intdiv($netAmount * $taxRate + 5000, 10000);
     }
 }
