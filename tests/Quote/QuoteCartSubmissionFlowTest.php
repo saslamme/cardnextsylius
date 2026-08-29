@@ -32,7 +32,7 @@ final class QuoteCartSubmissionFlowTest extends TestCase
     public function testValidPostReadsAndChecksTheSubmittedFormField(): void
     {
         self::assertStringContainsString("\$submittedToken=\$form->get('_submission')->getData()", $this->controller);
-        self::assertStringContainsString("is_string(\$submittedToken)&&\$submittedToken!==''&&hash_equals(\$storedToken,\$submittedToken)", $this->controller);
+        self::assertStringContainsString("!hash_equals(\$storedToken,\$submittedToken)", $this->controller);
         self::assertStringNotContainsString("request->all('quote_request')", $this->controller);
         self::assertTrue($this->position('handleRequest($request)') < $this->position('$submitter->submit('));
         self::assertTrue($this->position('$submitter->submit(') < $this->position("remove('cardnext.quote_submission')"));
@@ -54,8 +54,14 @@ final class QuoteCartSubmissionFlowTest extends TestCase
         $submit = $this->position('$submitter->submit(');
 
         self::assertTrue($check < $submit);
-        self::assertStringContainsString("\$submittedToken!==''", $this->controller);
+        self::assertStringContainsString("\$submittedToken===''", $this->controller);
         self::assertStringContainsString("remove('cardnext.quote_submission')", $this->controller);
+    }
+
+    public function testInvalidFormAndWrongTokenExposeNeutralMessages(): void
+    {
+        self::assertStringContainsString('$showValidationError=$form->isSubmitted()&&!$form->isValid()', $this->controller);
+        self::assertStringContainsString('$showSubmissionError=true', $this->controller);
     }
 
     private function position(string $needle): int

@@ -81,12 +81,17 @@
                             <h2 class="cn-title cn-title--section">{{ 'cardnext.quote.form.title'|trans }}</h2>
                         </div>
                         {{ form_start(form, {'attr': {'class': 'cn-form', 'id': 'cardnext-quote-request-form'}}) }}
+                            {% if showValidationError %}
+                                <div class="alert alert-danger" role="alert">{{ 'cardnext.quote.validation.required_fields'|trans }}</div>
+                            {% elseif showSubmissionError %}
+                                <div class="alert alert-danger" role="alert">{{ 'cardnext.quote.validation.submission'|trans }}</div>
+                            {% endif %}
                             {{ form_errors(form) }}
                             <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.company'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.company) }}{{ form_row(form.contactName) }}{{ form_row(form.email) }}{{ form_row(form.phone) }}{{ form_row(form.customerNumber) }}</div></fieldset>
                             <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.address'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.street) }}{{ form_row(form.houseNumber) }}{{ form_row(form.postalCode) }}{{ form_row(form.city) }}{{ form_row(form.countryCode) }}</div></fieldset>
                             <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.project'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.projectReference) }}{{ form_row(form.requestedDeliveryDate) }}{{ form_row(form.customerPurchaseOrderNumber) }}</div>{{ form_row(form.message) }}<h3 class="cn-quote__support-title">{{ 'cardnext.quote.form.support'|trans }}</h3><div class="cn-quote__support">{{ form_row(form.needsAdvice) }}{{ form_row(form.needsCompatibilityCheck) }}</div></fieldset>
                             <div class="cn-honeypot" aria-hidden="true">{{ form_row(form.website) }}</div>
-                            <div class="cn-quote__privacy form-check">{{ form_widget(form.privacyConsent, {'attr': {'class': 'form-check-input'}}) }} <label class="form-check-label" for="{{ form.privacyConsent.vars.id }}">{{ 'cardnext.quote.form.privacy_before'|trans }} <a href="{{ path('cardnext_shop_legal_privacy', {_locale: app.request.locale}) }}">{{ 'cardnext.quote.form.privacy_link'|trans }}</a>{{ 'cardnext.quote.form.privacy_after'|trans }}</label>{{ form_errors(form.privacyConsent) }}</div>
+                            <div class="cn-quote__privacy form-check">{{ form_widget(form.privacyConsent, {'attr': {'class': 'form-check-input'}}) }} <label class="form-check-label required" for="{{ form.privacyConsent.vars.id }}">{{ 'cardnext.quote.form.privacy_before'|trans }} <a href="{{ path('cardnext_shop_legal_privacy', {_locale: app.request.locale}) }}">{{ 'cardnext.quote.form.privacy_link'|trans }}</a>{{ 'cardnext.quote.form.privacy_after'|trans }} <span aria-hidden="true">*</span></label>{{ form_errors(form.privacyConsent) }}</div>
                             {{ form_rest(form) }}
                         {{ form_end(form, {'render_rest': false}) }}
                     </section>
