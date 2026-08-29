@@ -48,6 +48,14 @@
                 {{ 'Details' }}
             </a>
         </div>
+        {% if variant and channel_pricing and channel_pricing.price is not null %}
+            <form class="cn-quote-add" method="post" action="{{ path('cardnext_shop_quote_cart_add', {_locale: app.request.locale}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('quote_add') }}">
+                <input type="hidden" name="variantCode" value="{{ variant.code }}">
+                <input type="hidden" name="quantity" value="1">
+                <button class="cn-link cn-link--small" type="submit" aria-label="{{ 'cardnext.quote.add_product'|trans({'%product%': product.name}) }}">{{ 'cardnext.quote.add'|trans }}</button>
+            </form>
+        {% endif %}
         <button class="cn-compare-toggle" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_group }}" data-compare-url="{{ path('cardnext_shop_product_compare', {_locale: app.request.locale}) }}" aria-pressed="false" aria-label="{{ product.name }} zum Vergleich hinzufügen">+ Vergleichen</button>
     </div>
 </article>

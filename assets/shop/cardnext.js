@@ -387,3 +387,12 @@ if (document.readyState === 'loading') {
     cnOpenCartAfterAdd();
 }
 // CARDNEXT CART OFFCANVAS AFTER ADD:END
+
+document.addEventListener('submit', (event) => {
+    if (!event.target.matches('[data-cn-quote-submit]')) return;
+    const button = event.target.querySelector('[data-cn-quote-submit-button]');
+    if (button) {
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+    }
+});

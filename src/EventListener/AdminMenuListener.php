@@ -81,6 +81,13 @@ final class AdminMenuListener
             ;
         }
 
+        if ($menu->getChild('cardnext_quotes') === null) {
+            $menu->addChild('cardnext_quotes', [
+                'route' => 'cardnext_admin_quote_index',
+                'extras' => ['routes' => [['route' => 'cardnext_admin_quote_*']]],
+            ])->setLabel('cardnext.quote.admin.menu')->setLabelAttribute('icon', 'tabler:file-description');
+        }
+
         $configuration = $menu->getChild('configuration');
         if ($configuration !== null && $configuration->getChild('cardnext_markets') === null) {
             $configuration

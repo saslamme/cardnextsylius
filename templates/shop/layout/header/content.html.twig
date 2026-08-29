@@ -57,6 +57,10 @@
                         <span class="cn-shop-header__action-label">Mein Konto</span>
                     </a>
 
+                <a class="cn-shop-header__action cn-quote-header" href="{{ path('cardnext_shop_quote_cart', {_locale: app.request.locale}) }}" aria-label="{{ 'cardnext.quote.cart'|trans }}">
+                    <span class="cn-shop-header__action-label">{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span>
+                </a>
+
                 {{ component('sylius_shop:cart:widget', { template: 'shop/layout/header/cart.html.twig' }) }}
 
                 <button class="cardnext-menu-toggle cn-shop-header__menu-toggle" type="button" data-cardnext-menu-open aria-label="Navigation öffnen" aria-controls="cardnext-mobile-navigation">
@@ -91,6 +95,7 @@
                 {% else %}
                     <a href="{{ path('sylius_shop_login') }}"><span>Anmelden</span><span>→</span></a>
                 {% endif %}
+                <a href="{{ path('cardnext_shop_quote_cart', {_locale: app.request.locale}) }}"><span>{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span><span>→</span></a>
                 <a href="{{ path('sylius_shop_cart_summary') }}"><span>Warenkorb</span><span>→</span></a>
                 <a href="{{ path('sylius_shop_contact_request') }}"><span>Kontakt & Beratung</span><span>→</span></a>
             </div>
