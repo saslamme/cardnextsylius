@@ -31,6 +31,15 @@
             {% hook 'add_to_cart' with { product, form } %}
 
             {{ form_end(form, {'render_rest': false}) }}
+            {% set selected_variant = form.cartItem.vars.value.variant %}
+            {% if selected_variant %}
+                <form class="cn-quote-add cn-quote-add--detail" method="post" action="{{ path('cardnext_shop_quote_cart_add', {_locale: app.request.locale}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('quote_add') }}">
+                    <input type="hidden" name="variantCode" value="{{ selected_variant.code }}">
+                    <input type="number" name="quantity" value="1" min="1" max="100000" class="cn-quote-add__quantity" aria-label="{{ 'cardnext.quote.quantity'|trans }}">
+                    <button class="cn-btn cn-btn--secondary" type="submit">{{ 'cardnext.quote.add'|trans }}</button>
+                </form>
+            {% endif %}
         </div>
     {% endif %}
 </div>

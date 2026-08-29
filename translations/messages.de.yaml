@@ -117,3 +117,62 @@ cardnext:
         title: Versand
         description: Nach Produktion und Qualitätskontrolle werden Ihre Karten sicher versendet.
     content: { kicker: Produktinformationen }
+cardnext:
+    quote:
+        cart: Angebotskorb
+        header: 'Angebot (%count%)'
+        request: Angebotsanfrage
+        intro: Stellen Sie Ihre gewünschten Produkte zusammen. Wir prüfen Preise, Verfügbarkeit und Projektanforderungen und erstellen Ihnen anschließend ein individuelles Angebot.
+        add: Zum Angebot hinzufügen
+        add_product: '%product% zum Angebotskorb hinzufügen'
+        added: Das Produkt wurde zum Angebotskorb hinzugefügt.
+        invalid_item: Das Produkt ist in diesem Verkaufskanal nicht für eine Angebotsanfrage verfügbar.
+        channel_reset: Der Angebotskorb wurde wegen des Verkaufskanalwechsels zurückgesetzt.
+        empty: Ihr Angebotskorb ist noch leer.
+        empty_help: Fügen Sie Produkte hinzu, für die Sie ein individuelles Angebot erhalten möchten.
+        discover: Produkte entdecken
+        home: Startseite
+        sku: Artikelnummer
+        quantity: Menge
+        update: Aktualisieren
+        remove: Entfernen
+        price_note: '* Die dargestellten Shoppreise dienen als Orientierung. Sie erhalten ein individuelles Angebot auf Basis von Menge, Verfügbarkeit und Projektumfang.'
+        submit: Angebotsanfrage absenden
+        validation:
+            privacy: Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.
+        form:
+            title: Anfrageformular
+            company: Unternehmen
+            address: Adresse
+            project: Projektinformationen
+            message_placeholder: z. B. 250 Mitarbeiterausweise, Einführung im Oktober, Drucker inklusive Verbrauchsmaterial und Einweisung.
+            privacy_before: Ich habe die
+            privacy_link: Datenschutzerklärung gelesen und bin mit der Verarbeitung meiner Angaben zur Bearbeitung der Anfrage einverstanden
+        confirmation:
+            title: Vielen Dank für Ihre Angebotsanfrage.
+            reference: 'Ihre Referenz:'
+            body: Wir prüfen Ihre Anfrage und melden uns bei Ihnen.
+        admin:
+            menu: Angebote
+        status:
+            new: Neu
+            in_progress: In Bearbeitung
+            question: Rückfrage
+            closed: Geschlossen
+Company: Firma
+Contact name: Ansprechpartner
+Email: E-Mail
+Phone: Telefon
+Customer number: Kundennummer
+Street: Straße
+House number: Hausnummer
+Postal code: PLZ
+City: Ort
+Country code: Land
+Project reference: Projektreferenz
+Requested delivery date: Gewünschter Liefertermin
+Customer purchase order number: Interne Bestellnummer
+Message: Bemerkung
+Needs advice: Ich benötige Beratung zur Produktauswahl.
+Needs compatibility check: Bitte prüfen Sie die ausgewählten Produkte auf Kompatibilität.
+Privacy consent: Datenschutz

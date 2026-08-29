@@ -117,3 +117,45 @@ cardnext:
         title: Shipping
         description: After production and quality control, your cards will be shipped securely.
     content: { kicker: Product information }
+cardnext:
+    quote:
+        cart: Quote cart
+        header: 'Quote (%count%)'
+        request: Quote request
+        intro: Collect the products you need. We will review prices, availability and your project requirements and prepare an individual quote.
+        add: Add to quote
+        add_product: 'Add %product% to quote cart'
+        added: The product was added to your quote cart.
+        invalid_item: This product is not available for a quote in the current channel.
+        channel_reset: The quote cart was reset because the sales channel changed.
+        empty: Your quote cart is empty.
+        empty_help: Add products for which you would like an individual quote.
+        discover: Discover products
+        home: Home
+        sku: SKU
+        quantity: Quantity
+        update: Update
+        remove: Remove
+        price_note: '* Displayed shop prices are indicative. Your individual quote will reflect quantity, availability and project scope.'
+        submit: Submit quote request
+        validation:
+            privacy: Please consent to the processing of your information.
+        form:
+            title: Request details
+            company: Company
+            address: Address
+            project: Project information
+            message_placeholder: e.g. 250 employee cards, October rollout, printer, consumables and training.
+            privacy_before: I have read the
+            privacy_link: privacy policy and consent to processing my information for this request
+        confirmation:
+            title: Thank you for your quote request.
+            reference: 'Your reference:'
+            body: We will review your request and contact you.
+        admin:
+            menu: Quotes
+        status:
+            new: New
+            in_progress: In progress
+            question: Question
+            closed: Closed
