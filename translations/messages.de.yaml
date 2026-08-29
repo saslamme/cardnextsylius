@@ -147,6 +147,8 @@ cardnext:
         submit: Angebotsanfrage absenden
         validation:
             privacy: Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.
+            required_fields: Bitte prüfen Sie die markierten Pflichtfelder.
+            submission: Die Anfrage konnte nicht abgesendet werden. Bitte laden Sie die Seite neu und versuchen Sie es erneut.
         form:
             title: Anfrageformular
             company: Unternehmen

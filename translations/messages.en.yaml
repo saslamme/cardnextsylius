@@ -147,6 +147,8 @@ cardnext:
         submit: Submit quote request
         validation:
             privacy: Please consent to the processing of your information.
+            required_fields: Please check the marked required fields.
+            submission: The request could not be submitted. Please reload the page and try again.
         form:
             title: Request details
             company: Company
