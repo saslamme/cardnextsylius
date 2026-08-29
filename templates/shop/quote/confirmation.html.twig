@@ -1,1 +1,8 @@
-{% extends '@SyliusShop/shared/layout/base.html.twig' %}{% block content %}<main class="cn-quote cn-quote__confirmation cardnext-container"><h1>{{ 'cardnext.quote.confirmation.title'|trans }}</h1><p>{{ 'cardnext.quote.confirmation.reference'|trans }}</p><strong>{{ number }}</strong><p>{{ 'cardnext.quote.confirmation.body'|trans }}</p></main>{% endblock %}
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% block content %}
+    <main class="cn-page cn-quote">
+        <nav class="cn-breadcrumbs" aria-label="Breadcrumb"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.quote.home'|trans }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span><span aria-current="page">{{ 'cardnext.quote.confirmation.title'|trans }}</span></div></nav>
+        <section class="cn-section cn-quote__confirmation"><div class="cn-container cn-container--narrow"><span class="cn-kicker">{{ 'cardnext.quote.request'|trans }}</span><h1 class="cn-title cn-title--section">{{ 'cardnext.quote.confirmation.title'|trans }}</h1><p class="cn-lead">{{ 'cardnext.quote.confirmation.reference'|trans }} <strong>{{ number }}</strong></p><p class="cn-prose">{{ 'cardnext.quote.confirmation.body'|trans }}</p></div></section>
+    </main>
+{% endblock %}
