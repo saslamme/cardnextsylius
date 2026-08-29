@@ -8,6 +8,41 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     cardnext.quote_recipient: '%env(CARDNEXT_QUOTE_RECIPIENT)%'
+    # Structured source for all legal and contact details printed on quote PDFs.
+    # Deliberately keep unknown details empty; never derive these from legal-page HTML.
+    cardnext.quote_issuer_profiles:
+        CARDNEXT_DE:
+            company: 'Cardnext'
+            street: null
+            postalCode: null
+            city: null
+            country: 'Deutschland'
+            email: null
+            phone: null
+            website: 'www.cardnext.de'
+            vatId: null
+            registrationCourt: null
+            registrationNumber: null
+            managingDirector: null
+            bankName: null
+            iban: null
+            bic: null
+        CARDNEXT_AT:
+            company: 'Cardnext'
+            street: null
+            postalCode: null
+            city: null
+            country: 'Österreich'
+            email: null
+            phone: null
+            website: 'www.cardnext.at'
+            vatId: null
+            registrationCourt: null
+            registrationNumber: null
+            managingDirector: null
+            bankName: null
+            iban: null
+            bic: null
 
 services:
     # Default configuration for services in *this* file
@@ -49,3 +84,7 @@ services:
     App\Service\Quote\QuoteRequestMailer:
         arguments:
             $recipient: '%cardnext.quote_recipient%'
+
+    App\Service\Quote\QuoteIssuerProfileRegistry:
+        arguments:
+            $profiles: '%cardnext.quote_issuer_profiles%'
