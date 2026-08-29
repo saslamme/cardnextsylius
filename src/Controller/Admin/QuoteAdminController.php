@@ -17,7 +17,9 @@ use App\Service\Quote\QuoteCalculator;
 use App\Service\Quote\QuoteFactory;
 use App\Service\Quote\QuoteDraftGuard;
 use App\Service\Quote\QuotePdfRenderer;
+use App\Service\Quote\QuoteOfferSender;
 use App\Service\Quote\QuoteRevisionFactory;
+use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,8 +138,16 @@ final class QuoteAdminController extends AbstractController
     {
         $this->adminOnly(); $this->checkCsrf('quote_edit_'.$quote->getId(), $request); $this->draftGuard->assertDraft($quote);
         if ($quote->getItems()->isEmpty()) { $this->addFlash('error', 'Ein Angebot ohne Position kann nicht fertig markiert werden.'); }
-        else { $calculator->calculate($quote); $now=new \DateTimeImmutable(); if ($quote->getQuoteDate()===null) $quote->setQuoteDate($now->setTime(0,0)); if ($quote->getReadyAt()===null) $quote->setReadyAt($now); $quote->setStatus(QuoteStatus::Ready); $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_marked_ready', null, null, 'Angebot '.$quote->getNumber().' v'.$quote->getVersion().' fertiggestellt')); $this->entityManager->flush(); }
+        else { $calculator->calculate($quote); $now=new \DateTimeImmutable(); if ($quote->getQuoteDate()===null) $quote->setQuoteDate($now->setTime(0,0)); if ($quote->getReadyAt()===null) $quote->setReadyAt($now); $quote->transitionTo(QuoteStatus::Ready); $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_marked_ready', null, null, 'Angebot '.$quote->getNumber().' v'.$quote->getVersion().' fertiggestellt')); $this->entityManager->flush(); }
         return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
+    }
+
+    #[Route('/offer/{id}/send', name: 'send', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function send(Quote $quote, Request $request, QuoteOfferSender $sender, LoggerInterface $logger): Response
+    {
+        $this->adminOnly(); $this->checkCsrf('quote_send_'.$quote->getId(), $request);
+        try { $sender->send($quote); $this->addFlash('success', 'Angebot wurde versendet.'); } catch (\Throwable $e) { $logger->error('Quote offer sending failed', ['quoteId'=>$quote->getId(), 'exceptionClass'=>$e::class]); $this->addFlash('error', 'Das Angebot konnte nicht versendet werden.'); }
+        return $this->redirectToRoute('cardnext_admin_quote_edit', ['id'=>$quote->getId()]);
     }
 
     #[Route('/offer/{id}/revision', name: 'revision', requirements: ['id' => '\\d+'], methods: ['POST'])]
@@ -152,7 +162,7 @@ final class QuoteAdminController extends AbstractController
     public function pdf(Quote $quote, QuotePdfRenderer $renderer): Response
     {
         $this->adminOnly();
-        if ($quote->getStatus() !== QuoteStatus::Ready) return new Response('Ein finales PDF ist nur für fertige Angebote verfügbar.', Response::HTTP_CONFLICT);
+        if (!in_array($quote->getStatus(), [QuoteStatus::Ready, QuoteStatus::Sent, QuoteStatus::Accepted, QuoteStatus::Rejected, QuoteStatus::Superseded], true)) return new Response('Ein finales PDF ist nur für fertige Angebote verfügbar.', Response::HTTP_CONFLICT);
         $bytes=$renderer->render($quote); $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_pdf_downloaded',null,null,'Angebot '.$quote->getNumber().' v'.$quote->getVersion().' als PDF heruntergeladen')); $this->entityManager->flush();
         $safe=preg_replace('/[^A-Za-z0-9._-]/','-',$quote->getNumber()) ?: 'Angebot';
         return new Response($bytes,200,['Content-Type'=>'application/pdf','Content-Disposition'=>'attachment; filename="Angebot-'.$safe.'-v'.$quote->getVersion().'.pdf"']);

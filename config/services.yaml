@@ -88,3 +88,7 @@ services:
     App\Service\Quote\QuoteIssuerProfileRegistry:
         arguments:
             $profiles: '%cardnext.quote_issuer_profiles%'
+
+    App\Service\Quote\QuoteOfferMailer:
+        arguments:
+            $recipient: '%cardnext.quote_recipient%'

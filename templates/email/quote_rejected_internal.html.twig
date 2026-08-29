@@ -1,0 +1,3 @@
+<p>{{ ('quote_mail.rejected_internal')|trans({'%number%':quote.number,'%version%':quote.version}) }}</p>
+{% if quote.rejectionReason %}<p><strong>Grund:</strong> {{ quote.rejectionReason|nl2br }}</p>{% endif %}
+<p><a href="{{ adminUrl }}">Admin</a></p>

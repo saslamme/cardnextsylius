@@ -170,3 +170,44 @@ cardnext:
             in_progress: In progress
             question: Question
             closed: Closed
+quote_public:
+  title: Quote
+  version: Version
+  date: Quote date
+  valid_until: Valid until
+  expired: This quote is no longer valid.
+  already_accepted: This quote was already accepted on
+  already_rejected: This quote was rejected.
+  superseded: This quote has been replaced by a newer version.
+  company: Company
+  contact: Contact
+  project: Project
+  item: Item
+  quantity: Quantity
+  unit_price: Net unit price
+  net: Net
+  shipping: Shipping
+  service: Service
+  tax: VAT
+  total: Total
+  delivery: Delivery terms
+  payment: Payment terms
+  note: Customer note
+  pdf: Download quote as PDF
+  accept: Accept quote
+  reject: Reject quote
+  name: Name
+  reason: Reason for rejection (optional)
+  binding: I accept this quote as binding.
+  thanks: Thank you.
+  accept_success: Your acceptance was submitted successfully.
+  reject_success: Your rejection was submitted successfully.
+quote_mail:
+  greeting: 'Hello %name%,'
+  offer: 'Thank you for your enquiry. Your quote %number% is ready.'
+  view: View quote online
+  attachment: The quote is also attached as a PDF.
+  accepted_customer: We confirm receipt of your quote acceptance.
+  accepted_internal: 'Quote %number% v%version% was accepted.'
+  rejected_customer: We confirm receipt of your quote rejection.
+  rejected_internal: 'Quote %number% v%version% was rejected.'

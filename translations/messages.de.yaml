@@ -187,3 +187,44 @@ Message: Bemerkung
 Needs advice: Ich benötige Beratung zur Produktauswahl.
 Needs compatibility check: Bitte prüfen Sie die ausgewählten Produkte auf Kompatibilität.
 Privacy consent: Datenschutz
+quote_public:
+  title: Angebot
+  version: Version
+  date: Angebotsdatum
+  valid_until: Gültig bis
+  expired: Dieses Angebot ist nicht mehr gültig.
+  already_accepted: Dieses Angebot wurde bereits angenommen am
+  already_rejected: Dieses Angebot wurde abgelehnt.
+  superseded: Dieses Angebot wurde durch eine neuere Version ersetzt.
+  company: Firma
+  contact: Ansprechpartner
+  project: Projekt
+  item: Position
+  quantity: Menge
+  unit_price: Einzelpreis netto
+  net: Netto
+  shipping: Versand
+  service: Service
+  tax: MwSt.
+  total: Gesamtsumme
+  delivery: Lieferbedingungen
+  payment: Zahlungsbedingungen
+  note: Kundenhinweis
+  pdf: Angebot als PDF herunterladen
+  accept: Angebot annehmen
+  reject: Angebot ablehnen
+  name: Name
+  reason: Grund der Ablehnung (optional)
+  binding: Ich nehme dieses Angebot verbindlich an.
+  thanks: Vielen Dank.
+  accept_success: Ihre Annahme wurde erfolgreich übermittelt.
+  reject_success: Ihre Ablehnung wurde erfolgreich übermittelt.
+quote_mail:
+  greeting: 'Guten Tag %name%,'
+  offer: 'vielen Dank für Ihre Anfrage. Ihr Angebot %number% steht für Sie bereit.'
+  view: Angebot online ansehen
+  attachment: Das Angebot finden Sie zusätzlich als PDF im Anhang.
+  accepted_customer: Wir bestätigen den Eingang Ihrer Angebotsannahme.
+  accepted_internal: 'Angebot %number% v%version% wurde angenommen.'
+  rejected_customer: Wir bestätigen den Eingang Ihrer Angebotsablehnung.
+  rejected_internal: 'Angebot %number% v%version% wurde abgelehnt.'
