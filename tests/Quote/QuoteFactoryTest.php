@@ -9,6 +9,7 @@ use App\Entity\Quote\QuoteRequestItem;
 use App\Enum\Quote\QuoteRequestStatus;
 use App\Service\Quote\QuoteCalculator;
 use App\Service\Quote\QuoteFactory;
+use App\Service\Quote\QuoteTaxRateResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +27,7 @@ final class QuoteFactoryTest extends TestCase
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects(self::once())->method('persist'); $entityManager->expects(self::once())->method('flush');
 
-        $quote = (new QuoteFactory($entityManager, new QuoteCalculator()))->createFromRequest($request);
+        $quote = (new QuoteFactory($entityManager, new QuoteCalculator(), new QuoteTaxRateResolver()))->createFromRequest($request);
 
         self::assertSame('AG-2026-00042', $quote->getNumber()); self::assertCount(2, $quote->getItems());
         self::assertSame(114900, $quote->getItems()->first()->getOriginalUnitPrice()); self::assertSame(114900, $quote->getItems()->first()->getUnitPrice());

@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class QuoteFactory
 {
-    public function __construct(private EntityManagerInterface $entityManager, private QuoteCalculator $calculator) {}
+    public function __construct(private EntityManagerInterface $entityManager, private QuoteCalculator $calculator, private QuoteTaxRateResolver $taxRates) {}
 
     public function createFromRequest(QuoteRequest $request, ?AdminUser $admin = null): Quote
     {
@@ -32,6 +32,12 @@ final class QuoteFactory
         $quote->setCustomerCompany($request->getCompany());
         $quote->setCustomerContactName($request->getContactName());
         $quote->setCustomerEmail($request->getEmail());
+        $quote->setCustomerStreet($request->getStreet()); $quote->setCustomerHouseNumber($request->getHouseNumber());
+        $quote->setCustomerPostalCode($request->getPostalCode()); $quote->setCustomerCity($request->getCity());
+        $quote->setCustomerCountryCode($request->getCountryCode()); $quote->setCustomerNumber($request->getCustomerNumber());
+        $quote->setCustomerPhone($request->getPhone()); $quote->setProjectReference($request->getProjectReference());
+        $quote->setCustomerPurchaseOrderNumber($request->getCustomerPurchaseOrderNumber());
+        $quote->setDefaultTaxRate($this->taxRates->resolve($request->getChannelCode()));
         $quote->setCreatedBy($admin);
         $quote->setUpdatedBy($admin);
 
