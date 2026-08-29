@@ -58,6 +58,12 @@
                     </a>
 
                 <a class="cn-shop-header__action cn-quote-header" href="{{ path('cardnext_shop_quote_cart', {_locale: app.request.locale}) }}" aria-label="{{ 'cardnext.quote.cart'|trans }}">
+                    <span class="cn-shop-header__action-icon">
+                        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6.5 3.5h8l3 3V20.5h-11z"/>
+                            <path d="M14.5 3.5v3h3M9 11h6M9 14.5h6"/>
+                        </svg>
+                    </span>
                     <span class="cn-shop-header__action-label">{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span>
                 </a>
 

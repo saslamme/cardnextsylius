@@ -135,11 +135,13 @@ cardnext:
         quantity: Menge
         update: Aktualisieren
         remove: Entfernen
-        price_note: '* Die dargestellten Shoppreise dienen als Orientierung. Sie erhalten ein individuelles Angebot auf Basis von Menge, Verfügbarkeit und Projektumfang.'
+        price_note: 'Unverbindliche Preisangabe: Shoppreise dienen als Orientierung. Das finale Angebot berücksichtigt Menge, Verfügbarkeit und Projektumfang.'
         image_pending: Produktbild folgt
         summary: Zusammenfassung
         products: Produkte
         orientation_total: Orientierungswert
+        unit: Stück
+        total: Gesamt
         summary_note: Der endgültige Preis wird individuell für Ihre Anfrage ermittelt.
         continue: Anfrage vervollständigen
         submit: Angebotsanfrage absenden
@@ -150,9 +152,11 @@ cardnext:
             company: Unternehmen
             address: Adresse
             project: Projektinformationen
+            support: Zusätzliche Unterstützung
             message_placeholder: z. B. 250 Mitarbeiterausweise, Einführung im Oktober, Drucker inklusive Verbrauchsmaterial und Einweisung.
             privacy_before: Ich habe die
-            privacy_link: Datenschutzerklärung gelesen und bin mit der Verarbeitung meiner Angaben zur Bearbeitung der Anfrage einverstanden
+            privacy_link: Datenschutzerklärung
+            privacy_after: ' gelesen und bin mit der Verarbeitung meiner Angaben zur Bearbeitung der Anfrage einverstanden.'
         confirmation:
             title: Vielen Dank für Ihre Angebotsanfrage.
             reference: 'Ihre Referenz:'

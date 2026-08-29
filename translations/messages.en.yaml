@@ -135,11 +135,13 @@ cardnext:
         quantity: Quantity
         update: Update
         remove: Remove
-        price_note: '* Displayed shop prices are indicative. Your individual quote will reflect quantity, availability and project scope.'
+        price_note: 'Indicative pricing: Shop prices are a guide. The final quote reflects quantity, availability and project scope.'
         image_pending: Product image coming soon
         summary: Summary
         products: Products
         orientation_total: Indicative total
+        unit: item
+        total: Total
         summary_note: The final price will be calculated individually for your request.
         continue: Complete request
         submit: Submit quote request
@@ -150,9 +152,11 @@ cardnext:
             company: Company
             address: Address
             project: Project information
+            support: Additional support
             message_placeholder: e.g. 250 employee cards, October rollout, printer, consumables and training.
             privacy_before: I have read the
-            privacy_link: privacy policy and consent to processing my information for this request
+            privacy_link: privacy policy
+            privacy_after: ' and consent to processing my information for this request.'
         confirmation:
             title: Thank you for your quote request.
             reference: 'Your reference:'

@@ -5058,10 +5058,11 @@ html { scroll-behavior: smooth; }
 /* Quote cart: Cardnext components provide the visuals; these rules only arrange the page. */
 .cn-quote__header { max-width: 760px; margin-bottom: 38px; }
 .cn-quote__header .cn-title { margin: 7px 0 12px; }
-.cn-quote__commerce { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 48px; align-items: start; }
+.cn-quote__layout { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 48px; align-items: start; }
+.cn-quote__main { min-width: 0; }
 .cn-quote__items { border-top: 2px solid var(--cn-border-strong); }
 .cn-quote-item { display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; gap: 22px; align-items: center; padding: 24px 0; border-bottom: 1px solid var(--cn-border); }
-.cn-quote-item__media { width: 112px; min-height: 112px; display: grid; padding: 10px; place-items: center; background: var(--cn-surface-softer); border: 1px solid var(--cn-border); border-radius: var(--cn-radius); }
+.cn-quote-item__media { width: 112px; min-height: 96px; display: grid; padding: 10px; place-items: center; background: var(--cn-surface-soft); border: 1px solid var(--cn-border); border-radius: var(--cn-radius); }
 .cn-quote-item__image { max-height: 90px; object-fit: contain; }
 .cn-quote-item__placeholder { color: var(--cn-muted); font-size: .7rem; text-align: center; }
 .cn-quote-item__info .cn-kicker { margin-bottom: 4px; }
@@ -5074,8 +5075,12 @@ html { scroll-behavior: smooth; }
 .cn-quote-item__actions .form-label { display: block; }
 .cn-quote-item__actions .form-control, .cn-quote-add__quantity { width: 82px; }
 .cn-quote-item__actions .cn-link { padding: 0; background: transparent; border: 0; }
-.cn-quote__price-note { margin: 20px 0 0; padding: 14px 16px; background: var(--cn-primary-soft); border-left: 3px solid var(--cn-primary); font-size: .8rem; }
+.cn-quote-item__total { display: grid; justify-items: end; gap: 2px; }
+.cn-quote-item__total span { color: var(--cn-muted); font-size: .75rem; font-weight: 600; }
+.cn-quote-item__total strong { color: var(--cn-ink); }
+.cn-quote__price-note { margin: 18px 0 0; padding: 10px 14px; background: var(--cn-primary-soft); border-left: 3px solid var(--cn-primary); font-size: .8rem; line-height: 1.45; }
 .cn-quote-summary { padding: 20px; background: var(--cn-surface); border: 1px solid var(--cn-border); }
+.cn-quote-summary { position: sticky; top: calc(var(--cn-header-height) + 24px); }
 .cn-quote-summary h2 { padding-bottom: 14px; border-bottom: 1px solid var(--cn-border); }
 .cn-quote-summary dl { margin: 7px 0 0; }
 .cn-quote-summary dl > div { display: flex; justify-content: space-between; gap: 18px; padding: 10px 0; }
@@ -5084,12 +5089,14 @@ html { scroll-behavior: smooth; }
 .cn-quote-summary__total { margin-top: 4px; border-top: 1px solid var(--cn-border); }
 .cn-quote-summary__total dd { font-size: 1rem; }
 .cn-quote-summary .cn-meta { margin: 2px 0 16px; line-height: 1.55; }
-.cn-quote__form { margin-top: var(--cn-section-space); padding-top: 38px; border-top: 2px solid var(--cn-border-strong); }
-.cn-quote__form-heading { margin-bottom: 30px; }
+.cn-quote__form { margin-top: 42px; padding-top: 32px; border-top: 2px solid var(--cn-border-strong); }
+.cn-quote__form-heading { margin-bottom: 26px; }
 .cn-quote__form-heading .cn-title { margin-top: 7px; }
 .cn-quote__form fieldset { margin: 0 0 34px; padding: 0; border: 0; }
 .cn-quote__form legend { margin-bottom: 18px; }
 .cn-quote__form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+.cn-quote__support-title { margin: 4px 0 12px; color: var(--cn-ink); font-size: .86rem; font-weight: 700; }
+.cn-quote__support .mb-3 { margin-bottom: 10px !important; }
 .cn-quote__privacy { margin: 26px 0; }
 .cn-quote__privacy .form-check-label { color: var(--cn-text); font-size: .82rem; }
 .cn-quote__empty { padding: 30px; background: var(--cn-surface-soft); border: 1px solid var(--cn-border); }
@@ -5101,5 +5108,5 @@ html { scroll-behavior: smooth; }
 .cn-quote__confirmation .cn-title { margin: 7px 0 14px; }
 .cn-quote__confirmation .cn-prose { margin-top: 18px; }
 .text-prewrap { white-space: pre-wrap; }
-@media (max-width: 1024px) { .cn-quote__commerce { grid-template-columns: 1fr; gap: 28px; }.cn-quote-summary { max-width: 480px; } }
-@media (max-width: 767px) { .cn-quote-item { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }.cn-quote-item__media { width: 84px; min-height: 84px; }.cn-quote-item__actions { grid-column: 1 / -1; width: 100%; justify-items: start; }.cn-quote__form-grid { grid-template-columns: 1fr; }.cn-quote__form { margin-top: var(--cn-section-space-mobile); }.cn-quote-summary { max-width: none; } }
+@media (max-width: 1024px) { .cn-quote__layout { grid-template-columns: 1fr; gap: 28px; }.cn-quote-summary { position: static; max-width: 480px; } }
+@media (max-width: 767px) { .cn-quote-item { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }.cn-quote-item__media { width: 84px; min-height: 76px; }.cn-quote-item__actions { grid-column: 1 / -1; width: 100%; justify-items: start; }.cn-quote-item__total { justify-items: start; }.cn-quote__form-grid { grid-template-columns: 1fr; }.cn-quote__form { margin-top: var(--cn-section-space-mobile); }.cn-quote-summary { max-width: none; } }
