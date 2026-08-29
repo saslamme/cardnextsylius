@@ -37,6 +37,10 @@ final class ProductCardComponent
     #[ExposeInTemplate(name: 'comparison_group')]
     public ?string $comparisonGroup = null;
 
+    public bool $showQuoteAction = true;
+
+    public bool $showCompareAction = true;
+
     public function __construct(private readonly ChannelContextInterface $channelContext)
     {
     }

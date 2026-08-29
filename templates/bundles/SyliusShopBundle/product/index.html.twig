@@ -52,7 +52,7 @@
                     {{ component('cardnext:taxon:configurators', {taxon: cardnext_taxon}) }}
                 {% endif %}
                 {% if resources.data|length > 0 %}
-                    <div class="cn-product-grid cn-product-grid--lined" {{ sylius_test_html_attribute('products') }}>{% for product in resources.data %}{{ component('cardnext:product:card', {product: product}) }}{% endfor %}</div>
+                    <div class="cn-product-grid cn-product-grid--lined" {{ sylius_test_html_attribute('products') }}>{% for product in resources.data %}{{ component('cardnext:product:card', {product: product, showQuoteAction: false, showCompareAction: false}) }}{% endfor %}</div>
                     <div class="mt-4">{{ pagination.simple(resources.data) }}</div>
                 {% else %}
                     <div class="cn-panel"><strong>Keine Produkte gefunden.</strong><p class="mb-0 mt-1">Ändern Sie die Suche oder wählen Sie eine andere Produktkategorie.</p></div>
