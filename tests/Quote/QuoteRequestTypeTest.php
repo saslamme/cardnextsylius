@@ -66,6 +66,33 @@ final class QuoteRequestTypeTest extends TypeTestCase
         self::assertInstanceOf(QuoteRequest::class, $form->getData());
     }
 
+    public function testExplicitlyEmptyHoneypotIsNormalizedAndDoesNotInvalidateForm(): void
+    {
+        $form = $this->factory->create(QuoteRequestType::class);
+        $form->submit($this->validSubmission(['website' => '']));
+
+        self::assertTrue($form->isValid(), (string) $form->getErrors(true));
+        self::assertNull($form->get('website')->getData());
+    }
+
+    public function testMissingHoneypotIsEmptyAndDoesNotInvalidateForm(): void
+    {
+        $form = $this->factory->create(QuoteRequestType::class);
+        $form->submit($this->validSubmission());
+
+        self::assertTrue($form->isValid(), (string) $form->getErrors(true));
+        self::assertNull($form->get('website')->getData());
+    }
+
+    public function testFilledHoneypotRetainsItsBlockingValue(): void
+    {
+        $form = $this->factory->create(QuoteRequestType::class);
+        $form->submit($this->validSubmission(['website' => 'spam']));
+
+        self::assertTrue($form->isValid(), (string) $form->getErrors(true));
+        self::assertSame('spam', $form->get('website')->getData());
+    }
+
     public function testOptionalFieldsDoNotRequestHtmlRequiredValidation(): void
     {
         $view = $this->factory->create(QuoteRequestType::class)->createView();
@@ -81,5 +108,17 @@ final class QuoteRequestTypeTest extends TypeTestCase
             new PreloadedExtension([new QuoteRequestType()], []),
             new ValidatorExtension(Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator()),
         ];
+    }
+
+    /** @param array<string, string> $overrides */
+    private function validSubmission(array $overrides = []): array
+    {
+        return array_merge([
+            'company' => 'Cardnext GmbH',
+            'contactName' => 'Erika Mustermann',
+            'email' => 'erika@example.com',
+            'countryCode' => 'DE',
+            'privacyConsent' => '1',
+        ], $overrides);
     }
 }
