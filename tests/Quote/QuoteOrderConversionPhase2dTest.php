@@ -46,6 +46,28 @@ final class QuoteOrderConversionPhase2dTest extends TestCase
         QuoteOrderConverter::splitContactName('Sascha');
     }
 
+    public function testConverterUsesCustomerRelationAndNeverSnapshotEmailForIdentity(): void
+    {
+        $source = (string) file_get_contents(__DIR__.'/../../src/Service/Quote/QuoteOrderConverter.php');
+
+        self::assertStringContainsString('$customer = $quote->getCustomer();', $source);
+        self::assertStringContainsString('$order->setCustomer($customer)', $source);
+        self::assertStringNotContainsString("findOneBy(['email' => \$quote->getCustomerEmail()])", $source);
+        self::assertStringNotContainsString('$quote->setCustomerEmail(', $source);
+    }
+
+    public function testMissingCustomerRelationIsRejectedWithClearDomainError(): void
+    {
+        $source = (string) file_get_contents(__DIR__.'/../../src/Service/Quote/QuoteOrderConverter.php');
+
+        self::assertStringContainsString('$customer = $quote->getCustomer();', $source);
+        self::assertStringContainsString('if (!$customer instanceof Customer)', $source);
+        self::assertStringContainsString(
+            "throw new \\DomainException('Die Bestellung kann nicht erstellt werden, da dem Angebot kein Kundenkonto zugeordnet ist.');",
+            $source,
+        );
+    }
+
     public function testAdminConversionUsesPostCsrfAndSwitchesToOrderLink(): void
     {
         $template = (string) file_get_contents(__DIR__.'/../../templates/admin/cardnext/quote/edit.html.twig');

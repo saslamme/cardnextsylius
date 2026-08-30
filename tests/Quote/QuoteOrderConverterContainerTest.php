@@ -18,4 +18,23 @@ final class QuoteOrderConverterContainerTest extends KernelTestCase
             self::getContainer()->get(QuoteOrderConverter::class),
         );
     }
+
+    public function testConverterHasNoCustomerFactoryOrRepositoryDependency(): void
+    {
+        $constructor = (new \ReflectionClass(QuoteOrderConverter::class))->getConstructor();
+
+        self::assertNotNull($constructor);
+        self::assertNotContains(
+            'customerFactory',
+            array_map(static fn (\ReflectionParameter $parameter): string => $parameter->getName(), $constructor->getParameters()),
+        );
+        self::assertNotContains(
+            'customerRepository',
+            array_map(static fn (\ReflectionParameter $parameter): string => $parameter->getName(), $constructor->getParameters()),
+        );
+
+        $services = (string) file_get_contents(__DIR__.'/../../config/services.yaml');
+        self::assertStringNotContainsString("\$customerFactory: '@sylius.factory.customer'", $services);
+        self::assertStringNotContainsString("\$customerRepository: '@sylius.repository.customer'", $services);
+    }
 }
