@@ -1,0 +1,73 @@
+sylius_twig_hooks:
+    hooks:
+        # Render account breadcrumbs in their own hook before the constrained account layout.
+        # The original hookables are disabled below so that only menu and main remain in
+        # the two-column content hook.
+        'sylius_shop.account.common.index.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/common/content/breadcrumbs.html.twig'
+        'sylius_shop.account.common.show.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/common/content/breadcrumbs.html.twig'
+        'sylius_shop.account.common.create.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/common/content/breadcrumbs.html.twig'
+        'sylius_shop.account.common.update.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/common/content/breadcrumbs.html.twig'
+
+        'sylius_shop.account.order.index.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/order/index/content/breadcrumbs.html.twig'
+        'sylius_shop.account.order.show.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/order/show/content/breadcrumbs.html.twig'
+        'sylius_shop.account.address_book.index.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/address_book/index/content/breadcrumbs.html.twig'
+        'sylius_shop.account.address_book.create.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/address_book/create/content/breadcrumbs.html.twig'
+        'sylius_shop.account.address_book.update.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/address_book/update/content/breadcrumbs.html.twig'
+        'sylius_shop.account.profile_update.update.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/profile_update/update/content/breadcrumbs.html.twig'
+        'sylius_shop.account.change_password.update.content.breadcrumbs':
+            content:
+                template: '@SyliusShop/account/change_password/update/content/breadcrumbs.html.twig'
+
+        'sylius_shop.account.common.index.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.common.show.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.common.create.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.common.update.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.order.index.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.order.show.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.address_book.index.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.address_book.create.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.address_book.update.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.profile_update.update.content':
+            breadcrumbs:
+                enabled: false
+        'sylius_shop.account.change_password.update.content':
+            breadcrumbs:
+                enabled: false
