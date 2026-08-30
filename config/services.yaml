@@ -95,6 +95,7 @@ services:
     App\Service\Quote\QuoteOfferMailer:
         arguments:
             $recipient: '%cardnext.quote_recipient%'
+            $projectDir: '%kernel.project_dir%'
 
     App\Service\Quote\QuotePublicUrlGenerator:
         arguments:
