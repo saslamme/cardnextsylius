@@ -8,6 +8,7 @@ use App\Enum\Quote\QuoteStatus;
 use App\Service\Quote\QuoteOfferMailer;
 use App\Service\Quote\QuotePdfRenderer;
 use App\Service\Quote\QuotePublicAccessTokenManager;
+use App\Service\Quote\QuotePublicUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,10 +17,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-#[Route('/{_locale}/angebot/{number}/v{version}/{token}', requirements: ['version'=>'\\d+','token'=>'[a-fA-F0-9]{64}'])]
+#[Route('/{_locale}/angebot/{number}/v{version}/{token}', requirements: ['version'=>'\\d+','token'=>'[a-fA-F0-9]{64}'], priority: 100)]
 final class QuotePublicController extends AbstractController
 {
- public function __construct(private EntityManagerInterface $em,private QuotePublicAccessTokenManager $tokens){}
+ public function __construct(private EntityManagerInterface $em,private QuotePublicAccessTokenManager $tokens,private QuotePublicUrlGenerator $publicUrls){}
  #[Route('',name:'cardnext_shop_quote_public',methods:['GET'])]
  public function show(string $number,int $version,string $token):Response
  {
@@ -50,7 +51,7 @@ final class QuotePublicController extends AbstractController
   } catch(\InvalidArgumentException|\DomainException){return $this->secure(new Response('Invalid decision.',Response::HTTP_UNPROCESSABLE_ENTITY));}
   $event=$accept?'quote_accepted':'quote_rejected'; $q->getQuoteRequest()->addHistory(new QuoteRequestHistory($event,null,null,'Angebot '.$q->getNumber().' v'.$q->getVersion().($accept?' angenommen':' abgelehnt')));
   $this->em->flush();
-  $public=$this->generateUrl('cardnext_shop_quote_public',['_locale'=>$q->getLocaleCode(),'number'=>$q->getNumber(),'version'=>$q->getVersion(),'token'=>$token],UrlGeneratorInterface::ABSOLUTE_URL);
+  $public=$this->publicUrls->view($q,$token);
   $admin=$this->generateUrl('cardnext_admin_quote_show',['id'=>$q->getQuoteRequest()->getId()],UrlGeneratorInterface::ABSOLUTE_URL);
   try{$mailer->sendDecision($q,$public,$admin,$accept);}catch(\Throwable $e){$logger->error('Quote decision notification failed',['quoteId'=>$q->getId(),'exceptionClass'=>$e::class]);}
   return $this->secure($this->render('shop/quote/decision.html.twig',['quote'=>$q,'accepted'=>$accept]));
