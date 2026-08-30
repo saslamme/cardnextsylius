@@ -4665,6 +4665,14 @@ tbody td:nth-child(2) {
 
 /* Account and authentication */
 .cn-account { padding: 0 0 72px; background: var(--cn-surface); }
+.cn-account-breadcrumb { background: var(--cn-surface); border-bottom: 1px solid var(--cn-border); }
+.cn-account-breadcrumb__list { min-height: 52px; display: flex; align-items: center; gap: 0; margin: 0; padding: 0; overflow-x: auto; color: var(--cn-muted); font-size: .72rem; font-weight: 650; list-style: none; white-space: nowrap; scrollbar-width: none; }
+.cn-account-breadcrumb__list::-webkit-scrollbar { display: none; }
+.cn-account-breadcrumb__list li { display: flex; align-items: center; }
+.cn-account-breadcrumb__list li + li::before { content: "/"; margin: 0 10px; color: #aab0b4; }
+.cn-account-breadcrumb__list a { color: var(--cn-text); text-decoration: none; }
+.cn-account-breadcrumb__list a:hover { color: var(--cn-primary-hover); }
+.cn-account-breadcrumb__list [aria-current="page"] { color: var(--cn-muted); }
 .cn-account__breadcrumbs { margin-inline: calc(50% - 50vw); }
 .cn-account__breadcrumbs > .col-12 { width: auto; padding: 0; }
 .cn-account__breadcrumbs .breadcrumb { margin-bottom: 0; white-space: nowrap; overflow-x: auto; }
@@ -4673,7 +4681,8 @@ tbody td:nth-child(2) {
 .cn-account__sidebar { grid-column: 1; }
 .cn-account__main { grid-column: 2; }
 .cn-account__sidebar, .cn-account__main { min-width: 0; }
-.cn-account__header { margin-bottom: 22px; }
+.cn-account__header { margin-bottom: 22px; padding-top: 30px; }
+.cn-account__header .cn-kicker { display: block; margin-bottom: 8px; }
 .cn-account__header > .mb-4 { margin-bottom: 0 !important; }
 .cn-account__header h1, .cn-account__header .h1 { margin: 0 0 7px; color: var(--cn-ink); font-size: clamp(1.8rem,2.4vw,2.5rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.12; }
 .cn-account__header p, .cn-account__header > :last-child:not(h1) { color: var(--cn-muted); }
@@ -4689,6 +4698,38 @@ tbody td:nth-child(2) {
 .cn-account-nav__icon svg { width: 17px; height: 17px; }
 .cn-account-panel, .cn-account__main .card { background: #fff; border: 1px solid var(--cn-border) !important; border-radius: 8px; box-shadow: none; }
 .cn-account-panel__body { padding: 26px; }
+.cn-account-table-wrap { max-width: 100%; overflow-x: auto; border-radius: inherit; }
+.cn-account-table-wrap--flush { border-top: 1px solid var(--cn-border); border-bottom: 1px solid var(--cn-border); border-radius: 0; }
+.cn-account-table { width: 100%; min-width: 720px; border-collapse: collapse; color: var(--cn-text); font-size: .78rem; }
+.cn-account-table th { padding: 13px 16px; color: var(--cn-muted); background: var(--cn-surface-softer); border-bottom: 1px solid var(--cn-border); font-size: .66rem; font-weight: 800; letter-spacing: .035em; text-transform: uppercase; }
+.cn-account-table td { padding: 16px; border-bottom: 1px solid var(--cn-border); vertical-align: middle; }
+.cn-account-table tbody tr:last-child td { border-bottom: 0; }
+.cn-account-table tbody tr:hover { background: var(--cn-surface-softer); }
+.cn-account-table td small { display: block; margin-top: 3px; color: var(--cn-muted); font-size: .68rem; line-height: 1.45; }
+.cn-account-table__money { text-align: right; white-space: nowrap; }
+.cn-account-table__action { width: 1%; text-align: right; white-space: nowrap; }
+.cn-account-status { display: inline-flex; align-items: center; min-height: 25px; padding: 4px 9px; color: #31536d; background: #edf4f8; border: 1px solid #d9e7ef; border-radius: 999px; font-size: .65rem; font-weight: 800; white-space: nowrap; }
+.cn-account-status--accepted { color: #286443; background: #edf7f1; border-color: #d4eadc; }
+.cn-account-status--rejected { color: #8a4141; background: #fbf1f1; border-color: #efdada; }
+.cn-account-status--superseded { color: #626b70; background: #f2f3f3; border-color: #e0e2e3; }
+.cn-quote-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 14px; color: var(--cn-muted); font-size: .76rem; }
+.cn-quote-detail__intro { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(180px,.7fr); gap: 32px; }
+.cn-quote-detail__intro address, .cn-quote-detail__intro p { margin: 5px 0 0; color: var(--cn-text); font-size: .8rem; font-style: normal; line-height: 1.65; }
+.cn-quote-detail__label { color: var(--cn-muted); font-size: .65rem; font-weight: 800; letter-spacing: .045em; text-transform: uppercase; }
+.cn-quote-detail__footer { display: grid; gap: 28px; }
+.cn-quote-totals { width: min(100%,390px); display: grid; grid-template-columns: 1fr auto; gap: 9px 28px; margin: 0 0 0 auto; font-size: .78rem; }
+.cn-quote-totals dt, .cn-quote-totals dd { margin: 0; }
+.cn-quote-totals dd { text-align: right; font-variant-numeric: tabular-nums; }
+.cn-quote-totals__grand { margin-top: 5px !important; padding-top: 13px; color: var(--cn-ink); border-top: 1px solid var(--cn-border); font-size: .95rem; font-weight: 850; }
+.cn-quote-terms { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 22px; padding-top: 24px; border-top: 1px solid var(--cn-border); }
+.cn-quote-terms h2 { margin: 0 0 7px; font-size: .86rem; }
+.cn-quote-terms p { margin: 0; color: var(--cn-muted); font-size: .76rem; line-height: 1.65; }
+.cn-account-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.cn-quote-decisions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; padding-top: 24px; border-top: 1px solid var(--cn-border); }
+.cn-account__main .cn-quote-decisions form { width: 100%; padding: 20px; background: var(--cn-surface-softer); }
+.cn-quote-decisions label { display: block; margin-bottom: 12px; color: var(--cn-text); font-size: .76rem; font-weight: 700; }
+.cn-quote-decisions label span { color: var(--cn-muted); font-weight: 500; }
+.cn-quote-decisions textarea { min-height: 82px; margin-bottom: 10px; resize: vertical; }
 .cn-dashboard__identity { display: flex; align-items: flex-start; }
 .cn-dashboard__details { min-width: 0; flex: 1; }
 .cn-dashboard__details .row { margin: 0; align-items: center; }
@@ -4757,6 +4798,8 @@ tbody td:nth-child(2) {
     .cn-account-nav__head { padding: 14px 16px 11px; }
     .cn-account-nav__link { min-width: 0; }
     .cn-account__header h1, .cn-account__header .h1 { font-size: 2rem; }
+    .cn-account-breadcrumb__list { min-height: 46px; }
+    .cn-quote-detail__intro, .cn-quote-terms, .cn-quote-decisions { grid-template-columns: 1fr; }
     .cn-address-grid { grid-template-columns: 1fr; }
     .cn-auth { min-height: 0; padding-block: 38px; }
     .cn-auth__split { display: flex; flex-direction: column; }
@@ -4769,6 +4812,9 @@ tbody td:nth-child(2) {
     .cn-dashboard__quick-links a { min-height: 88px; border-right: 0; border-bottom: 1px solid var(--cn-border); }
     .cn-dashboard__quick-links a:last-child { border-bottom: 0; }
     .cn-account-panel__body, .cn-account__main form, .cn-address-card__body { padding: 20px; }
+    .cn-account__header { padding-top: 24px; }
+    .cn-account-table th, .cn-account-table td { padding-inline: 13px; }
+    .cn-account-actions .btn, .cn-quote-decisions .btn { width: 100%; }
     .cn-account__main .table-responsive { overflow-x: auto; }
     .cn-account__main .table { min-width: 620px; }
     .cn-auth__form-panel, .cn-auth__aside, .cn-auth__single { padding: 28px 22px; }
