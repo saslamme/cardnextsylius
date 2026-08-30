@@ -19,12 +19,14 @@ use App\Service\Quote\QuoteDraftGuard;
 use App\Service\Quote\QuotePdfRenderer;
 use App\Service\Quote\QuoteOfferSender;
 use App\Service\Quote\QuoteOrderConverter;
+use App\Service\Quote\QuoteOrderDataValidator;
 use App\Service\Quote\QuoteRevisionFactory;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/admin/cardnext/quotes', name: 'cardnext_admin_quote_')]
@@ -73,6 +75,19 @@ final class QuoteAdminController extends AbstractController
         $this->checkCsrf('quote_edit_'.$quote->getId(), $request);
         try {
             $this->draftGuard->assertDraft($quote);
+            $email = trim((string) $request->request->get('customerEmail', ''));
+            if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) throw new \InvalidArgumentException('Bitte geben Sie eine gültige Kunden-E-Mail-Adresse ein.');
+            $countryCode = strtoupper(trim((string) $request->request->get('customerCountryCode', '')));
+            if ($countryCode !== '' && !Countries::exists($countryCode)) throw new \InvalidArgumentException('Bitte geben Sie das Land als gültigen ISO-2-Code ein.');
+            $quote->setCustomerCompany(trim((string) $request->request->get('customerCompany', '')));
+            $quote->setCustomerContactName(trim((string) $request->request->get('customerContactName', '')));
+            $quote->setCustomerEmail($email);
+            $quote->setCustomerPhone($this->nullable($request->request->get('customerPhone')));
+            $quote->setCustomerStreet($this->nullable($request->request->get('customerStreet')));
+            $quote->setCustomerHouseNumber($this->nullable($request->request->get('customerHouseNumber')));
+            $quote->setCustomerPostalCode($this->nullable($request->request->get('customerPostalCode')));
+            $quote->setCustomerCity($this->nullable($request->request->get('customerCity')));
+            $quote->setCustomerCountryCode($countryCode === '' ? null : $countryCode);
             foreach ($request->request->all('items') as $id => $values) {
                 if (!is_array($values)) throw new \InvalidArgumentException('Ungültige Positionsdaten.');
                 $item = $this->itemOf($quote, (int) $id);
@@ -135,11 +150,11 @@ final class QuoteAdminController extends AbstractController
     }
 
     #[Route('/offer/{id}/ready', name: 'ready', requirements: ['id' => '\\d+'], methods: ['POST'])]
-    public function ready(Quote $quote, Request $request, QuoteCalculator $calculator): Response
+    public function ready(Quote $quote, Request $request, QuoteCalculator $calculator, QuoteOrderDataValidator $orderDataValidator): Response
     {
         $this->adminOnly(); $this->checkCsrf('quote_edit_'.$quote->getId(), $request); $this->draftGuard->assertDraft($quote);
         if ($quote->getItems()->isEmpty()) { $this->addFlash('error', 'Ein Angebot ohne Position kann nicht fertig markiert werden.'); }
-        else { $calculator->calculate($quote); $now=new \DateTimeImmutable(); if ($quote->getQuoteDate()===null) $quote->setQuoteDate($now->setTime(0,0)); if ($quote->getReadyAt()===null) $quote->setReadyAt($now); $quote->transitionTo(QuoteStatus::Ready); $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_marked_ready', null, null, 'Angebot '.$quote->getNumber().' v'.$quote->getVersion().' fertiggestellt')); $this->entityManager->flush(); }
+        else try { $orderDataValidator->assertCompleteForReady($quote); $calculator->calculate($quote); $now=new \DateTimeImmutable(); if ($quote->getQuoteDate()===null) $quote->setQuoteDate($now->setTime(0,0)); if ($quote->getReadyAt()===null) $quote->setReadyAt($now); $quote->transitionTo(QuoteStatus::Ready); $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_marked_ready', null, null, 'Angebot '.$quote->getNumber().' v'.$quote->getVersion().' fertiggestellt')); $this->entityManager->flush(); } catch (\DomainException $exception) { $this->addFlash('error', $exception->getMessage()); }
         return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
     }
 

@@ -42,8 +42,8 @@ final class QuoteOrderConversionPhase2dTest extends TestCase
     public function testContactNameIsSplitDeterministically(): void
     {
         self::assertSame(['Sascha', 'Lammers'], QuoteOrderConverter::splitContactName(' Sascha Lammers '));
-        self::assertSame(['Sascha', '-'], QuoteOrderConverter::splitContactName('Sascha'));
-        self::assertSame(['-', '-'], QuoteOrderConverter::splitContactName(''));
+        $this->expectException(\DomainException::class);
+        QuoteOrderConverter::splitContactName('Sascha');
     }
 
     public function testAdminConversionUsesPostCsrfAndSwitchesToOrderLink(): void

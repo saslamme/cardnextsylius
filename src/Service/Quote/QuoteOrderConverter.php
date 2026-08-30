@@ -51,6 +51,7 @@ final readonly class QuoteOrderConverter
         private ObjectRepository $channelRepository,
         private ObjectRepository $customerRepository,
         private OrderNumberAssignerInterface $numberAssigner,
+        private QuoteOrderDataValidator $orderDataValidator,
     ) {
     }
 
@@ -113,11 +114,11 @@ final readonly class QuoteOrderConverter
     private function validate(Quote $quote): void
     {
         if ($quote->getStatus() !== QuoteStatus::Accepted) throw new \DomainException('Nur ein angenommenes Angebot kann in eine Bestellung umgewandelt werden.');
+        $this->orderDataValidator->assertCompleteForOrder($quote);
         if ($quote->getItems()->isEmpty()) throw new \DomainException('Ein Angebot ohne Positionen kann nicht in eine Bestellung umgewandelt werden.');
         if (trim($quote->getChannelCode()) === '') throw new \DomainException('Im Angebot fehlt der Channel.');
         if (trim($quote->getCurrencyCode()) === '') throw new \DomainException('Im Angebot fehlt die Währung.');
         if (trim($quote->getLocaleCode()) === '') throw new \DomainException('Im Angebot fehlt die Sprache.');
-        if (!filter_var($quote->getCustomerEmail(), FILTER_VALIDATE_EMAIL)) throw new \DomainException('Im Angebot fehlt eine gültige Kunden-E-Mail-Adresse.');
         foreach ($quote->getItems() as $item) if ($item->getItemType() === QuoteItemType::Product && $item->getVariant() === null) throw new \DomainException(sprintf('Die Produktvariante der Position „%s“ existiert nicht mehr.', $item->getName()));
     }
 
@@ -163,7 +164,7 @@ final readonly class QuoteOrderConverter
     public static function splitContactName(string $contactName): array
     {
         $parts = preg_split('/\s+/u', trim($contactName), 2, PREG_SPLIT_NO_EMPTY) ?: [];
-        if ($parts === []) return ['-', '-'];
-        return [$parts[0], $parts[1] ?? '-'];
+        if (count($parts) !== 2) throw new \DomainException('Der Ansprechpartner muss Vor- und Nachname enthalten.');
+        return [$parts[0], $parts[1]];
     }
 }
