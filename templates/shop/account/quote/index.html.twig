@@ -1,8 +1,7 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 
 {% block content %}
-    {% embed 'shop/account/_layout.html.twig' with { title: 'Angebote', breadcrumbs: [{ label: 'Angebote' }] } %}
-        {% block page_intro %}<p class="cn-lead">Ihre persönlichen Angebote übersichtlich an einem Ort.</p>{% endblock %}
+    {% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'Angebote' }] } %}
         {% block account_content %}
                     <section class="cn-account-panel">
                         <div class="cn-account-table-wrap">

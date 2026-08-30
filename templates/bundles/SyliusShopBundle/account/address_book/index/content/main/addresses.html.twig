@@ -1,3 +1,9 @@
+<div class="cn-account-panel__toolbar">
+    <a class="btn btn-primary" href="{{ path('sylius_shop_account_address_book_create') }}">
+        + {{ 'sylius.ui.add_address'|trans }}
+    </a>
+</div>
+
 {% if hookable_metadata.context.addresses|length > 0 %}
     {% hook 'addresses' %}
 {% else %}

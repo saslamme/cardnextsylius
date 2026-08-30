@@ -1,0 +1,27 @@
+{% set order = hookable_metadata.context.order %}
+{% set prefixes = hookable_metadata.prefixes|merge(['sylius_shop.shared.order.show']) %}
+{% from '@SyliusShop/shared/macro/order/state.html.twig' import label %}
+
+<section class="cn-account-panel cn-order-summary-meta">
+    <div class="cn-account-panel__body">
+        <dl>
+            <div>
+                <dt>{{ 'sylius.ui.state'|trans }}</dt>
+                <dd>{{ label(order.state) }}</dd>
+            </div>
+            <div>
+                <dt>{{ 'sylius.ui.created_at'|trans }}</dt>
+                <dd>{{ order.checkoutCompletedAt|format_date }}</dd>
+            </div>
+            <div>
+                <dt>{{ 'sylius.ui.currency'|trans }}</dt>
+                <dd>{{ order.currencyCode }}</dd>
+            </div>
+        </dl>
+        {% if order.paymentState == constant('Sylius\\Component\\Core\\OrderPaymentStates::STATE_AWAITING_PAYMENT') %}
+            <a class="btn btn-primary" href="{{ path('sylius_shop_order_show', { tokenValue: order.tokenValue }) }}">{{ 'sylius.ui.pay'|trans }}</a>
+        {% endif %}
+    </div>
+</section>
+
+{% hook 'summary' with { _prefixes: prefixes } %}
