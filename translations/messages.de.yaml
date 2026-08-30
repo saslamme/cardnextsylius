@@ -170,6 +170,12 @@ cardnext:
             in_progress: In Bearbeitung
             question: Rückfrage
             closed: Geschlossen
+            sent: Offen
+            accepted: Angenommen
+            rejected: Abgelehnt
+            superseded: Ersetzt
+  account:
+    quotes: Angebote
 Company: Firma
 Contact name: Ansprechpartner
 Email: E-Mail
@@ -228,12 +234,3 @@ quote_mail:
   accepted_internal: 'Angebot %number% v%version% wurde angenommen.'
   rejected_customer: Wir bestätigen den Eingang Ihrer Angebotsablehnung.
   rejected_internal: 'Angebot %number% v%version% wurde abgelehnt.'
-cardnext:
-  account:
-    quotes: Angebote
-  quote:
-    status:
-      sent: Offen
-      accepted: Angenommen
-      rejected: Abgelehnt
-      superseded: Ersetzt
