@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Quote;
 
+use App\Entity\Customer\Customer;
 use App\Entity\Order\Order;
 use App\Entity\User\AdminUser;
 use App\Enum\Quote\QuoteStatus;
@@ -18,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['quote_request_id'], name: 'IDX_CN_OFFER_REQUEST')]
 #[ORM\Index(columns: ['status'], name: 'IDX_CN_OFFER_STATUS')]
 #[ORM\Index(columns: ['created_at'], name: 'IDX_CN_OFFER_CREATED')]
+#[ORM\Index(columns: ['customer_id'], name: 'IDX_CN_OFFER_CUSTOMER')]
 #[ORM\HasLifecycleCallbacks]
 class Quote
 {
@@ -34,6 +36,9 @@ class Quote
     #[ORM\Column(name: 'customer_company', length: 255)] private string $customerCompany = '';
     #[ORM\Column(name: 'customer_contact_name', length: 255)] private string $customerContactName = '';
     #[ORM\Column(name: 'customer_email', length: 254)] private string $customerEmail = '';
+    #[ORM\ManyToOne(targetEntity: Customer::class)]
+    #[ORM\JoinColumn(name: 'customer_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Customer $customer = null;
     #[ORM\Column(name: 'customer_street', length: 255, nullable: true)] private ?string $customerStreet = null;
     #[ORM\Column(name: 'customer_house_number', length: 32, nullable: true)] private ?string $customerHouseNumber = null;
     #[ORM\Column(name: 'customer_postal_code', length: 32, nullable: true)] private ?string $customerPostalCode = null;
@@ -45,8 +50,6 @@ class Quote
     #[ORM\Column(name: 'customer_purchase_order_number', length: 128, nullable: true)] private ?string $customerPurchaseOrderNumber = null;
     #[ORM\Column(name: 'quote_date', type: Types::DATE_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $quoteDate = null;
     #[ORM\Column(name: 'ready_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $readyAt = null;
-    #[ORM\Column(name: 'access_token_hash', length: 64, nullable: true)] private ?string $accessTokenHash = null;
-    #[ORM\Column(name: 'access_token_issued_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $accessTokenIssuedAt = null;
     #[ORM\Column(name: 'first_sent_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $firstSentAt = null;
     #[ORM\Column(name: 'last_sent_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $lastSentAt = null;
     #[ORM\Column(name: 'send_count', options: ['default' => 0])] private int $sendCount = 0;
@@ -103,6 +106,7 @@ class Quote
     public function getCustomerCompany(): string { return $this->customerCompany; } public function setCustomerCompany(string $value): void { $this->customerCompany = $value; }
     public function getCustomerContactName(): string { return $this->customerContactName; } public function setCustomerContactName(string $value): void { $this->customerContactName = $value; }
     public function getCustomerEmail(): string { return $this->customerEmail; } public function setCustomerEmail(string $value): void { $this->customerEmail = $value; }
+    public function getCustomer(): ?Customer { return $this->customer; } public function setCustomer(?Customer $value): void { $this->customer = $value; }
     public function getCustomerStreet(): ?string { return $this->customerStreet; } public function setCustomerStreet(?string $v): void { $this->customerStreet=$v; }
     public function getCustomerHouseNumber(): ?string { return $this->customerHouseNumber; } public function setCustomerHouseNumber(?string $v): void { $this->customerHouseNumber=$v; }
     public function getCustomerPostalCode(): ?string { return $this->customerPostalCode; } public function setCustomerPostalCode(?string $v): void { $this->customerPostalCode=$v; }
@@ -114,9 +118,6 @@ class Quote
     public function getCustomerPurchaseOrderNumber(): ?string { return $this->customerPurchaseOrderNumber; } public function setCustomerPurchaseOrderNumber(?string $v): void { $this->customerPurchaseOrderNumber=$v; }
     public function getQuoteDate(): ?\DateTimeImmutable { return $this->quoteDate; } public function setQuoteDate(?\DateTimeImmutable $v): void { $this->quoteDate=$v; }
     public function getReadyAt(): ?\DateTimeImmutable { return $this->readyAt; } public function setReadyAt(?\DateTimeImmutable $v): void { $this->readyAt=$v; }
-    public function getAccessTokenHash(): ?string { return $this->accessTokenHash; }
-    public function getAccessTokenIssuedAt(): ?\DateTimeImmutable { return $this->accessTokenIssuedAt; }
-    public function setPublicAccess(?string $hash, ?\DateTimeImmutable $issuedAt): void { $this->accessTokenHash=$hash; $this->accessTokenIssuedAt=$issuedAt; }
     public function getFirstSentAt(): ?\DateTimeImmutable { return $this->firstSentAt; } public function getLastSentAt(): ?\DateTimeImmutable { return $this->lastSentAt; } public function getSendCount(): int { return $this->sendCount; }
     public function recordSent(\DateTimeImmutable $now): void { if (!in_array($this->status,[QuoteStatus::Ready,QuoteStatus::Sent],true)) throw new \DomainException('Dieses Angebot kann nicht versendet werden.'); if ($this->firstSentAt===null) $this->firstSentAt=$now; $this->lastSentAt=$now; ++$this->sendCount; if ($this->status===QuoteStatus::Ready) $this->transitionTo(QuoteStatus::Sent); }
     public function getFirstViewedAt(): ?\DateTimeImmutable { return $this->firstViewedAt; } public function getLastViewedAt(): ?\DateTimeImmutable { return $this->lastViewedAt; } public function getViewCount(): int { return $this->viewCount; }

@@ -21,8 +21,8 @@
         </div>
         {% if quote.validUntil %}<div style="padding:20px 30px;color:#667085;font-size:13px;border-bottom:1px solid #e4e7ec;"><strong style="color:#05053f;">{{ 'quote_public.valid_until'|trans }}:</strong> {{ quote.validUntil|format_date(locale=quote.localeCode) }}</div>{% endif %}
         <div style="padding:28px 30px 30px;text-align:center;">
-            <a href="{{ publicUrl|e('html_attr') }}" style="display:inline-block;padding:14px 24px;border-radius:6px;background:#f04b23;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;">{{ 'quote_mail.view'|trans }}</a>
-            <p style="margin:18px 0 0;color:#7b8494;font-size:12px;">{{ 'quote_mail.attachment'|trans }}</p>
+            <a href="{{ accountUrl|e('html_attr') }}" style="display:inline-block;padding:14px 24px;border-radius:6px;background:#f04b23;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;">{{ 'quote_mail.view'|trans }}</a>
+            <p style="margin:18px 0 0;color:#7b8494;font-size:12px;">Bitte melden Sie sich mit Ihrem Kundenkonto an.</p>
         </div>
     </div>
     <div style="padding:22px 6px 0;color:#8a93a3;font-size:11px;line-height:1.65;text-align:center;"><strong style="color:#667085;">Cardnext</strong><br>{{ is_de ? 'Wir freuen uns auf Ihre Rückmeldung.' : 'We look forward to hearing from you.' }}</div>

@@ -162,7 +162,7 @@ final class QuoteAdminController extends AbstractController
     public function send(Quote $quote, Request $request, QuoteOfferSender $sender, LoggerInterface $logger): Response
     {
         $this->adminOnly(); $this->checkCsrf('quote_send_'.$quote->getId(), $request);
-        try { $sender->send($quote); $this->addFlash('success', 'Angebot wurde versendet.'); } catch (\Throwable $e) { $logger->error('Quote offer sending failed', ['quoteId'=>$quote->getId(), 'exceptionClass'=>$e::class]); $this->addFlash('error', 'Das Angebot konnte nicht versendet werden.'); }
+        try { $sender->send($quote); $this->addFlash('success', 'Angebot wurde versendet.'); } catch (\DomainException $e) { $this->addFlash('error', $e->getMessage()); } catch (\Throwable $e) { $logger->error('Quote offer sending failed', ['quoteId'=>$quote->getId(), 'exceptionClass'=>$e::class]); $this->addFlash('error', 'Das Angebot konnte nicht versendet werden.'); }
         return $this->redirectToRoute('cardnext_admin_quote_edit', ['id'=>$quote->getId()]);
     }
 
