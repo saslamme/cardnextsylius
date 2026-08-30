@@ -1,15 +1,9 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 
 {% block content %}
-    {% include 'shop/account/_breadcrumb.html.twig' with { items: [{ label: 'Angebote' }] } %}
-    <section class="cn-account">
-        <div class="cn-container cn-container--narrow">
-            <div class="cn-account__layout">
-                <aside class="cn-account__sidebar" aria-label="{{ 'sylius.ui.my_account'|trans }}">
-                    <div class="cn-account-nav">{{ knp_menu_render('sylius_shop.account', {'template': '@SyliusShop/account/menu/content.html.twig'}) }}</div>
-                </aside>
-                <main class="cn-account__main">
-                    <header class="cn-account__header"><span class="cn-kicker">Mein Konto</span><h1>Angebote</h1><p>Ihre persönlichen Angebote übersichtlich an einem Ort.</p></header>
+    {% embed 'shop/account/_layout.html.twig' with { title: 'Angebote', breadcrumbs: [{ label: 'Angebote' }] } %}
+        {% block page_intro %}<p class="cn-lead">Ihre persönlichen Angebote übersichtlich an einem Ort.</p>{% endblock %}
+        {% block account_content %}
                     <section class="cn-account-panel">
                         <div class="cn-account-table-wrap">
                             <table class="cn-account-table">
@@ -31,8 +25,6 @@
                             </table>
                         </div>
                     </section>
-                </main>
-            </div>
-        </div>
-    </section>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}
