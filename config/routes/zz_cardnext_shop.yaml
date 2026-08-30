@@ -21,12 +21,12 @@ sylius_shop_product_show:
     methods: [GET]
     requirements: *public_slug_requirements
 
-# Deliberately last: all explicit Sylius/Cardnext routes win.
-# Old paths are not retained; redirect history can be added in a follow-up.
+# Deliberately last, with reserved storefront prefixes excluded as a second line
+# of defence. Route import order must never make the catch-all swallow quotes.
 cardnext_shop_configurator_page:
     path: /{_locale}/{configuratorPath}
     controller: App\Controller\Shop\ConfiguratorPageController
     methods: [GET]
     requirements:
         _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
-        configuratorPath: .+
+        configuratorPath: '(?!angebot(?:/|$)).+'
