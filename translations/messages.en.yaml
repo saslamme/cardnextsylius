@@ -170,6 +170,12 @@ cardnext:
             in_progress: In progress
             question: Question
             closed: Closed
+            sent: Open
+            accepted: Accepted
+            rejected: Rejected
+            superseded: Replaced
+  account:
+    quotes: Quotes
 quote_public:
   title: Quote
   version: Version
@@ -211,12 +217,3 @@ quote_mail:
   accepted_internal: 'Quote %number% v%version% was accepted.'
   rejected_customer: We confirm receipt of your quote rejection.
   rejected_internal: 'Quote %number% v%version% was rejected.'
-cardnext:
-  account:
-    quotes: Quotes
-  quote:
-    status:
-      sent: Open
-      accepted: Accepted
-      rejected: Rejected
-      superseded: Replaced
