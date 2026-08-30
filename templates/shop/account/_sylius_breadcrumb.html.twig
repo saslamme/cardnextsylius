@@ -1,0 +1,38 @@
+{% set route = app.request.attributes.get('_route') %}
+{% set items = [] %}
+
+{% if route == 'sylius_shop_account_order_index' %}
+    {% set items = [{ label: 'sylius.ui.order_history'|trans }] %}
+{% elseif route == 'sylius_shop_account_order_show' %}
+    {% set metadata = hookable_metadata|default(null) %}
+    {% set contextOrder = metadata ? metadata.context.order|default(null) : null %}
+    {% set templateOrder = order|default(null) %}
+    {% set resourceOrder = resource|default(null) %}
+    {% set currentOrder = contextOrder ?? templateOrder ?? resourceOrder %}
+    {% set items = [
+        { label: 'sylius.ui.order_history'|trans, path: path('sylius_shop_account_order_index') },
+    ] %}
+    {% if currentOrder and currentOrder.number is defined %}
+        {% set items = items|merge([{ label: '#' ~ currentOrder.number }]) %}
+    {% endif %}
+{% elseif route == 'sylius_shop_account_address_book_index' %}
+    {% set items = [{ label: 'sylius.ui.address_book'|trans }] %}
+{% elseif route == 'sylius_shop_account_address_book_create' %}
+    {% set items = [
+        { label: 'sylius.ui.address_book'|trans, path: path('sylius_shop_account_address_book_index') },
+        { label: 'sylius.ui.add_address'|trans },
+    ] %}
+{% elseif route == 'sylius_shop_account_address_book_update' %}
+    {% set items = [
+        { label: 'sylius.ui.address_book'|trans, path: path('sylius_shop_account_address_book_index') },
+        { label: 'sylius.ui.edit'|trans },
+    ] %}
+{% elseif route == 'sylius_shop_account_profile_update' %}
+    {% set items = [{ label: 'sylius.ui.personal_information'|trans }] %}
+{% elseif route == 'sylius_shop_account_change_password' %}
+    {% set items = [{ label: 'sylius.ui.change_password'|trans }] %}
+{% elseif route == 'sylius_shop_account_dashboard' %}
+    {% set items = [] %}
+{% endif %}
+
+{% include 'shop/account/_breadcrumb.html.twig' with { items: items } %}
