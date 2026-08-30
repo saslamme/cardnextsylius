@@ -1,0 +1,13 @@
+<nav class="cn-account-breadcrumb" aria-label="Breadcrumb">
+    <div class="cn-container cn-container--narrow">
+        <ol class="cn-account-breadcrumb__list">
+            <li><a href="{{ path('sylius_shop_homepage') }}">{{ 'sylius.ui.home'|trans }}</a></li>
+            <li><a href="{{ path('sylius_shop_account_dashboard') }}">{{ 'sylius.ui.my_account'|trans }}</a></li>
+            {% for item in items|default([]) %}
+                <li{% if loop.last %} aria-current="page"{% endif %}>
+                    {% if item.path is defined and not loop.last %}<a href="{{ item.path }}">{{ item.label }}</a>{% else %}<span>{{ item.label }}</span>{% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+</nav>

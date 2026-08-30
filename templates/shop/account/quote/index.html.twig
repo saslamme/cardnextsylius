@@ -1,1 +1,38 @@
-{% extends '@SyliusShop/shared/layout/base.html.twig' %}{% block content %}<section class="cn-account"><div class="cn-container cn-container--narrow"><div class="cn-account__layout"><aside class="cn-account__sidebar"><div class="cn-account-nav">{{ knp_menu_render('sylius_shop.account', {'template':'@SyliusShop/account/menu/content.html.twig'}) }}</div></aside><main class="cn-account__main"><header class="cn-account__header"><span class="cn-kicker">Mein Konto</span><h1>Angebote</h1></header><section class="cn-account-panel"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Angebotsnummer</th><th>Version</th><th>Datum</th><th>Status</th><th>Gültig bis</th><th>Gesamtsumme</th><th></th></tr></thead><tbody>{% for quote in quotes %}<tr><td><strong>{{ quote.number }}</strong></td><td>{{ quote.version }}</td><td>{{ quote.quoteDate ? quote.quoteDate|format_date(locale=quote.localeCode) : '–' }}</td><td>{{ ('cardnext.quote.status.'~quote.status.value)|trans }}</td><td>{{ quote.validUntil ? quote.validUntil|format_date(locale=quote.localeCode) : '–' }}</td><td>{{ (quote.grandTotal/100)|format_currency(quote.currencyCode,locale=quote.localeCode) }}</td><td><a class="btn btn-primary" href="{{ path('cardnext_shop_account_quote_show',{number:quote.number,version:quote.version}) }}">Angebot ansehen</a></td></tr>{% else %}<tr><td colspan="7">Aktuell sind keine Angebote verfügbar.</td></tr>{% endfor %}</tbody></table></div></section></main></div></div></section>{% endblock %}
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% block content %}
+    {% include 'shop/account/_breadcrumb.html.twig' with { items: [{ label: 'Angebote' }] } %}
+    <section class="cn-account">
+        <div class="cn-container cn-container--narrow">
+            <div class="cn-account__layout">
+                <aside class="cn-account__sidebar" aria-label="{{ 'sylius.ui.my_account'|trans }}">
+                    <div class="cn-account-nav">{{ knp_menu_render('sylius_shop.account', {'template': '@SyliusShop/account/menu/content.html.twig'}) }}</div>
+                </aside>
+                <main class="cn-account__main">
+                    <header class="cn-account__header"><span class="cn-kicker">Mein Konto</span><h1>Angebote</h1><p>Ihre persönlichen Angebote übersichtlich an einem Ort.</p></header>
+                    <section class="cn-account-panel">
+                        <div class="cn-account-table-wrap">
+                            <table class="cn-account-table">
+                                <thead><tr><th>Angebotsnummer</th><th>Datum</th><th>Status</th><th>Gültig bis</th><th class="cn-account-table__money">Gesamtsumme</th><th><span class="visually-hidden">Aktion</span></th></tr></thead>
+                                <tbody>
+                                {% for quote in quotes %}
+                                    <tr>
+                                        <td><strong>{{ quote.number }}</strong><small>Version {{ quote.version }}</small></td>
+                                        <td>{{ quote.quoteDate ? quote.quoteDate|format_date(locale=quote.localeCode) : '–' }}</td>
+                                        <td><span class="cn-account-status cn-account-status--{{ quote.status.value }}">{{ ('cardnext.quote.status.' ~ quote.status.value)|trans }}</span></td>
+                                        <td>{{ quote.validUntil ? quote.validUntil|format_date(locale=quote.localeCode) : '–' }}</td>
+                                        <td class="cn-account-table__money"><strong>{{ (quote.grandTotal / 100)|format_currency(quote.currencyCode, locale=quote.localeCode) }}</strong></td>
+                                        <td class="cn-account-table__action"><a class="btn btn-primary btn-sm" href="{{ path('cardnext_shop_account_quote_show', {number: quote.number, version: quote.version}) }}">Ansehen</a></td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="6"><div class="cn-account-empty"><h2>Keine Angebote</h2><p>Aktuell sind keine Angebote verfügbar.</p></div></td></tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% set order = hookable_metadata.context.order %}
+{% include 'shop/account/_breadcrumb.html.twig' with { items: [
+    { label: 'sylius.ui.order_history'|trans, path: path('sylius_shop_account_order_index') },
+    { label: ('#' ~ order.number) }
+] } %}
