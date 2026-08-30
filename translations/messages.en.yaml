@@ -205,9 +205,18 @@ quote_public:
 quote_mail:
   greeting: 'Hello %name%,'
   offer: 'Thank you for your enquiry. Your quote %number% is ready.'
-  view: View quote online
-  attachment: The quote is also attached as a PDF.
+  view: View quote in your account
+  attachment: Please sign in with your customer account.
   accepted_customer: We confirm receipt of your quote acceptance.
   accepted_internal: 'Quote %number% v%version% was accepted.'
   rejected_customer: We confirm receipt of your quote rejection.
   rejected_internal: 'Quote %number% v%version% was rejected.'
+cardnext:
+  account:
+    quotes: Quotes
+  quote:
+    status:
+      sent: Open
+      accepted: Accepted
+      rejected: Rejected
+      superseded: Replaced
