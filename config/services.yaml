@@ -100,3 +100,11 @@ services:
     App\Service\Quote\QuotePublicUrlGenerator:
         arguments:
             $baseUrls: '%cardnext.quote_public_base_urls%'
+
+    App\Service\Quote\QuoteOrderConverter:
+        arguments:
+            $adjustmentFactory: '@sylius.factory.adjustment'
+            $customerFactory: '@sylius.factory.customer'
+            $addressFactory: '@sylius.factory.address'
+            $channelRepository: '@sylius.repository.channel'
+            $customerRepository: '@sylius.repository.customer'

@@ -18,6 +18,7 @@ use App\Service\Quote\QuoteFactory;
 use App\Service\Quote\QuoteDraftGuard;
 use App\Service\Quote\QuotePdfRenderer;
 use App\Service\Quote\QuoteOfferSender;
+use App\Service\Quote\QuoteOrderConverter;
 use App\Service\Quote\QuoteRevisionFactory;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -156,6 +157,19 @@ final class QuoteAdminController extends AbstractController
         $this->adminOnly(); $this->checkCsrf('quote_revision_'.$quote->getId(), $request);
         $new=$this->entityManager->wrapInTransaction(function () use ($factory,$quote): Quote { $new=$factory->create($quote,$this->admin()); $quote->getQuoteRequest()->addHistory(new QuoteRequestHistory('quote_revision_created',null,null,'Angebot '.$quote->getNumber().' v'.$new->getVersion().' erstellt')); return $new; });
         return $this->redirectToRoute('cardnext_admin_quote_edit',['id'=>$new->getId()]);
+    }
+
+    #[Route('/offer/{id}/order', name: 'order_create', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function createOrder(Quote $quote, Request $request, QuoteOrderConverter $converter): Response
+    {
+        $this->adminOnly(); $this->checkCsrf('quote_order_create_'.$quote->getId(), $request);
+        try {
+            $converter->convert($quote, $this->admin());
+            $this->addFlash('success', 'Bestellung wurde erfolgreich erstellt.');
+        } catch (\DomainException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
+        return $this->redirectToRoute('cardnext_admin_quote_edit', ['id' => $quote->getId()]);
     }
 
     #[Route('/offer/{id}/pdf', name: 'pdf', requirements: ['id' => '\\d+'], methods: ['GET'])]

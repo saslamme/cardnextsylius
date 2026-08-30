@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Quote;
 
+use App\Entity\Order\Order;
 use App\Entity\User\AdminUser;
 use App\Enum\Quote\QuoteStatus;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -74,6 +75,14 @@ class Quote
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $updatedAt;
     #[ORM\ManyToOne(targetEntity: AdminUser::class), ORM\JoinColumn(name: 'created_by_id', nullable: true, onDelete: 'SET NULL')] private ?AdminUser $createdBy = null;
     #[ORM\ManyToOne(targetEntity: AdminUser::class), ORM\JoinColumn(name: 'updated_by_id', nullable: true, onDelete: 'SET NULL')] private ?AdminUser $updatedBy = null;
+    #[ORM\OneToOne(targetEntity: Order::class)]
+    #[ORM\JoinColumn(name: 'order_id', nullable: true, unique: true, onDelete: 'SET NULL')]
+    private ?Order $order = null;
+    #[ORM\Column(name: 'converted_to_order_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $convertedToOrderAt = null;
+    #[ORM\ManyToOne(targetEntity: AdminUser::class)]
+    #[ORM\JoinColumn(name: 'converted_to_order_by_id', nullable: true, onDelete: 'SET NULL')]
+    private ?AdminUser $convertedToOrderBy = null;
     /** @var Collection<int, QuoteItem> */
     #[ORM\OneToMany(mappedBy: 'quote', targetEntity: QuoteItem::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC'])]
@@ -133,6 +142,14 @@ class Quote
     public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; } public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
     public function getCreatedBy(): ?AdminUser { return $this->createdBy; } public function setCreatedBy(?AdminUser $value): void { $this->createdBy = $value; }
     public function getUpdatedBy(): ?AdminUser { return $this->updatedBy; } public function setUpdatedBy(?AdminUser $value): void { $this->updatedBy = $value; }
+    public function getOrder(): ?Order { return $this->order; }
+    public function getConvertedToOrderAt(): ?\DateTimeImmutable { return $this->convertedToOrderAt; }
+    public function getConvertedToOrderBy(): ?AdminUser { return $this->convertedToOrderBy; }
+    public function markConvertedToOrder(Order $order, ?AdminUser $admin, \DateTimeImmutable $now): void
+    {
+        if ($this->order !== null) throw new \DomainException('Dieses Angebot wurde bereits in eine Bestellung umgewandelt.');
+        $this->order = $order; $this->convertedToOrderBy = $admin; $this->convertedToOrderAt = $now;
+    }
     /** @return Collection<int, QuoteItem> */ public function getItems(): Collection { return $this->items; }
     public function addItem(QuoteItem $item): void { if (!$this->items->contains($item)) { $this->items->add($item); $item->setQuote($this); } }
     public function removeItem(QuoteItem $item): void { $this->items->removeElement($item); }
