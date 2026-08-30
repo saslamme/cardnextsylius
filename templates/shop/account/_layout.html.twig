@@ -1,11 +1,6 @@
 {% include 'shop/account/_breadcrumb.html.twig' with { items: breadcrumbs|default([]) } %}
 <section class="cn-account">
     <div class="cn-container">
-        <header class="cn-account__header">
-            <span class="cn-kicker">Mein Konto</span>
-            <h1 class="cn-title cn-title--section">{{ title }}</h1>
-            {% block page_intro %}{% endblock %}
-        </header>
         <div class="cn-account__layout">
             <aside class="cn-account__sidebar" aria-label="{{ 'sylius.ui.my_account'|trans }}">
                 <div class="cn-account-nav">{{ knp_menu_render('sylius_shop.account', {'template': '@SyliusShop/account/menu/content.html.twig'}) }}</div>

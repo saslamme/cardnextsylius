@@ -2,14 +2,14 @@
 
 {% block content %}
     {% embed 'shop/account/_layout.html.twig' with {
-        title: 'Angebot ' ~ quote.number,
         breadcrumbs: [{ label: 'Angebote', path: path('cardnext_shop_account_quote_index') }, { label: quote.number }]
     } %}
-        {% block page_intro %}
-                        <div class="cn-quote-meta"><span>Version {{ quote.version }}</span><span class="cn-account-status cn-account-status--{{ quote.status.value }}">{{ ('cardnext.quote.status.' ~ quote.status.value)|trans }}</span><span>Gültig bis {{ quote.validUntil ? quote.validUntil|format_date(locale=quote.localeCode) : '–' }}</span></div>
-        {% endblock %}
         {% block account_content %}
                     <section class="cn-account-panel cn-quote-detail">
+                        <div class="cn-account-panel__body cn-quote-detail__meta">
+                            <strong>{{ quote.number }}</strong>
+                            <div class="cn-quote-meta"><span>Version {{ quote.version }}</span><span class="cn-account-status cn-account-status--{{ quote.status.value }}">{{ ('cardnext.quote.status.' ~ quote.status.value)|trans }}</span><span>Gültig bis {{ quote.validUntil ? quote.validUntil|format_date(locale=quote.localeCode) : '–' }}</span></div>
+                        </div>
                         <div class="cn-account-panel__body cn-quote-detail__intro">
                             <div><span class="cn-quote-detail__label">Kundendaten</span><address><strong>{{ quote.customerCompany }}</strong><br>{{ quote.customerContactName }}<br>{{ quote.customerStreet }} {{ quote.customerHouseNumber }}<br>{{ quote.customerPostalCode }} {{ quote.customerCity }}</address></div>
                             <div><span class="cn-quote-detail__label">Angebotsdatum</span><p>{{ quote.quoteDate ? quote.quoteDate|format_date(locale=quote.localeCode) : '–' }}</p>{% if quote.projectReference %}<span class="cn-quote-detail__label">Projekt</span><p>{{ quote.projectReference }}</p>{% endif %}</div>
