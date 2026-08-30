@@ -108,8 +108,6 @@ services:
             $orderItemFactory: '@sylius.custom_factory.order_item'
             $quantityModifier: '@sylius.modifier.order_item_quantity'
             $adjustmentFactory: '@sylius.factory.adjustment'
-            $customerFactory: '@sylius.factory.customer'
             $addressFactory: '@sylius.factory.address'
             $channelRepository: '@sylius.repository.channel'
-            $customerRepository: '@sylius.repository.customer'
             $numberAssigner: '@sylius.number_assigner.order_number'

@@ -35,10 +35,8 @@ final readonly class QuoteOrderConverter
      * @param OrderFactoryInterface<Order> $orderFactory
      * @param CartItemFactoryInterface<OrderItem> $orderItemFactory
      * @param FactoryInterface<AdjustmentInterface> $adjustmentFactory
-     * @param FactoryInterface<Customer> $customerFactory
      * @param FactoryInterface<Address> $addressFactory
      * @param ObjectRepository<Channel> $channelRepository
-     * @param ObjectRepository<Customer> $customerRepository
      */
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -46,10 +44,8 @@ final readonly class QuoteOrderConverter
         private CartItemFactoryInterface $orderItemFactory,
         private OrderItemQuantityModifierInterface $quantityModifier,
         private FactoryInterface $adjustmentFactory,
-        private FactoryInterface $customerFactory,
         private FactoryInterface $addressFactory,
         private ObjectRepository $channelRepository,
-        private ObjectRepository $customerRepository,
         private OrderNumberAssignerInterface $numberAssigner,
         private QuoteOrderDataValidator $orderDataValidator,
     ) {
@@ -76,13 +72,9 @@ final readonly class QuoteOrderConverter
                 throw new \DomainException('Die Angebotswährung ist für den gespeicherten Channel nicht verfügbar.');
             }
 
-            $customer = $this->customerRepository->findOneBy(['email' => $quote->getCustomerEmail()]);
+            $customer = $quote->getCustomer();
             if (!$customer instanceof Customer) {
-                $customer = $this->customerFactory->createNew();
-                [$firstName, $lastName] = self::splitContactName($quote->getCustomerContactName());
-                $customer->setEmail($quote->getCustomerEmail());
-                $customer->setFirstName($firstName); $customer->setLastName($lastName); $customer->setPhoneNumber($quote->getCustomerPhone());
-                $this->entityManager->persist($customer);
+                throw new \DomainException('Die Bestellung kann nicht erstellt werden, da dem Angebot kein Kundenkonto zugeordnet ist.');
             }
 
             $order = $this->orderFactory->createNew();

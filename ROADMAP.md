@@ -16,7 +16,7 @@ Die Account-Autorisierung ist im aktuellen Code grundsätzlich sauber: Login, Cu
 
 ### Verifikation der bekannten Hypothesen
 
-- Customer Ownership: **Status: bestätigt** (P1-001).
+- Customer Ownership: **Status: Code-Fix in PR #119 umgesetzt; Staging-/Runtime-Verifikation ausstehend** (P1-001).
 - Quote Account Security: **Status: bereits behoben**; funktionale Regressionstests fehlen (P1-004).
 - Public Quote URLs: **Status: bereits behoben**; keine Quote-Token-Route/Controller/Mail-URL gefunden.
 - Transaktion, Sperre, Idempotenz, Sylius-Factories/Modifier/Number-Assigner und Total-Invariante: **Status: bereits behoben**. Customer und Enum-Dispatch bleiben offen.
@@ -31,12 +31,13 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 
 ### P1-001 — Quote Customer Identity
 
-- **ID/Priorität/Status/Bereich:** P1-001 / P1 / bestätigt / Datenintegrität, Quote-to-Order
+- **ID/Priorität/Status/Bereich:** P1-001 / P1 / Code-Fix in PR #119 umgesetzt; Staging-/Runtime-Verifikation ausstehend / Datenintegrität, Quote-to-Order
 - **Betroffene Dateien:** `src/Service/Quote/QuoteOrderConverter.php`, `src/Entity/Quote/Quote.php`, Tests unter `tests/Quote/`
-- **Aktuelles Verhalten:** Der Converter sucht Customer über `quote.customerEmail` und erzeugt bei Nichtfund einen Guest-Customer, obwohl `Quote.customer` die autoritative Beziehung ist.
+- **Behobenes Verhalten:** Der Converter suchte Customer über `quote.customerEmail` und erzeugte bei Nichtfund einen Guest-Customer, obwohl `Quote.customer` die autoritative Beziehung ist.
 - **Risiko:** Nach einer E-Mail-Änderung kann die Order einem anderen/neuen Customer gehören; Account-Ownership und Order-Historie divergieren.
 - **Lösung:** Ausschließlich `Quote::getCustomer()` verwenden und bei fehlendem Customer die Konvertierung fachlich ablehnen. Keine Identity-Auflösung über Snapshot-Felder.
 - **Acceptance Criteria:** Order- und Quote-Customer haben dieselbe Datenbank-ID; E-Mail-Änderung ändert die Zuordnung nicht; kein impliziter Guest wird erzeugt.
+- **Umsetzung:** `QuoteOrderConverter` verwendet ausschließlich `Quote.customer`; die Snapshot-E-Mail wird nicht mehr zur Customer-Auflösung verwendet.
 - **Tests:** Integrationstest mit persistiertem Customer, geänderter E-Mail, Konvertierung und Identity-Assertion; Missing-Customer-Negativtest.
 
 ### P1-002 — Expliziter QuoteItemType-Dispatch
