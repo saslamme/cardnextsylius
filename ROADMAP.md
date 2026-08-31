@@ -239,3 +239,7 @@ Ein Finding ist erledigt, wenn Acceptance Criteria und positive/negative Tests e
 - `doctrine:schema:validate` und `doctrine:migrations:status`: zusätzlich keine erreichbare MySQL-Datenbank in der Audit-Umgebung; auf Staging/Produktionskopie wiederholen.
 - Composer Security Audit nach normaler, plattformkonformer Installation mit Sodium wiederholen.
 - Echte HTTP-Firewall-, Mailzustellungs-, PDF- und Double-Click/Concurrency-Szenarien benötigen MySQL und eine laufende Testanwendung.
+
+## ERP-synchronized maintenance contracts
+
+ERP remains the source of truth; customers are mapped only through `erpCustomerNumber`. A scheduled, idempotent sync maintains a non-destructive local read projection used by the account and read-only administration views. Production endpoint/authentication/payload and full-snapshot-versus-delta semantics remain deployment integration inputs.

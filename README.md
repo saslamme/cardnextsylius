@@ -127,3 +127,43 @@ Der Composer Audit prüft den committed Lockfile-Stand: Security Advisories bloc
 ## Beitragen
 
 Kleine, fokussierte PRs verwenden; Tests und Migration Notes beilegen. Fachliche Refactorings nicht mit ECS-Massendiffs kombinieren. Security-, Money-, Customer- und Order-Änderungen benötigen Regressionstests und Review gegen die installierte Sylius-2.2-API.
+
+## Maintenance Contracts
+
+Customers can view ERP-synchronized printer maintenance contracts in their account. Administration provides a read-only view of ERP fields and permits only the Cardnext-local internal note to be edited.
+
+## ERP integration
+
+### Maintenance contracts
+
+The ERP system is the source of truth for maintenance contracts. Cardnext stores a synchronized local projection for customer-account and administration purposes; no manual second source of truth exists.
+
+Customer ownership is mapped exclusively as `ERP customer number → CustomerB2BProfile.erpCustomerNumber → Sylius Customer`. Email, names, addresses, and company names are never identity keys.
+
+ERP-managed, read-only fields are ERP Contract ID, ERP Customer Number, Serial Number, Printer Model, Contract Reference, Start Date, End Date, and Source Updated Date. `internalNote` and `lastSyncedAt` are local metadata; ERP updates never overwrite `internalNote`.
+
+Run the idempotent sync manually or from cron:
+
+```bash
+php bin/console cardnext:erp:sync-maintenance-contracts --env=prod
+```
+
+```cron
+*/30 * * * * cd /path/to/cardnext && php bin/console cardnext:erp:sync-maintenance-contracts --env=prod
+```
+
+The recommended initial frequency is every 30–60 minutes. The command is locked against concurrent execution. An ERP/API failure never causes existing local maintenance contracts to be deleted; the customer account continues to use the last successfully synchronized data.
+
+Configuration contains no credentials:
+
+```dotenv
+CARDNEXT_ERP_BASE_URI=
+CARDNEXT_ERP_MAINTENANCE_CONTRACTS_ENDPOINT=
+CARDNEXT_ERP_AUTH_HEADER=
+CARDNEXT_ERP_AUTH_VALUE=
+CARDNEXT_ERP_MAINTENANCE_FIELD_MAP='{}'
+```
+
+Never commit production ERP credentials. ERP authentication must be configured according to the production ERP API. No production ERP specification was found in this repository, so production response mapping must be finalized once the schema is supplied. `CARDNEXT_ERP_MAINTENANCE_FIELD_MAP` deliberately has no invented defaults and must map the DTO names (`externalId`, `erpCustomerNumber`, `serialNumber`, `startsAt`, `endsAt`, and optional snapshot fields) to confirmed response keys.
+
+The following production integration facts remain required: base URL, endpoint, authentication, response format, stable contract identifier, pagination, full-snapshot versus delta semantics, and field mapping. Until full-snapshot semantics are confirmed, missing records are never deleted or deactivated. Empty successful responses likewise perform no destructive operation.

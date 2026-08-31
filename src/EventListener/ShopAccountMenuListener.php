@@ -15,6 +15,8 @@ final class ShopAccountMenuListener
         $menu = $event->getMenu();
         $item = $menu->addChild('quotes', ['route' => 'cardnext_shop_account_quote_index'])->setLabel('cardnext.account.quotes');
         $item->setLabelAttribute('icon', 'tabler:file-invoice');
-        $menu->reorderChildren(['dashboard', 'order_history', 'quotes', 'address_book', 'personal_information', 'change_password']);
+        $maintenance = $menu->addChild('maintenance_contracts', ['route' => 'cardnext_shop_account_maintenance_contract_index'])->setLabel('cardnext.account.maintenance_contracts');
+        $maintenance->setLabelAttribute('icon', 'tabler:shield-check');
+        $menu->reorderChildren(['dashboard', 'order_history', 'quotes', 'maintenance_contracts', 'address_book', 'personal_information', 'change_password']);
     }
 }

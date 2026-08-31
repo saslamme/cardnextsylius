@@ -80,6 +80,9 @@ final class AdminMenuListener
                 ->setLabelAttribute('icon', 'tabler:building-store')
             ;
         }
+        if ($customers !== null && $customers->getChild('cardnext_maintenance_contracts') === null) {
+            $customers->addChild('cardnext_maintenance_contracts', ['route' => 'cardnext_admin_maintenance_contract_index', 'extras' => ['routes' => [['route' => 'cardnext_admin_maintenance_contract_*']]]])->setLabel('cardnext.maintenance_contract.admin.menu')->setLabelAttribute('icon', 'tabler:shield-check');
+        }
 
         if ($menu->getChild('cardnext_quotes') === null) {
             $menu->addChild('cardnext_quotes', [

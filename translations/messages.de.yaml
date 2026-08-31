@@ -1,4 +1,24 @@
 cardnext:
+  account:
+    maintenance_contracts: Wartungsverträge
+  maintenance_contract:
+    printer: Kartendrucker
+    serial: Seriennummer
+    reference: Vertragsnummer
+    starts: Beginn
+    ends: Ende
+    status:
+      label: Status
+      active: Aktiv
+      upcoming: Bevorstehend
+      expired: Abgelaufen
+    empty:
+      title: Keine Wartungsverträge
+      text: Für Ihr Kundenkonto sind aktuell keine Wartungsverträge hinterlegt.
+    admin:
+      menu: Wartungsverträge
+      source_notice: Die Vertragsdaten werden aus dem ERP synchronisiert. Nur die interne Notiz wird lokal gepflegt.
+      sync: Jetzt synchronisieren
   order:
     configured_product: Konfiguriertes Produkt
     configured_items: Konfigurierte Artikel
