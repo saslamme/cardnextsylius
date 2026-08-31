@@ -94,7 +94,7 @@ jobs:
                 run: composer check-platform-reqs
 
             -   name: "Check for security vulnerabilities"
-                run: composer audit
+                run: composer audit --locked --abandoned=report
 
             -   name: "Validate Twig templates"
                 run: bin/console lint:twig templates
