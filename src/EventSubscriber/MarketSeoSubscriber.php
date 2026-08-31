@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\International\CardnextMarketRegistry;
 use App\International\MarketUrlResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final readonly class MarketSeoSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private MarketUrlResolver $resolver)
+    public function __construct(private MarketUrlResolver $resolver, private CardnextMarketRegistry $markets)
     {
     }
 
@@ -35,6 +36,10 @@ final readonly class MarketSeoSubscriber implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
+        if ($this->markets->forHostname($request->getHost()) === null) {
+            return;
+        }
+
         $tags = sprintf("\n<link rel=\"canonical\" href=\"%s\">", htmlspecialchars($this->resolver->canonical($request), \ENT_QUOTES));
         foreach ($this->resolver->links($request) as $link) {
             $tags .= sprintf(
