@@ -1,128 +1,128 @@
 cardnext:
   storefront:
     homepage:
-      meta_title: 'Cardnext – Kartendrucker, RFID & Auto-ID'
+      meta_title: Cardnext – Stampanti per tessere, RFID e Auto-ID
       hero:
-        kicker: 'Professionale Identifikationstechnik'
-        title: 'Tecnologia für sichere Identitäten.'
-        text: 'Kartendrucker, RFID-Leser, Plastikkarten und Auto-ID-Lösungen für Unternehmen, Integratoren und professionelle Anwender.'
-        products: 'Prodotti entdecken'
-        consulting: 'Beratung anfragen'
-        visual_label: 'Kartendrucker, RFID-Leser und Plastikkarten'
-        image_alt: 'Professionaler Kartendrucker mit Plastikkarten am Arbeitsplatz'
+        kicker: Tecnologia professionale per l'identificazione
+        title: Tecnologia per identità sicure.
+        text: Stampanti per tessere, lettori RFID, tessere in plastica e soluzioni Auto-ID per aziende, integratori e utenti professionali.
+        products: Scopri i prodotti
+        consulting: Richiedi una consulenza
+        visual_label: Stampanti per tessere, lettori RFID e tessere in plastica
+        image_alt: Stampante professionale per tessere con tessere in plastica sulla postazione di lavoro
       categories:
-        title: 'Categorie popolari'
+        title: Categorie più richieste
       service:
-        kicker: 'Più dell’hardware'
-        title: 'Tecnologiaversorgung mit persönlichem Service.'
-        text: 'Wir liefern nicht nur das Produkt. Wir helfen bei Auswahl, Kompatibilität und Konfiguration – und der zuverlässigen Versorgung mit passendem Zubehör und Verbrauchsmaterial.'
-        button: 'Mehr über unseren Service'
-        image_alt: 'Consulenza personale zu professioneller Identifikationstechnik'
+        kicker: Più che semplice hardware
+        title: Tecnologia professionale con un servizio personalizzato.
+        text: Non forniamo soltanto il prodotto. Ti assistiamo nella selezione, nella verifica della compatibilità e nella configurazione, garantendo una fornitura affidabile di accessori e materiali di consumo adatti.
+        button: Scopri il nostro servizio
+        image_alt: Consulenza personalizzata sulla tecnologia professionale per l'identificazione
         items:
           advice:
-            title: 'Auswahl & Beratung'
-            text: 'Wir finden die passende Lösung für Ihren Bedarf.'
+            title: Selezione e consulenza
+            text: Troviamo la soluzione adatta alle tue esigenze.
           configuration:
-            title: 'Konfiguration'
-            text: 'Kompatibel und optimal eingestellt.'
+            title: Configurazione
+            text: Compatibilità garantita e impostazioni ottimali.
           projects:
-            title: 'Soluzioni di progetto'
-            text: 'Individuelle Konzepte für Ihr Unternehmen.'
+            title: Soluzioni per progetti
+            text: Progetti personalizzati per la tua azienda.
           consumables:
-            title: 'Verbrauchsmaterial'
-            text: 'Farbbänder, Karten und Reinigungskarten direkt verfügbar.'
+            title: Materiali di consumo
+            text: Nastri, tessere e schede di pulizia disponibili direttamente.
       products:
-        kicker: 'Ausgewählte Prodotti'
-        title: 'Professionale Hardware.'
-        empty: 'Noch keine Prodotti für diesen Verkaufskanal veröffentlicht.'
+        kicker: Prodotti selezionati
+        title: Hardware professionale.
+        empty: Non sono ancora stati pubblicati prodotti per questo canale di vendita.
       industries:
-        kicker: 'Ambiti di applicazione'
-        title: 'Tecnologia, die zu Ihrem Einsatz passt.'
-        text: 'Von der Mitarbeiterausweiserstellung bis zur RFID-gestützten Identifikation: Prodotti und Zubehör werden nach Anwendung gedacht, nicht nur nach Hersteller.'
-        link: 'Lösungen ansehen'
+        kicker: Ambiti di applicazione
+        title: Tecnologia adatta a ogni applicazione.
+        text: 'Dalla creazione dei badge per dipendenti all''identificazione tramite RFID: selezioniamo prodotti e accessori in base all''applicazione, non soltanto al produttore.'
+        link: Scopri le soluzioni
         cards:
-          title: 'Ausweise & Kartenausgabe'
-          text: 'Kartendrucker, Farbbänder, Plastikkarten und Zubehör für Mitarbeiterausweise, Besucherkarten und Mitgliedsausweise.'
-          image_alt: 'Mitarbeiterausweis in einem professionellen Kartenhalter'
+          title: Badge e rilascio tessere
+          text: Stampanti per tessere, nastri, tessere in plastica e accessori per badge aziendali, visitatori e soci.
+          image_alt: Badge aziendale in un portatessere professionale
         identification:
-          title: 'Sichere Identifikation'
-          text: 'RFID-Leser, Smartcards und Identmedien für Login, Zutritt und eindeutige Benutzeridentifikation.'
-          image_alt: 'Kontaktlose Identifikation mit RFID-Karte an einem Zutrittsleser'
+          title: Identificazione sicura
+          text: Lettori RFID, smart card e supporti identificativi per accesso, controllo degli ingressi e identificazione univoca degli utenti.
+          image_alt: Identificazione contactless con tessera RFID su un lettore di accesso
         logistics:
-          title: 'Lager & Logistik'
-          text: 'RFID- und Barcode-Tecnologia für Erfassung, Rückverfolgbarkeit und effiziente Materialbewegungen.'
-          image_alt: 'Barcode-Erfassung in einem professionellen Lager'
+          title: Magazzino e logistica
+          text: Tecnologia RFID e barcode per acquisizione dati, tracciabilità e movimentazione efficiente dei materiali.
+          image_alt: Lettura di codici a barre in un magazzino professionale
       why:
-        kicker: 'Perché Cardnext'
-        title: 'Technik. Know-how. Verlässlichkeit.'
-        text: 'Ein fokussierter Partner für professionelle Identifikations- und Auto-ID-Technik – mit direkter Beratung und einem klar strukturierten Produktsortiment.'
+        kicker: Perché Cardnext
+        title: Tecnologia. Competenza. Affidabilità.
+        text: Un partner specializzato in tecnologie professionali per l'identificazione e l'Auto-ID, con consulenza diretta e una gamma di prodotti ben strutturata.
         items:
           specialized:
-            title: 'Assortimento specializzato'
-            text: 'Focus su stampa di carte, RFID, identificazione e tecnologia Auto-ID professionale.'
+            title: Gamma specializzata
+            text: Specializzazione in stampa di tessere, RFID, identificazione e tecnologia Auto-ID professionale.
           independent:
-            title: 'Indipendenza dai produttori'
-            text: 'Confrontate i prodotti di produttori affermati in base all’applicazione.'
+            title: Indipendenza dai produttori
+            text: Confronta i prodotti di produttori affermati in base all'applicazione.
           compatibility:
-            title: 'Compatibilità sotto controllo'
-            text: 'Accessori e materiali di consumo sono abbinati tecnicamente ai dispositivi adatti.'
+            title: Compatibilità verificata
+            text: Accessori e materiali di consumo sono abbinati tecnicamente ai dispositivi compatibili.
           personal:
-            title: 'Contatto personale'
-            text: 'Per progetti e consulenza avrete un referente diretto.'
+            title: Contatto personale
+            text: Per progetti e consulenze avrai un referente diretto.
       cta:
-        title: 'Nicht sicher, welches Produkt passt?'
-        text: 'Wir helfen Ihnen bei der Auswahl.'
-        button: 'Jetzt beraten lassen'
+        title: Non sai quale prodotto scegliere?
+        text: Ti aiutiamo nella scelta.
+        button: Richiedi una consulenza
       promises:
         shipping:
-          title: 'Spedizione rapida'
-          text: 'Für verfügbare Lagerartikel'
+          title: Spedizione rapida
+          text: Per gli articoli disponibili a magazzino
         advice:
-          title: 'Consulenza personale'
-          text: 'Vor und nach dem Kauf'
+          title: Consulenza personalizzata
+          text: Prima e dopo l'acquisto
         payment:
-          title: 'Pagamento sicuro'
-          text: 'Professionale Zahlungsabwicklung'
+          title: Pagamento sicuro
+          text: Gestione professionale dei pagamenti
         projects:
-          title: 'Soluzioni di progetto'
-          text: 'Individuelle Lösungen auf Anfrage'
+          title: Soluzioni per progetti
+          text: Soluzioni personalizzate su richiesta
     header:
-      home: 'Cardnext Startseite'
-      search_label: 'Prodotti suchen'
-      search_placeholder: 'Prodotti, Hersteller oder Artikelnummer suchen'
-      search_submit: 'Suche starten'
-      account: 'Il mio account'
-      login: 'Accedi'
-      open_navigation: 'Navigation öffnen'
-      close_navigation: 'Navigation schließen'
-      mobile_navigation: 'Mobile Navigation'
-      cart: 'Carrello'
-      contact_advice: 'Kontakt & Beratung'
-      product_categories: 'Produktkategorien'
-      show_all: 'Alle anzeigen'
-      all_category: 'Alle %category%'
-      brands: 'Marchi'
-      support: 'Support'
-      downloads: 'Downloads'
-      contact: 'Contatti'
+      home: Homepage Cardnext
+      search_label: Cerca prodotti
+      search_placeholder: Cerca prodotti, produttori o codici articolo
+      search_submit: Avvia la ricerca
+      account: Il mio account
+      login: Accedi
+      open_navigation: Apri navigazione
+      close_navigation: Chiudi navigazione
+      mobile_navigation: Navigazione mobile
+      cart: Carrello
+      contact_advice: Contatti e consulenza
+      product_categories: Categorie di prodotti
+      show_all: Mostra tutto
+      all_category: 'Tutti: %category%'
+      brands: Marchi
+      support: Supporto
+      downloads: Download
+      contact: Contatti
     footer:
-      description: 'Professionale Lösungen für Kartendruck, RFID, Zeiterfassung, Barcode-Systeme und Ausweiszubehör.'
-      products: 'Prodotti'
-      solutions: 'Soluzioni'
-      service: 'Servizio'
-      company: 'Cardnext'
-      id_creation: 'Ausweiserstellung'
-      access_control: 'Zutrittskontrolle'
-      time_tracking: 'Zeiterfassung'
-      rfid_identification: 'RFID-Identifikation'
-      advice: 'Contatti'
-      about: 'Über uns'
-      legal: 'Rechtliches'
-      imprint: 'Impressum'
-      privacy: 'Datenschutz'
-      terms: 'AGB'
-      back_to_top: 'Nach oben'
-      language: 'Italiano'
+      description: Soluzioni professionali per stampa di tessere, RFID, rilevazione presenze, sistemi barcode e accessori per badge.
+      products: Prodotti
+      solutions: Soluzioni
+      service: Servizio
+      company: Cardnext
+      id_creation: Creazione di badge
+      access_control: Controllo accessi
+      time_tracking: Rilevazione presenze
+      rfid_identification: Identificazione RFID
+      advice: Contatti
+      about: Chi siamo
+      legal: Informazioni legali
+      imprint: Note legali
+      privacy: Privacy
+      terms: Condizioni generali
+      back_to_top: Torna in alto
+      language: Italiano
   market:
     select: Seleziona il paese
   account:
@@ -173,7 +173,7 @@ cardnext:
       empty: Nessuna area ancora disponibile.
     quantity: Quantità
     choose: Seleziona
-    yes: SÌ
+    'yes': SÌ
     upload_later: Il caricamento del file avviene successivamente all'ordine.
     production_time: Tempo di produzione
     working_days: giorni lavorativi
@@ -185,9 +185,9 @@ cardnext:
     shipping_note: Più spese di spedizione ed eventualmente l'imposta sulle vendite prevista dalla legge.
     add_to_cart: Aggiungi al carrello
     price_details: Dettagli sui prezzi
-    awaiting_price: Il prezzo è calcolato
+    awaiting_price: Calcolo del prezzo in corso
     assurance:
-      calculation: Lato server e calcolato in modo vincolante
+      calculation: Calcolo vincolante sul server
       checkout: Elaborazione sicura degli ordini
     create: Crea configuratore
     edit: Modificare
@@ -218,11 +218,11 @@ cardnext:
     all_statuses: Tutti gli stati
     filter: Filtro
     empty: Nessun configuratore ancora disponibile.
-    from: lontano
+    from: Da
     global: Globale/tutti i canali
     source: fonte
     currency: valuta
-    charge: Dimensione del prezzo
+    charge: Componente del prezzo
     tier: Scala di quantità
     amount: Quantità
     minimum_quantity: Quantità minima

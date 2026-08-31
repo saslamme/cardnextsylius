@@ -1,128 +1,128 @@
 cardnext:
   storefront:
     homepage:
-      meta_title: 'Cardnext – Kartendrucker, RFID & Auto-ID'
+      meta_title: Cardnext – Impresoras de tarjetas, RFID y Auto-ID
       hero:
-        kicker: 'Profesional Identifikationstechnik'
-        title: 'Tecnología für sichere Identitäten.'
-        text: 'Kartendrucker, RFID-Leser, Plastikkarten und Auto-ID-Lösungen für Unternehmen, Integratoren und professionelle Anwender.'
-        products: 'Productos entdecken'
-        consulting: 'Beratung anfragen'
-        visual_label: 'Kartendrucker, RFID-Leser und Plastikkarten'
-        image_alt: 'Profesionalr Kartendrucker mit Plastikkarten am Arbeitsplatz'
+        kicker: Tecnología profesional de identificación
+        title: Tecnología para identidades seguras.
+        text: Impresoras de tarjetas, lectores RFID, tarjetas de plástico y soluciones Auto-ID para empresas, integradores y usuarios profesionales.
+        products: Descubrir productos
+        consulting: Solicitar asesoramiento
+        visual_label: Impresoras de tarjetas, lectores RFID y tarjetas de plástico
+        image_alt: Impresora profesional de tarjetas con tarjetas de plástico en el puesto de trabajo
       categories:
-        title: 'Categorías populares'
+        title: Categorías populares
       service:
-        kicker: 'Más que hardware'
-        title: 'Tecnologíaversorgung mit persönlichem Service.'
-        text: 'Wir liefern nicht nur das Produkt. Wir helfen bei Auswahl, Kompatibilität und Konfiguration – und der zuverlässigen Versorgung mit passendem Zubehör und Verbrauchsmaterial.'
-        button: 'Mehr über unseren Service'
-        image_alt: 'Asesoramiento personal zu professioneller Identifikationstechnik'
+        kicker: Más que hardware
+        title: Tecnología profesional con asesoramiento personalizado.
+        text: No solo suministramos el producto. Te ayudamos con la selección, la compatibilidad y la configuración, y garantizamos un suministro fiable de accesorios y consumibles adecuados.
+        button: Más información sobre nuestro servicio
+        image_alt: Asesoramiento personalizado sobre tecnología profesional de identificación
         items:
           advice:
-            title: 'Auswahl & Beratung'
-            text: 'Wir finden die passende Lösung für Ihren Bedarf.'
+            title: Selección y asesoramiento
+            text: Encontramos la solución adecuada para tus necesidades.
           configuration:
-            title: 'Konfiguration'
-            text: 'Kompatibel und optimal eingestellt.'
+            title: Configuración
+            text: Compatibilidad garantizada y ajustes óptimos.
           projects:
-            title: 'Proyectos empresariales'
-            text: 'Individuelle Konzepte für Ihr Unternehmen.'
+            title: Soluciones para proyectos
+            text: Conceptos personalizados para tu empresa.
           consumables:
-            title: 'Verbrauchsmaterial'
-            text: 'Farbbänder, Karten und Reinigungskarten direkt verfügbar.'
+            title: Consumibles
+            text: Cintas, tarjetas y tarjetas de limpieza disponibles directamente.
       products:
-        kicker: 'Ausgewählte Productos'
-        title: 'Profesional Hardware.'
-        empty: 'Noch keine Productos für diesen Verkaufskanal veröffentlicht.'
+        kicker: Productos seleccionados
+        title: Hardware profesional.
+        empty: Todavía no se han publicado productos para este canal de venta.
       industries:
-        kicker: 'Ámbitos de aplicación'
-        title: 'Tecnología, die zu Ihrem Einsatz passt.'
-        text: 'Von der Mitarbeiterausweiserstellung bis zur RFID-gestützten Identifikation: Productos und Zubehör werden nach Anwendung gedacht, nicht nur nach Hersteller.'
-        link: 'Lösungen ansehen'
+        kicker: Ámbitos de aplicación
+        title: Tecnología adaptada a cada aplicación.
+        text: 'Desde la emisión de tarjetas de empleado hasta la identificación mediante RFID: seleccionamos productos y accesorios en función de la aplicación, no solo del fabricante.'
+        link: Ver soluciones
         cards:
-          title: 'Ausweise & Kartenausgabe'
-          text: 'Kartendrucker, Farbbänder, Plastikkarten und Zubehör für Mitarbeiterausweise, Besucherkarten und Mitgliedsausweise.'
-          image_alt: 'Mitarbeiterausweis in einem professionellen Kartenhalter'
+          title: Tarjetas de identificación y emisión
+          text: Impresoras de tarjetas, cintas, tarjetas de plástico y accesorios para identificaciones de empleados, visitantes y socios.
+          image_alt: Tarjeta de empleado en un portatarjetas profesional
         identification:
-          title: 'Sichere Identifikation'
-          text: 'RFID-Leser, Smartcards und Identmedien für Login, Zutritt und eindeutige Benutzeridentifikation.'
-          image_alt: 'Kontaktlose Identifikation mit RFID-Karte an einem Zutrittsleser'
+          title: Identificación segura
+          text: Lectores RFID, tarjetas inteligentes y soportes de identificación para inicio de sesión, control de acceso e identificación inequívoca de usuarios.
+          image_alt: Identificación sin contacto con tarjeta RFID en un lector de acceso
         logistics:
-          title: 'Lager & Logistik'
-          text: 'RFID- und Barcode-Tecnología für Erfassung, Rückverfolgbarkeit und effiziente Materialbewegungen.'
-          image_alt: 'Barcode-Erfassung in einem professionellen Lager'
+          title: Almacén y logística
+          text: Tecnología RFID y de códigos de barras para captura de datos, trazabilidad y movimientos eficientes de materiales.
+          image_alt: Lectura de códigos de barras en un almacén profesional
       why:
-        kicker: 'Por qué Cardnext'
-        title: 'Technik. Know-how. Verlässlichkeit.'
-        text: 'Ein fokussierter Partner für professionelle Identifikations- und Auto-ID-Technik – mit direkter Beratung und einem klar strukturierten Produktsortiment.'
+        kicker: Por qué Cardnext
+        title: Tecnología. Experiencia. Fiabilidad.
+        text: Un socio especializado en tecnología profesional de identificación y Auto-ID, con asesoramiento directo y una gama de productos claramente estructurada.
         items:
           specialized:
-            title: 'Surtido especializado'
-            text: 'Centrado en impresión de tarjetas, RFID, identificación y tecnología Auto-ID profesional.'
+            title: Gama especializada
+            text: Especialización en impresión de tarjetas, RFID, identificación y tecnología Auto-ID profesional.
           independent:
-            title: 'Independencia de fabricantes'
-            text: 'Compare productos de fabricantes reconocidos según su aplicación.'
+            title: Independencia de fabricantes
+            text: Compara productos de fabricantes reconocidos según la aplicación.
           compatibility:
-            title: 'Compatibilidad garantizada'
-            text: 'Los accesorios y consumibles se asignan técnicamente a los equipos adecuados.'
+            title: Compatibilidad comprobada
+            text: Los accesorios y consumibles están técnicamente adaptados a los equipos adecuados.
           personal:
-            title: 'Contacto personal'
-            text: 'Para proyectos y asesoramiento contará con un interlocutor directo.'
+            title: Contacto personal
+            text: Para proyectos y asesoramiento tendrás una persona de contacto directa.
       cta:
-        title: 'Nicht sicher, welches Produkt passt?'
-        text: 'Wir helfen Ihnen bei der Auswahl.'
-        button: 'Jetzt beraten lassen'
+        title: ¿No sabes qué producto elegir?
+        text: Te ayudamos a elegir.
+        button: Solicitar asesoramiento
       promises:
         shipping:
-          title: 'Envío rápido'
-          text: 'Für verfügbare Lagerartikel'
+          title: Envío rápido
+          text: Para artículos disponibles en almacén
         advice:
-          title: 'Asesoramiento personal'
-          text: 'Vor und nach dem Kauf'
+          title: Asesoramiento personalizado
+          text: Antes y después de la compra
         payment:
-          title: 'Pago seguro'
-          text: 'Profesional Zahlungsabwicklung'
+          title: Pago seguro
+          text: Procesamiento profesional de pagos
         projects:
-          title: 'Proyectos empresariales'
-          text: 'Individuelle Lösungen auf Anfrage'
+          title: Soluciones para proyectos
+          text: Soluciones personalizadas bajo petición
     header:
-      home: 'Cardnext Startseite'
-      search_label: 'Productos suchen'
-      search_placeholder: 'Productos, Hersteller oder Artikelnummer suchen'
-      search_submit: 'Suche starten'
-      account: 'Mi cuenta'
-      login: 'Iniciar sesión'
-      open_navigation: 'Navigation öffnen'
-      close_navigation: 'Navigation schließen'
-      mobile_navigation: 'Mobile Navigation'
-      cart: 'Carrito'
-      contact_advice: 'Kontakt & Beratung'
-      product_categories: 'Produktkategorien'
-      show_all: 'Alle anzeigen'
-      all_category: 'Alle %category%'
-      brands: 'Marcas'
-      support: 'Support'
-      downloads: 'Downloads'
-      contact: 'Contacto'
+      home: Página de inicio de Cardnext
+      search_label: Buscar productos
+      search_placeholder: Buscar productos, fabricantes o números de artículo
+      search_submit: Iniciar búsqueda
+      account: Mi cuenta
+      login: Iniciar sesión
+      open_navigation: Abrir navegación
+      close_navigation: Cerrar navegación
+      mobile_navigation: Navegación móvil
+      cart: Carrito
+      contact_advice: Contacto y asesoramiento
+      product_categories: Categorías de productos
+      show_all: Ver todos
+      all_category: 'Todos: %category%'
+      brands: Marcas
+      support: Soporte
+      downloads: Descargas
+      contact: Contacto
     footer:
-      description: 'Profesional Lösungen für Kartendruck, RFID, Zeiterfassung, Barcode-Systeme und Ausweiszubehör.'
-      products: 'Productos'
-      solutions: 'Soluciones'
-      service: 'Servicio'
-      company: 'Cardnext'
-      id_creation: 'Ausweiserstellung'
-      access_control: 'Zutrittskontrolle'
-      time_tracking: 'Zeiterfassung'
-      rfid_identification: 'RFID-Identifikation'
-      advice: 'Contacto'
-      about: 'Über uns'
-      legal: 'Rechtliches'
-      imprint: 'Impressum'
-      privacy: 'Datenschutz'
-      terms: 'AGB'
-      back_to_top: 'Nach oben'
-      language: 'Español'
+      description: Soluciones profesionales para impresión de tarjetas, RFID, control horario, sistemas de códigos de barras y accesorios de identificación.
+      products: Productos
+      solutions: Soluciones
+      service: Servicio
+      company: Cardnext
+      id_creation: Emisión de identificaciones
+      access_control: Control de acceso
+      time_tracking: Control horario
+      rfid_identification: Identificación RFID
+      advice: Contacto
+      about: Quiénes somos
+      legal: Información legal
+      imprint: Aviso legal
+      privacy: Privacidad
+      terms: Condiciones generales
+      back_to_top: Volver arriba
+      language: Español
   market:
     select: Seleccionar país
   account:
@@ -172,29 +172,29 @@ cardnext:
       create: Crear área
       empty: Aún no hay áreas disponibles.
     quantity: Cantidad
-    choose: Por favor seleccione
-    yes: Sí
+    choose: Seleccionar
+    'yes': Sí
     upload_later: La carga del archivo se realiza después del pedido.
     production_time: tiempo de producción
-    working_days: dias laborables
+    working_days: días laborables
     summary: Tu configuración
     incomplete: Incompleto
     total: precio total
     placeholder: Complete los campos obligatorios para calcular automáticamente el precio.
-    per_piece: una pieza
-    shipping_note: Más gastos de envío y, si corresponde, impuestos sobre las ventas legales.
-    add_to_cart: añadir a la cesta
+    per_piece: por unidad
+    shipping_note: Más gastos de envío y, cuando corresponda, los impuestos legalmente aplicables.
+    add_to_cart: Añadir al carrito
     price_details: Detalles de precios
-    awaiting_price: El precio se calcula
+    awaiting_price: Calculando el precio
     assurance:
-      calculation: Del lado del servidor y calculado de forma vinculante
+      calculation: Cálculo vinculante en el servidor
       checkout: Procesamiento seguro de pedidos
     create: Crear configurador
     edit: Editar
     delete: Borrar
     delete_confirm: ¿Realmente eliminar?
     delete_product_confirm: Este producto de configuración, incluido el configurador, la estructura y las reglas de precios, se eliminará permanentemente.
-    save: Ahorrar
+    save: Guardar
     name: nombre
     code: código
     product: producto
@@ -218,11 +218,11 @@ cardnext:
     all_statuses: Todos los estados
     filter: Filtrar
     empty: Aún no hay configuradores disponibles.
-    from: lejos
+    from: Desde
     global: Global/todos los canales
     source: fuente
     currency: divisa
-    charge: Dimensión de precio
+    charge: Componente del precio
     tier: escala de cantidades
     amount: Cantidad
     minimum_quantity: Cantidad mínima
@@ -246,7 +246,7 @@ cardnext:
     field_type:
       single_choice: selección individual
       multiple_choice: Selección múltiple
-      boolean: Sí No
+      boolean: Sí/No
       integer: Entero
       decimal: numero decimal
       text: texto
@@ -270,7 +270,7 @@ cardnext:
       delete_blocked: La eliminación se canceló para proteger los datos de pedidos o productos asociados.
   configurator_path:
     label: URL del configurador
-    help: Ruta relativa de la página del configurador independiente, p.e. B. tarjetas de plástico/impresión de tarjetas de plástico. Sin dominio y sin barra inicial.
+    help: Ruta relativa de la página independiente del configurador, p. ej., tarjetas-plastico/imprimir-tarjetas-plastico. Sin dominio ni barra inicial.
     required: Para un producto de configuración, se debe ingresar una URL del configurador en cada traducción.
     invalid: La ruta solo debe contener segmentos de ruta válidos y no debe utilizar dominio, consulta, fragmentos, ".." ni segmentos vacíos.
     unique: Esta URL del configurador ya se utiliza en este idioma.
@@ -278,7 +278,7 @@ cardnext:
   configurator_page:
     kicker: Producto de configuración
     breadcrumb:
-      home: comenzar
+      home: Inicio
     stage:
       kicker: Tu configuración
       title: Configurar producto
@@ -286,24 +286,24 @@ cardnext:
     trust:
       calculation: Cálculo transparente
       production: Fabricación profesional
-      support: Consejos personales
+      support: Asesoramiento personalizado
     process:
       title: Así funciona tu pedido de tarjetas de plástico impresas individualmente
       step_1:
         title: Configurar
         description: Selecciona material, impresión, cantidad y tiempo de producción de tus tarjetas.
       step_2:
-        title: Orden
+        title: Realizar pedido
         description: Consulta tu configuración y completa cómodamente el pedido online.
       step_3:
-        title: Imprimir datos
-        description: Después de realizar el pedido, envíe sus datos de impresión para su posterior procesamiento.
+        title: Datos de impresión
+        description: Después de realizar el pedido, envía los datos de impresión para su procesamiento.
       step_4:
-        title: Liberar
-        description: Recibe una prueba y sólo entonces libera la producción.
+        title: Aprobar
+        description: Recibirás una prueba y solo entonces aprobarás la producción.
       step_5:
         title: Envío
-        description: Después del control de producción y calidad, sus tarjetas se enviarán de forma segura.
+        description: Tras la producción y el control de calidad, tus tarjetas se enviarán de forma segura.
     content:
       kicker: Información del producto
   quote:
