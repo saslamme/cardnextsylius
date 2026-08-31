@@ -86,6 +86,12 @@ jobs:
             -   name: Test installer
                 run: bin/console sylius:install --no-interaction -vvv
 
+            -   name: Validate database schema
+                run: bin/console doctrine:schema:validate
+
+            -   name: Check migration status
+                run: bin/console doctrine:migrations:status --no-interaction
+
             -   name: Run PHPUnit
                 run: vendor/bin/phpunit --colors=always
 

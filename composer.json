@@ -1,4 +1,6 @@
 {
+    "name": "cardnext/cardnext",
+    "description": "Cardnext B2B e-commerce application based on Sylius and Symfony",
     "type": "project",
     "keywords": [
         "symfony",
@@ -8,7 +10,7 @@
         "cart",
         "shopping"
     ],
-    "homepage": "https://sylius.com",
+    "homepage": "https://github.com/saslamme/cardnextsylius",
     "license": "proprietary",
     "authors": [
         {
