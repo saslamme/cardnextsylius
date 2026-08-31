@@ -79,3 +79,13 @@ When enabled lead times exist, `leadTimeCode` is required and must identify an
 enabled lead time belonging to that configurator. Validation failures use the
 response field `leadTime`. Configurators without enabled lead times continue to
 accept requests without this property.
+
+## Lokalisierte Konfigurator-Struktur
+
+Neben den bereits lokalisierten Konfigurator-Seiten sind Sections, Fields, Values und Lead Times über eigene Translation-Entities übersetzbar. Unterstützte Storefront-Locales stammen aus der Cardnext-Market-Konfiguration: `de_DE`, `de_AT`, `da_DK`, `es_ES`, `it_IT`, `nl_NL` und `sv_SE`.
+
+Die Darstellung verwendet zuerst die exakt angeforderte Locale, danach `de_DE` und zuletzt die weiterhin vorhandenen Legacy-Felder. Leere oder fehlende Übersetzungen unterbrechen die Storefront daher nicht. Die Migration übernimmt ausschließlich bestehende Legacy-Inhalte nach `de_DE`; andere Sprachen werden bewusst nicht mit deutschen Platzhaltern befüllt.
+
+Feld- und Wertnamen werden beim Hinzufügen zum Warenkorb in der Bestell-Locale in den unveränderlichen Configured-Order-Item-Snapshot geschrieben. Technische Codes und sämtliche Preis-, Mengen-, Abhängigkeits- und Währungslogik bleiben davon unabhängig.
+
+Die zusätzlichen Channels werden durch diese Funktion **nicht** automatisch für Konfiguratoren aktiviert. Ebenso werden keine EUR/DKK/SEK-Preise umgerechnet oder kopiert: Übersetzungsimport, geprüfte Marktpreise und Channel-Freigabe folgen in separaten Schritten.

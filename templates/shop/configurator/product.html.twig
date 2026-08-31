@@ -23,8 +23,8 @@
                     {% if section.enabled %}
                         <fieldset class="cn-configurator__section">
                             <div class="cn-configurator__section-head">
-                                <legend>{{ section.name }}</legend>
-                                {% if section.description %}<p>{{ section.description }}</p>{% endif %}
+                                <legend>{{ configurator_text(section, 'name') }}</legend>
+                                {% if configurator_text(section, 'description') %}<p>{{ configurator_text(section, 'description') }}</p>{% endif %}
                             </div>
                             <div class="cn-configurator__fields">
                             {% for field in section.fields %}
@@ -35,15 +35,15 @@
                                     {% set selectChoice = field.type.value == 'single_choice' and not segmented and visualValues|length == 0 %}
                                     <div class="cn-configurator__field" data-configurator-field="{{ field.code }}" data-field-type="{{ field.type.value }}">
                                         {% if field.type.value in ['single_choice', 'multiple_choice'] and not selectChoice %}
-                                            <div class="cn-configurator__label" id="configurator-label-{{ configurator.code }}-{{ field.code }}">{{ field.name }}{% if field.required %} <span aria-hidden="true">*</span>{% endif %}{% if field.description %}<span class="cn-configurator__hint">{{ field.description }}</span>{% endif %}</div>
+                                            <div class="cn-configurator__label" id="configurator-label-{{ configurator.code }}-{{ field.code }}">{{ configurator_text(field, 'name') }}{% if field.required %} <span aria-hidden="true">*</span>{% endif %}{% if configurator_text(field, 'description') %}<span class="cn-configurator__hint">{{ configurator_text(field, 'description') }}</span>{% endif %}</div>
                                         {% else %}
-                                            <label class="cn-configurator__label" for="configurator-{{ configurator.code }}-{{ field.code }}">{{ field.name }}{% if field.required %} <span aria-hidden="true">*</span>{% endif %}{% if field.description %}<span class="cn-configurator__hint">{{ field.description }}</span>{% endif %}</label>
+                                            <label class="cn-configurator__label" for="configurator-{{ configurator.code }}-{{ field.code }}">{{ configurator_text(field, 'name') }}{% if field.required %} <span aria-hidden="true">*</span>{% endif %}{% if configurator_text(field, 'description') %}<span class="cn-configurator__hint">{{ configurator_text(field, 'description') }}</span>{% endif %}</label>
                                         {% endif %}
                                         <div class="cn-configurator__control-wrap">
                                             {% if selectChoice %}
                                                 <select class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]"{% if field.required %} required{% endif %}>
                                                     <option value="">{{ 'cardnext.configurator.choose'|trans }}</option>
-                                                    {% for value in activeValues %}<option value="{{ value.code }}" data-configurator-value="{{ value.code }}"{% if value.preselected %} selected{% endif %}>{{ value.name }}</option>{% endfor %}
+                                                    {% for value in activeValues %}<option value="{{ value.code }}" data-configurator-value="{{ value.code }}"{% if value.preselected %} selected{% endif %}>{{ configurator_text(value, 'name') }}</option>{% endfor %}
                                                 </select>
                                             {% elseif field.type.value in ['single_choice', 'multiple_choice'] %}
                                                 <div class="{{ segmented ? 'cn-configurator__segmented' : 'cn-configurator__choices' }}"{% if field.type.value == 'single_choice' %} role="radiogroup" aria-labelledby="configurator-label-{{ configurator.code }}-{{ field.code }}"{% endif %}>
@@ -51,7 +51,7 @@
                                                         <label class="cn-configurator__choice" data-configurator-value="{{ value.code }}" for="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}">
                                                             <input id="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}" name="selection[{{ field.code }}]{{ field.type.value == 'multiple_choice' ? '[]' : '' }}" value="{{ value.code }}" type="{{ field.type.value == 'single_choice' ? 'radio' : 'checkbox' }}"{% if value.preselected %} checked{% endif %}{% if field.required and field.type.value == 'single_choice' %} required{% endif %}>
                                                             {% if value.imagePath %}<img src="{{ asset(value.imagePath) }}" alt="" loading="lazy">{% endif %}
-                                                            <span class="cn-configurator__choice-copy"><strong>{% if value.colorHex %}<i class="cn-configurator__swatch" style="--choice-color: {{ value.colorHex }}"></i>{% endif %}{% if value.icon %}<span class="cn-configurator__icon" aria-hidden="true">{{ value.icon }}</span>{% endif %}{{ value.name }}</strong>{% if value.description %}<small>{{ value.description }}</small>{% endif %}</span>
+                                                            <span class="cn-configurator__choice-copy"><strong>{% if value.colorHex %}<i class="cn-configurator__swatch" style="--choice-color: {{ value.colorHex }}"></i>{% endif %}{% if value.icon %}<span class="cn-configurator__icon" aria-hidden="true">{{ value.icon }}</span>{% endif %}{{ configurator_text(value, 'name') }}</strong>{% if configurator_text(value, 'description') %}<small>{{ configurator_text(value, 'description') }}</small>{% endif %}</span>
                                                         </label>
                                                     {% endfor %}
                                                 </div>
@@ -65,7 +65,7 @@
                                             {% elseif field.type.value == 'upload' %}
                                                 <div class="cn-configurator__upload">{{ 'cardnext.configurator.upload_later'|trans }}</div>
                                             {% endif %}
-                                            {% if field.helpText %}<div class="cn-configurator__help">{{ field.helpText }}</div>{% endif %}
+                                            {% if configurator_text(field, 'helpText') %}<div class="cn-configurator__help">{{ configurator_text(field, 'helpText') }}</div>{% endif %}
                                             <div class="cn-configurator__error" data-field-error="{{ field.code }}"></div>
                                         </div>
                                     </div>
@@ -82,7 +82,7 @@
                         <div class="cn-configurator__section-head"><legend>{{ 'cardnext.configurator.production_time'|trans }}</legend></div>
                         <div class="cn-configurator__lead-times">
                             {% for leadTime in activeLeadTimes %}
-                                <div class="cn-configurator__lead-time"><input id="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}" name="leadTimeCode" value="{{ leadTime.code }}" type="radio"{% if leadTime.preselected %} checked{% endif %} required><label for="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}"><i aria-hidden="true"></i><span><strong>{{ leadTime.name }}</strong>{% if leadTime.description %}<small>{{ leadTime.description }}</small>{% endif %}</span><b>{{ leadTime.workingDays }} {{ 'cardnext.configurator.working_days'|trans }}</b></label></div>
+                                <div class="cn-configurator__lead-time"><input id="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}" name="leadTimeCode" value="{{ leadTime.code }}" type="radio"{% if leadTime.preselected %} checked{% endif %} required><label for="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}"><i aria-hidden="true"></i><span><strong>{{ configurator_text(leadTime, 'name') }}</strong>{% if configurator_text(leadTime, 'description') %}<small>{{ configurator_text(leadTime, 'description') }}</small>{% endif %}</span><b>{{ leadTime.workingDays }} {{ 'cardnext.configurator.working_days'|trans }}</b></label></div>
                             {% endfor %}
                         </div>
                         <div class="cn-configurator__error" data-field-error="leadTime"></div>

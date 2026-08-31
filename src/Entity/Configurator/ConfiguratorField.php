@@ -59,8 +59,13 @@ class ConfiguratorField
 /** @var Collection<int,ConfiguratorValue> */ #[ORM\OneToMany(mappedBy:'field', targetEntity:ConfiguratorValue::class, cascade:['persist'], orphanRemoval:true),ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
     private Collection $values;
 
+    /** @var Collection<int, ConfiguratorFieldTranslation> */
+    #[ORM\OneToMany(mappedBy: 'field', targetEntity: ConfiguratorFieldTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $translations;
+
     public function __construct(string $code, string $name, FieldType $type)
     {
+        $this->translations = new ArrayCollection();
         $this->code = $code;
         $this->name = $name;
         $this->type = $type;
@@ -262,5 +267,35 @@ class ConfiguratorField
         $this->minimumValue = $minimum;
         $this->maximumValue = $maximum;
         $this->step = $step;
+    }
+
+    /** @return Collection<int, ConfiguratorFieldTranslation> */
+    public function getTranslations(): Collection
+    {
+        return $this->translations;
+    }
+
+    public function addTranslation(ConfiguratorFieldTranslation $translation): void
+    {
+        if (!$this->translations->contains($translation)) {
+            $this->translations->add($translation);
+            $translation->setField($this);
+        }
+    }
+
+    public function removeTranslation(ConfiguratorFieldTranslation $translation): void
+    {
+        $this->translations->removeElement($translation);
+    }
+
+    public function getTranslation(string $locale): ?ConfiguratorFieldTranslation
+    {
+        foreach ($this->translations as $translation) {
+            if ($translation->getLocale() === $locale) {
+                return $translation;
+            }
+        }
+
+        return null;
     }
 }

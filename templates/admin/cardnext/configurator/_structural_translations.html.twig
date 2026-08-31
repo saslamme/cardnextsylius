@@ -1,0 +1,20 @@
+{% if translation_locales is defined %}
+<details class="card mt-3 mb-3">
+    <summary class="card-header"><strong>Übersetzungen</strong> <small class="text-secondary">Basis: de_DE</small></summary>
+    <div class="card-body">
+        <div class="accordion" role="group" aria-label="Übersetzungen">
+            {% for locale in translation_locales %}
+                {% set translation = entity ? entity.getTranslation(locale) : null %}
+                <details class="mb-2" {{ locale == 'de_DE' ? 'open' }}>
+                    <summary><code>{{ locale }}</code></summary>
+                    <div class="row mt-2">
+                        <div class="col"><label class="form-label">Name</label><input class="form-control" name="translations[{{ locale }}][name]" value="{{ translation ? translation.name : '' }}"></div>
+                        <div class="col"><label class="form-label">Beschreibung</label><textarea class="form-control" name="translations[{{ locale }}][description]">{{ translation ? translation.description : '' }}</textarea></div>
+                        {% if field_help|default(false) %}<div class="col"><label class="form-label">Hilfetext</label><textarea class="form-control" name="translations[{{ locale }}][help_text]">{{ translation ? translation.helpText : '' }}</textarea></div>{% endif %}
+                    </div>
+                </details>
+            {% endfor %}
+        </div>
+    </div>
+</details>
+{% endif %}
