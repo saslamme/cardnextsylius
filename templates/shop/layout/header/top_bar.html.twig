@@ -3,6 +3,6 @@
         <a href="{{ path('sylius_shop_homepage') }}#services">Support</a>
         <a href="{{ path('sylius_shop_homepage') }}#downloads">Downloads</a>
         <a href="{{ path('sylius_shop_contact_request') }}">Kontakt</a>
-        <span class="cn-utility__market">DE · Deutschland</span>
+        {% include 'shop/layout/header/_market_selector.html.twig' %}
     </div>
 </div>

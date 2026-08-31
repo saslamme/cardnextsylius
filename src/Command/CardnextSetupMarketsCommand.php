@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:cardnext:setup-markets',
-    description: 'Creates/updates the 13 Cardnext country channels, locales, currencies and countries.',
+    description: 'Creates/updates the seven supported Cardnext country channels, locales, currencies and countries.',
 )]
 final class CardnextSetupMarketsCommand extends Command
 {
@@ -44,12 +44,6 @@ final class CardnextSetupMarketsCommand extends Command
                 InputOption::VALUE_NONE,
                 'Validate and show changes without committing them.',
             )
-            ->addOption(
-                'enable-new',
-                null,
-                InputOption::VALUE_NONE,
-                'Enable newly created non-DE channels. Without this option they are created disabled.',
-            )
         ;
     }
 
@@ -57,7 +51,6 @@ final class CardnextSetupMarketsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $dryRun = (bool) $input->getOption('dry-run');
-        $enableNew = (bool) $input->getOption('enable-new');
 
         $stats = [
             'locales_created' => 0,
@@ -107,9 +100,7 @@ final class CardnextSetupMarketsCommand extends Command
 
                     $channel = $newChannel;
                     $channel->setCode($market->channelCode);
-                    $channel->setEnabled(
-                        $market->channelCode === 'CARDNEXT_DE' || $enableNew,
-                    );
+                    $channel->setEnabled($market->enabled);
                     $this->entityManager->persist($channel);
 
                     $created = true;
@@ -181,14 +172,8 @@ final class CardnextSetupMarketsCommand extends Command
                     $changed = true;
                 }
 
-                // Existing non-DE channels are never disabled by this command.
-                // --enable-new may also be used to enable already-created Cardnext markets.
-                if (
-                    $enableNew &&
-                    $market->channelCode !== 'CARDNEXT_DE' &&
-                    !$channel->isEnabled()
-                ) {
-                    $channel->setEnabled(true);
+                if ($channel->isEnabled() !== $market->enabled) {
+                    $channel->setEnabled($market->enabled);
                     $changed = true;
                 }
 
@@ -243,11 +228,7 @@ final class CardnextSetupMarketsCommand extends Command
         if ($dryRun) {
             $io->success('Dry-Run erfolgreich. Es wurden keine Änderungen gespeichert.');
         } else {
-            $io->success(
-                $enableNew
-                    ? 'Cardnext-Märkte eingerichtet. Nicht-DE-Channels wurden aktiviert.'
-                    : 'Cardnext-Märkte eingerichtet. Neue Nicht-DE-Channels bleiben bis zum Launch deaktiviert.',
-            );
+            $io->success('Cardnext-Märkte eingerichtet. Der Aktivstatus wurde mit der zentralen Registry abgeglichen.');
         }
 
         return Command::SUCCESS;

@@ -20,7 +20,25 @@ Die Anwendung folgt grundsätzlich den Sylius-Aggregaten und erweitert deren kon
 
 ### Channels
 
-Die Geschäftsbereiche `CARDNEXT_DE` und `CARDNEXT_AT` werden über Sylius-Channels isoliert. Channel, Locale und Currency sind bei Angebotsanfragen und Angeboten als Snapshot gespeichert. Account-Zugriffe filtern zusätzlich nach dem aktuellen Channel. Canonical Hosts und rechtliche Ausstellerdaten sind deployment- bzw. fachlich freizugebende Konfiguration; sie dürfen nicht aus dem eingehenden Admin-Request abgeleitet werden.
+Die sieben Märkte werden über native Sylius-Channels und deren eindeutigen Hostnamen isoliert:
+
+| Markt | Channel | Host | Locale | Basiswährung |
+|---|---|---|---|---|
+| Deutschland | `CARDNEXT_DE` | `www.cardnext.de` | `de_DE` | EUR |
+| Österreich | `CARDNEXT_AT` | `at.cardnext.de` | `de_AT` | EUR |
+| Danmark | `CARDNEXT_DK` | `dk.cardnext.de` | `da_DK` | DKK |
+| España | `CARDNEXT_ES` | `es.cardnext.de` | `es_ES` | EUR |
+| Italia | `CARDNEXT_IT` | `it.cardnext.de` | `it_IT` | EUR |
+| Nederland | `CARDNEXT_NL` | `nl.cardnext.de` | `nl_NL` | EUR |
+| Sverige | `CARDNEXT_SE` | `se.cardnext.de` | `sv_SE` | SEK |
+
+`CardnextMarketRegistry` ist die zentrale Code-Konfiguration; `app:cardnext:setup-markets` gleicht sie idempotent mit Sylius Locale-, Currency-, Country- und Channel-Datensätzen ab. Sylius' Hostname-Channel-Resolver bestimmt den tatsächlichen Channel – kein Request-Parameter darf ihn überschreiben. Zum Hinzufügen eines Marktes werden Registry, Übersetzung und Matrix ergänzt und anschließend der Setup-/Check-Befehl ausgeführt.
+
+Der Marktumschalter in Desktop- und Mobilheader wechselt Host und Locale. Produkte werden nur erhalten, wenn sie im Ziel-Channel aktiviert sind und eine echte Zielübersetzung besitzen; andernfalls führt der Link sicher zur Ziel-Homepage. Dasselbe Resolver-Ergebnis speist Canonical und gültige hreflang-Alternativen. `/sitemap.xml` wird im aktuellen Host-/Channel-Kontext ausgegeben und enthält keine fremden Hosts.
+
+Alle Hosts müssen per DNS auf dieselbe Installation zeigen und im TLS-Zertifikat enthalten sein. Einzelne DNS-/SAN-Einträge oder Wildcard-DNS/TLS sind möglich; Wildcards sind keine Anwendungsvoraussetzung. Vor Produktion sind insbesondere `dk`, `es`, `it`, `nl` und `se.cardnext.de` einzurichten.
+
+Der Setup-Befehl erfindet keine Produktzuordnungen oder Preise. DKK- und SEK-Channel-Pricings müssen je freigegebenem Produkt explizit in Sylius angelegt werden; es erfolgt keine EUR-Umrechnung. Steuern, Zonen, Versand, Zahlarten und Rechtstexte bleiben getrennte, fachlich freizugebende Konfiguration. Quote-Account-Links und Ausstellerprofile bleiben bis zur Freigabe bewusst nur für DE/AT verfügbar.
 
 ## Angebotsworkflow
 
