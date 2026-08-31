@@ -58,6 +58,7 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 - **Betroffene Dateien:** `.github/workflows/ci_static-checks.yaml`, `.github/workflows/build.yml`, `composer.json`
 - **Umsetzung PR #121:** Composer Validate, Composer Audit und Plattformanforderungen sind blockierend. Twig, YAML und Container werden auf den tatsächlichen Projektpfaden geprüft; PHPStan verwendet deterministisch `phpstan.dist.neon` mit 1 GiB Speicher. Die MySQL-Testinstallation validiert anschließend Schema und Migrationsstatus; die bewusst unmanaged `cardnext_quote_sequence` ist aus ORM-Schemavergleichen ausgeschlossen.
 - **Noch offen:** Repository-weite ECS-Bereinigung und anschließend ECS als Required Gate (separater mechanischer Folge-PR; aktuell rund 48 Bestandsfunde).
+- **Gate-Stand nach PHPStan-Audit:** Composer-, Plattform-, Symfony-Lint-, PHPStan- und Schema-Gates sind aktiv. ECS bleibt das letzte ausstehende Coding-Standard-Gate.
 - **Risiko:** Defekte Templates/Config, Coding-Standard- und Dependency-Security-Regressionen können grün mergen. Markdown-only Audit-PRs triggern den Build wegen `*.md`-Ignore nicht.
 - **Lösung:** Gates mit den im README genannten exakten Pfaden hinzufügen; `composer audit` blockierend; ECS als eigener Gate nach separatem Cleanup; Schema Validate mit MySQL-Service.
 - **Acceptance Criteria:** Jeder Gate wird auf PRs ausgeführt und Fehler blockieren; keine `continue-on-error`-Ausnahme für Security.
@@ -136,6 +137,7 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 - **Risiko:** Lokale/CI-Kommandos divergieren; Strict Gate kann nicht aktiviert werden.
 - **Umsetzung PR #121:** Der kanonische PHPStan-Befehl lädt `phpstan.dist.neon` und damit alle versionierten Pfade mit einem expliziten 1-GiB-Limit. Das Root-Package besitzt valide proprietäre Metadaten; CI installiert exakt den committed Lockfile-Stand.
 - **Noch offen:** Der reproduzierbare Voll-Lauf meldet 441 Bestandsfehler, verteilt auf Produktionscode, Konfigurations-Bootstrap und Tests (insbesondere fehlende Iterable-/Generic-Typen, Mixed-Zugriffe und veraltete Sylius-Typreferenzen). Ein fokussierter Folge-PR muss diese gruppiert an der Ursache beheben; es wurde weder eine Baseline noch eine breite Ignore-Liste erzeugt.
+- **Audit PR #122:** Der unveränderte Level-9-Voll-Lauf bestätigte 441 Findings (299 in `src/`, 142 in `tests/`). Nach explizitem Laden der bereits installierten Doctrine- und Webmozart-Assert-Extensions sowie der Korrektur einer veralteten Sylius-Calculator-Schnittstelle verbleiben 414 Findings (272 in `src/`, 142 in `tests/`). Da die Bereinigung mehrere hundert fachlich zu prüfende Änderungen erfordert, wird sie gemäß Review-Sicherheitsvorgabe auf Folge-PRs für Domain/Doctrine, Import/Search, Symfony/Application-Services und Tests aufgeteilt. Level, Analysepfade und Gates bleiben unverändert; es gibt weder Baseline noch Ignore-Regeln.
 - **Acceptance Criteria:** beide Befehle reproduzierbar und grün.
 - **Tests:** Composer validate strict und PHPStan aus sauberem Checkout.
 
