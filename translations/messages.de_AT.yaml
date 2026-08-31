@@ -1,3 +1,311 @@
 cardnext:
   market:
     select: Land auswählen
+  account:
+    quotes: Angebote
+    maintenance_contracts: Wartungsverträge
+  maintenance_contract:
+    printer: Kartendrucker
+    serial: Seriennummer
+    reference: Vertragsnummer
+    starts: Beginn
+    ends: Ende
+    status:
+      label: Status
+      active: Aktiv
+      upcoming: Bevorstehend
+      expired: Abgelaufen
+    empty:
+      title: Keine Wartungsverträge
+      text: Für Ihr Kundenkonto sind aktuell keine Wartungsverträge hinterlegt.
+    admin:
+      menu: Wartungsverträge
+      source_notice: Die Vertragsdaten werden aus dem ERP synchronisiert. Nur die interne Notiz wird lokal gepflegt.
+      sync: Jetzt synchronisieren
+  order:
+    configured_product: Konfiguriertes Produkt
+    configured_items: Konfigurierte Artikel
+    position: Position
+    positions: Positionen
+    production_time: Produktionszeit
+    working_days: ca. %days% Arbeitstage
+  admin:
+    product_create:
+      standard: Standardprodukt
+      variant: Variantenprodukt
+      configuration: Konfigurationsprodukt
+  configurator:
+    lead_time:
+      preselected: Vorausgewählt
+      preselected_help: Diese Lieferzeit ist beim Öffnen des Konfigurators automatisch ausgewählt.
+    fixed_numeric_help: Sind Minimum und Maximum identisch, wird der Wert im Frontend fest vorgegeben.
+    title: Konfiguratoren
+    form:
+      title: Produkt konfigurieren
+      intro: Der Preis aktualisiert sich automatisch.
+    section:
+      basic: Basis
+      create: Bereich anlegen
+      empty: Noch keine Bereiche vorhanden.
+    quantity: Menge
+    choose: Bitte auswählen
+    yes: Ja
+    upload_later: Der Dateiupload erfolgt nach der Bestellung.
+    production_time: Produktionszeit
+    working_days: Arbeitstage
+    summary: Ihre Konfiguration
+    incomplete: Unvollständig
+    total: Gesamtpreis
+    placeholder: Füllen Sie die Pflichtfelder aus, um den Preis automatisch zu berechnen.
+    per_piece: pro Stück
+    shipping_note: Zuzüglich Versand und ggf. gesetzlicher Umsatzsteuer.
+    add_to_cart: In den Warenkorb
+    price_details: Preisdetails
+    awaiting_price: Preis wird berechnet
+    assurance:
+      calculation: Serverseitig und verbindlich kalkuliert
+      checkout: Sichere Bestellabwicklung
+    create: Konfigurator anlegen
+    edit: Bearbeiten
+    delete: Löschen
+    delete_confirm: Wirklich löschen?
+    delete_product_confirm: Dieses Konfigurationsprodukt einschließlich Konfigurator, Struktur und Preisregeln wird dauerhaft gelöscht.
+    save: Speichern
+    name: Name
+    code: Code
+    product: Produkt
+    status: Status
+    enabled: Aktiv
+    disabled: Inaktiv
+    preselected: Vorausgewählt
+    preselected_help: Dieser Wert wird beim Öffnen des Konfigurators automatisch ausgewählt.
+    sections: Bereiche
+    fields: Felder
+    values: Werte
+    type: Typ
+    required: Pflichtfeld
+    position: Position
+    description: Beschreibung
+    help: Hilfetext
+    step: Schrittweite
+    color: Farbe
+    color_icon: Farbe / Icon
+    search: Name oder Code suchen
+    all_statuses: Alle Status
+    filter: Filtern
+    empty: Noch keine Konfiguratoren vorhanden.
+    from: ab
+    global: Global / alle Channels
+    source: Quelle
+    currency: Währung
+    charge: Preisdimension
+    tier: Mengenstaffel
+    amount: Betrag
+    minimum_quantity: Mindestmenge
+    maximum_quantity: Höchstmenge (leer = unbegrenzt)
+    multiplier_field: Multiplikatorfeld
+    percentage_base: Prozentbasis
+    channel_help: Eine Channel-spezifische Preisregel überschreibt die globale Regel derselben Preisdimension.
+    tabs:
+      master: Stammdaten
+      structure: Struktur
+      prices: Preise
+    field:
+      create: Feld anlegen
+      empty: Noch keine Felder vorhanden.
+    value:
+      create: Wert anlegen
+    price:
+      create: Preisregel anlegen
+      base: BASIS
+      empty: Noch keine Preisregeln vorhanden.
+    field_type:
+      single_choice: Einzelauswahl
+      multiple_choice: Mehrfachauswahl
+      boolean: Ja/Nein
+      integer: Ganzzahl
+      decimal: Dezimalzahl
+      text: Text
+      quantity: Menge
+      upload: Datei
+    price_type:
+      unit: Preis pro Stück
+      fixed: Einmaliger Betrag
+      percent: Prozentualer Zuschlag
+    multiplier:
+      none: Kein Multiplikator
+      quantity: Menge
+      field_value: Feldwert
+    percentage_base_base: Basispreis
+    percentage_base_options: Optionen
+    percentage_base_subtotal: Zwischensumme
+    flash:
+      created: Konfigurator wurde angelegt.
+      updated: Konfigurator wurde aktualisiert.
+      deleted: Konfigurationsprodukt wurde vollständig gelöscht.
+      delete_blocked: Die Löschung wurde zum Schutz verknüpfter Produkt- oder Bestelldaten abgebrochen.
+  configurator_path:
+    label: Konfigurator-URL
+    help: Relativer Pfad der eigenständigen Konfigurator-Seite, z. B. plastikkarten/plastikkarten-bedrucken. Ohne Domain und ohne führenden Schrägstrich.
+    required: Für ein Konfigurationsprodukt muss in jeder Übersetzung eine Konfigurator-URL eingetragen sein.
+    invalid: Der Pfad darf nur gültige Pfadsegmente enthalten und keine Domain, Query, Fragmente, „..“ oder leeren Segmente verwenden.
+    unique: Diese Konfigurator-URL wird in dieser Sprache bereits verwendet.
+    configurable_only: Eine Konfigurator-URL ist nur für Konfigurationsprodukte zulässig.
+  configurator_page:
+    kicker: Konfigurationsprodukt
+    breadcrumb:
+      home: Start
+    stage:
+      kicker: Ihre Konfiguration
+      title: Produkt konfigurieren
+      intro: Stellen Sie Ihr Produkt zusammen und lassen Sie den Preis unverbindlich berechnen.
+    trust:
+      calculation: Transparente Kalkulation
+      production: Professionelle Fertigung
+      support: Persönliche Beratung
+    process:
+      title: So funktioniert Ihre Bestellung individuell bedruckter Plastikkarten
+      step_1:
+        title: Konfigurieren
+        description: Wählen Sie Material, Druck, Menge und Produktionszeit für Ihre Karten aus.
+      step_2:
+        title: Bestellen
+        description: Prüfen Sie Ihre Konfiguration und schließen Sie die Bestellung bequem online ab.
+      step_3:
+        title: Druckdaten
+        description: Nach der Bestellung übermitteln Sie Ihre Druckdaten für die weitere Bearbeitung.
+      step_4:
+        title: Freigabe
+        description: Sie erhalten einen Korrekturabzug und geben die Produktion erst dann frei.
+      step_5:
+        title: Versand
+        description: Nach Produktion und Qualitätskontrolle werden Ihre Karten sicher versendet.
+    content:
+      kicker: Produktinformationen
+  quote:
+    cart: Angebotskorb
+    header: Angebot (%count%)
+    request: Angebotsanfrage
+    intro: Stellen Sie Ihre gewünschten Produkte zusammen. Wir prüfen Preise, Verfügbarkeit und Projektanforderungen und erstellen Ihnen anschließend ein individuelles Angebot.
+    add: Zum Angebot hinzufügen
+    add_product: '%product% zum Angebotskorb hinzufügen'
+    added: Das Produkt wurde zum Angebotskorb hinzugefügt.
+    invalid_item: Das Produkt ist in diesem Verkaufskanal nicht für eine Angebotsanfrage verfügbar.
+    channel_reset: Der Angebotskorb wurde wegen des Verkaufskanalwechsels zurückgesetzt.
+    empty: Ihr Angebotskorb ist noch leer.
+    empty_help: Fügen Sie Produkte hinzu, für die Sie ein individuelles Angebot erhalten möchten.
+    discover: Produkte entdecken
+    home: Startseite
+    sku: Artikelnummer
+    quantity: Menge
+    update: Aktualisieren
+    remove: Entfernen
+    price_note: 'Unverbindliche Preisangabe: Shoppreise dienen als Orientierung. Das finale Angebot berücksichtigt Menge, Verfügbarkeit und Projektumfang.'
+    image_pending: Produktbild folgt
+    summary: Zusammenfassung
+    products: Produkte
+    orientation_total: Orientierungswert
+    unit: Stück
+    total: Gesamt
+    summary_note: Der endgültige Preis wird individuell für Ihre Anfrage ermittelt.
+    continue: Anfrage vervollständigen
+    submit: Angebotsanfrage absenden
+    validation:
+      privacy: Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.
+      required_fields: Bitte prüfen Sie die markierten Pflichtfelder.
+      submission: Die Anfrage konnte nicht abgesendet werden. Bitte laden Sie die Seite neu und versuchen Sie es erneut.
+    form:
+      title: Anfrageformular
+      company: Unternehmen
+      address: Adresse
+      project: Projektinformationen
+      support: Zusätzliche Unterstützung
+      message_placeholder: z. B. 250 Mitarbeiterausweise, Einführung im Oktober, Drucker inklusive Verbrauchsmaterial und Einweisung.
+      privacy_before: Ich habe die
+      privacy_link: Datenschutzerklärung
+      privacy_after: ' gelesen und bin mit der Verarbeitung meiner Angaben zur Bearbeitung der Anfrage einverstanden.'
+    confirmation:
+      title: Vielen Dank für Ihre Angebotsanfrage.
+      reference: 'Ihre Referenz:'
+      body: Wir prüfen Ihre Anfrage und melden uns bei Ihnen.
+    admin:
+      menu: Angebote
+    status:
+      new: Neu
+      in_progress: In Bearbeitung
+      question: Rückfrage
+      closed: Geschlossen
+      sent: Offen
+      accepted: Angenommen
+      rejected: Abgelehnt
+      superseded: Ersetzt
+Company: Firma
+Contact name: Ansprechpartner
+Email: E-Mail
+Phone: Telefon
+Customer number: Kundennummer
+Street: Straße
+House number: Hausnummer
+Postal code: PLZ
+City: Ort
+Country code: Land
+Project reference: Projektreferenz
+Requested delivery date: Gewünschter Liefertermin
+Customer purchase order number: Interne Bestellnummer
+Message: Bemerkung
+Needs advice: Ich benötige Beratung zur Produktauswahl.
+Needs compatibility check: Bitte prüfen Sie die ausgewählten Produkte auf Kompatibilität.
+Privacy consent: Datenschutz
+quote_public:
+  title: Angebot
+  version: Version
+  date: Angebotsdatum
+  valid_until: Gültig bis
+  expired: Dieses Angebot ist nicht mehr gültig.
+  already_accepted: Dieses Angebot wurde bereits angenommen am
+  already_rejected: Dieses Angebot wurde abgelehnt.
+  superseded: Dieses Angebot wurde durch eine neuere Version ersetzt.
+  company: Firma
+  contact: Ansprechpartner
+  project: Projekt
+  item: Position
+  quantity: Menge
+  unit_price: Einzelpreis netto
+  net: Netto
+  shipping: Versand
+  service: Service
+  tax: MwSt.
+  total: Gesamtsumme
+  delivery: Lieferbedingungen
+  payment: Zahlungsbedingungen
+  note: Kundenhinweis
+  pdf: Angebot als PDF herunterladen
+  accept: Angebot annehmen
+  reject: Angebot ablehnen
+  name: Name
+  reason: Grund der Ablehnung (optional)
+  binding: Ich nehme dieses Angebot verbindlich an.
+  thanks: Vielen Dank.
+  accept_success: Ihre Annahme wurde erfolgreich übermittelt.
+  reject_success: Ihre Ablehnung wurde erfolgreich übermittelt.
+quote_mail:
+  greeting: Guten Tag %name%,
+  offer: 'vielen Dank für Ihre Anfrage. Ein neues Angebot steht in Ihrem Kundenkonto bereit. Angebot: %number%.'
+  view: Angebot im Kundenkonto ansehen
+  attachment: Bitte melden Sie sich mit Ihrem Kundenkonto an.
+  accepted_customer: Wir bestätigen den Eingang Ihrer Angebotsannahme.
+  accepted_internal: Angebot %number% v%version% wurde angenommen.
+  rejected_customer: Wir bestätigen den Eingang Ihrer Angebotsablehnung.
+  rejected_internal: Angebot %number% v%version% wurde abgelehnt.
+  request_subject: Ihre Angebotsanfrage %number% bei Cardnext
+  offer_subject: Ihr Angebot %number% von Cardnext
+  accepted_subject: Bestätigung Ihrer Angebotsannahme
+  rejected_subject: Bestätigung Ihrer Angebotsablehnung
+  personal_offer: Ihr persönliches Angebot
+  sign_in: Bitte melden Sie sich mit Ihrem Kundenkonto an.
+  signoff: Wir freuen uns auf Ihre Rückmeldung.
+  request_title: Vielen Dank für Ihre Angebotsanfrage
+  request_greeting: Guten Tag %name%,
+  request_reference: 'Ihre Referenz: %number%'
+  request_body: Ihre Anfrage umfasst %count% Positionen. Wir prüfen Preise, Verfügbarkeit und Ihre Angaben und melden uns anschließend bei Ihnen.
+  regards: Viele Grüße – Ihr Cardnext-Team

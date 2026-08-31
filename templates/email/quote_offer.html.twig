@@ -1,4 +1,3 @@
-{% set is_de = quote.localeCode starts with 'de' %}
 <!doctype html>
 <html lang="{{ quote.localeCode|replace({'_':'-'}) }}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ 'quote_public.title'|trans }} {{ quote.number }}</title></head>
@@ -9,7 +8,7 @@
     </div>
     <div style="overflow:hidden;border:1px solid #e4e7ec;border-radius:10px;background:#ffffff;">
         <div style="padding:30px;border-bottom:1px solid #e4e7ec;">
-            <div style="margin-bottom:7px;color:#f04b23;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">{{ is_de ? 'Ihr persönliches Angebot' : 'Your personal quote' }}</div>
+            <div style="margin-bottom:7px;color:#f04b23;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">{{ 'quote_mail.personal_offer'|trans }}</div>
             <h1 style="margin:0 0 10px;font-size:25px;line-height:1.2;color:#05053f;">{{ 'quote_mail.greeting'|trans({'%name%':quote.customerContactName}) }}</h1>
             <p style="margin:0;color:#667085;font-size:14px;">{{ 'quote_mail.offer'|trans({'%number%':quote.number}) }}</p>
         </div>
@@ -22,10 +21,10 @@
         {% if quote.validUntil %}<div style="padding:20px 30px;color:#667085;font-size:13px;border-bottom:1px solid #e4e7ec;"><strong style="color:#05053f;">{{ 'quote_public.valid_until'|trans }}:</strong> {{ quote.validUntil|format_date(locale=quote.localeCode) }}</div>{% endif %}
         <div style="padding:28px 30px 30px;text-align:center;">
             <a href="{{ accountUrl|e('html_attr') }}" style="display:inline-block;padding:14px 24px;border-radius:6px;background:#f04b23;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;">{{ 'quote_mail.view'|trans }}</a>
-            <p style="margin:18px 0 0;color:#7b8494;font-size:12px;">Bitte melden Sie sich mit Ihrem Kundenkonto an.</p>
+            <p style="margin:18px 0 0;color:#7b8494;font-size:12px;">{{ 'quote_mail.sign_in'|trans }}</p>
         </div>
     </div>
-    <div style="padding:22px 6px 0;color:#8a93a3;font-size:11px;line-height:1.65;text-align:center;"><strong style="color:#667085;">Cardnext</strong><br>{{ is_de ? 'Wir freuen uns auf Ihre Rückmeldung.' : 'We look forward to hearing from you.' }}</div>
+    <div style="padding:22px 6px 0;color:#8a93a3;font-size:11px;line-height:1.65;text-align:center;"><strong style="color:#667085;">Cardnext</strong><br>{{ 'quote_mail.signoff'|trans }}</div>
 </div>
 </body>
 </html>
