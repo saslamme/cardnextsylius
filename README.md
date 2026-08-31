@@ -85,7 +85,7 @@ php bin/console doctrine:schema:validate
 
 ```bash
 composer validate --strict --no-check-version
-composer audit
+composer audit --locked --abandoned=report
 composer check-platform-reqs
 php bin/console about
 php bin/console lint:container
@@ -100,6 +100,8 @@ php bin/console debug:router
 ```
 
 ECS prüft den Application Code unter `src/` mit dem Sylius Labs Coding Standard und ist ebenso wie PHPStan ein blockierendes CI-Gate. Formatbereinigungen gehören in einen eigenen mechanischen PR. PHPStan soll über die versionierte `phpstan.dist.neon` deterministisch laufen; Fehler werden an der Ursache behoben und nicht durch breite Ignore-Listen verborgen.
+
+Der Composer Audit prüft den committed Lockfile-Stand: Security Advisories blockieren den Build, während aufgegebene Pakete sichtbar gemeldet und separat als Dependency-Maintenance bearbeitet werden.
 
 ## Deployment
 

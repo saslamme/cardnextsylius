@@ -144,6 +144,15 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 - **Acceptance Criteria:** beide Befehle reproduzierbar und grün.
 - **Tests:** Composer validate strict und PHPStan aus sauberem Checkout.
 
+### P2-008 — Abandoned Composer Dependencies
+
+- **ID/Priorität/Status/Bereich:** P2-008 / P2 / bestätigt / Dependency Maintenance
+- **Aktueller Audit-Stand:** 0 Security Advisories; 5 aufgegebene Pakete: `behat/transliterator`, `composer/package-versions-deprecated`, `friends-of-behat/mink`, `friends-of-behat/mink-browserkit-driver` und `php-http/message-factory`.
+- **Dependency Tree:** `friends-of-behat/mink` und `friends-of-behat/mink-browserkit-driver` sind direkte Development-Dependencies. Die übrigen Pakete kommen transitiv über Sylius bzw. das Sylius Adyen Plugin.
+- **Einordnung:** Ohne Security Advisory ist dies kein P0/P1-Security-Finding. Der blockierende Audit meldet die Pakete mit `--abandoned=report`, ohne echte Vulnerabilities zu maskieren.
+- **Lösung:** Direkte und transitive Herkunft bei künftigen Sylius-/Plugin-Upgrades erneut prüfen und feststellen, welche Pakete dadurch entfallen. Keine riskanten Einzelupgrades gegen den Sylius Dependency Tree erzwingen.
+- **Acceptance Criteria:** Alle aufgegebenen Pakete sind entweder durch kompatible Maintained Packages ersetzt oder durch reguläre Sylius-/Plugin-Upgrades aus dem Lockfile verschwunden; Security Advisories bleiben jederzeit blockierend.
+
 ## P3
 
 ### P3-001 — Architekturentscheidungen dokumentieren
