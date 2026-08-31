@@ -9,10 +9,12 @@ use Symfony\Component\Yaml\Yaml;
 
 final class MarketPresentationArchitectureTest extends TestCase
 {
-    public function testDesktopAndMobileHeaderExposeCentralMarketSelector(): void
+    public function testUtilityBarAndMobileHeaderExposeCentralMarketSelector(): void
     {
         $header = (string) file_get_contents(__DIR__ . '/../../templates/shop/layout/header/content.html.twig');
-        self::assertSame(2, substr_count($header, "include 'shop/layout/header/_market_selector.html.twig'"));
+        self::assertSame(1, substr_count($header, "include 'shop/layout/header/_market_selector.html.twig'"));
+        $utilityBar = (string) file_get_contents(__DIR__ . '/../../templates/shop/layout/header/top_bar.html.twig');
+        self::assertSame(1, substr_count($utilityBar, "include 'shop/layout/header/_market_selector.html.twig'"));
         $selector = (string) file_get_contents(__DIR__ . '/../../templates/shop/layout/header/_market_selector.html.twig');
         self::assertStringContainsString('cardnext_market_links()', $selector);
         self::assertStringNotContainsString('https://', $selector);
