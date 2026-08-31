@@ -1,4 +1,128 @@
 cardnext:
+  storefront:
+    homepage:
+      meta_title: 'Cardnext – Kartendrucker, RFID & Auto-ID'
+      hero:
+        kicker: 'Professionale Identifikationstechnik'
+        title: 'Tecnologia für sichere Identitäten.'
+        text: 'Kartendrucker, RFID-Leser, Plastikkarten und Auto-ID-Lösungen für Unternehmen, Integratoren und professionelle Anwender.'
+        products: 'Prodotti entdecken'
+        consulting: 'Beratung anfragen'
+        visual_label: 'Kartendrucker, RFID-Leser und Plastikkarten'
+        image_alt: 'Professionaler Kartendrucker mit Plastikkarten am Arbeitsplatz'
+      categories:
+        title: 'Categorie popolari'
+      service:
+        kicker: 'Più dell’hardware'
+        title: 'Tecnologiaversorgung mit persönlichem Service.'
+        text: 'Wir liefern nicht nur das Produkt. Wir helfen bei Auswahl, Kompatibilität und Konfiguration – und der zuverlässigen Versorgung mit passendem Zubehör und Verbrauchsmaterial.'
+        button: 'Mehr über unseren Service'
+        image_alt: 'Consulenza personale zu professioneller Identifikationstechnik'
+        items:
+          advice:
+            title: 'Auswahl & Beratung'
+            text: 'Wir finden die passende Lösung für Ihren Bedarf.'
+          configuration:
+            title: 'Konfiguration'
+            text: 'Kompatibel und optimal eingestellt.'
+          projects:
+            title: 'Soluzioni di progetto'
+            text: 'Individuelle Konzepte für Ihr Unternehmen.'
+          consumables:
+            title: 'Verbrauchsmaterial'
+            text: 'Farbbänder, Karten und Reinigungskarten direkt verfügbar.'
+      products:
+        kicker: 'Ausgewählte Prodotti'
+        title: 'Professionale Hardware.'
+        empty: 'Noch keine Prodotti für diesen Verkaufskanal veröffentlicht.'
+      industries:
+        kicker: 'Ambiti di applicazione'
+        title: 'Tecnologia, die zu Ihrem Einsatz passt.'
+        text: 'Von der Mitarbeiterausweiserstellung bis zur RFID-gestützten Identifikation: Prodotti und Zubehör werden nach Anwendung gedacht, nicht nur nach Hersteller.'
+        link: 'Lösungen ansehen'
+        cards:
+          title: 'Ausweise & Kartenausgabe'
+          text: 'Kartendrucker, Farbbänder, Plastikkarten und Zubehör für Mitarbeiterausweise, Besucherkarten und Mitgliedsausweise.'
+          image_alt: 'Mitarbeiterausweis in einem professionellen Kartenhalter'
+        identification:
+          title: 'Sichere Identifikation'
+          text: 'RFID-Leser, Smartcards und Identmedien für Login, Zutritt und eindeutige Benutzeridentifikation.'
+          image_alt: 'Kontaktlose Identifikation mit RFID-Karte an einem Zutrittsleser'
+        logistics:
+          title: 'Lager & Logistik'
+          text: 'RFID- und Barcode-Tecnologia für Erfassung, Rückverfolgbarkeit und effiziente Materialbewegungen.'
+          image_alt: 'Barcode-Erfassung in einem professionellen Lager'
+      why:
+        kicker: 'Perché Cardnext'
+        title: 'Technik. Know-how. Verlässlichkeit.'
+        text: 'Ein fokussierter Partner für professionelle Identifikations- und Auto-ID-Technik – mit direkter Beratung und einem klar strukturierten Produktsortiment.'
+        items:
+          specialized:
+            title: 'Assortimento specializzato'
+            text: 'Focus su stampa di carte, RFID, identificazione e tecnologia Auto-ID professionale.'
+          independent:
+            title: 'Indipendenza dai produttori'
+            text: 'Confrontate i prodotti di produttori affermati in base all’applicazione.'
+          compatibility:
+            title: 'Compatibilità sotto controllo'
+            text: 'Accessori e materiali di consumo sono abbinati tecnicamente ai dispositivi adatti.'
+          personal:
+            title: 'Contatto personale'
+            text: 'Per progetti e consulenza avrete un referente diretto.'
+      cta:
+        title: 'Nicht sicher, welches Produkt passt?'
+        text: 'Wir helfen Ihnen bei der Auswahl.'
+        button: 'Jetzt beraten lassen'
+      promises:
+        shipping:
+          title: 'Spedizione rapida'
+          text: 'Für verfügbare Lagerartikel'
+        advice:
+          title: 'Consulenza personale'
+          text: 'Vor und nach dem Kauf'
+        payment:
+          title: 'Pagamento sicuro'
+          text: 'Professionale Zahlungsabwicklung'
+        projects:
+          title: 'Soluzioni di progetto'
+          text: 'Individuelle Lösungen auf Anfrage'
+    header:
+      home: 'Cardnext Startseite'
+      search_label: 'Prodotti suchen'
+      search_placeholder: 'Prodotti, Hersteller oder Artikelnummer suchen'
+      search_submit: 'Suche starten'
+      account: 'Il mio account'
+      login: 'Accedi'
+      open_navigation: 'Navigation öffnen'
+      close_navigation: 'Navigation schließen'
+      mobile_navigation: 'Mobile Navigation'
+      cart: 'Carrello'
+      contact_advice: 'Kontakt & Beratung'
+      product_categories: 'Produktkategorien'
+      show_all: 'Alle anzeigen'
+      all_category: 'Alle %category%'
+      brands: 'Marchi'
+      support: 'Support'
+      downloads: 'Downloads'
+      contact: 'Contatti'
+    footer:
+      description: 'Professionale Lösungen für Kartendruck, RFID, Zeiterfassung, Barcode-Systeme und Ausweiszubehör.'
+      products: 'Prodotti'
+      solutions: 'Soluzioni'
+      service: 'Servizio'
+      company: 'Cardnext'
+      id_creation: 'Ausweiserstellung'
+      access_control: 'Zutrittskontrolle'
+      time_tracking: 'Zeiterfassung'
+      rfid_identification: 'RFID-Identifikation'
+      advice: 'Contatti'
+      about: 'Über uns'
+      legal: 'Rechtliches'
+      imprint: 'Impressum'
+      privacy: 'Datenschutz'
+      terms: 'AGB'
+      back_to_top: 'Nach oben'
+      language: 'Italiano'
   market:
     select: Seleziona il paese
   account:

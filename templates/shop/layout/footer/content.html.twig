@@ -1,28 +1,33 @@
+{% set currentMarket = cardnext_current_market() %}
+{% set footerTaxons = [
+    {'code': 'card_printers'}, {'code': 'rfid_readers'}, {'code': 'plastic_cards'},
+    {'code': 'id_accessories'}, {'code': 'barcode_scanners'}
+] %}
 <footer class="cn-footer">
     <div class="cn-container">
         <div class="cn-footer__grid">
             <div class="cn-footer__brand">
-                <a class="cn-footer__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="Cardnext Startseite"><img src="{{ asset('cardnext/cardnext.svg') }}" width="180" height="35" alt="Cardnext"></a>
-                <p>Professionelle Lösungen für Kartendruck, RFID, Zeiterfassung, Barcode-Systeme und Ausweiszubehör.</p>
+                <a class="cn-footer__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ 'cardnext.storefront.header.home'|trans }}"><img src="{{ asset('cardnext/cardnext.svg') }}" width="180" height="35" alt="Cardnext"></a>
+                <p>{{ 'cardnext.storefront.footer.description'|trans }}</p>
             </div>
-            <div><div class="cn-footer__title">Produkte</div><ul class="cn-footer__links">
-                <li><a href="{{ path('sylius_shop_product_index', {slug: 'kartendrucker'}) }}">Kartendrucker</a></li><li><a href="{{ path('sylius_shop_product_index', {slug: 'rfid-leser'}) }}">RFID-Leser</a></li><li><a href="{{ path('sylius_shop_product_index', {slug: 'plastikkarten'}) }}">Plastikkarten</a></li><li><a href="{{ path('sylius_shop_product_index', {slug: 'kartenzubehoer'}) }}">Kartenzubehör</a></li><li><a href="{{ path('sylius_shop_product_index', {slug: 'barcode-scanner'}) }}">Barcode</a></li>
+            <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.products'|trans }}</div><ul class="cn-footer__links">
+                {% for item in footerTaxons %}{% set taxon = cardnext_taxon_by_code(item.code) %}{% if taxon %}<li><a href="{{ path('sylius_shop_product_index', {slug: taxon.slug, _locale: app.request.locale}) }}">{{ taxon.name }}</a></li>{% endif %}{% endfor %}
             </ul></div>
-            <div><div class="cn-footer__title">Lösungen</div><ul class="cn-footer__links">
-                <li><a href="{{ path('sylius_shop_homepage') }}#solutions">Ausweiserstellung</a></li><li><a href="{{ path('sylius_shop_homepage') }}#solutions">Zutrittskontrolle</a></li><li><a href="{{ path('sylius_shop_homepage') }}#solutions">Zeiterfassung</a></li><li><a href="{{ path('sylius_shop_homepage') }}#solutions">RFID-Identifikation</a></li>
+            <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.solutions'|trans }}</div><ul class="cn-footer__links">
+                <li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.id_creation'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.access_control'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.time_tracking'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.rfid_identification'|trans }}</a></li>
             </ul></div>
-            <div><div class="cn-footer__title">Service</div><ul class="cn-footer__links">
-                <li><a href="{{ path('sylius_shop_contact_request') }}">Beratung</a></li><li><a href="{{ path('sylius_shop_homepage') }}#downloads">Downloads</a></li><li><a href="{{ path('sylius_shop_cart_summary') }}">Warenkorb</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">Kontakt</a></li>
+            <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.service'|trans }}</div><ul class="cn-footer__links">
+                <li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.footer.advice'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#downloads">{{ 'cardnext.storefront.header.downloads'|trans }}</a></li><li><a href="{{ path('sylius_shop_cart_summary') }}">{{ 'cardnext.storefront.header.cart'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>
             </ul></div>
-            <div><div class="cn-footer__title">Cardnext</div><ul class="cn-footer__links">
-                <li><a href="{{ path('sylius_shop_homepage') }}#company">Über uns</a></li><li><a href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}">Marken</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">Kontakt</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">Mein Konto</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">Anmelden</a></li>{% endif %}
+            <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.company'|trans }}</div><ul class="cn-footer__links">
+                <li><a href="{{ path('sylius_shop_homepage') }}#company">{{ 'cardnext.storefront.footer.about'|trans }}</a></li><li><a href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}">{{ 'cardnext.storefront.header.brands'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">{{ 'cardnext.storefront.header.account'|trans }}</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">{{ 'cardnext.storefront.header.login'|trans }}</a></li>{% endif %}
             </ul></div>
         </div>
         <div class="cn-footer__bottom"><span>© {{ 'now'|date('Y') }} Cardnext</span>
-            <nav class="cn-footer__legal cardnext-footer__legal" aria-label="Rechtliches">
-                <a href="{{ path('cardnext_shop_legal_imprint', {'_locale': app.request.locale}) }}">Impressum</a>
-                <a href="{{ path('cardnext_shop_legal_privacy', {'_locale': app.request.locale}) }}">Datenschutz</a>
-                <a href="{{ path('cardnext_shop_legal_terms', {'_locale': app.request.locale}) }}">AGB</a>
-            </nav><span>Deutschland · Deutsch &nbsp;&nbsp; <a href="#top">Nach oben ↑</a></span></div>
+            <nav class="cn-footer__legal cardnext-footer__legal" aria-label="{{ 'cardnext.storefront.footer.legal'|trans }}">
+                <a href="{{ path('cardnext_shop_legal_imprint', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.imprint'|trans }}</a>
+                <a href="{{ path('cardnext_shop_legal_privacy', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.privacy'|trans }}</a>
+                <a href="{{ path('cardnext_shop_legal_terms', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.terms'|trans }}</a>
+            </nav><span>{% if currentMarket %}{{ currentMarket.countryDisplayName }} · {{ 'cardnext.storefront.footer.language'|trans }} &nbsp;&nbsp;{% endif %}<a href="#top">{{ 'cardnext.storefront.footer.back_to_top'|trans }} ↑</a></span></div>
     </div>
 </footer>

@@ -7,7 +7,7 @@
         data-bs-toggle="offcanvas"
         data-bs-target="#offcanvasCart"
         aria-controls="offcanvasCart"
-        aria-label="Warenkorb"
+        aria-label="{{ 'cardnext.storefront.header.cart'|trans }}"
         {{ sylius_test_html_attribute('cart-button') }}
     >
         <span class="cn-shop-header__action-icon">
@@ -22,6 +22,6 @@
                 </span>
             {% endif %}
         </span>
-        <span class="cn-shop-header__action-label">Warenkorb</span>
+        <span class="cn-shop-header__action-label">{{ 'cardnext.storefront.header.cart'|trans }}</span>
     </button>
 </div>

@@ -1,7 +1,7 @@
 <header class="cardnext-header cn-shop-header" data-cardnext-header>
     <div class="cardnext-container cn-shop-header__inner">
         <div class="cn-shop-header__top">
-            <a class="cn-shop-header__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="Cardnext Startseite">
+            <a class="cn-shop-header__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ 'cardnext.storefront.header.home'|trans }}">
                 <img src="{{ asset('cardnext/cardnext.svg') }}" width="184" height="36" alt="Cardnext">
             </a>
 
@@ -13,7 +13,7 @@
                 data-cn-smart-search-form
                 data-cn-suggest-url="{{ path('cardnext_shop_search_suggest', {'_locale': app.request.locale}) }}"
             >
-                <label class="visually-hidden" for="cn-header-search-input">Produkte suchen</label>
+                <label class="visually-hidden" for="cn-header-search-input">{{ 'cardnext.storefront.header.search_label'|trans }}</label>
 
                 <div class="cn-shop-header__search-box">
                     <input
@@ -21,16 +21,16 @@
                         class="cn-shop-header__search-input"
                         type="search"
                         name="q"
-                        placeholder="Produkte, Hersteller oder Artikelnummer suchen"
+                        placeholder="{{ 'cardnext.storefront.header.search_placeholder'|trans }}"
                         autocomplete="off"
-                        aria-label="Produkte suchen"
+                        aria-label="{{ 'cardnext.storefront.header.search_label'|trans }}"
                         data-cn-smart-search-input
                     >
 
                     <button
                         class="cn-shop-header__search-button"
                         type="submit"
-                        aria-label="Suche starten"
+                        aria-label="{{ 'cardnext.storefront.header.search_submit'|trans }}"
                     >
                         <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="6.5"/>
@@ -44,9 +44,9 @@
 
             <div class="cn-shop-header__actions">
                 {% if is_granted('ROLE_USER') %}
-                    <a class="cn-shop-header__action" href="{{ path('sylius_shop_account_dashboard') }}" aria-label="Mein Konto">
+                    <a class="cn-shop-header__action" href="{{ path('sylius_shop_account_dashboard') }}" aria-label="{{ 'cardnext.storefront.header.account'|trans }}">
                 {% else %}
-                    <a class="cn-shop-header__action" href="{{ path('sylius_shop_login') }}" aria-label="Anmelden">
+                    <a class="cn-shop-header__action" href="{{ path('sylius_shop_login') }}" aria-label="{{ 'cardnext.storefront.header.login'|trans }}">
                 {% endif %}
                         <span class="cn-shop-header__action-icon">
                             <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -54,7 +54,7 @@
                                 <path d="M5.5 20c.7-4 3-6 6.5-6s5.8 2 6.5 6"/>
                             </svg>
                         </span>
-                        <span class="cn-shop-header__action-label">Mein Konto</span>
+                        <span class="cn-shop-header__action-label">{{ 'cardnext.storefront.header.account'|trans }}</span>
                     </a>
 
                 <a class="cn-shop-header__action cn-quote-header" href="{{ path('cardnext_shop_quote_cart', {_locale: app.request.locale}) }}" aria-label="{{ 'cardnext.quote.cart'|trans }}">
@@ -69,7 +69,7 @@
 
                 {{ component('sylius_shop:cart:widget', { template: 'shop/layout/header/cart.html.twig' }) }}
 
-                <button class="cardnext-menu-toggle cn-shop-header__menu-toggle" type="button" data-cardnext-menu-open aria-label="Navigation öffnen" aria-controls="cardnext-mobile-navigation">
+                <button class="cardnext-menu-toggle cn-shop-header__menu-toggle" type="button" data-cardnext-menu-open aria-label="{{ 'cardnext.storefront.header.open_navigation'|trans }}" aria-controls="cardnext-mobile-navigation">
                     <span></span><span></span><span></span>
                 </button>
             </div>
@@ -84,12 +84,12 @@
 </header>
 
 <div class="cardnext-mobile-overlay" data-cardnext-mobile-overlay hidden>
-    <aside class="cardnext-mobile-nav" id="cardnext-mobile-navigation" aria-label="Mobile Navigation">
+    <aside class="cardnext-mobile-nav" id="cardnext-mobile-navigation" aria-label="{{ 'cardnext.storefront.header.mobile_navigation'|trans }}">
         <div class="cardnext-mobile-nav__head">
             <a class="cardnext-logo" href="{{ path('sylius_shop_homepage') }}">
                 <img src="{{ asset('cardnext/cardnext.svg') }}" width="170" height="33" alt="Cardnext">
             </a>
-            <button type="button" class="cardnext-mobile-nav__close" data-cardnext-menu-close aria-label="Navigation schließen">×</button>
+            <button type="button" class="cardnext-mobile-nav__close" data-cardnext-menu-close aria-label="{{ 'cardnext.storefront.header.close_navigation'|trans }}">×</button>
         </div>
         <div class="cardnext-mobile-nav__body">
             {% include 'shop/layout/header/_market_selector.html.twig' %}
@@ -98,13 +98,13 @@
             }) }}
             <div class="cardnext-mobile-nav__actions">
                 {% if is_granted('ROLE_USER') %}
-                    <a href="{{ path('sylius_shop_account_dashboard') }}"><span>Mein Konto</span><span>→</span></a>
+                    <a href="{{ path('sylius_shop_account_dashboard') }}"><span>{{ 'cardnext.storefront.header.account'|trans }}</span><span>→</span></a>
                 {% else %}
-                    <a href="{{ path('sylius_shop_login') }}"><span>Anmelden</span><span>→</span></a>
+                    <a href="{{ path('sylius_shop_login') }}"><span>{{ 'cardnext.storefront.header.login'|trans }}</span><span>→</span></a>
                 {% endif %}
                 <a href="{{ path('cardnext_shop_quote_cart', {_locale: app.request.locale}) }}"><span>{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span><span>→</span></a>
-                <a href="{{ path('sylius_shop_cart_summary') }}"><span>Warenkorb</span><span>→</span></a>
-                <a href="{{ path('sylius_shop_contact_request') }}"><span>Kontakt & Beratung</span><span>→</span></a>
+                <a href="{{ path('sylius_shop_cart_summary') }}"><span>{{ 'cardnext.storefront.header.cart'|trans }}</span><span>→</span></a>
+                <a href="{{ path('sylius_shop_contact_request') }}"><span>{{ 'cardnext.storefront.header.contact_advice'|trans }}</span><span>→</span></a>
             </div>
         </div>
     </aside>

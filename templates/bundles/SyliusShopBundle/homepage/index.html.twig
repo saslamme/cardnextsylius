@@ -1,42 +1,42 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
-{% block title %}Cardnext – Kartendrucker, RFID & Auto-ID{% endblock %}
+{% block title %}{{ 'cardnext.storefront.homepage.meta_title'|trans }}{% endblock %}
 {% block content %}
 <main id="main-content" class="cn-page">
 <section class="cn-hero" aria-labelledby="cn-hero-title">
     <div class="cn-container cn-hero__grid">
         <div class="cn-stack cn-hero__copy">
-            <span class="cn-kicker">Professionelle Identifikationstechnik</span>
-            <h1 class="cn-title cn-title--hero" id="cn-hero-title">Technologie für sichere Identitäten.</h1>
-            <p class="cn-lead">Kartendrucker, RFID-Leser, Plastikkarten und Auto-ID-Lösungen für Unternehmen, Integratoren und professionelle Anwender.</p>
-            <div class="cn-cluster"><a class="cn-btn cn-btn--primary" href="#products">Produkte entdecken →</a><a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">Beratung anfragen</a></div>
+            <span class="cn-kicker">{{ 'cardnext.storefront.homepage.hero.kicker'|trans }}</span>
+            <h1 class="cn-title cn-title--hero" id="cn-hero-title">{{ 'cardnext.storefront.homepage.hero.title'|trans }}</h1>
+            <p class="cn-lead">{{ 'cardnext.storefront.homepage.hero.text'|trans }}</p>
+            <div class="cn-cluster"><a class="cn-btn cn-btn--primary" href="#products">{{ 'cardnext.storefront.homepage.hero.products'|trans }} →</a><a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.homepage.hero.consulting'|trans }}</a></div>
         </div>
-        <div class="cn-hero__visual cn-hero__visual--photo" aria-label="Kartendrucker, RFID-Leser und Plastikkarten">
-            <img class="cn-hero__photo" src="{{ asset('cardnext/homepage/hero-card-printer.webp') }}" alt="Professioneller Kartendrucker mit Plastikkarten am Arbeitsplatz" width="1600" height="900" loading="eager" fetchpriority="high">
+        <div class="cn-hero__visual cn-hero__visual--photo" aria-label="{{ 'cardnext.storefront.homepage.hero.visual_label'|trans }}">
+            <img class="cn-hero__photo" src="{{ asset('cardnext/homepage/hero-card-printer.webp') }}" alt="{{ 'cardnext.storefront.homepage.hero.image_alt'|trans }}" width="1600" height="900" loading="eager" fetchpriority="high">
 </div>
     </div>
 </section>
 <section class="cn-home-categories" aria-labelledby="cn-popular-title">
     <div class="cn-container">
         <div class="cn-home-categories__head">
-            <h2 id="cn-popular-title">Beliebte Kategorien</h2>
+            <h2 id="cn-popular-title">{{ 'cardnext.storefront.homepage.categories.title'|trans }}</h2>
         </div>
 
         {% set homeCategories = [
-            {'name': 'Kartendrucker', 'slug': 'kartendrucker', 'image': 'kartendrucker.webp'},
-            {'name': 'RFID-Leser', 'slug': 'rfid-leser', 'image': 'rfid-leser.webp'},
-            {'name': 'Plastikkarten', 'slug': 'plastikkarten', 'image': 'plastikkarten.webp'},
-            {'name': 'Kartenzubehör', 'slug': 'kartenzubehoer', 'image': 'kartenzubehoer.webp'},
-            {'name': 'Farbbänder', 'slug': 'farbbaender', 'image': 'farbbaender.webp'},
-            {'name': 'Barcode-Scanner', 'slug': 'barcode-scanner', 'image': 'barcode-scanner.webp'},
-            {'name': 'Zeiterfassung', 'slug': 'zeiterfassung', 'image': 'zeiterfassung.webp'},
-            {'name': 'Zutrittskontrolle', 'slug': 'zutrittskontrolle', 'image': 'zutrittskontrolle.webp'}
+            {'code': 'card_printers', 'image': 'kartendrucker.webp'},
+            {'code': 'rfid_readers', 'image': 'rfid-leser.webp'},
+            {'code': 'plastic_cards', 'image': 'plastikkarten.webp'},
+            {'code': 'id_accessories', 'image': 'kartenzubehoer.webp'},
+            {'code': 'ribbons', 'image': 'farbbaender.webp'},
+            {'code': 'barcode_scanners', 'image': 'barcode-scanner.webp'},
+            {'code': 'access_control', 'image': 'zutrittskontrolle.webp'}
         ] %}
 
         <div class="cn-home-categories__grid">
             {% for category in homeCategories %}
-                <a
+                {% set taxon = cardnext_taxon_by_code(category.code) %}
+                {% if taxon %}<a
                     class="cn-home-category"
-                    href="{{ path('sylius_shop_product_index', {'slug': category.slug, '_locale': app.request.locale}) }}"
+                    href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': app.request.locale}) }}"
                 >
                     <span class="cn-home-category__media">
                         <img
@@ -48,10 +48,10 @@
                         >
                     </span>
                     <span class="cn-home-category__label">
-                        <strong>{{ category.name }}</strong>
+                        <strong>{{ taxon.name }}</strong>
                         <span aria-hidden="true">&#8594;</span>
                     </span>
-                </a>
+                </a>{% endif %}
             {% endfor %}
         </div>
     </div>
@@ -60,22 +60,22 @@
     <div class="cn-container cn-home-service__grid">
         <div class="cn-home-service__feature">
             <div class="cn-home-service__copy">
-                <span class="cn-kicker">Mehr als Hardware</span>
+                <span class="cn-kicker">{{ 'cardnext.storefront.homepage.service.kicker'|trans }}</span>
                 <h2 class="cn-title cn-title--section" id="cn-home-service-title">
-                    Technologieversorgung mit persönlichem Service.
+                    {{ 'cardnext.storefront.homepage.service.title'|trans }}
                 </h2>
                 <p class="cn-lead">
-                    Wir liefern nicht nur das Produkt. Wir helfen bei Auswahl, Kompatibilität und Konfiguration – und der zuverlässigen Versorgung mit passendem Zubehör und Verbrauchsmaterial.
+                    {{ 'cardnext.storefront.homepage.service.text'|trans }}
                 </p>
                 <a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">
-                    Mehr über unseren Service &#8594;
+                    {{ 'cardnext.storefront.homepage.service.button'|trans }} &#8594;
                 </a>
             </div>
 
             <div class="cn-home-service__photo">
                 <img
                     src="{{ asset('cardnext/homepage/service-consultation.webp') }}"
-                    alt="Persönliche Beratung zu professioneller Identifikationstechnik"
+                    alt="{{ 'cardnext.storefront.homepage.service.image_alt'|trans }}"
                     width="1200"
                     height="1060"
                     loading="lazy"
@@ -94,8 +94,8 @@
                     </svg>
                 </span>
                 <span class="cn-home-service__item-copy">
-                    <strong>Auswahl &amp; Beratung</strong>
-                    <span>Wir finden die passende Lösung für Ihren Bedarf.</span>
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.advice.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.advice.text'|trans }}</span>
                 </span>
                 <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
             </a>
@@ -108,8 +108,8 @@
                     </svg>
                 </span>
                 <span class="cn-home-service__item-copy">
-                    <strong>Konfiguration</strong>
-                    <span>Kompatibel und optimal eingestellt.</span>
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.configuration.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.configuration.text'|trans }}</span>
                 </span>
                 <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
             </a>
@@ -122,13 +122,14 @@
                     </svg>
                 </span>
                 <span class="cn-home-service__item-copy">
-                    <strong>Projektgeschäft</strong>
-                    <span>Individuelle Konzepte für Ihr Unternehmen.</span>
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.projects.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.projects.text'|trans }}</span>
                 </span>
                 <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
             </a>
 
-            <a class="cn-home-service__item" href="{{ path('sylius_shop_product_index', {'slug': 'farbbaender', '_locale': app.request.locale}) }}">
+            {% set ribbonsTaxon = cardnext_taxon_by_code('ribbons') %}
+            <a class="cn-home-service__item" href="{{ ribbonsTaxon ? path('sylius_shop_product_index', {'slug': ribbonsTaxon.slug, '_locale': app.request.locale}) : path('sylius_shop_homepage') }}">
                 <span class="cn-home-service__icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <path d="m12 3 7 4v10l-7 4-7-4V7z"/>
@@ -137,25 +138,25 @@
                     </svg>
                 </span>
                 <span class="cn-home-service__item-copy">
-                    <strong>Verbrauchsmaterial</strong>
-                    <span>Farbbänder, Karten und Reinigungskarten direkt verfügbar.</span>
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.consumables.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.consumables.text'|trans }}</span>
                 </span>
                 <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
             </a>
         </div>
     </div>
 </section>
-<section class="cn-section" id="products"><div class="cn-container"><div class="cn-section-head"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">Ausgewählte Produkte</span><h2 class="cn-title cn-title--section">Professionelle Hardware.</h2></div></div>{% set homepage_products = cardnext_homepage_products(4) %}
+<section class="cn-section" id="products"><div class="cn-container"><div class="cn-section-head"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.products.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.products.title'|trans }}</h2></div></div>{% set homepage_products = cardnext_homepage_products(4) %}
             {% include 'shop/homepage/product_list.html.twig' with { products: homepage_products } only %}</div></section>
 <section class="cn-section cn-section--soft" id="industries"><div class="cn-container">
-    <div class="cn-stack cn-stack--sm mb-4"><span class="cn-kicker">Einsatzbereiche</span><h2 class="cn-title cn-title--section">Technologie, die zu Ihrem Einsatz passt.</h2><p class="cn-lead">Von der Mitarbeiterausweiserstellung bis zur RFID-gestützten Identifikation: Produkte und Zubehör werden nach Anwendung gedacht, nicht nur nach Hersteller.</p></div>
+    <div class="cn-stack cn-stack--sm mb-4"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.industries.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.industries.title'|trans }}</h2><p class="cn-lead">{{ 'cardnext.storefront.homepage.industries.text'|trans }}</p></div>
     <div class="cn-grid cn-grid--3">
-        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-id-cards.webp') }}" alt="Mitarbeiterausweis in einem professionellen Kartenhalter" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>Ausweise & Kartenausgabe</h3><p>Kartendrucker, Farbbänder, Plastikkarten und Zubehör für Mitarbeiterausweise, Besucherkarten und Mitgliedsausweise.</p><a class="cn-link cn-link--arrow" href="#products">Lösungen ansehen</a></div></article>
-        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-rfid.webp') }}" alt="Kontaktlose Identifikation mit RFID-Karte an einem Zutrittsleser" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>Sichere Identifikation</h3><p>RFID-Leser, Smartcards und Identmedien für Login, Zutritt und eindeutige Benutzeridentifikation.</p><a class="cn-link cn-link--arrow" href="#products">Lösungen ansehen</a></div></article>
-        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-logistics.webp') }}" alt="Barcode-Erfassung in einem professionellen Lager" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>Lager & Logistik</h3><p>RFID- und Barcode-Technologie für Erfassung, Rückverfolgbarkeit und effiziente Materialbewegungen.</p><a class="cn-link cn-link--arrow" href="#products">Lösungen ansehen</a></div></article>
+        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-id-cards.webp') }}" alt="{{ 'cardnext.storefront.homepage.industries.cards.image_alt'|trans }}" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>{{ 'cardnext.storefront.homepage.industries.cards.title'|trans }}</h3><p>{{ 'cardnext.storefront.homepage.industries.cards.text'|trans }}</p><a class="cn-link cn-link--arrow" href="#products">{{ 'cardnext.storefront.homepage.industries.link'|trans }}</a></div></article>
+        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-rfid.webp') }}" alt="{{ 'cardnext.storefront.homepage.industries.identification.image_alt'|trans }}" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>{{ 'cardnext.storefront.homepage.industries.identification.title'|trans }}</h3><p>{{ 'cardnext.storefront.homepage.industries.identification.text'|trans }}</p><a class="cn-link cn-link--arrow" href="#products">{{ 'cardnext.storefront.homepage.industries.link'|trans }}</a></div></article>
+        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-logistics.webp') }}" alt="{{ 'cardnext.storefront.homepage.industries.logistics.image_alt'|trans }}" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>{{ 'cardnext.storefront.homepage.industries.logistics.title'|trans }}</h3><p>{{ 'cardnext.storefront.homepage.industries.logistics.text'|trans }}</p><a class="cn-link cn-link--arrow" href="#products">{{ 'cardnext.storefront.homepage.industries.link'|trans }}</a></div></article>
     </div>
 </div></section>
-<section class="cn-section" id="why-cardnext"><div class="cn-container"><div class="cn-split mb-4"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">Warum Cardnext</span><h2 class="cn-title cn-title--section">Technik. Know-how. Verlässlichkeit.</h2></div><p class="cn-lead">Ein fokussierter Partner für professionelle Identifikations- und Auto-ID-Technik – mit direkter Beratung und einem klar strukturierten Produktsortiment.</p></div><div class="cn-grid cn-grid--4 cn-grid--lined">{% set advantages = [['01','Spezialisiertes Sortiment','Fokus auf Kartendruck, RFID, Identifikation und professionelle Auto-ID-Technik.'],['02','Herstellerübergreifend','Produkte verschiedener etablierter Hersteller können passend zur Anwendung verglichen werden.'],['03','Kompatibilität im Blick','Zubehör und Verbrauchsmaterial werden technisch den passenden Geräten zugeordnet.'],['04','Persönlicher Kontakt','Bei Projekt- und Beratungsbedarf gibt es einen direkten Ansprechpartner statt anonymer Shop-Prozesse.']] %}{% for item in advantages %}<div class="cn-feature"><span class="cn-feature__index">{{ item[0] }}</span><h3>{{ item[1] }}</h3><p>{{ item[2] }}</p></div>{% endfor %}</div></div></section>
+<section class="cn-section" id="why-cardnext"><div class="cn-container"><div class="cn-split mb-4"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.why.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.why.title'|trans }}</h2></div><p class="cn-lead">{{ 'cardnext.storefront.homepage.why.text'|trans }}</p></div><div class="cn-grid cn-grid--4 cn-grid--lined">{% set advantages = [['01','specialized'],['02','independent'],['03','compatibility'],['04','personal']] %}{% for item in advantages %}<div class="cn-feature"><span class="cn-feature__index">{{ item[0] }}</span><h3>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.title')|trans }}</h3><p>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.text')|trans }}</p></div>{% endfor %}</div></div></section>
 <section class="cn-cta cn-cta--support">
     <img class="cn-cta__background"
         src="{{ asset('cardnext/homepage/support-advisor.webp') }}"
@@ -166,12 +167,12 @@
         aria-hidden="true">
     <div class="cn-container cn-cta__inner">
         <div class="cn-cta__copy">
-            <h2>Nicht sicher, welches Produkt passt?</h2>
-            <p>Wir helfen Ihnen bei der Auswahl.</p>
+            <h2>{{ 'cardnext.storefront.homepage.cta.title'|trans }}</h2>
+            <p>{{ 'cardnext.storefront.homepage.cta.text'|trans }}</p>
         </div>
 
         <a class="cn-btn cn-btn--primary cn-cta__button" href="{{ path('sylius_shop_contact_request') }}">
-            Jetzt beraten lassen &#8594;
+            {{ 'cardnext.storefront.homepage.cta.button'|trans }} &#8594;
         </a>
     </div>
 </section>
@@ -188,8 +189,8 @@
                 </svg>
             </span>
             <span class="cn-promise__copy">
-                <strong>Schneller Versand</strong>
-                <span>Für verfügbare Lagerartikel</span>
+                <strong>{{ 'cardnext.storefront.homepage.promises.shipping.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.shipping.text'|trans }}</span>
             </span>
         </div>
 
@@ -201,8 +202,8 @@
                 </svg>
             </span>
             <span class="cn-promise__copy">
-                <strong>Persönliche Beratung</strong>
-                <span>Vor und nach dem Kauf</span>
+                <strong>{{ 'cardnext.storefront.homepage.promises.advice.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.advice.text'|trans }}</span>
             </span>
         </div>
 
@@ -215,8 +216,8 @@
                 </svg>
             </span>
             <span class="cn-promise__copy">
-                <strong>Sichere Zahlung</strong>
-                <span>Professionelle Zahlungsabwicklung</span>
+                <strong>{{ 'cardnext.storefront.homepage.promises.payment.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.payment.text'|trans }}</span>
             </span>
         </div>
 
@@ -230,8 +231,8 @@
                 </svg>
             </span>
             <span class="cn-promise__copy">
-                <strong>Projektgeschäft</strong>
-                <span>Individuelle Lösungen auf Anfrage</span>
+                <strong>{{ 'cardnext.storefront.homepage.service.items.projects.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.projects.text'|trans }}</span>
             </span>
         </div>
     </div>

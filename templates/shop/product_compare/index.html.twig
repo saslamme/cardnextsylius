@@ -11,7 +11,7 @@
         {% if requestedCount > 3 %}<div class="cn-compare-notice" role="status">Sie können maximal 3 Produkte vergleichen.</div>{% endif %}
         {% if not comparison.compatible %}<div class="cn-compare-notice cn-compare-notice--error" role="alert">Diese Produkte gehören zu unterschiedlichen Produktbereichen und können nicht sinnvoll miteinander verglichen werden.</div>
         {% elseif comparison.products|length < 2 %}
-            <section class="cn-compare-empty"><h2>Produkte vergleichen</h2><p>{% if comparison.products|length == 1 %}Wählen Sie noch ein zweites Produkt aus.{% else %}Wählen Sie mindestens zwei Produkte aus einer Kategorie aus, um technische Merkmale direkt gegenüberzustellen.{% endif %}</p><a class="cn-btn cn-btn--primary cn-btn--small" href="{{ path('sylius_shop_product_index', {_locale: app.request.locale, slug: 'kartendrucker'}) }}">Zu den Kartendruckern</a></section>
+            {% set cardPrintersTaxon = cardnext_taxon_by_code('card_printers') %}<section class="cn-compare-empty"><h2>Produkte vergleichen</h2><p>{% if comparison.products|length == 1 %}Wählen Sie noch ein zweites Produkt aus.{% else %}Wählen Sie mindestens zwei Produkte aus einer Kategorie aus, um technische Merkmale direkt gegenüberzustellen.{% endif %}</p><a class="cn-btn cn-btn--primary cn-btn--small" href="{{ path('sylius_shop_product_index', {_locale: app.request.locale, slug: cardPrintersTaxon.slug}) }}">Zu den Kartendruckern</a></section>
         {% else %}
             <label class="cn-compare-differences"><input type="checkbox" data-compare-differences> Nur Unterschiede anzeigen</label>
             <div class="cn-compare-scroll" tabindex="0">
