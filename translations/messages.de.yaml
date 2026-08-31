@@ -1,5 +1,6 @@
 cardnext:
   account:
+    quotes: Angebote
     maintenance_contracts: Wartungsverträge
   maintenance_contract:
     printer: Kartendrucker
@@ -194,8 +195,6 @@ cardnext:
             accepted: Angenommen
             rejected: Abgelehnt
             superseded: Ersetzt
-  account:
-    quotes: Angebote
 Company: Firma
 Contact name: Ansprechpartner
 Email: E-Mail
