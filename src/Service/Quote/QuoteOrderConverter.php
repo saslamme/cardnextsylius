@@ -111,15 +111,31 @@ final readonly class QuoteOrderConverter
         if (trim($quote->getChannelCode()) === '') throw new \DomainException('Im Angebot fehlt der Channel.');
         if (trim($quote->getCurrencyCode()) === '') throw new \DomainException('Im Angebot fehlt die Währung.');
         if (trim($quote->getLocaleCode()) === '') throw new \DomainException('Im Angebot fehlt die Sprache.');
-        foreach ($quote->getItems() as $item) if ($item->getItemType() === QuoteItemType::Product && $item->getVariant() === null) throw new \DomainException(sprintf('Die Produktvariante der Position „%s“ existiert nicht mehr.', $item->getName()));
+        foreach ($quote->getItems() as $item) {
+            match ($item->getItemType()) {
+                QuoteItemType::Product => $this->validateProductItem($item),
+                QuoteItemType::Custom => null,
+                QuoteItemType::Service, QuoteItemType::Shipping => throw $this->unsupportedItemType($item),
+            };
+        }
     }
 
     private function addQuoteItem(Order $order, QuoteItem $quoteItem, Quote $quote): void
     {
-        if ($quoteItem->getItemType() === QuoteItemType::Custom) {
-            $this->addAdjustment($order, 'cardnext_quote_custom', $quoteItem->getName(), $quoteItem->getLineTotal(), ['description' => $quoteItem->getDescription()]);
-            return;
-        }
+        match ($quoteItem->getItemType()) {
+            QuoteItemType::Product => $this->addProductItem($order, $quoteItem, $quote),
+            QuoteItemType::Custom => $this->addCustomItem($order, $quoteItem),
+            QuoteItemType::Service, QuoteItemType::Shipping => throw $this->unsupportedItemType($quoteItem),
+        };
+    }
+
+    private function validateProductItem(QuoteItem $item): void
+    {
+        if ($item->getVariant() === null) throw new \DomainException(sprintf('Die Produktvariante der Position „%s“ existiert nicht mehr.', $item->getName()));
+    }
+
+    private function addProductItem(Order $order, QuoteItem $quoteItem, Quote $quote): void
+    {
         $item = $this->orderItemFactory->createNew();
         $item->setVariant($quoteItem->getVariant()); $item->setProductName($quoteItem->getName());
         // The original unit price plus the locked discount reproduces the accepted net snapshot exactly.
@@ -127,6 +143,22 @@ final readonly class QuoteOrderConverter
         $this->quantityModifier->modify($item, $quoteItem->getQuantity());
         $order->addItem($item);
         $this->addAdjustment($item, 'cardnext_quote_discount', 'Angebotsrabatt '.$quote->getNumber(), -$quoteItem->getLineDiscount());
+    }
+
+    private function addCustomItem(Order $order, QuoteItem $quoteItem): void
+    {
+        $this->addAdjustment($order, 'cardnext_quote_custom', $quoteItem->getName(), $quoteItem->getLineTotal(), ['description' => $quoteItem->getDescription()]);
+    }
+
+    private function unsupportedItemType(QuoteItem $item): \DomainException
+    {
+        $message = match ($item->getItemType()) {
+            QuoteItemType::Service => 'Serviceleistungen werden über den Servicebetrag des Angebots abgebildet und dürfen nicht zusätzlich als Angebotsposition vorhanden sein.',
+            QuoteItemType::Shipping => 'Versandkosten werden über den Versandbetrag des Angebots abgebildet und dürfen nicht zusätzlich als Angebotsposition vorhanden sein.',
+            QuoteItemType::Product, QuoteItemType::Custom => sprintf('Die Angebotsposition „%s“ kann nicht in eine Bestellung übernommen werden.', $item->getName()),
+        };
+
+        return new \DomainException(sprintf('%s Betroffene Position: „%s“.', $message, $item->getName()));
     }
 
     private function address(Quote $quote): Address
