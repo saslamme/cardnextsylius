@@ -1,128 +1,128 @@
 cardnext:
   storefront:
     homepage:
-      meta_title: 'Cardnext – Kartendrucker, RFID & Auto-ID'
+      meta_title: Cardnext – Kaartprinters, RFID & Auto-ID
       hero:
-        kicker: 'Professionele Identifikationstechnik'
-        title: 'Technologie für sichere Identitäten.'
-        text: 'Kartendrucker, RFID-Leser, Plastikkarten und Auto-ID-Lösungen für Unternehmen, Integratoren und professionelle Anwender.'
-        products: 'Producten entdecken'
-        consulting: 'Beratung anfragen'
-        visual_label: 'Kartendrucker, RFID-Leser und Plastikkarten'
-        image_alt: 'Professioneler Kartendrucker mit Plastikkarten am Arbeitsplatz'
+        kicker: Professionele identificatietechnologie
+        title: Technologie voor veilige identiteiten.
+        text: Kaartprinters, RFID-lezers, plastic kaarten en Auto-ID-oplossingen voor bedrijven, integrators en professionele gebruikers.
+        products: Producten ontdekken
+        consulting: Advies aanvragen
+        visual_label: Kaartprinters, RFID-lezers en plastic kaarten
+        image_alt: Professionele kaartprinter met plastic kaarten op de werkplek
       categories:
-        title: 'Populaire categorieën'
+        title: Populaire categorieën
       service:
-        kicker: 'Meer dan hardware'
-        title: 'Technologieversorgung mit persönlichem Service.'
-        text: 'Wir liefern nicht nur das Produkt. Wir helfen bei Auswahl, Kompatibilität und Konfiguration – und der zuverlässigen Versorgung mit passendem Zubehör und Verbrauchsmaterial.'
-        button: 'Mehr über unseren Service'
-        image_alt: 'Persoonlijk advies zu professioneller Identifikationstechnik'
+        kicker: Meer dan hardware
+        title: Professionele technologie met persoonlijke service.
+        text: Wij leveren niet alleen het product. Wij helpen bij selectie, compatibiliteit en configuratie en zorgen voor een betrouwbare levering van passende accessoires en verbruiksartikelen.
+        button: Meer over onze service
+        image_alt: Persoonlijk advies over professionele identificatietechnologie
         items:
           advice:
-            title: 'Auswahl & Beratung'
-            text: 'Wir finden die passende Lösung für Ihren Bedarf.'
+            title: Selectie en advies
+            text: Wij vinden de juiste oplossing voor uw behoefte.
           configuration:
-            title: 'Konfiguration'
-            text: 'Kompatibel und optimal eingestellt.'
+            title: Configuratie
+            text: Compatibel en optimaal ingesteld.
           projects:
-            title: 'Projectoplossingen'
-            text: 'Individuelle Konzepte für Ihr Unternehmen.'
+            title: Projectoplossingen
+            text: Oplossingen op maat voor uw bedrijf.
           consumables:
-            title: 'Verbrauchsmaterial'
-            text: 'Farbbänder, Karten und Reinigungskarten direkt verfügbar.'
+            title: Verbruiksartikelen
+            text: Linten, kaarten en reinigingskaarten direct beschikbaar.
       products:
-        kicker: 'Ausgewählte Producten'
-        title: 'Professionele Hardware.'
-        empty: 'Noch keine Producten für diesen Verkaufskanal veröffentlicht.'
+        kicker: Geselecteerde producten
+        title: Professionele hardware.
+        empty: Er zijn nog geen producten voor dit verkoopkanaal gepubliceerd.
       industries:
-        kicker: 'Toepassingen'
-        title: 'Technologie, die zu Ihrem Einsatz passt.'
-        text: 'Von der Mitarbeiterausweiserstellung bis zur RFID-gestützten Identifikation: Producten und Zubehör werden nach Anwendung gedacht, nicht nur nach Hersteller.'
-        link: 'Lösungen ansehen'
+        kicker: Toepassingen
+        title: Technologie die bij uw toepassing past.
+        text: 'Van medewerkerspassen tot RFID-identificatie: producten en accessoires worden geselecteerd op toepassing, niet alleen op fabrikant.'
+        link: Oplossingen bekijken
         cards:
-          title: 'Ausweise & Kartenausgabe'
-          text: 'Kartendrucker, Farbbänder, Plastikkarten und Zubehör für Mitarbeiterausweise, Besucherkarten und Mitgliedsausweise.'
-          image_alt: 'Mitarbeiterausweis in einem professionellen Kartenhalter'
+          title: Passen en kaartuitgifte
+          text: Kaartprinters, linten, plastic kaarten en accessoires voor medewerkerspassen, bezoekerspassen en ledenpassen.
+          image_alt: Medewerkerspas in een professionele kaarthouder
         identification:
-          title: 'Sichere Identifikation'
-          text: 'RFID-Leser, Smartcards und Identmedien für Login, Zutritt und eindeutige Benutzeridentifikation.'
-          image_alt: 'Kontaktlose Identifikation mit RFID-Karte an einem Zutrittsleser'
+          title: Veilige identificatie
+          text: RFID-lezers, smartcards en identificatiemiddelen voor aanmelden, toegangscontrole en eenduidige gebruikersidentificatie.
+          image_alt: Contactloze identificatie met een RFID-kaart bij een toegangslezer
         logistics:
-          title: 'Lager & Logistik'
-          text: 'RFID- und Barcode-Technologie für Erfassung, Rückverfolgbarkeit und effiziente Materialbewegungen.'
-          image_alt: 'Barcode-Erfassung in einem professionellen Lager'
+          title: Magazijn & logistiek
+          text: RFID- en barcodetechnologie voor gegevensregistratie, traceerbaarheid en efficiënte materiaalstromen.
+          image_alt: Barcodes registreren in een professioneel magazijn
       why:
-        kicker: 'Waarom Cardnext'
-        title: 'Technik. Know-how. Verlässlichkeit.'
-        text: 'Ein fokussierter Partner für professionelle Identifikations- und Auto-ID-Technik – mit direkter Beratung und einem klar strukturierten Produktsortiment.'
+        kicker: Waarom Cardnext
+        title: Technologie. Expertise. Betrouwbaarheid.
+        text: Een gespecialiseerde partner voor professionele identificatie- en Auto-ID-technologie, met direct advies en een overzichtelijk productassortiment.
         items:
           specialized:
-            title: 'Gespecialiseerd assortiment'
-            text: 'Focus op kaartdruk, RFID, identificatie en professionele Auto-ID-technologie.'
+            title: Gespecialiseerd assortiment
+            text: Focus op kaartprinten, RFID, identificatie en professionele Auto-ID-technologie.
           independent:
-            title: 'Merkonafhankelijk'
-            text: 'Vergelijk producten van gerenommeerde fabrikanten passend bij de toepassing.'
+            title: Merkonafhankelijk
+            text: Vergelijk producten van gerenommeerde fabrikanten op basis van de toepassing.
           compatibility:
-            title: 'Compatibiliteit voorop'
-            text: 'Accessoires en verbruiksartikelen worden technisch aan de juiste apparaten gekoppeld.'
+            title: Compatibiliteit gecontroleerd
+            text: Accessoires en verbruiksartikelen zijn technisch afgestemd op geschikte apparaten.
           personal:
-            title: 'Persoonlijk contact'
-            text: 'Voor projecten en advies hebt u een direct aanspreekpunt.'
+            title: Persoonlijk contact
+            text: Voor projecten en advies krijgt u een vaste contactpersoon.
       cta:
-        title: 'Nicht sicher, welches Produkt passt?'
-        text: 'Wir helfen Ihnen bei der Auswahl.'
-        button: 'Jetzt beraten lassen'
+        title: Niet zeker welk product past?
+        text: Wij helpen u bij de keuze.
+        button: Advies aanvragen
       promises:
         shipping:
-          title: 'Snelle verzending'
-          text: 'Für verfügbare Lagerartikel'
+          title: Snelle verzending
+          text: Voor beschikbare voorraadartikelen
         advice:
-          title: 'Persoonlijk advies'
-          text: 'Vor und nach dem Kauf'
+          title: Persoonlijk advies
+          text: Voor en na de aankoop
         payment:
-          title: 'Veilig betalen'
-          text: 'Professionele Zahlungsabwicklung'
+          title: Veilig betalen
+          text: Professionele betalingsverwerking
         projects:
-          title: 'Projectoplossingen'
-          text: 'Individuelle Lösungen auf Anfrage'
+          title: Projectoplossingen
+          text: Oplossingen op maat op aanvraag
     header:
-      home: 'Cardnext Startseite'
-      search_label: 'Producten suchen'
-      search_placeholder: 'Producten, Hersteller oder Artikelnummer suchen'
-      search_submit: 'Suche starten'
-      account: 'Mijn account'
-      login: 'Inloggen'
-      open_navigation: 'Navigation öffnen'
-      close_navigation: 'Navigation schließen'
-      mobile_navigation: 'Mobile Navigation'
-      cart: 'Winkelwagen'
-      contact_advice: 'Kontakt & Beratung'
-      product_categories: 'Produktkategorien'
-      show_all: 'Alle anzeigen'
-      all_category: 'Alle %category%'
-      brands: 'Merken'
-      support: 'Support'
-      downloads: 'Downloads'
-      contact: 'Contact'
+      home: Cardnext-homepage
+      search_label: Producten zoeken
+      search_placeholder: Zoek producten, fabrikanten of artikelnummers
+      search_submit: Zoeken
+      account: Mijn account
+      login: Inloggen
+      open_navigation: Navigatie openen
+      close_navigation: Navigatie sluiten
+      mobile_navigation: Mobiele navigatie
+      cart: Winkelwagen
+      contact_advice: Contact & advies
+      product_categories: Productcategorieën
+      show_all: Alles weergeven
+      all_category: Alle %category%
+      brands: Merken
+      support: Support
+      downloads: Downloads
+      contact: Contact
     footer:
-      description: 'Professionele Lösungen für Kartendruck, RFID, Zeiterfassung, Barcode-Systeme und Ausweiszubehör.'
-      products: 'Producten'
-      solutions: 'Oplossingen'
-      service: 'Service'
-      company: 'Cardnext'
-      id_creation: 'Ausweiserstellung'
-      access_control: 'Zutrittskontrolle'
-      time_tracking: 'Zeiterfassung'
-      rfid_identification: 'RFID-Identifikation'
-      advice: 'Contact'
-      about: 'Über uns'
-      legal: 'Rechtliches'
-      imprint: 'Impressum'
-      privacy: 'Datenschutz'
-      terms: 'AGB'
-      back_to_top: 'Nach oben'
-      language: 'Nederlands'
+      description: Professionele oplossingen voor kaartprinten, RFID, tijdregistratie, barcodesystemen en accessoires voor identificatiepassen.
+      products: Producten
+      solutions: Oplossingen
+      service: Service
+      company: Cardnext
+      id_creation: Passen maken
+      access_control: Toegangscontrole
+      time_tracking: Tijdregistratie
+      rfid_identification: RFID-identificatie
+      advice: Contact
+      about: Over ons
+      legal: Juridische informatie
+      imprint: Colofon
+      privacy: Privacy
+      terms: Algemene voorwaarden
+      back_to_top: Naar boven
+      language: Nederlands
   market:
     select: Selecteer land
   account:
@@ -151,7 +151,7 @@ cardnext:
     configured_items: Geconfigureerde artikelen
     position: positie
     positions: posities
-    production_time: Productie tijd
+    production_time: Productietijd
     working_days: ca. %days% werkdagen
   admin:
     product_create:
@@ -168,14 +168,14 @@ cardnext:
       title: Configureer product
       intro: De prijs wordt automatisch bijgewerkt.
     section:
-      basic: baseren
-      create: Gebied creëren
+      basic: Basis
+      create: Sectie maken
       empty: Er zijn nog geen gebieden beschikbaar.
     quantity: Aantal
-    choose: Selecteer alstublieft
-    yes: Ja
+    choose: Selecteren
+    'yes': Ja
     upload_later: Het uploaden van het bestand vindt plaats na de bestelling.
-    production_time: Productie tijd
+    production_time: Productietijd
     working_days: werkdagen
     summary: Uw configuratie
     incomplete: Onvolledig
@@ -190,7 +190,7 @@ cardnext:
       calculation: Server-side en bindend berekend
       checkout: Veilige orderverwerking
     create: Configurator maken
-    edit: Bewerking
+    edit: Bewerken
     delete: Verwijderen
     delete_confirm: Echt verwijderen?
     delete_product_confirm: Dit configuratieproduct inclusief configurator, structuur en prijsregels wordt definitief verwijderd.
@@ -218,11 +218,11 @@ cardnext:
     all_statuses: Alle statussen
     filter: Filter
     empty: Er zijn nog geen configuratoren beschikbaar.
-    from: weg
+    from: Vanaf
     global: Globaal / alle kanalen
     source: bron
     currency: munteenheid
-    charge: Prijs dimensie
+    charge: Prijscomponent
     tier: Hoeveelheidsschaal
     amount: Hoeveelheid
     minimum_quantity: Minimale hoeveelheid
@@ -241,7 +241,7 @@ cardnext:
       create: Creëer waarde
     price:
       create: Prijsregel maken
-      base: BASEREN
+      base: BASIS
       empty: Er zijn nog geen prijsregels.
     field_type:
       single_choice: Individuele selectie
@@ -270,7 +270,7 @@ cardnext:
       delete_blocked: De verwijdering is geannuleerd om de bijbehorende product- of bestelgegevens te beschermen.
   configurator_path:
     label: Configurator-URL
-    help: Relatief pad van de standalone configuratorpagina, b.v. B. plastic kaarten/plastic kaarten afdrukken. Zonder domein en zonder leidende slash.
+    help: Relatief pad van de zelfstandige configuratorpagina, bijvoorbeeld plastic-kaarten/plastic-kaarten-bedrukken. Zonder domein en zonder voorafgaande slash.
     required: Voor een configuratieproduct moet in elke vertaling een configurator-URL worden ingevoerd.
     invalid: Het pad mag alleen geldige padsegmenten bevatten en mag geen domein, query, fragmenten, ".." of lege segmenten gebruiken.
     unique: Deze configurator-URL wordt al in deze taal gebruikt.
