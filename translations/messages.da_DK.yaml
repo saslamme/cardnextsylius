@@ -1,3 +1,311 @@
 cardnext:
   market:
     select: Vælg land
+  account:
+    quotes: Tilbud
+    maintenance_contracts: Vedligeholdelseskontrakter
+  maintenance_contract:
+    printer: Kort printer
+    serial: Serienummer
+    reference: Kontraktnummer
+    starts: begyndelse
+    ends: Ende
+    status:
+      label: status
+      active: Aktiv
+      upcoming: Kommende
+      expired: Udløbet
+    empty:
+      title: Ingen vedligeholdelseskontrakter
+      text: Der er i øjeblikket ingen vedligeholdelseskontrakter gemt for din kundekonto.
+    admin:
+      menu: Vedligeholdelseskontrakter
+      source_notice: Kontraktdata synkroniseres fra ERP'en. Kun den interne note vedligeholdes lokalt.
+      sync: Synkroniser nu
+  order:
+    configured_product: Konfigureret produkt
+    configured_items: Konfigurerede elementer
+    position: position
+    positions: positioner
+    production_time: Produktionstid
+    working_days: ca. %days% arbejdsdage
+  admin:
+    product_create:
+      standard: Standard produkt
+      variant: Variant produkt
+      configuration: Konfigurationsprodukt
+  configurator:
+    lead_time:
+      preselected: Forudvalgt
+      preselected_help: Denne leveringstid vælges automatisk, når konfiguratoren åbnes.
+    fixed_numeric_help: Hvis minimum og maksimum er identiske, er værdien fast i frontend.
+    title: Konfiguratorer
+    form:
+      title: Konfigurer produktet
+      intro: Prisen opdateres automatisk.
+    section:
+      basic: grundlag
+      create: Opret område
+      empty: Ingen tilgængelige områder endnu.
+    quantity: Mængde
+    choose: Vælg venligst
+    yes: Ja
+    upload_later: Filen uploades efter bestillingen.
+    production_time: Produktionstid
+    working_days: arbejdsdage
+    summary: Din konfiguration
+    incomplete: Ufuldstændig
+    total: Samlet pris
+    placeholder: Udfyld de påkrævede felter for automatisk at beregne prisen.
+    per_piece: stykket
+    shipping_note: Plus forsendelse og, hvis det er relevant, lovpligtig moms.
+    add_to_cart: Tilføj til kurv
+    price_details: Prisoplysninger
+    awaiting_price: Pris er beregnet
+    assurance:
+      calculation: Server-side og bindende beregnet
+      checkout: Sikker ordrebehandling
+    create: Opret konfigurator
+    edit: Redigere
+    delete: Slet
+    delete_confirm: Virkelig slette?
+    delete_product_confirm: Dette konfigurationsprodukt, inklusive konfigurator, struktur og prissætningsregler, slettes permanent.
+    save: Gem
+    name: navn
+    code: kode
+    product: produkt
+    status: status
+    enabled: Aktiv
+    disabled: Inaktiv
+    preselected: Forudvalgt
+    preselected_help: Denne værdi vælges automatisk, når konfiguratoren åbnes.
+    sections: områder
+    fields: felter
+    values: Værdier
+    type: type
+    required: Obligatorisk felt
+    position: position
+    description: Beskrivelse
+    help: Hjælpetekst
+    step: trinstørrelse
+    color: Farve
+    color_icon: Farve/ikon
+    search: Søg navn eller kode
+    all_statuses: Alle statusser
+    filter: Filter
+    empty: Ingen tilgængelige konfiguratorer endnu.
+    from: væk
+    global: Global / alle kanaler
+    source: kilde
+    currency: valuta
+    charge: Pris dimension
+    tier: Mængde skala
+    amount: Beløb
+    minimum_quantity: Minimum mængde
+    maximum_quantity: Maksimal mængde (tom = ubegrænset)
+    multiplier_field: Multiplikatorfelt
+    percentage_base: Procentbasis
+    channel_help: En kanalspecifik prissætningsregel tilsidesætter den globale regel med samme prisdimension.
+    tabs:
+      master: Stamdata
+      structure: struktur
+      prices: Priser
+    field:
+      create: Opret felt
+      empty: Ingen felter endnu.
+    value:
+      create: Skab værdi
+    price:
+      create: Opret prisregel
+      base: GRUNDLAG
+      empty: Ingen prisregler endnu.
+    field_type:
+      single_choice: Individuelt valg
+      multiple_choice: Flere valg
+      boolean: Ja Nej
+      integer: Heltal
+      decimal: decimaltal
+      text: tekst
+      quantity: Mængde
+      upload: fil
+    price_type:
+      unit: Pris pr stk
+      fixed: Engangsbeløb
+      percent: Procentvis tillæg
+    multiplier:
+      none: Ingen multiplikator
+      quantity: Mængde
+      field_value: Feltværdi
+    percentage_base_base: Grundpris
+    percentage_base_options: Valgmuligheder
+    percentage_base_subtotal: Subtotal
+    flash:
+      created: Konfigurator er blevet oprettet.
+      updated: Konfigurator er blevet opdateret.
+      deleted: Konfigurationsproduktet er blevet fuldstændigt slettet.
+      delete_blocked: Sletningen blev annulleret for at beskytte tilknyttede produkt- eller ordredata.
+  configurator_path:
+    label: Konfigurator URL
+    help: Relativ sti til den selvstændige konfiguratorside, f.eks. B. plastikkort/plastikkorttryk. Uden domæne og uden førende skråstreg.
+    required: For et konfigurationsprodukt skal der indtastes en konfigurator-URL i hver oversættelse.
+    invalid: Stien må kun indeholde gyldige stisegmenter og må ikke bruge domæne, forespørgsel, fragmenter, ".." eller tomme segmenter.
+    unique: Denne konfigurator-URL bruges allerede på dette sprog.
+    configurable_only: En konfigurator-URL er kun tilladt for konfigurationsprodukter.
+  configurator_page:
+    kicker: Konfigurationsprodukt
+    breadcrumb:
+      home: starte
+    stage:
+      kicker: Din konfiguration
+      title: Konfigurer produktet
+      intro: Sammensæt dit produkt og få beregnet prisen uforpligtende.
+    trust:
+      calculation: Gennemsigtig beregning
+      production: Professionel fremstilling
+      support: Personlig rådgivning
+    process:
+      title: Sådan fungerer din ordre på individuelt trykte plastikkort
+      step_1:
+        title: Konfigurer
+        description: Vælg materiale, tryk, mængde og produktionstid til dine kort.
+      step_2:
+        title: Bestille
+        description: Tjek din konfiguration og gennemfør bestillingen online.
+      step_3:
+        title: Udskriv data
+        description: Efter bestilling skal du indsende dine printdata til videre behandling.
+      step_4:
+        title: Frigøre
+        description: Du modtager et bevis og frigiver først derefter produktionen.
+      step_5:
+        title: Forsendelse
+        description: Efter produktion og kvalitetskontrol vil dine kort blive sendt sikkert.
+    content:
+      kicker: Produktinformation
+  quote:
+    cart: Tilbudskurv
+    header: Tilbud (%count%)
+    request: Anmodning om tilbud
+    intro: Sammensæt dine ønskede produkter. Vi tjekker priser, tilgængelighed og projektkrav og laver derefter et individuelt tilbud til dig.
+    add: Tilføj til tilbud
+    add_product: Tilføj %product% for at tilbyde kurv
+    added: Produktet er tilføjet tilbudskurven.
+    invalid_item: Produktet er ikke tilgængeligt for en tilbudsanmodning i denne salgskanal.
+    channel_reset: Tilbudskurven blev nulstillet på grund af ændringen af ​​salgskanal.
+    empty: Din tilbudskurv er stadig tom.
+    empty_help: Tilføj produkter, du gerne vil modtage et tilpasset tilbud på.
+    discover: Opdag produkter
+    home: Hjemmeside
+    sku: Varenummer
+    quantity: Mængde
+    update: Opdatering
+    remove: Fjerne
+    price_note: 'Uforpligtende prisoplysninger: Butikspriser er vejledende. Det endelige tilbud tager højde for mængde, tilgængelighed og projektomfang.'
+    image_pending: Produktbillede følger
+    summary: Oversigt
+    products: Produkter
+    orientation_total: Orienteringsværdi
+    unit: Stykke
+    total: I alt
+    summary_note: Den endelige pris vil blive bestemt individuelt for din anmodning.
+    continue: Fuldstændig anmodning
+    submit: Send tilbudsanmodning
+    validation:
+      privacy: Accepter venligst behandlingen af ​​dine oplysninger.
+      required_fields: Tjek venligst de markerede obligatoriske felter.
+      submission: Anmodningen kunne ikke sendes. Genindlæs siden og prøv igen.
+    form:
+      title: Forespørgselsformular
+      company: Forfølge
+      address: adresse
+      project: Projektinformation
+      support: Yderligere support
+      message_placeholder: f.eks. B. 250 medarbejder ID-kort, introduktion i oktober, printer inklusiv forbrugsvarer og uddannelse.
+      privacy_before: jeg har
+      privacy_link: Privatlivspolitik
+      privacy_after: Jeg har læst og accepterer behandlingen af ​​mine oplysninger for at behandle anmodningen.
+    confirmation:
+      title: Tak for din tilbudsanmodning.
+      reference: 'Din reference:'
+      body: Vi tjekker din anmodning og vender tilbage til dig.
+    admin:
+      menu: Tilbud
+    status:
+      new: Ny
+      in_progress: Igangværende
+      question: Forespørgsel
+      closed: Lukket
+      sent: Åben
+      accepted: Antaget
+      rejected: Afvist
+      superseded: Udskiftet
+Company: selskab
+Contact name: kontaktperson
+Email: e-mail
+Phone: telefon
+Customer number: Kundenummer
+Street: Gade
+House number: husnummer
+Postal code: postnummer
+City: Beliggenhed
+Country code: land
+Project reference: Projektreference
+Requested delivery date: Ønsket leveringsdato
+Customer purchase order number: Internt ordrenummer
+Message: bemærkning
+Needs advice: Jeg har brug for råd om produktvalg.
+Needs compatibility check: Tjek venligst de valgte produkter for kompatibilitet.
+Privacy consent: Databeskyttelse
+quote_public:
+  title: Tilbud
+  version: version
+  date: Tilbudsdato
+  valid_until: Gælder indtil kl
+  expired: Dette tilbud er ikke længere gyldigt.
+  already_accepted: Dette tilbud er allerede blevet accepteret d
+  already_rejected: Dette tilbud blev afvist.
+  superseded: Dette tilbud er blevet erstattet af en nyere version.
+  company: selskab
+  contact: kontaktperson
+  project: projekt
+  item: position
+  quantity: Mængde
+  unit_price: Enhedspris netto
+  net: Net
+  shipping: Forsendelse
+  service: service
+  tax: moms
+  total: total
+  delivery: Leveringsbetingelser
+  payment: Betalingsbetingelser
+  note: Kundemeddelelse
+  pdf: Download tilbud som PDF
+  accept: Accepter tilbud
+  reject: Afslå tilbud
+  name: navn
+  reason: Årsag til afvisning (valgfrit)
+  binding: Jeg accepterer dette tilbud bindende.
+  thanks: Tak.
+  accept_success: Din accept er blevet sendt.
+  reject_success: Dit afslag er blevet sendt.
+quote_mail:
+  greeting: Hej %name%,
+  offer: 'Tak for din henvendelse. Et nyt tilbud er tilgængeligt på din kundekonto. Tilbud: %number%.'
+  view: Se tilbud på kundekonto
+  attachment: Log venligst ind med din kundekonto.
+  accepted_customer: Vi bekræfter modtagelsen af ​​dit tilbudsaccept.
+  accepted_internal: Tilbud %number% v%version% blev accepteret.
+  rejected_customer: Vi bekræfter modtagelsen af ​​dit tilbudsafslag.
+  rejected_internal: Tilbud %number% v%version% blev afvist.
+  request_subject: Din tilbudsanmodning %number% hos Cardnext
+  offer_subject: Dit tilbud %number% fra Cardnext
+  accepted_subject: Bekræftelse på din accept af tilbuddet
+  rejected_subject: Bekræftelse af dit tilbudsafslag
+  personal_offer: Dit personlige tilbud
+  sign_in: Log venligst ind med din kundekonto.
+  signoff: Vi ser frem til din feedback.
+  request_title: Tak for din tilbudsanmodning
+  request_greeting: Hej %name%,
+  request_reference: 'Din reference: %number%'
+  request_body: Din anmodning omfatter %count% positioner. Vi tjekker priser, tilgængelighed og dine detaljer og vender derefter tilbage til dig.
+  regards: De bedste ønsker – dit Cardnext-team

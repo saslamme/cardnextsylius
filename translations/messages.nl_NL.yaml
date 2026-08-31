@@ -1,3 +1,311 @@
 cardnext:
   market:
-    select: Land kiezen
+    select: Selecteer land
+  account:
+    quotes: Offerteen
+    maintenance_contracts: Onderhoudscontracten
+  maintenance_contract:
+    printer: Kaartprinter
+    serial: Serienummer
+    reference: Contractnummer
+    starts: begin
+    ends: Einde
+    status:
+      label: status
+      active: Actief
+      upcoming: Aankomend
+      expired: Verlopen
+    empty:
+      title: Geen onderhoudscontracten
+      text: Er zijn momenteel geen onderhoudscontracten opgeslagen voor uw klantaccount.
+    admin:
+      menu: Onderhoudscontracten
+      source_notice: De contractgegevens worden vanuit het ERP gesynchroniseerd. Alleen de interne notitie wordt lokaal bijgehouden.
+      sync: Synchroniseer nu
+  order:
+    configured_product: Geconfigureerd product
+    configured_items: Geconfigureerde artikelen
+    position: positie
+    positions: posities
+    production_time: Productie tijd
+    working_days: ca. %days% werkdagen
+  admin:
+    product_create:
+      standard: Standaardproduct
+      variant: Variantproduct
+      configuration: Configuratieproduct
+  configurator:
+    lead_time:
+      preselected: Voorgeselecteerd
+      preselected_help: Deze levertijd wordt automatisch geselecteerd bij het openen van de configurator.
+    fixed_numeric_help: Als minimum en maximum identiek zijn, wordt de waarde vastgelegd in de frontend.
+    title: Configuratoren
+    form:
+      title: Configureer product
+      intro: De prijs wordt automatisch bijgewerkt.
+    section:
+      basic: baseren
+      create: Gebied creëren
+      empty: Er zijn nog geen gebieden beschikbaar.
+    quantity: Aantal
+    choose: Selecteer alstublieft
+    yes: Ja
+    upload_later: Het uploaden van het bestand vindt plaats na de bestelling.
+    production_time: Productie tijd
+    working_days: werkdagen
+    summary: Uw configuratie
+    incomplete: Onvolledig
+    total: Totale prijs
+    placeholder: Vul de verplichte velden in om de prijs automatisch te berekenen.
+    per_piece: per stuk
+    shipping_note: Plus verzendkosten en, indien van toepassing, wettelijke omzetbelasting.
+    add_to_cart: Voeg toe aan winkelwagen
+    price_details: Prijsdetails
+    awaiting_price: Prijs wordt berekend
+    assurance:
+      calculation: Server-side en bindend berekend
+      checkout: Veilige orderverwerking
+    create: Configurator maken
+    edit: Bewerking
+    delete: Verwijderen
+    delete_confirm: Echt verwijderen?
+    delete_product_confirm: Dit configuratieproduct inclusief configurator, structuur en prijsregels wordt definitief verwijderd.
+    save: Opslaan
+    name: naam
+    code: code
+    product: product
+    status: status
+    enabled: Actief
+    disabled: Inactief
+    preselected: Voorgeselecteerd
+    preselected_help: Deze waarde wordt automatisch geselecteerd bij het openen van de configurator.
+    sections: gebieden
+    fields: velden
+    values: Waarden
+    type: type
+    required: Verplicht veld
+    position: positie
+    description: Beschrijving
+    help: Help-tekst
+    step: stapgrootte
+    color: Kleur
+    color_icon: Kleur/pictogram
+    search: Zoek naam of code
+    all_statuses: Alle statussen
+    filter: Filter
+    empty: Er zijn nog geen configuratoren beschikbaar.
+    from: weg
+    global: Globaal / alle kanalen
+    source: bron
+    currency: munteenheid
+    charge: Prijs dimensie
+    tier: Hoeveelheidsschaal
+    amount: Hoeveelheid
+    minimum_quantity: Minimale hoeveelheid
+    maximum_quantity: Maximale hoeveelheid (leeg = onbeperkt)
+    multiplier_field: Vermenigvuldigingsveld
+    percentage_base: Percentagebasis
+    channel_help: Een kanaalspecifieke prijsregel overschrijft de algemene regel van dezelfde prijsdimensie.
+    tabs:
+      master: Stamgegevens
+      structure: structuur
+      prices: Prijzen
+    field:
+      create: Veld maken
+      empty: Nog geen velden.
+    value:
+      create: Creëer waarde
+    price:
+      create: Prijsregel maken
+      base: BASEREN
+      empty: Er zijn nog geen prijsregels.
+    field_type:
+      single_choice: Individuele selectie
+      multiple_choice: Meerdere selectie
+      boolean: Ja Nee
+      integer: Geheel getal
+      decimal: decimaal getal
+      text: tekst
+      quantity: Aantal
+      upload: bestand
+    price_type:
+      unit: Prijs per stuk
+      fixed: Eenmalig bedrag
+      percent: Procentuele toeslag
+    multiplier:
+      none: Geen vermenigvuldiger
+      quantity: Aantal
+      field_value: Veldwaarde
+    percentage_base_base: Basisprijs
+    percentage_base_options: Opties
+    percentage_base_subtotal: Subtotaal
+    flash:
+      created: Configurator is aangemaakt.
+      updated: Configurator is bijgewerkt.
+      deleted: Configuratieproduct is volledig verwijderd.
+      delete_blocked: De verwijdering is geannuleerd om de bijbehorende product- of bestelgegevens te beschermen.
+  configurator_path:
+    label: Configurator-URL
+    help: Relatief pad van de standalone configuratorpagina, b.v. B. plastic kaarten/plastic kaarten afdrukken. Zonder domein en zonder leidende slash.
+    required: Voor een configuratieproduct moet in elke vertaling een configurator-URL worden ingevoerd.
+    invalid: Het pad mag alleen geldige padsegmenten bevatten en mag geen domein, query, fragmenten, ".." of lege segmenten gebruiken.
+    unique: Deze configurator-URL wordt al in deze taal gebruikt.
+    configurable_only: Een configurator-URL is alleen toegestaan ​​voor configuratieproducten.
+  configurator_page:
+    kicker: Configuratieproduct
+    breadcrumb:
+      home: begin
+    stage:
+      kicker: Uw configuratie
+      title: Configureer product
+      intro: Stel uw product samen en laat vrijblijvend de prijs berekenen.
+    trust:
+      calculation: Transparante berekening
+      production: Professionele productie
+      support: Persoonlijk advies
+    process:
+      title: Zo werkt uw bestelling voor individueel bedrukte plastic kaarten
+      step_1:
+        title: Configureer
+        description: Selecteer materiaal, bedrukking, hoeveelheid en productietijd voor uw kaarten.
+      step_2:
+        title: Volgorde
+        description: Controleer uw configuratie en rond de bestelling gemakkelijk online af.
+      step_3:
+        title: Gegevens afdrukken
+        description: Geef na het bestellen uw printgegevens door voor verdere verwerking.
+      step_4:
+        title: Uitgave
+        description: U ontvangt een proefdruk en geeft pas daarna de productie vrij.
+      step_5:
+        title: Verzending
+        description: Na productie en kwaliteitscontrole worden uw kaarten veilig verzonden.
+    content:
+      kicker: Productinformatie
+  quote:
+    cart: Offerte mand
+    header: Offerte (%count%)
+    request: Offerteaanvraag
+    intro: Stel uw gewenste producten samen. Wij controleren prijzen, beschikbaarheid en projectvereisten en maken vervolgens een individuele offerte voor u op.
+    add: Toevoegen aan offerte
+    add_product: Voeg %product% toe aan het winkelmandje
+    added: Het product is toegevoegd aan het offertesmandje.
+    invalid_item: Het product is niet beschikbaar voor een offerteaanvraag in dit verkoopkanaal.
+    channel_reset: Het offertesmandje is gereset vanwege de wijziging van het verkoopkanaal.
+    empty: Uw offertesmandje is nog leeg.
+    empty_help: Voeg producten toe waarvoor u een offerte op maat wilt ontvangen.
+    discover: Ontdek producten
+    home: Startpagina
+    sku: Artikelnummer
+    quantity: Aantal
+    update: Update
+    remove: Verwijderen
+    price_note: 'Vrijblijvende prijsinformatie: Winkelprijzen dienen als leidraad. Bij de definitieve offerte wordt rekening gehouden met de hoeveelheid, beschikbaarheid en projectomvang.'
+    image_pending: Productafbeelding volgt
+    summary: Samenvatting
+    products: Producten
+    orientation_total: Oriëntatie waarde
+    unit: Deel
+    total: In totaal
+    summary_note: De uiteindelijke prijs wordt individueel voor uw aanvraag bepaald.
+    continue: Volledige aanvraag
+    submit: Offerteaanvraag versturen
+    validation:
+      privacy: Ga akkoord met de verwerking van uw gegevens.
+      required_fields: Controleer de gemarkeerde verplichte velden.
+      submission: Het verzoek kon niet worden verzonden. Laad de pagina opnieuw en probeer het opnieuw.
+    form:
+      title: Aanvraagformulier
+      company: Nastreven
+      address: adres
+      project: Projectinformatie
+      support: Extra ondersteuning
+      message_placeholder: bijv. B. 250 identiteitskaarten voor medewerkers, introductie in oktober, printer inclusief verbruiksartikelen en training.
+      privacy_before: Ik heb de
+      privacy_link: Privacybeleid
+      privacy_after: Ik heb gelezen en ga akkoord met de verwerking van mijn gegevens om het verzoek te verwerken.
+    confirmation:
+      title: Bedankt voor uw offerteaanvraag.
+      reference: 'Uw referentie:'
+      body: Wij zullen uw verzoek controleren en contact met u opnemen.
+    admin:
+      menu: Offerteen
+    status:
+      new: Nieuw
+      in_progress: In uitvoering
+      question: Navraag
+      closed: Gesloten
+      sent: Open
+      accepted: Verondersteld
+      rejected: Afgewezen
+      superseded: Vervangen
+Company: bedrijf
+Contact name: contactpersoon
+Email: e-mail
+Phone: telefoon
+Customer number: Klantnummer
+Street: Straat
+House number: huisnummer
+Postal code: Postcode
+City: Locatie
+Country code: land
+Project reference: Projectreferentie
+Requested delivery date: Gewenste leverdatum
+Customer purchase order number: Intern bestelnummer
+Message: opmerking
+Needs advice: Ik heb advies nodig over de productkeuze.
+Needs compatibility check: Controleer de geselecteerde producten op compatibiliteit.
+Privacy consent: Gegevensbescherming
+quote_public:
+  title: Aanbod
+  version: versie
+  date: Offertesdatum
+  valid_until: Geldig tot
+  expired: Deze offerte is niet langer geldig.
+  already_accepted: Dit bod is al geaccepteerd op
+  already_rejected: Dit aanbod werd afgewezen.
+  superseded: Deze offerte is vervangen door een nieuwere versie.
+  company: bedrijf
+  contact: contactpersoon
+  project: project
+  item: positie
+  quantity: Aantal
+  unit_price: Eenheidsprijs netto
+  net: Netto
+  shipping: Verzending
+  service: dienst
+  tax: VAT
+  total: totaal
+  delivery: Leveringsvoorwaarden
+  payment: Betalingsvoorwaarden
+  note: Kennisgeving van de klant
+  pdf: Offerte downloaden als PDF
+  accept: Accepteer aanbod
+  reject: Offerte afwijzen
+  name: naam
+  reason: Reden van afwijzing (optioneel)
+  binding: Ik aanvaard dit aanbod bindend.
+  thanks: Bedankt.
+  accept_success: Uw acceptatie is succesvol verzonden.
+  reject_success: Uw afwijzing is succesvol ingediend.
+quote_mail:
+  greeting: Hallo %name%,
+  offer: 'Bedankt voor uw vraag. Er is een nieuwe offerte beschikbaar in uw klantaccount. Offerte: %number%.'
+  view: Bekijk offerte in klantaccount
+  attachment: Log in met uw klantaccount.
+  accepted_customer: Wij bevestigen de ontvangst van uw aanvaarding van het aanbod.
+  accepted_internal: Offerte %number% v%version% is geaccepteerd.
+  rejected_customer: Wij bevestigen de ontvangst van uw afwijzing van het aanbod.
+  rejected_internal: Offerte %number% v%version% is afgewezen.
+  request_subject: Uw offerteaanvraag %number% bij Cardnext
+  offer_subject: Jouw offerte %number% van Cardnext
+  accepted_subject: Bevestiging van uw aanvaarding van het aanbod
+  rejected_subject: Bevestiging van de afwijzing van uw bod
+  personal_offer: Jouw persoonlijke aanbod
+  sign_in: Log in met uw klantaccount.
+  signoff: Wij kijken uit naar uw feedback.
+  request_title: Bedankt voor uw offerteaanvraag
+  request_greeting: Hallo %name%,
+  request_reference: 'Uw referentie: %number%'
+  request_body: Uw verzoek omvat %count%-posities. Wij controleren de prijzen, beschikbaarheid en uw gegevens en nemen dan contact met u op.
+  regards: Beste wensen – uw Cardnext-team

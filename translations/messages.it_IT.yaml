@@ -1,3 +1,311 @@
 cardnext:
   market:
-    select: Seleziona paese
+    select: Seleziona il paese
+  account:
+    quotes: Offerte
+    maintenance_contracts: Contratti di manutenzione
+  maintenance_contract:
+    printer: Stampante per carte
+    serial: Numero di serie
+    reference: Numero del contratto
+    starts: inizio
+    ends: FINE
+    status:
+      label: stato
+      active: Attivo
+      upcoming: Prossimamente
+      expired: Scaduto
+    empty:
+      title: Nessun contratto di manutenzione
+      text: Al momento non sono presenti contratti di manutenzione memorizzati per il tuo account cliente.
+    admin:
+      menu: Contratti di manutenzione
+      source_notice: I dati del contratto vengono sincronizzati dall'ERP. Solo la nota interna viene mantenuta localmente.
+      sync: Sincronizza ora
+  order:
+    configured_product: Prodotto configurato
+    configured_items: Elementi configurati
+    position: posizione
+    positions: posizioni
+    production_time: Tempo di produzione
+    working_days: ca. %days% giorni lavorativi
+  admin:
+    product_create:
+      standard: Prodotto standard
+      variant: Prodotto variante
+      configuration: Prodotto di configurazione
+  configurator:
+    lead_time:
+      preselected: Preselezionato
+      preselected_help: Questo tempo di consegna viene selezionato automaticamente all'apertura del configuratore.
+    fixed_numeric_help: Se minimo e massimo sono identici, il valore è fisso nel frontend.
+    title: Configuratori
+    form:
+      title: Configura prodotto
+      intro: Il prezzo si aggiorna automaticamente.
+    section:
+      basic: base
+      create: Crea zona
+      empty: Nessuna area ancora disponibile.
+    quantity: Quantità
+    choose: Seleziona
+    yes: SÌ
+    upload_later: Il caricamento del file avviene successivamente all'ordine.
+    production_time: Tempo di produzione
+    working_days: giorni lavorativi
+    summary: La tua configurazione
+    incomplete: Incompleto
+    total: Prezzo totale
+    placeholder: Compila i campi richiesti per calcolare automaticamente il prezzo.
+    per_piece: al pezzo
+    shipping_note: Più spese di spedizione ed eventualmente l'imposta sulle vendite prevista dalla legge.
+    add_to_cart: Aggiungi al carrello
+    price_details: Dettagli sui prezzi
+    awaiting_price: Il prezzo è calcolato
+    assurance:
+      calculation: Lato server e calcolato in modo vincolante
+      checkout: Elaborazione sicura degli ordini
+    create: Crea configuratore
+    edit: Modificare
+    delete: Eliminare
+    delete_confirm: Eliminare davvero?
+    delete_product_confirm: Questo prodotto di configurazione, incluso il configuratore, la struttura e le regole dei prezzi, verrà eliminato definitivamente.
+    save: Salva
+    name: nome
+    code: codice
+    product: prodotto
+    status: stato
+    enabled: Attivo
+    disabled: Inattivo
+    preselected: Preselezionato
+    preselected_help: Questo valore viene selezionato automaticamente all'apertura del configuratore.
+    sections: aree
+    fields: campi
+    values: Valori
+    type: tipo
+    required: Campo obbligatorio
+    position: posizione
+    description: Descrizione
+    help: Testo di aiuto
+    step: dimensione del passo
+    color: Colore
+    color_icon: Colore/icona
+    search: Cerca nome o codice
+    all_statuses: Tutti gli stati
+    filter: Filtro
+    empty: Nessun configuratore ancora disponibile.
+    from: lontano
+    global: Globale/tutti i canali
+    source: fonte
+    currency: valuta
+    charge: Dimensione del prezzo
+    tier: Scala di quantità
+    amount: Quantità
+    minimum_quantity: Quantità minima
+    maximum_quantity: Quantità massima (vuoto = illimitato)
+    multiplier_field: Campo moltiplicatore
+    percentage_base: Base percentuale
+    channel_help: Una regola di determinazione del prezzo specifica del canale sovrascrive la regola globale della stessa dimensione di determinazione del prezzo.
+    tabs:
+      master: Dati anagrafici
+      structure: struttura
+      prices: Prezzi
+    field:
+      create: Crea campo
+      empty: Nessun campo ancora.
+    value:
+      create: Creare valore
+    price:
+      create: Crea una regola di prezzo
+      base: BASE
+      empty: Nessuna regola sui prezzi ancora.
+    field_type:
+      single_choice: Selezione individuale
+      multiple_choice: Selezione multipla
+      boolean: Sì, no
+      integer: Intero
+      decimal: numero decimale
+      text: testo
+      quantity: Quantità
+      upload: file
+    price_type:
+      unit: Prezzo per pezzo
+      fixed: Importo una tantum
+      percent: Supplemento percentuale
+    multiplier:
+      none: Nessun moltiplicatore
+      quantity: Quantità
+      field_value: Valore del campo
+    percentage_base_base: Prezzo base
+    percentage_base_options: Opzioni
+    percentage_base_subtotal: Totale parziale
+    flash:
+      created: Il configuratore è stato creato.
+      updated: Il configuratore è stato aggiornato.
+      deleted: Il prodotto di configurazione è stato completamente eliminato.
+      delete_blocked: L'eliminazione è stata annullata per proteggere i dati del prodotto o dell'ordine associati.
+  configurator_path:
+    label: URL del configuratore
+    help: Percorso relativo della pagina del configuratore autonomo, ad es. B. stampa di carte in plastica/carte in plastica. Senza dominio e senza barra iniziale.
+    required: Per un prodotto di configurazione, è necessario inserire un URL del configuratore in ogni traduzione.
+    invalid: Il percorso deve contenere solo segmenti di percorso validi e non deve utilizzare dominio, query, frammenti, ".." o segmenti vuoti.
+    unique: Questo URL del configuratore è già utilizzato in questa lingua.
+    configurable_only: Un URL del configuratore è consentito solo per i prodotti di configurazione.
+  configurator_page:
+    kicker: Prodotto di configurazione
+    breadcrumb:
+      home: inizio
+    stage:
+      kicker: La tua configurazione
+      title: Configura prodotto
+      intro: Componi il tuo prodotto e fatti calcolare il prezzo senza impegno.
+    trust:
+      calculation: Calcolo trasparente
+      production: Produzione professionale
+      support: Consiglio personale
+    process:
+      title: Ecco come funziona il tuo ordine di carte plastificate stampate individualmente
+      step_1:
+        title: Configura
+        description: Seleziona materiale, stampa, quantità e tempi di produzione delle tue card.
+      step_2:
+        title: Ordine
+        description: Controlla la tua configurazione e completa comodamente l'ordine online.
+      step_3:
+        title: Stampa dati
+        description: Dopo l'ordine inviate i vostri dati di stampa per l'ulteriore elaborazione.
+      step_4:
+        title: Pubblicazione
+        description: Riceverai una prova e solo allora rilascerai la produzione.
+      step_5:
+        title: Spedizione
+        description: Dopo la produzione e il controllo qualità, le tue carte verranno spedite in tutta sicurezza.
+    content:
+      kicker: Informazioni sul prodotto
+  quote:
+    cart: Cestino dell'offerta
+    header: Offerta (%count%)
+    request: Richiesta di preventivo
+    intro: Metti insieme i prodotti desiderati. Controlliamo prezzi, disponibilità e requisiti del progetto e poi creiamo un'offerta individuale per te.
+    add: Aggiungi all'offerta
+    add_product: Aggiungi %product% al carrello delle offerte
+    added: Il prodotto è stato aggiunto al carrello delle offerte.
+    invalid_item: Il prodotto non è disponibile per una richiesta di preventivo in questo canale di vendita.
+    channel_reset: Il carrello delle offerte è stato reimpostato a causa del cambio del canale di vendita.
+    empty: Il tuo carrello delle offerte è ancora vuoto.
+    empty_help: Aggiungi i prodotti per i quali desideri ricevere un preventivo personalizzato.
+    discover: Scopri i prodotti
+    home: Pagina iniziale
+    sku: Numero dell'articolo
+    quantity: Quantità
+    update: Aggiornamento
+    remove: Rimuovere
+    price_note: 'Informazioni sui prezzi non vincolanti: i prezzi dei negozi servono da guida. L''offerta finale tiene conto della quantità, della disponibilità e della portata del progetto.'
+    image_pending: Segue l'immagine del prodotto
+    summary: Riepilogo
+    products: Prodotti
+    orientation_total: Valore di orientamento
+    unit: Pezzo
+    total: In totale
+    summary_note: Il prezzo finale sarà determinato individualmente per la vostra richiesta.
+    continue: Richiesta completa
+    submit: Invia richiesta di offerta
+    validation:
+      privacy: Per favore acconsenti al trattamento dei tuoi dati.
+      required_fields: Si prega di controllare i campi contrassegnati come obbligatori.
+      submission: Non è stato possibile inviare la richiesta. Ricarica la pagina e riprova.
+    form:
+      title: Modulo di richiesta
+      company: Perseguire
+      address: indirizzo
+      project: Informazioni sul progetto
+      support: Supporto aggiuntivo
+      message_placeholder: per esempio. B. 250 carte d'identità dei dipendenti, introduzione a ottobre, stampante compresi materiali di consumo e formazione.
+      privacy_before: Ho il
+      privacy_link: politica sulla riservatezza
+      privacy_after: Ho letto e acconsento al trattamento dei miei dati per elaborare la richiesta.
+    confirmation:
+      title: Grazie per la tua richiesta di preventivo.
+      reference: 'Il tuo riferimento:'
+      body: Controlleremo la tua richiesta e ti ricontatteremo.
+    admin:
+      menu: Offerte
+    status:
+      new: Nuovo
+      in_progress: In corso
+      question: Inchiesta
+      closed: Chiuso
+      sent: Aprire
+      accepted: Presunto
+      rejected: Respinto
+      superseded: Sostituito
+Company: azienda
+Contact name: referente
+Email: e-mail
+Phone: telefono
+Customer number: Numero cliente
+Street: Strada
+House number: numero civico
+Postal code: Cap
+City: Posizione
+Country code: Paese
+Project reference: Riferimento del progetto
+Requested delivery date: Data di consegna desiderata
+Customer purchase order number: Numero d'ordine interno
+Message: osservazione
+Needs advice: Ho bisogno di un consiglio sulla scelta del prodotto.
+Needs compatibility check: Si prega di verificare la compatibilità dei prodotti selezionati.
+Privacy consent: Protezione dei dati
+quote_public:
+  title: Offerta
+  version: versione
+  date: Data dell'offerta
+  valid_until: Valido fino al
+  expired: Questa offerta non è più valida.
+  already_accepted: Questa offerta è già stata accettata il
+  already_rejected: Questa offerta è stata rifiutata.
+  superseded: Questa offerta è stata sostituita da una versione più recente.
+  company: azienda
+  contact: referente
+  project: progetto
+  item: posizione
+  quantity: Quantità
+  unit_price: Prezzo unitario netto
+  net: Netto
+  shipping: Spedizione
+  service: servizio
+  tax: I.V.A.
+  total: totale
+  delivery: Condizioni di consegna
+  payment: Termini di pagamento
+  note: Avviso al cliente
+  pdf: Scarica l'offerta in PDF
+  accept: Accetta l'offerta
+  reject: Rifiuta l'offerta
+  name: nome
+  reason: Motivo del rifiuto (facoltativo)
+  binding: Accetto questa offerta in modo vincolante.
+  thanks: Grazie.
+  accept_success: La tua accettazione è stata inviata con successo.
+  reject_success: Il tuo rifiuto è stato inviato con successo.
+quote_mail:
+  greeting: Ciao %name%,
+  offer: 'Grazie per la tua richiesta. Una nuova offerta è disponibile nel tuo account cliente. Offerta: %number%.'
+  view: Visualizza l'offerta nell'account cliente
+  attachment: Effettua il login con il tuo account cliente.
+  accepted_customer: Confermiamo la ricezione dell'accettazione della tua offerta.
+  accepted_internal: L'offerta %number% v%version% è stata accettata.
+  rejected_customer: Confermiamo la ricezione del rifiuto dell'offerta.
+  rejected_internal: L'offerta %number% v%version% è stata rifiutata.
+  request_subject: La tua richiesta di offerta %number% su Cardnext
+  offer_subject: La tua offerta %number% da Cardnext
+  accepted_subject: Conferma dell'accettazione dell'offerta
+  rejected_subject: Conferma del rifiuto della tua offerta
+  personal_offer: La tua offerta personale
+  sign_in: Effettua il login con il tuo account cliente.
+  signoff: Aspettiamo il tuo feedback.
+  request_title: Grazie per la tua richiesta di preventivo
+  request_greeting: Ciao %name%,
+  request_reference: 'Il tuo riferimento: %number%'
+  request_body: La tua richiesta include posizioni %count%. Controlleremo prezzi, disponibilità e i tuoi dati e poi ti ricontatteremo.
+  regards: 'I migliori auguri: il tuo team Cardnext'

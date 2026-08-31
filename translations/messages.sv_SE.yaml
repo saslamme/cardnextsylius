@@ -1,3 +1,311 @@
 cardnext:
   market:
     select: Välj land
+  account:
+    quotes: Offertn
+    maintenance_contracts: Underhållsavtal
+  maintenance_contract:
+    printer: Kortskrivare
+    serial: Serienummer
+    reference: Kontraktsnummer
+    starts: början
+    ends: Avsluta
+    status:
+      label: status
+      active: Aktiv
+      upcoming: Kommande
+      expired: Utgått
+    empty:
+      title: Inga underhållskontrakt
+      text: Det finns för närvarande inga underhållskontrakt lagrade för ditt kundkonto.
+    admin:
+      menu: Underhållsavtal
+      source_notice: Kontraktsdata synkroniseras från ERP:n. Endast den interna anteckningen upprätthålls lokalt.
+      sync: Synkronisera nu
+  order:
+    configured_product: Konfigurerad produkt
+    configured_items: Konfigurerade objekt
+    position: placera
+    positions: positioner
+    production_time: Produktionstid
+    working_days: ca. %days% arbetsdagar
+  admin:
+    product_create:
+      standard: Standardprodukt
+      variant: Variant produkt
+      configuration: Konfigurationsprodukt
+  configurator:
+    lead_time:
+      preselected: Förvald
+      preselected_help: Denna leveranstid väljs automatiskt när konfiguratorn öppnas.
+    fixed_numeric_help: Om minimum och maximum är identiska, är värdet fast i frontend.
+    title: Konfiguratorer
+    form:
+      title: Konfigurera produkten
+      intro: Priset uppdateras automatiskt.
+    section:
+      basic: bas
+      create: Skapa område
+      empty: Inga områden är tillgängliga ännu.
+    quantity: Antal
+    choose: Vänligen välj
+    yes: Ja
+    upload_later: Filuppladdningen sker efter beställningen.
+    production_time: Produktionstid
+    working_days: arbetsdagar
+    summary: Din konfiguration
+    incomplete: Ofullständig
+    total: Totalt pris
+    placeholder: Fyll i de obligatoriska fälten för att automatiskt beräkna priset.
+    per_piece: per styck
+    shipping_note: Plus frakt och i förekommande fall lagstadgad moms.
+    add_to_cart: Lägg till i varukorgen
+    price_details: Prisinformation
+    awaiting_price: Priset är beräknat
+    assurance:
+      calculation: Server-side och bindande beräknad
+      checkout: Säker orderhantering
+    create: Skapa konfigurator
+    edit: Redigera
+    delete: Radera
+    delete_confirm: verkligen radera?
+    delete_product_confirm: Denna konfigurationsprodukt inklusive konfigurator, struktur och prissättningsregler kommer att raderas permanent.
+    save: Spara
+    name: namn
+    code: koda
+    product: produkt
+    status: status
+    enabled: Aktiv
+    disabled: Inaktiv
+    preselected: Förvald
+    preselected_help: Detta värde väljs automatiskt när konfiguratorn öppnas.
+    sections: områden
+    fields: fält
+    values: Värderingar
+    type: typ
+    required: Obligatoriskt fält
+    position: placera
+    description: Beskrivning
+    help: Hjälptext
+    step: stegstorlek
+    color: Färg
+    color_icon: Färg/ikon
+    search: Sök namn eller kod
+    all_statuses: Alla statusar
+    filter: Filtrera
+    empty: Inga konfiguratorer tillgängliga ännu.
+    from: bort
+    global: Global / alla kanaler
+    source: källa
+    currency: valuta
+    charge: Prisdimension
+    tier: Kvantitetsskala
+    amount: Belopp
+    minimum_quantity: Minsta kvantitet
+    maximum_quantity: Maximal kvantitet (tom = obegränsad)
+    multiplier_field: Multiplikatorfält
+    percentage_base: Procentbasis
+    channel_help: En kanalspecifik prissättningsregel åsidosätter den globala regeln för samma prissättningsdimension.
+    tabs:
+      master: Masterdata
+      structure: strukturera
+      prices: Priser
+    field:
+      create: Skapa fält
+      empty: Inga fält ännu.
+    value:
+      create: Skapa värde
+    price:
+      create: Skapa prisregel
+      base: BAS
+      empty: Inga prisregler än.
+    field_type:
+      single_choice: Individuellt urval
+      multiple_choice: Flerval
+      boolean: Ja Nej
+      integer: Heltal
+      decimal: decimaltal
+      text: text
+      quantity: Antal
+      upload: fil
+    price_type:
+      unit: Pris per styck
+      fixed: Engångsbelopp
+      percent: Procentuell tilläggsavgift
+    multiplier:
+      none: Ingen multiplikator
+      quantity: Antal
+      field_value: Fältvärde
+    percentage_base_base: Grundpris
+    percentage_base_options: Alternativ
+    percentage_base_subtotal: Delsumma
+    flash:
+      created: Konfigurator har skapats.
+      updated: Konfiguratorn har uppdaterats.
+      deleted: Konfigurationsprodukten har tagits bort helt.
+      delete_blocked: Raderingen avbröts för att skydda tillhörande produkt- eller beställningsdata.
+  configurator_path:
+    label: Konfiguratorns URL
+    help: Relativ sökväg för den fristående konfiguratorsidan, t.ex. B. plastkort/plastkortstryck. Utan domän och utan inledande snedstreck.
+    required: För en konfigurationsprodukt måste en konfigurator-URL anges i varje översättning.
+    invalid: Sökvägen får bara innehålla giltiga sökvägssegment och får inte använda domän, fråga, fragment, ".." eller tomma segment.
+    unique: Denna konfigurator-URL används redan på detta språk.
+    configurable_only: En konfigurator-URL är endast tillåten för konfigurationsprodukter.
+  configurator_page:
+    kicker: Konfigurationsprodukt
+    breadcrumb:
+      home: start
+    stage:
+      kicker: Din konfiguration
+      title: Konfigurera produkten
+      intro: Sätt ihop din produkt och få priset beräknat utan förpliktelser.
+    trust:
+      calculation: Transparent beräkning
+      production: Professionell tillverkning
+      support: Personlig rådgivning
+    process:
+      title: Så fungerar din beställning av individuellt tryckta plastkort
+      step_1:
+        title: Konfigurera
+        description: Välj material, tryck, kvantitet och produktionstid för dina kort.
+      step_2:
+        title: Beställa
+        description: Kontrollera din konfiguration och slutför bekvämt beställningen online.
+      step_3:
+        title: Skriv ut data
+        description: Efter beställning, skicka in dina utskriftsdata för vidare bearbetning.
+      step_4:
+        title: Släppa
+        description: Du får ett bevis och släpper först då produktionen.
+      step_5:
+        title: Transport
+        description: Efter produktion och kvalitetskontroll kommer dina kort att skickas säkert.
+    content:
+      kicker: Produktinformation
+  quote:
+    cart: Offertkorg
+    header: Offert (%count%)
+    request: Begäran om offert
+    intro: Sätt ihop dina önskade produkter. Vi kontrollerar priser, tillgänglighet och projektkrav och skapar sedan ett individuellt offert åt dig.
+    add: Lägg till i offertt
+    add_product: Lägg till %product% i offertkorg
+    added: Produkten har lagts till i offertkorgen.
+    invalid_item: Produkten är inte tillgänglig för en offertförfrågan i denna försäljningskanal.
+    channel_reset: Offertkorgen återställdes på grund av förändringen av försäljningskanalen.
+    empty: Din offertkorg är fortfarande tom.
+    empty_help: Lägg till produkter du vill få en skräddarsydd offert för.
+    discover: Upptäck produkter
+    home: Hemsida
+    sku: Artikelnummer
+    quantity: Antal
+    update: Uppdatera
+    remove: Ta bort
+    price_note: 'Ej bindande prisinformation: Butikspriserna är vägledande. Det slutliga offertt tar hänsyn till kvantitet, tillgänglighet och projektomfattning.'
+    image_pending: Produktbild följer
+    summary: Sammanfattning
+    products: Produkter
+    orientation_total: Orienteringsvärde
+    unit: Bit
+    total: Totalt
+    summary_note: Det slutliga priset kommer att fastställas individuellt för din förfrågan.
+    continue: Komplett förfrågan
+    submit: Skicka offertförfrågan
+    validation:
+      privacy: Vänligen godkänn behandlingen av din information.
+      required_fields: Kontrollera de markerade obligatoriska fälten.
+      submission: Begäran kunde inte skickas. Ladda om sidan och försök igen.
+    form:
+      title: Förfrågningsformulär
+      company: Utöva
+      address: adress
+      project: Projektinformation
+      support: Ytterligare support
+      message_placeholder: till exempel B. 250 anställdas ID-kort, introduktion i oktober, skrivare inklusive förbrukningsmaterial och utbildning.
+      privacy_before: Jag har
+      privacy_link: Sekretesspolicy
+      privacy_after: Jag har läst och godkänner behandlingen av mina uppgifter för att behandla begäran.
+    confirmation:
+      title: Tack för din offertförfrågan.
+      reference: 'Din referens:'
+      body: Vi kommer att kontrollera din förfrågan och återkomma till dig.
+    admin:
+      menu: Offertn
+    status:
+      new: Ny
+      in_progress: Pågår
+      question: Förfrågan
+      closed: Stängd
+      sent: Öppna
+      accepted: Förutsatt
+      rejected: Avvisad
+      superseded: Bytt ut
+Company: företag
+Contact name: kontaktperson
+Email: e-post
+Phone: telefon
+Customer number: Kundnummer
+Street: Gata
+House number: husnummer
+Postal code: Postnummer
+City: Plats
+Country code: land
+Project reference: Projektreferens
+Requested delivery date: Önskat leveransdatum
+Customer purchase order number: Internt ordernummer
+Message: anmärkning
+Needs advice: Jag behöver råd om produktval.
+Needs compatibility check: Kontrollera de valda produkterna för kompatibilitet.
+Privacy consent: Dataskydd
+quote_public:
+  title: Erbjuda
+  version: version
+  date: Offertdatum
+  valid_until: Gäller till kl
+  expired: Detta offert är inte längre giltigt.
+  already_accepted: Detta offert har redan accepterats den
+  already_rejected: Detta offert avvisades.
+  superseded: Detta offert har ersatts av en nyare version.
+  company: företag
+  contact: kontaktperson
+  project: projekt
+  item: placera
+  quantity: Antal
+  unit_price: Enhetspris netto
+  net: Netto
+  shipping: Transport
+  service: service
+  tax: Moms
+  total: total
+  delivery: Leveransvillkor
+  payment: Betalningsvillkor
+  note: Kundmeddelande
+  pdf: Ladda ner offertt som PDF
+  accept: Acceptera offertt
+  reject: Avslå offert
+  name: namn
+  reason: Orsak till avslag (valfritt)
+  binding: Jag accepterar detta offert bindande.
+  thanks: Tack.
+  accept_success: Ditt godkännande har skickats.
+  reject_success: Ditt avslag har skickats.
+quote_mail:
+  greeting: Hej %name%,
+  offer: 'Tack för din förfrågan. Ett nytt offert finns tillgängligt på ditt kundkonto. Offert: %number%.'
+  view: Se offertt på kundkontot
+  attachment: Logga in med ditt kundkonto.
+  accepted_customer: Vi bekräftar mottagandet av ditt offert.
+  accepted_internal: Offertt %number% v%version% accepterades.
+  rejected_customer: Vi bekräftar mottagandet av ditt avslag på offertt.
+  rejected_internal: Offertt %number% v%version% avvisades.
+  request_subject: Din offertförfrågan %number% på Cardnext
+  offer_subject: Ditt offert %number% från Cardnext
+  accepted_subject: Bekräftelse på att du accepterar offertt
+  rejected_subject: Bekräftelse på ditt avslag på offertt
+  personal_offer: Ditt personliga offert
+  sign_in: Logga in med ditt kundkonto.
+  signoff: Vi ser fram emot din feedback.
+  request_title: Tack för din offertförfrågan
+  request_greeting: Hej %name%,
+  request_reference: 'Din referens: %number%'
+  request_body: Din förfrågan inkluderar %count% positioner. Vi kontrollerar priser, tillgänglighet och dina uppgifter och återkommer sedan till dig.
+  regards: Bästa hälsningar – ditt Cardnext-team

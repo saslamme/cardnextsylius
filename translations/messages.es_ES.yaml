@@ -1,3 +1,311 @@
 cardnext:
   market:
     select: Seleccionar país
+  account:
+    quotes: Ofertas
+    maintenance_contracts: Contratos de mantenimiento
+  maintenance_contract:
+    printer: Impresora de tarjetas
+    serial: Número de serie
+    reference: Número de contrato
+    starts: comienzo
+    ends: Fin
+    status:
+      label: estado
+      active: Activo
+      upcoming: Próximo
+      expired: Venció
+    empty:
+      title: Sin contratos de mantenimiento
+      text: Actualmente no hay contratos de mantenimiento almacenados para su cuenta de cliente.
+    admin:
+      menu: Contratos de mantenimiento
+      source_notice: Los datos del contrato se sincronizan desde el ERP. Sólo la nota interna se mantiene localmente.
+      sync: Sincronizar ahora
+  order:
+    configured_product: Producto configurado
+    configured_items: Artículos configurados
+    position: posición
+    positions: posiciones
+    production_time: tiempo de producción
+    working_days: aprox. %days% días laborables
+  admin:
+    product_create:
+      standard: Producto estándar
+      variant: Producto variante
+      configuration: Producto de configuración
+  configurator:
+    lead_time:
+      preselected: Preseleccionado
+      preselected_help: Este plazo de entrega se selecciona automáticamente al abrir el configurador.
+    fixed_numeric_help: Si el mínimo y el máximo son idénticos, el valor se fija en la interfaz.
+    title: Configuradores
+    form:
+      title: Configurar producto
+      intro: El precio se actualiza automáticamente.
+    section:
+      basic: base
+      create: Crear área
+      empty: Aún no hay áreas disponibles.
+    quantity: Cantidad
+    choose: Por favor seleccione
+    yes: Sí
+    upload_later: La carga del archivo se realiza después del pedido.
+    production_time: tiempo de producción
+    working_days: dias laborables
+    summary: Tu configuración
+    incomplete: Incompleto
+    total: precio total
+    placeholder: Complete los campos obligatorios para calcular automáticamente el precio.
+    per_piece: una pieza
+    shipping_note: Más gastos de envío y, si corresponde, impuestos sobre las ventas legales.
+    add_to_cart: añadir a la cesta
+    price_details: Detalles de precios
+    awaiting_price: El precio se calcula
+    assurance:
+      calculation: Del lado del servidor y calculado de forma vinculante
+      checkout: Procesamiento seguro de pedidos
+    create: Crear configurador
+    edit: Editar
+    delete: Borrar
+    delete_confirm: ¿Realmente eliminar?
+    delete_product_confirm: Este producto de configuración, incluido el configurador, la estructura y las reglas de precios, se eliminará permanentemente.
+    save: Ahorrar
+    name: nombre
+    code: código
+    product: producto
+    status: estado
+    enabled: Activo
+    disabled: Inactivo
+    preselected: Preseleccionado
+    preselected_help: Este valor se selecciona automáticamente al abrir el configurador.
+    sections: áreas
+    fields: campos
+    values: Valores
+    type: tipo
+    required: Campo obligatorio
+    position: posición
+    description: Descripción
+    help: Texto de ayuda
+    step: tamaño del paso
+    color: Color
+    color_icon: Color/Icono
+    search: Buscar nombre o código
+    all_statuses: Todos los estados
+    filter: Filtrar
+    empty: Aún no hay configuradores disponibles.
+    from: lejos
+    global: Global/todos los canales
+    source: fuente
+    currency: divisa
+    charge: Dimensión de precio
+    tier: escala de cantidades
+    amount: Cantidad
+    minimum_quantity: Cantidad mínima
+    maximum_quantity: Cantidad máxima (vacía = ilimitada)
+    multiplier_field: Campo multiplicador
+    percentage_base: Base porcentual
+    channel_help: Una regla de precios específica de un canal anula la regla global de la misma dimensión de precios.
+    tabs:
+      master: datos maestros
+      structure: estructura
+      prices: Precios
+    field:
+      create: Crear campo
+      empty: Aún no hay campos.
+    value:
+      create: Crear valor
+    price:
+      create: Crear regla de precio
+      base: BASE
+      empty: Aún no hay reglas de precios.
+    field_type:
+      single_choice: selección individual
+      multiple_choice: Selección múltiple
+      boolean: Sí No
+      integer: Entero
+      decimal: numero decimal
+      text: texto
+      quantity: Cantidad
+      upload: archivo
+    price_type:
+      unit: Precio por pieza
+      fixed: Importe único
+      percent: Recargo porcentual
+    multiplier:
+      none: Sin multiplicador
+      quantity: Cantidad
+      field_value: Valor del campo
+    percentage_base_base: Precio base
+    percentage_base_options: Opciones
+    percentage_base_subtotal: Total parcial
+    flash:
+      created: Se ha creado el configurador.
+      updated: El configurador ha sido actualizado.
+      deleted: El producto de configuración se ha eliminado por completo.
+      delete_blocked: La eliminación se canceló para proteger los datos de pedidos o productos asociados.
+  configurator_path:
+    label: URL del configurador
+    help: Ruta relativa de la página del configurador independiente, p.e. B. tarjetas de plástico/impresión de tarjetas de plástico. Sin dominio y sin barra inicial.
+    required: Para un producto de configuración, se debe ingresar una URL del configurador en cada traducción.
+    invalid: La ruta solo debe contener segmentos de ruta válidos y no debe utilizar dominio, consulta, fragmentos, ".." ni segmentos vacíos.
+    unique: Esta URL del configurador ya se utiliza en este idioma.
+    configurable_only: Una URL del configurador solo está permitida para productos de configuración.
+  configurator_page:
+    kicker: Producto de configuración
+    breadcrumb:
+      home: comenzar
+    stage:
+      kicker: Tu configuración
+      title: Configurar producto
+      intro: Arma tu producto y calcula el precio sin compromiso.
+    trust:
+      calculation: Cálculo transparente
+      production: Fabricación profesional
+      support: Consejos personales
+    process:
+      title: Así funciona tu pedido de tarjetas de plástico impresas individualmente
+      step_1:
+        title: Configurar
+        description: Selecciona material, impresión, cantidad y tiempo de producción de tus tarjetas.
+      step_2:
+        title: Orden
+        description: Consulta tu configuración y completa cómodamente el pedido online.
+      step_3:
+        title: Imprimir datos
+        description: Después de realizar el pedido, envíe sus datos de impresión para su posterior procesamiento.
+      step_4:
+        title: Liberar
+        description: Recibe una prueba y sólo entonces libera la producción.
+      step_5:
+        title: Envío
+        description: Después del control de producción y calidad, sus tarjetas se enviarán de forma segura.
+    content:
+      kicker: Información del producto
+  quote:
+    cart: Cesta de oferta
+    header: Oferta (%count%)
+    request: Solicitud de cotización
+    intro: Arma tus productos deseados. Comprobamos precios, disponibilidad y requisitos del proyecto y luego creamos una oferta individual para usted.
+    add: Añadir a la oferta
+    add_product: Añadir %product% a la cesta de ofertas
+    added: El producto ha sido añadido a la cesta de ofertas.
+    invalid_item: El producto no está disponible para solicitud de cotización en este canal de venta.
+    channel_reset: La canasta de ofertas fue reseteada debido al cambio de canal de venta.
+    empty: Su cesta de ofertas todavía está vacía.
+    empty_help: Agregue productos para los que le gustaría recibir una cotización personalizada.
+    discover: Descubre productos
+    home: pagina de inicio
+    sku: Número de artículo
+    quantity: Cantidad
+    update: Actualizar
+    remove: Eliminar
+    price_note: 'Información de precios no vinculante: Los precios de la tienda sirven como guía. La oferta final tiene en cuenta la cantidad, la disponibilidad y el alcance del proyecto.'
+    image_pending: La imagen del producto es la siguiente.
+    summary: Resumen
+    products: Productos
+    orientation_total: Valor de orientación
+    unit: Pedazo
+    total: En total
+    summary_note: El precio final se determinará individualmente para su solicitud.
+    continue: Solicitud completa
+    submit: Enviar solicitud de oferta
+    validation:
+      privacy: Por favor acepte el procesamiento de su información.
+      required_fields: Por favor revise los campos obligatorios marcados.
+      submission: No se pudo enviar la solicitud. Vuelva a cargar la página e inténtelo de nuevo.
+    form:
+      title: Formulario de consulta
+      company: Buscar
+      address: DIRECCIÓN
+      project: Información del proyecto
+      support: Soporte adicional
+      message_placeholder: p.ej. B. 250 tarjetas de identificación de empleados, introducción en octubre, impresora que incluye consumibles y capacitación.
+      privacy_before: tengo el
+      privacy_link: política de privacidad
+      privacy_after: He leído y acepto el tratamiento de mis datos para tramitar la solicitud.
+    confirmation:
+      title: Gracias por su solicitud de cotización.
+      reference: 'Tu referencia:'
+      body: Revisaremos su solicitud y nos comunicaremos con usted.
+    admin:
+      menu: Ofertas
+    status:
+      new: Nuevo
+      in_progress: En curso
+      question: Consulta
+      closed: Cerrado
+      sent: Abierto
+      accepted: Ficticio
+      rejected: Rechazado
+      superseded: Reemplazado
+Company: compañía
+Contact name: Persona de contacto
+Email: correo electrónico
+Phone: teléfono
+Customer number: Número de cliente
+Street: Calle
+House number: numero de casa
+Postal code: Código postal
+City: Ubicación
+Country code: país
+Project reference: Referencia del proyecto
+Requested delivery date: Fecha de entrega deseada
+Customer purchase order number: Número de pedido interno
+Message: observación
+Needs advice: Necesito asesoramiento sobre la selección de productos.
+Needs compatibility check: Verifique la compatibilidad de los productos seleccionados.
+Privacy consent: Protección de datos
+quote_public:
+  title: Oferta
+  version: versión
+  date: Fecha de oferta
+  valid_until: Válido hasta
+  expired: Esta oferta ya no es válida.
+  already_accepted: Esta oferta ya ha sido aceptada el
+  already_rejected: Esta oferta fue rechazada.
+  superseded: Esta oferta ha sido reemplazada por una versión más nueva.
+  company: compañía
+  contact: Persona de contacto
+  project: proyecto
+  item: posición
+  quantity: Cantidad
+  unit_price: Precio unitario neto
+  net: Neto
+  shipping: Envío
+  service: servicio
+  tax: IVA
+  total: total
+  delivery: Condiciones de entrega
+  payment: Condiciones de pago
+  note: Aviso al cliente
+  pdf: Descargar oferta en PDF
+  accept: Aceptar oferta
+  reject: Rechazar oferta
+  name: nombre
+  reason: Motivo del rechazo (opcional)
+  binding: Acepto esta oferta de forma vinculante.
+  thanks: Gracias.
+  accept_success: Su aceptación ha sido enviada exitosamente.
+  reject_success: Su rechazo ha sido enviado exitosamente.
+quote_mail:
+  greeting: Hola %name%,
+  offer: 'Gracias por su consulta. Una nueva oferta está disponible en su cuenta de cliente. Oferta: %number%.'
+  view: Ver oferta en cuenta de cliente
+  attachment: Por favor inicie sesión con su cuenta de cliente.
+  accepted_customer: Confirmamos la recepción de la aceptación de su oferta.
+  accepted_internal: Se aceptó la oferta %number% v%version%.
+  rejected_customer: Confirmamos recepción del rechazo de su oferta.
+  rejected_internal: La oferta %number% v%version% fue rechazada.
+  request_subject: Tu solicitud de oferta %number% en Cardnext
+  offer_subject: Tu oferta %number% de Cardnext
+  accepted_subject: Confirmación de su aceptación de la oferta.
+  rejected_subject: Confirmación del rechazo de su oferta
+  personal_offer: Tu oferta personal
+  sign_in: Por favor inicie sesión con su cuenta de cliente.
+  signoff: Esperamos sus comentarios.
+  request_title: Gracias por su solicitud de cotización
+  request_greeting: Hola %name%,
+  request_reference: 'Su referencia: %number%'
+  request_body: Su solicitud incluye %count% posiciones. Revisaremos los precios, la disponibilidad y sus datos y nos pondremos en contacto con usted.
+  regards: Atentamente, el equipo de Cardnext
