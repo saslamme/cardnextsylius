@@ -8,13 +8,17 @@ use App\Entity\Channel\Channel;
 use App\Entity\Configurator\Configurator;
 use App\Entity\Configurator\ConfiguratorDependency;
 use App\Entity\Configurator\ConfiguratorField;
+use App\Entity\Configurator\ConfiguratorFieldTranslation;
 use App\Entity\Configurator\ConfiguratorImage;
 use App\Entity\Configurator\ConfiguratorLeadTime;
+use App\Entity\Configurator\ConfiguratorLeadTimeTranslation;
 use App\Entity\Configurator\ConfiguratorPriceRule;
 use App\Entity\Configurator\ConfiguratorSection;
+use App\Entity\Configurator\ConfiguratorSectionTranslation;
 use App\Entity\Configurator\ConfiguratorTaxon;
 use App\Entity\Configurator\ConfiguratorTranslation;
 use App\Entity\Configurator\ConfiguratorValue;
+use App\Entity\Configurator\ConfiguratorValueTranslation;
 use App\Entity\Taxation\TaxCategory;
 use App\Entity\Taxonomy\Taxon;
 use App\Enum\Configurator\DependencyEffect;
@@ -23,6 +27,7 @@ use App\Enum\Configurator\FieldType;
 use App\Enum\Configurator\MultiplierType;
 use App\Enum\Configurator\PercentageBase;
 use App\Enum\Configurator\PriceType;
+use App\International\CardnextMarketRegistry;
 use App\Service\CardnextMediaStorage;
 use App\Service\Configurator\Admin\DecimalAmountTransformer;
 use App\Service\Configurator\ConfiguratorAggregateDeleter;
@@ -39,6 +44,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(AdminUserInterface::DEFAULT_ADMIN_ROLE)]
 final class ConfiguratorAdminController extends AbstractController
 {
+    public function __construct(private readonly ?CardnextMarketRegistry $marketRegistry = null)
+    {
+    }
+
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
@@ -98,13 +107,13 @@ final class ConfiguratorAdminController extends AbstractController
     #[Route('/{id}/structure', name: 'structure', requirements: ['id' => '\\d+'], methods: ['GET'])]
     public function structure(Configurator $configurator): Response
     {
-        return $this->render('admin/cardnext/configurator/structure.html.twig', compact('configurator'));
+        return $this->render('admin/cardnext/configurator/structure.html.twig', ['configurator' => $configurator, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/translations', name: 'translations', methods: ['GET'])]
     public function translations(Configurator $configurator): Response
     {
-        return $this->render('admin/cardnext/configurator/translations.html.twig', compact('configurator'));
+        return $this->render('admin/cardnext/configurator/translations.html.twig', ['configurator' => $configurator, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/translations/new', name: 'translation_create', methods: ['GET', 'POST'])]
@@ -224,7 +233,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/media.html.twig', compact('configurator'));
+        return $this->render('admin/cardnext/configurator/media.html.twig', ['configurator' => $configurator, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/media/{image}/edit', name: 'image_update', methods: ['POST'])]
@@ -316,6 +325,7 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $section = new ConfiguratorSection($this->required($request, 'code'), $this->required($request, 'name'));
                 $this->applySection($section, $request);
+                $this->applyStructuralTranslations($section, $request);
                 $configurator->addSection($section);
                 $em->persist($section);
                 $em->flush();
@@ -326,7 +336,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/section_form.html.twig', ['configurator' => $configurator, 'section' => null]);
+        return $this->render('admin/cardnext/configurator/section_form.html.twig', ['configurator' => $configurator, 'section' => null, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/sections/{section}/edit', name: 'section_update', methods: ['GET', 'POST'])]
@@ -337,6 +347,7 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $section->setName($this->required($request, 'name'));
                 $this->applySection($section, $request);
+                $this->applyStructuralTranslations($section, $request);
                 $em->flush();
 
                 return $this->redirectToRoute('cardnext_admin_configurator_structure', ['id' => $configurator->getId()]);
@@ -345,7 +356,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/section_form.html.twig', compact('configurator', 'section'));
+        return $this->render('admin/cardnext/configurator/section_form.html.twig', ['configurator' => $configurator, 'section' => $section, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/sections/{section}/delete', name: 'section_delete', methods: ['POST'])]
@@ -373,6 +384,7 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $field = new ConfiguratorField($this->required($request, 'code'), $this->required($request, 'name'), FieldType::from($this->required($request, 'type')));
                 $this->applyField($field, $request);
+                $this->applyStructuralTranslations($field, $request);
                 $section->addField($field);
                 $em->persist($field);
                 $em->flush();
@@ -383,7 +395,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/field_form.html.twig', ['configurator' => $configurator, 'section' => $section, 'field' => null, 'field_types' => FieldType::cases()]);
+        return $this->render('admin/cardnext/configurator/field_form.html.twig', ['configurator' => $configurator, 'section' => $section, 'field' => null, 'field_types' => FieldType::cases(), 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/fields/{field}/edit', name: 'field_update', methods: ['GET', 'POST'])]
@@ -398,6 +410,7 @@ final class ConfiguratorAdminController extends AbstractController
                 } elseif ($field->getType()->value !== $request->request->get('type')) {
                     throw new \DomainException('Der Feldtyp kann nicht geändert werden, solange Werte vorhanden sind.');
                 } $this->applyField($field, $request);
+                $this->applyStructuralTranslations($field, $request);
                 $em->flush();
 
                 return $this->redirectToRoute('cardnext_admin_configurator_structure', ['id' => $configurator->getId()]);
@@ -406,7 +419,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/field_form.html.twig', ['configurator' => $configurator, 'section' => $field->getSection(), 'field' => $field, 'field_types' => FieldType::cases()]);
+        return $this->render('admin/cardnext/configurator/field_form.html.twig', ['configurator' => $configurator, 'section' => $field->getSection(), 'field' => $field, 'field_types' => FieldType::cases(), 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/fields/{field}/delete', name: 'field_delete', methods: ['POST'])]
@@ -448,6 +461,7 @@ final class ConfiguratorAdminController extends AbstractController
                 $value = new ConfiguratorValue($this->required($request, 'code'), $this->required($request, 'name'));
                 $field->addValue($value);
                 $this->applyValue($value, $request);
+                $this->applyStructuralTranslations($value, $request);
                 $em->persist($value);
                 $em->flush();
 
@@ -457,7 +471,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/value_form.html.twig', ['configurator' => $configurator, 'field' => $field, 'value' => null]);
+        return $this->render('admin/cardnext/configurator/value_form.html.twig', ['configurator' => $configurator, 'field' => $field, 'value' => null, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/fields/{field}/values/{value}/edit', name: 'value_update', methods: ['GET', 'POST'])]
@@ -472,6 +486,7 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $value->setName($this->required($request, 'name'));
                 $this->applyValue($value, $request);
+                $this->applyStructuralTranslations($value, $request);
                 $em->flush();
 
                 return $this->redirectToRoute('cardnext_admin_configurator_values', ['id' => $configurator->getId(), 'field' => $field->getId()]);
@@ -480,7 +495,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/value_form.html.twig', compact('configurator', 'field', 'value'));
+        return $this->render('admin/cardnext/configurator/value_form.html.twig', ['configurator' => $configurator, 'field' => $field, 'value' => $value, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/fields/{field}/values/{value}/delete', name: 'value_delete', methods: ['POST'])]
@@ -606,6 +621,7 @@ final class ConfiguratorAdminController extends AbstractController
             try {
                 $leadTime = new ConfiguratorLeadTime($configurator, $this->required($request, 'code'), $this->required($request, 'name'), $this->nonNegativeInt($request, 'working_days', 0, 'Ungültige Werktage.'));
                 $this->applyLeadTime($leadTime, $request);
+                $this->applyStructuralTranslations($leadTime, $request);
                 $em->persist($leadTime);
                 $em->flush();
             } catch (\Throwable $e) {
@@ -613,7 +629,7 @@ final class ConfiguratorAdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/cardnext/configurator/lead_times.html.twig', compact('configurator'));
+        return $this->render('admin/cardnext/configurator/lead_times.html.twig', ['configurator' => $configurator, 'translation_locales' => $this->translationLocales()]);
     }
 
     #[Route('/{id}/lead-times/{leadTime}/edit', name: 'lead_time_update', methods: ['POST'])]
@@ -623,6 +639,7 @@ final class ConfiguratorAdminController extends AbstractController
         $this->validToken($request, 'lead-time-' . $leadTime->getId());
         $leadTime->setName($this->required($request, 'name'));
         $this->applyLeadTime($leadTime, $request);
+        $this->applyStructuralTranslations($leadTime, $request);
         $em->flush();
 
         return $this->redirectToRoute('cardnext_admin_configurator_lead_times', ['id' => $configurator->getId()]);
@@ -637,6 +654,56 @@ final class ConfiguratorAdminController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('cardnext_admin_configurator_lead_times', ['id' => $configurator->getId()]);
+    }
+
+    /** @param ConfiguratorSection|ConfiguratorField|ConfiguratorValue|ConfiguratorLeadTime $entity */
+    private function applyStructuralTranslations(object $entity, Request $request): void
+    {
+        $rows = $request->request->all('translations');
+        foreach ($this->translationLocales() as $locale) {
+            $row = $rows[$locale] ?? [];
+            if (!is_array($row)) {
+                continue;
+            }
+            $rawName = $row['name'] ?? '';
+            $name = is_string($rawName) ? trim($rawName) : '';
+            if ($name === '') {
+                continue;
+            }
+            $translation = $entity->getTranslation($locale);
+            if ($translation === null) {
+                $translation = match (true) {
+                    $entity instanceof ConfiguratorSection => new ConfiguratorSectionTranslation($locale, $name),
+                    $entity instanceof ConfiguratorField => new ConfiguratorFieldTranslation($locale, $name),
+                    $entity instanceof ConfiguratorValue => new ConfiguratorValueTranslation($locale, $name),
+                    $entity instanceof ConfiguratorLeadTime => new ConfiguratorLeadTimeTranslation($locale, $name),
+                };
+                $entity->addTranslation($translation);
+            } else {
+                $translation->setName($name);
+            }
+            $translation->setDescription($this->nullableArrayValue($row, 'description'));
+            if ($translation instanceof ConfiguratorFieldTranslation) {
+                $translation->setHelpText($this->nullableArrayValue($row, 'help_text'));
+            }
+        }
+    }
+
+    /** @return list<string> */
+    private function translationLocales(): array
+    {
+        $registry = $this->marketRegistry ?? new CardnextMarketRegistry();
+
+        return array_values(array_unique(array_map(static fn ($market): string => $market->localeCode, $registry->all())));
+    }
+
+    /** @param array<array-key, mixed> $values */
+    private function nullableArrayValue(array $values, string $key): ?string
+    {
+        $rawValue = $values[$key] ?? '';
+        $value = is_string($rawValue) ? trim($rawValue) : '';
+
+        return $value === '' ? null : $value;
     }
 
     // @phpstan-ignore missingType.iterableValue

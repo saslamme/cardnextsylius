@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Configurator;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity] #[ORM\Table(name:'cardnext_configurator_lead_time')] #[ORM\UniqueConstraint(name:'UNIQ_CN_CFG_LEAD_CODE', columns:['configurator_id', 'code'])]
@@ -37,8 +39,13 @@ class ConfiguratorLeadTime
     #[ORM\Column(name: 'preselected', options: ['default' => false])]
     private bool $preselected = false;
 
+    /** @var Collection<int, ConfiguratorLeadTimeTranslation> */
+    #[ORM\OneToMany(mappedBy: 'leadTime', targetEntity: ConfiguratorLeadTimeTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $translations;
+
     public function __construct(Configurator $c, string $code, string $name, int $days)
     {
+        $this->translations = new ArrayCollection();
         if ($days < 0) {
             throw new \InvalidArgumentException('Working days cannot be negative.');
         }
@@ -137,5 +144,35 @@ class ConfiguratorLeadTime
         }
 
         $this->preselected = $preselected;
+    }
+
+    /** @return Collection<int, ConfiguratorLeadTimeTranslation> */
+    public function getTranslations(): Collection
+    {
+        return $this->translations;
+    }
+
+    public function addTranslation(ConfiguratorLeadTimeTranslation $translation): void
+    {
+        if (!$this->translations->contains($translation)) {
+            $this->translations->add($translation);
+            $translation->setLeadTime($this);
+        }
+    }
+
+    public function removeTranslation(ConfiguratorLeadTimeTranslation $translation): void
+    {
+        $this->translations->removeElement($translation);
+    }
+
+    public function getTranslation(string $locale): ?ConfiguratorLeadTimeTranslation
+    {
+        foreach ($this->translations as $translation) {
+            if ($translation->getLocale() === $locale) {
+                return $translation;
+            }
+        }
+
+        return null;
     }
 }

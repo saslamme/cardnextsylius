@@ -38,8 +38,13 @@ class ConfiguratorSection
 /** @var Collection<int,ConfiguratorField> */ #[ORM\OneToMany(mappedBy:'section', targetEntity:ConfiguratorField::class, cascade:['persist'], orphanRemoval:true),ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
     private Collection $fields;
 
+    /** @var Collection<int, ConfiguratorSectionTranslation> */
+    #[ORM\OneToMany(mappedBy: 'section', targetEntity: ConfiguratorSectionTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $translations;
+
     public function __construct(string $code, string $name)
     {
+        $this->translations = new ArrayCollection();
         $this->code = $code;
         $this->name = $name;
         $this->fields = new ArrayCollection();
@@ -143,5 +148,35 @@ class ConfiguratorSection
             $this->fields->add($v);
             $v->setSection($this);
         }
+    }
+
+    /** @return Collection<int, ConfiguratorSectionTranslation> */
+    public function getTranslations(): Collection
+    {
+        return $this->translations;
+    }
+
+    public function addTranslation(ConfiguratorSectionTranslation $translation): void
+    {
+        if (!$this->translations->contains($translation)) {
+            $this->translations->add($translation);
+            $translation->setSection($this);
+        }
+    }
+
+    public function removeTranslation(ConfiguratorSectionTranslation $translation): void
+    {
+        $this->translations->removeElement($translation);
+    }
+
+    public function getTranslation(string $locale): ?ConfiguratorSectionTranslation
+    {
+        foreach ($this->translations as $translation) {
+            if ($translation->getLocale() === $locale) {
+                return $translation;
+            }
+        }
+
+        return null;
     }
 }

@@ -13,6 +13,7 @@
         <label><input type="checkbox" name="enabled" value="1" checked> {{ 'cardnext.configurator.enabled'|trans }}</label>
         <label><input type="checkbox" name="preselected" value="1"> {{ 'cardnext.configurator.lead_time.preselected'|trans }}</label>
         <small class="text-secondary">{{ 'cardnext.configurator.lead_time.preselected_help'|trans }}</small>
+        {% include 'admin/cardnext/configurator/_structural_translations.html.twig' with {entity:null} %}
         <button class="btn btn-primary">Hinzufügen</button>
     </form>
     {% for leadTime in configurator.leadTimes %}
@@ -26,6 +27,7 @@
             <label><input type="checkbox" name="enabled" value="1" {{ leadTime.enabled ? 'checked' }}> {{ 'cardnext.configurator.enabled'|trans }}</label>
             <label><input type="checkbox" name="preselected" value="1" {{ leadTime.preselected ? 'checked' }}> {{ 'cardnext.configurator.lead_time.preselected'|trans }}</label>
             <small class="text-secondary">{{ 'cardnext.configurator.lead_time.preselected_help'|trans }}</small>
+            {% include 'admin/cardnext/configurator/_structural_translations.html.twig' with {entity:leadTime} %}
             <button class="btn">Speichern</button>
         </form>
         <form method="post" action="{{ path('cardnext_admin_configurator_lead_time_delete', {id: configurator.id, leadTime: leadTime.id}) }}">

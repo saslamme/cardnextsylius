@@ -6,6 +6,8 @@ namespace App\Entity\Configurator;
 
 use App\Enum\Configurator\FieldType;
 use App\Repository\Configurator\ConfiguratorValueRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass:ConfiguratorValueRepository::class)] #[ORM\Table(name:'cardnext_configurator_value')] #[ORM\UniqueConstraint(name:'UNIQ_CN_CFG_VALUE_CODE', columns:['field_id', 'code'])]
@@ -45,8 +47,13 @@ class ConfiguratorValue
     #[ORM\Column(name:'icon', length:100, nullable:true)]
     private ?string $icon = null;
 
+    /** @var Collection<int, ConfiguratorValueTranslation> */
+    #[ORM\OneToMany(mappedBy: 'value', targetEntity: ConfiguratorValueTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $translations;
+
     public function __construct(string $code, string $name)
     {
+        $this->translations = new ArrayCollection();
         $this->code = $code;
         $this->name = $name;
     }
@@ -174,5 +181,35 @@ class ConfiguratorValue
     public function setIcon(?string $v): void
     {
         $this->icon = $v;
+    }
+
+    /** @return Collection<int, ConfiguratorValueTranslation> */
+    public function getTranslations(): Collection
+    {
+        return $this->translations;
+    }
+
+    public function addTranslation(ConfiguratorValueTranslation $translation): void
+    {
+        if (!$this->translations->contains($translation)) {
+            $this->translations->add($translation);
+            $translation->setValue($this);
+        }
+    }
+
+    public function removeTranslation(ConfiguratorValueTranslation $translation): void
+    {
+        $this->translations->removeElement($translation);
+    }
+
+    public function getTranslation(string $locale): ?ConfiguratorValueTranslation
+    {
+        foreach ($this->translations as $translation) {
+            if ($translation->getLocale() === $locale) {
+                return $translation;
+            }
+        }
+
+        return null;
     }
 }
