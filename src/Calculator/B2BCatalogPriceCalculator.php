@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Calculator;
 
 use App\Service\B2BPriceResolver;
-use Sylius\Component\Core\Calculator\CatalogPricesCalculatorInterface;
+use Sylius\Component\Core\Calculator\ProductVariantPricesCalculatorInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Customer\Context\CustomerContextInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
-#[AsDecorator('sylius.calculator.product_variant_catalog_price', priority: 100)]
-final readonly class B2BCatalogPriceCalculator implements CatalogPricesCalculatorInterface
+#[AsDecorator('sylius.calculator.product_variant_price', priority: 100)]
+final readonly class B2BCatalogPriceCalculator implements ProductVariantPricesCalculatorInterface
 {
     public function __construct(
         #[AutowireDecorated]
-        private CatalogPricesCalculatorInterface $inner,
+        private ProductVariantPricesCalculatorInterface $inner,
         private B2BPriceResolver $priceResolver,
         private CustomerContextInterface $customerContext,
     ) {
