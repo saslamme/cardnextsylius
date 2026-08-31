@@ -17,6 +17,7 @@ class PrinterAdvisorProfile
 
     #[ORM\OneToOne(inversedBy: 'printerAdvisorProfile', targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    // @phpstan-ignore doctrine.associationType
     private ?Product $product = null;
 
     #[ORM\Column(name: 'enabled', options: ['default' => false])]

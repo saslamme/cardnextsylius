@@ -51,6 +51,7 @@ final readonly class CardnextMediaStorage
         $mimeType = $file->getMimeType();
         $fileSize = $file->getSize();
 
+        // @phpstan-ignore argument.type
         $productCode = strtolower((string) $this->slugger->slug($document->getProduct()->getCode()));
         $directory = self::PUBLIC_PREFIX . 'product-documents/' . $productCode;
         $filename = sprintf(

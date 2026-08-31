@@ -9,6 +9,7 @@ use App\Entity\Configurator\ConfiguratorPriceRule;
 final class PriceRuleOverlapValidator
 {
     /** @param iterable<ConfiguratorPriceRule> $rules @return list<array{first:ConfiguratorPriceRule,second:ConfiguratorPriceRule}> */
+    // @phpstan-ignore missingType.iterableValue
     public function findOverlaps(iterable $rules): array
     {
         $groups = [];

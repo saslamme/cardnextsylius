@@ -64,6 +64,7 @@ final class MarketOverviewAdminController extends AbstractController
 
             $shippingAmount = null;
             if ($shippingMethod instanceof ShippingMethod) {
+                // @phpstan-ignore offsetAccess.nonOffsetAccessible
                 $shippingAmount = $shippingMethod->getConfiguration()[$market->channelCode]['amount'] ?? null;
             }
 

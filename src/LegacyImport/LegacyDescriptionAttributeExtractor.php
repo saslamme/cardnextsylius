@@ -280,7 +280,8 @@ final class LegacyDescriptionAttributeExtractor
 
         $current = $attributes[$code];
         if (is_array($current) && is_array($value)) {
-            $attributes[$code] = array_values(array_unique([...$current, ...$value]));
+            $strings = array_filter([...$current, ...$value], 'is_string');
+            $attributes[$code] = array_values(array_unique($strings));
             return;
         }
 
@@ -290,6 +291,7 @@ final class LegacyDescriptionAttributeExtractor
         }
     }
 
+    /** @return list<string>|null */
     private function normalizePrinterTechnology(string $value): ?array
     {
         $fold = self::fold($value);
@@ -298,6 +300,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string>|null */
     private function normalizeResolution(string $value): ?array
     {
         if (preg_match('/(^|\D)1200\s*dpi/i', $value)) return ['dpi_1200'];
@@ -306,6 +309,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string>|null */
     private function normalizePrintSides(string $value): ?array
     {
         $fold = self::fold($value);
@@ -314,6 +318,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string> */
     private function normalizePrintMode(string $value): array
     {
         $fold = self::fold($value);
@@ -323,6 +328,7 @@ final class LegacyDescriptionAttributeExtractor
         return $result;
     }
 
+    /** @return list<string> */
     private function normalizeCardFormat(string $value): array
     {
         $fold = self::fold($value);
@@ -332,6 +338,7 @@ final class LegacyDescriptionAttributeExtractor
         return $result;
     }
 
+    /** @return list<string> */
     private function normalizeConnectivity(string $value, string $target): array
     {
         $value = preg_replace('/\([^)]*(?:optional|modellabh[aä]ngig)[^)]*\)/iu', '', $value) ?? $value;
@@ -347,6 +354,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string> */
     private function normalizeEncoding(string $value): array
     {
         $fold = self::fold($value);
@@ -357,6 +365,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string> */
     private function normalizeFrequency(string $value): array
     {
         $fold = self::fold($value);
@@ -367,6 +376,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string> */
     private function normalizeRfidTechnologies(string $value): array
     {
         $fold = self::fold($value);
@@ -382,6 +392,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string>|null */
     private function normalizeFormFactor(string $value): ?array
     {
         $fold = self::fold($value);
@@ -392,6 +403,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string> */
     private function normalizeOutputMode(string $value): array
     {
         $fold = self::fold($value);
@@ -403,12 +415,14 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string>|null */
     private function normalizeIpRating(string $value): ?array
     {
         if (!preg_match('/\bIP\s*(30|40|42|54|65|67)\b/i', $value, $m)) return null;
         return ['ip'.strtolower($m[1])];
     }
 
+    /** @return list<string>|null */
     private function normalizeCardMaterial(string $value): ?array
     {
         $fold = self::fold($value);
@@ -420,6 +434,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string> */
     private function normalizeColor(string $value): array
     {
         $fold = self::fold($value);
@@ -429,6 +444,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string> */
     private function normalizeSurface(string $value): array
     {
         $fold = self::fold($value);
@@ -439,6 +455,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string>|null */
     private function normalizeMagneticStripe(string $value): ?array
     {
         $fold = self::fold($value);
@@ -448,6 +465,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string>|null */
     private function normalizeOrientation(string $value): ?array
     {
         $fold = self::fold($value);
@@ -457,6 +475,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string>|null */
     private function normalizeRibbonType(string $value): ?array
     {
         $fold = self::fold($value);
@@ -469,6 +488,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string> */
     private function normalizeBarcodeDimension(string $value): array
     {
         $fold = self::fold($value);
@@ -479,6 +499,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string>|null */
     private function normalizeScanEngine(string $value): ?array
     {
         $fold = self::fold($value);
@@ -488,6 +509,7 @@ final class LegacyDescriptionAttributeExtractor
         return null;
     }
 
+    /** @return list<string> */
     private function normalizeIdentificationMethods(string $value): array
     {
         $fold = self::fold($value);
@@ -500,6 +522,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string> */
     private function normalizeAccessProtocols(string $value): array
     {
         $fold = self::fold($value);
@@ -511,6 +534,7 @@ final class LegacyDescriptionAttributeExtractor
         return array_values(array_unique($result));
     }
 
+    /** @return list<string>|null */
     private function normalizeAccessComponentType(string $value): ?array
     {
         $fold = self::fold($value);

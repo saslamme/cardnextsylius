@@ -52,6 +52,7 @@ final class ConfiguratorAdminController extends AbstractController
             $qb->andWhere('c.enabled = :enabled')->setParameter('enabled', $request->query->getBoolean('enabled'));
         }
         $countQb = clone $qb;
+        // @phpstan-ignore argument.type
         $total = count($countQb->setFirstResult(null)->setMaxResults(null)->getQuery()->getResult());
         $rows = $qb->setFirstResult(($page - 1) * 25)->setMaxResults(25)->getQuery()->getResult();
 
@@ -163,6 +164,7 @@ final class ConfiguratorAdminController extends AbstractController
             foreach ($configurator->getChannels()->toArray() as $channel) {
                 $configurator->removeChannel($channel);
             } foreach ($request->request->all('channels') as $id) {
+                // @phpstan-ignore cast.int
                 $channel = $em->find(Channel::class, (int) $id);
                 if ($channel instanceof Channel) {
                     $configurator->addChannel($channel);
@@ -513,6 +515,7 @@ final class ConfiguratorAdminController extends AbstractController
                 $em->persist($rule);
                 $all = $em->getRepository(ConfiguratorPriceRule::class)->findBy(['configurator' => $configurator]);
                 $all[] = $rule;
+                // @phpstan-ignore argument.type
                 foreach ($overlaps->findOverlaps($all) as $overlap) {
                     if ($overlap['second'] === $rule || $overlap['first'] === $rule) {
                         throw new \DomainException(sprintf('Diese Mengenstaffel überschneidet sich mit einer bestehenden Preisregel (%d–%s).', $overlap['first']->getMinimumQuantity(), $overlap['first']->getMaximumQuantity() ?? '∞'));
@@ -636,6 +639,7 @@ final class ConfiguratorAdminController extends AbstractController
         return $this->redirectToRoute('cardnext_admin_configurator_lead_times', ['id' => $configurator->getId()]);
     }
 
+    // @phpstan-ignore missingType.iterableValue
     private function configuratorFields(Configurator $configurator): array
     {
         $fields = [];

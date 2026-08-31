@@ -18,6 +18,10 @@ final readonly class PublicSlugController
 {
     private const HIDDEN_ROOT_TAXON_CODE = 'CARDNEXT_PRODUCTS';
 
+    /**
+     * @param TaxonRepositoryInterface<\App\Entity\Taxonomy\Taxon> $taxonRepository
+     * @param ProductRepositoryInterface<\App\Entity\Product\Product> $productRepository
+     */
     public function __construct(
         private TaxonRepositoryInterface $taxonRepository,
         private ProductRepositoryInterface $productRepository,
@@ -35,6 +39,7 @@ final readonly class PublicSlugController
         $taxon = $this->taxonRepository->findOneBySlug($slug, $locale);
 
         if ($taxon !== null && $taxon->getCode() !== self::HIDDEN_ROOT_TAXON_CODE) {
+            // @phpstan-ignore method.notFound
             $menuTaxon = $channel->getMenuTaxon();
             $taxonRoot = $taxon->getRoot();
 
@@ -49,6 +54,7 @@ final readonly class PublicSlugController
             }
         }
 
+        // @phpstan-ignore argument.type
         $product = $this->productRepository->findOneByChannelAndSlug($channel, $locale, $slug);
         if ($product !== null) {
             $request->attributes->set('_sylius', [

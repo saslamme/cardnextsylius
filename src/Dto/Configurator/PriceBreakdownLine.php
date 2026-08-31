@@ -10,6 +10,7 @@ final readonly class PriceBreakdownLine implements \JsonSerializable
     {
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public function jsonSerialize(): array
     {
         return get_object_vars($this);

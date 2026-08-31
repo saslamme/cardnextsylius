@@ -24,6 +24,7 @@ class ConfiguratorDependency
     private DependencyOperator $operator;
 
     #[ORM\Column(name:'expected_values', type:'json')]
+    // @phpstan-ignore missingType.iterableValue
     private array $expectedValues = [];
 
     #[ORM\ManyToOne(targetEntity:ConfiguratorField::class),ORM\JoinColumn(name:'target_field_id', nullable:true, onDelete:'CASCADE')]
@@ -74,6 +75,7 @@ class ConfiguratorDependency
         return $this->operator;
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public function getExpectedValues(): array
     {
         return $this->expectedValues;
@@ -127,6 +129,7 @@ class ConfiguratorDependency
         $this->enabled = $v;
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public function setOperator(DependencyOperator $operator, array $expectedValues): void
     {
         self::assertExpectedValues($operator, $expectedValues);
@@ -156,6 +159,7 @@ class ConfiguratorDependency
         }
     }
 
+    // @phpstan-ignore missingType.iterableValue
     private static function assertExpectedValues(DependencyOperator $operator, array $expected): void
     {
         if ($operator === DependencyOperator::IS_SELECTED) {

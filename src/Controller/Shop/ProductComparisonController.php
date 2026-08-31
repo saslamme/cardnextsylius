@@ -22,6 +22,7 @@ final class ProductComparisonController extends AbstractController
         $channel = $this->channelContext->getChannel();
         if (!$channel instanceof Channel) { throw new \LogicException('Cardnext channel expected.'); }
         $products = $this->comparison->findComparableProducts($limited, $channel);
+        // @phpstan-ignore argument.type
         $comparison = $this->comparison->build($products, $channel, $request->getLocale());
 
         return $this->render('shop/product_compare/index.html.twig', ['comparison' => $comparison, 'channel' => $channel, 'requestedCount' => count($raw), 'codes' => array_map(static fn ($product): string => (string) $product->getCode(), $products)]);

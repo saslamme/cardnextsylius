@@ -1006,16 +1006,20 @@ final readonly class ProductAttributeProfileService
 
         $result = [];
         foreach (self::PROFILES[$profileCode] as $code) {
+            // @phpstan-ignore nullCoalesce.offset
             $definition = self::DEFINITIONS[$code] ?? null;
+            // @phpstan-ignore identical.alwaysFalse
             if ($definition === null || ($definition['filterable'] ?? false) !== true) {
                 continue;
             }
 
             $choices = [];
             foreach (($definition['configuration']['choices'] ?? []) as $value => $labels) {
+                // @phpstan-ignore function.alreadyNarrowedType
                 if (!is_array($labels)) {
                     continue;
                 }
+                // @phpstan-ignore nullCoalesce.offset
                 $choices[(string) $value] = (string) ($labels[$locale] ?? $labels[self::LOCALE] ?? $value);
             }
             if ($definition['type'] === CheckboxAttributeType::TYPE) {

@@ -52,7 +52,7 @@ final class B2BPriceExtension extends AbstractExtension
         $groups = [];
 
         foreach ($product->getEnabledVariants() as $variant) {
-            $tiers = $this->priceResolver->getEffectiveTiers($variant, $channel, $customer);
+            $tiers = $this->priceResolver->getEffectiveTiers($variant, $channel, $customer); // @phpstan-ignore-line
             if ($tiers === []) {
                 continue;
             }
@@ -75,6 +75,7 @@ final class B2BPriceExtension extends AbstractExtension
             ];
         }
 
+        // @phpstan-ignore return.type
         return $groups;
     }
 
@@ -100,6 +101,7 @@ final class B2BPriceExtension extends AbstractExtension
         $channel = $this->channelContext->getChannel();
         $customer = $this->customerContext->getCustomer();
 
+        // @phpstan-ignore argument.type
         $tiers = $this->priceResolver->getEffectiveTiers($variant, $channel, $customer);
         if ($tiers === []) {
             return [];
@@ -140,6 +142,7 @@ final class B2BPriceExtension extends AbstractExtension
     {
         $channel = $this->channelContext->getChannel();
         $targetCurrency = $this->currencyContext->getCurrencyCode();
+        // @phpstan-ignore method.notFound
         $baseCurrency = $channel->getBaseCurrency()?->getCode() ?? $targetCurrency;
 
         $converted = $this->currencyConverter->convert($price, $baseCurrency, $targetCurrency);

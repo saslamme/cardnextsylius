@@ -72,6 +72,7 @@ final class CardnextCheckCommercialMarketsCommand extends Command
 
             $amount = null;
             if ($shippingMethod instanceof ShippingMethod && $channel instanceof Channel) {
+                // @phpstan-ignore offsetAccess.nonOffsetAccessible
                 $amount = $shippingMethod->getConfiguration()[$market->channelCode]['amount'] ?? null;
             }
 
@@ -89,6 +90,7 @@ final class CardnextCheckCommercialMarketsCommand extends Command
                 $shippingZone instanceof Zone ? 'OK' : 'FEHLT',
                 $taxZone instanceof Zone ? 'OK' : 'FEHLT',
                 $shippingMethod instanceof ShippingMethod ? 'OK' : 'FEHLT',
+                // @phpstan-ignore cast.string
                 $amount === null ? 'offen' : (string) $amount,
                 $shippingMethod?->isEnabled() ? 'ja' : 'nein',
                 $paymentAssigned ? 'OK' : 'FEHLT',

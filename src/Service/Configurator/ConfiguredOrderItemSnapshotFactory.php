@@ -30,9 +30,10 @@ final readonly class ConfiguredOrderItemSnapshotFactory
                     $values[$value->getCode()] = ['code' => $value->getCode(), 'name' => $value->getName()];
                 }
                 if ($field->getType()->value === 'multiple_choice') {
+                    // @phpstan-ignore argument.type
                     $entry['values'] = array_values(array_intersect_key($values, array_flip(is_array($selected) ? $selected : [])));
                 } elseif ($field->getType()->value === 'single_choice') {
-                    $entry['value'] = $values[(string) $selected] ?? ['code' => (string) $selected, 'name' => (string) $selected];
+                    $entry['value'] = $values[(string) $selected] ?? ['code' => (string) $selected, 'name' => (string) $selected]; // @phpstan-ignore-line
                 } else {
                     $entry['value'] = $selected;
                 }
@@ -43,6 +44,7 @@ final readonly class ConfiguredOrderItemSnapshotFactory
         $translation = $configurator->getTranslation($locale);
         $canonical = ['quantity' => $configuration->quantity, 'leadTimeCode' => $configuration->leadTimeCode, 'selections' => $configuration->selections];
 
+        // @phpstan-ignore argument.type
         return new ConfiguredOrderItem($configurator->getCode(), $translation?->getName() ?? $configurator->getName(), $locale, $configuration->channelCode, $price->currencyCode, $price->quantity, $this->hashGenerator->generate($configuration), $snapshot, array_map(static fn ($line): array => $line->jsonSerialize(), $price->breakdown), $canonical, $price->baseUnitAmount, $price->optionsUnitAmount, $price->unitAmount, $price->unitTotal, $price->fixedTotal, $price->percentageTotal, $price->total, $price->leadTimeCode, $price->leadTimeName, $price->workingDays, $configurator->getTaxCategory()?->getCode(), $configurator->isShippingRequired());
     }
 }

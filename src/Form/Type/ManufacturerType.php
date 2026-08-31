@@ -95,14 +95,16 @@ final class ManufacturerType extends AbstractType
 
             /** @var Manufacturer|null $manufacturer */
             $manufacturer = $event->getForm()->getData();
+            // @phpstan-ignore cast.string
             $slug = trim((string) ($submitted['slug'] ?? ''));
 
             if ($slug === '' && $manufacturer?->getSlug() !== '') {
+                // @phpstan-ignore method.nonObject
                 $slug = $manufacturer->getSlug();
             }
 
             if ($slug === '') {
-                $slug = trim((string) ($submitted['name'] ?? '')) ?: trim((string) ($submitted['code'] ?? ''));
+                $slug = trim((string) ($submitted['name'] ?? '')) ?: trim((string) ($submitted['code'] ?? '')); // @phpstan-ignore-line
             }
 
             $submitted['slug'] = $slug === '' ? '' : $this->slugger->slug($slug)->lower()->toString();

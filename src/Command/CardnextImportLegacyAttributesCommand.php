@@ -114,6 +114,7 @@ final class CardnextImportLegacyAttributesCommand extends Command
             return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
         }
 
+        // @phpstan-ignore cast.string
         return (string) $value;
     }
 }

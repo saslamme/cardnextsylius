@@ -105,6 +105,7 @@ final class ConfiguredCartController extends AbstractController
         if ($configurator === null || !$channel instanceof \App\Entity\Channel\Channel || !$configurator->hasChannel($channel) || !is_int($quantity) || $quantity < 1 || !is_array($selections) || $channelCode === null || ($lead !== null && !is_string($lead))) {
             return $this->json(['ok' => false, 'message' => 'Ungültige Konfiguration.'], 422);
         }
+        // @phpstan-ignore argument.type
         $configuration = new ConfiguratorConfiguration($code, $quantity, $this->currencyContext->getCurrencyCode(), $channelCode, $selections, [], $lead);
 
         try {

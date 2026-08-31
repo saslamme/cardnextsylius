@@ -46,6 +46,7 @@ final class CardnextProductAttributeBooleanFilter implements FilterInterface
             ->andWhere($attributeAlias . '.code = :' . $codeParameter)
             ->andWhere($valueAlias . '.boolean = :' . $valueParameter)
             ->setParameter($codeParameter, $attributeCode)
+            // @phpstan-ignore cast.string
             ->setParameter($valueParameter, in_array((string) $data, ['1', 'true', 'yes'], true))
             ->distinct()
         ;

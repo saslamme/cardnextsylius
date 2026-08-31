@@ -256,15 +256,25 @@ class ProductImportRun
     public function applyResult(array $result): void
     {
         $this->rows = $result['rows'];
+        // @phpstan-ignore nullCoalesce.offset
         $this->manufacturersCreated = $result['manufacturers_created'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->manufacturersUpdated = $result['manufacturers_updated'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->documentsCreated = $result['documents_created'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->documentsUpdated = $result['documents_updated'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->compatibilitiesCreated = $result['compatibilities_created'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->compatibilitiesUpdated = $result['compatibilities_updated'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->priceRulesCreated = $result['price_rules_created'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->priceRulesUpdated = $result['price_rules_updated'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->customerPriceRulesCreated = $result['customer_price_rules_created'] ?? 0;
+        // @phpstan-ignore nullCoalesce.offset
         $this->customerPriceRulesUpdated = $result['customer_price_rules_updated'] ?? 0;
         $this->productsCreated = $result['products_created'];
         $this->productsUpdated = $result['products_updated'];

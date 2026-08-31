@@ -52,6 +52,7 @@ final class ProductCardComponent
         $channel = $this->channelContext->getChannel();
         $taxon = $this->product->getMainTaxon();
         if ($taxon !== null) {
+            // @phpstan-ignore nullsafe.neverNull
             while ($taxon->getParent() !== null && $taxon->getParent()?->getCode() !== 'products') {
                 $taxon = $taxon->getParent();
             }

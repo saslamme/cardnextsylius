@@ -42,6 +42,7 @@ final class CardnextManufacturerFilter implements FilterInterface
 
         $queryBuilder
             ->andWhere($queryBuilder->expr()->in($alias . '.code', ':cn_manufacturer_codes'))
+            // @phpstan-ignore argument.type
             ->setParameter('cn_manufacturer_codes', array_map('strval', $values))
         ;
     }

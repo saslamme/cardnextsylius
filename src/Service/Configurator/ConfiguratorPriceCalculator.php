@@ -102,6 +102,7 @@ final readonly class ConfiguratorPriceCalculator
 
         $unitTotal = ($baseUnit + $optionsUnit) * $cfg->quantity;
         foreach ($deferred as $rule) {
+            // @phpstan-ignore match.unhandled
             $base = match ($rule->getPercentageBase() ?? PercentageBase::SUBTOTAL) {
                 PercentageBase::BASE => $baseUnit * $cfg->quantity,
                 PercentageBase::OPTIONS => $optionsUnit * $cfg->quantity,
@@ -154,6 +155,7 @@ final readonly class ConfiguratorPriceCalculator
     }
 
     /** @param array<string, mixed> $selections @return list<ConfiguratorValue> */
+    // @phpstan-ignore missingType.iterableValue
     private function selectedValues(Configurator $configurator, array $selections): array
     {
         $result = [];

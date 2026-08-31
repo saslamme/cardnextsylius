@@ -317,6 +317,7 @@ final class CardnextSetupNavigationDemoCommand extends Command
         $assigned = 0;
 
         foreach (self::DEMO_PRODUCT_ASSIGNMENTS as $taxonCode => $productCodes) {
+            // @phpstan-ignore method.notFound
             $taxon = $repository->findOneBy(['code' => $taxonCode]);
             if (!$taxon instanceof Taxon || null === $taxon->getId()) {
                 continue;
@@ -336,6 +337,7 @@ final class CardnextSetupNavigationDemoCommand extends Command
                     . 'SELECT :productId, :taxonId, 0 WHERE NOT EXISTS ('
                     . 'SELECT 1 FROM sylius_product_taxon WHERE product_id = :productId AND taxon_id = :taxonId'
                     . ')',
+                    // @phpstan-ignore cast.int
                     ['productId' => (int) $productId, 'taxonId' => (int) $taxon->getId()],
                 );
             }

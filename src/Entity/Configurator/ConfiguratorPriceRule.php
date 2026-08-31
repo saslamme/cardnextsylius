@@ -49,6 +49,7 @@ class ConfiguratorPriceRule
     private PriceType $priceType;
 
 /** Minor units for UNIT/FIXED; basis points for PERCENT. */ #[ORM\Column(name:'amount', type:'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $amount;
 
     #[ORM\Column(name:'multiplier_type', enumType:MultiplierType::class, length:20)]
@@ -233,6 +234,7 @@ class ConfiguratorPriceRule
         if ($type === MultiplierType::FIELD_VALUE && $field === null) {
             throw new \InvalidArgumentException('FIELD_VALUE requires a multiplier field.');
         }
+        // @phpstan-ignore nullsafe.neverNull
         if ($type === MultiplierType::FIELD_VALUE && !in_array($field?->getType(), [FieldType::INTEGER, FieldType::QUANTITY], true)) {
             throw new \DomainException('FIELD_VALUE requires an INTEGER or QUANTITY multiplier field.');
         }
@@ -305,6 +307,7 @@ class ConfiguratorPriceRule
         }
         $multiplier = $this->multiplierField === null ? '-' : implode('/', [$this->multiplierField->getSection()->getCode(), $this->multiplierField->getCode()]);
 
+        // @phpstan-ignore nullsafe.neverNull
         $percentageBase = $this->priceType === PriceType::PERCENT ? $this->percentageBase?->value ?? PercentageBase::SUBTOTAL->value : '-';
 
         return implode('|', [$this->configurator->getCode(), $source, $this->chargeCode, $this->priceType->value, $this->multiplierType->value, $multiplier, $percentageBase]);

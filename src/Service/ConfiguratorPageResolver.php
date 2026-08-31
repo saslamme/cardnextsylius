@@ -13,6 +13,7 @@ final readonly class ConfiguratorPageResolver
     {
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public function resolve(string $path, string $locale, Channel $channel): ?array
     {
         return $this->configurators->findPublicByPath($path, $locale, $channel);

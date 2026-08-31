@@ -10,7 +10,7 @@ use App\Service\ProductFacetService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Bundle\GridBundle\Builder\Filter\Filter;
-use Sylius\Bundle\GridBundle\Builder\GridBuilderInterface;
+use Sylius\Component\Grid\Builder\GridBuilderInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Grid\Mutator\GridMutatorInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;

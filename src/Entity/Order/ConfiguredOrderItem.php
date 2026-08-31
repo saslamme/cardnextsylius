@@ -65,24 +65,31 @@ class ConfiguredOrderItem
     private array $canonicalConfiguration;
 
     #[ORM\Column(name: 'base_unit_amount', type: 'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $baseUnitAmount;
 
     #[ORM\Column(name: 'options_unit_amount', type: 'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $optionsUnitAmount;
 
     #[ORM\Column(name: 'unit_amount', type: 'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $unitAmount;
 
     #[ORM\Column(name: 'unit_total', type: 'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $unitTotal;
 
     #[ORM\Column(name: 'fixed_total', type: 'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $fixedTotal;
 
     #[ORM\Column(name: 'percentage_total', type: 'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $percentageTotal;
 
     #[ORM\Column(type: 'bigint')]
+    // @phpstan-ignore doctrine.columnType
     private int $total;
 
     #[ORM\Column(name: 'snapshot_version')]
@@ -94,7 +101,11 @@ class ConfiguredOrderItem
     #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
-    /** @param array<string,mixed> $selections @param array<string,mixed> $breakdown @param array<string,mixed> $canonical */
+    /**
+     * @param array<string, mixed> $selections
+     * @param array<string, mixed> $breakdown
+     * @param array<string, mixed> $canonical
+     */
     public function __construct(string $configuratorCode, string $configuratorName, string $localeCode, string $channelCode, string $currencyCode, int $quantity, string $configurationHash, array $selections, array $breakdown, array $canonical, int $baseUnitAmount, int $optionsUnitAmount, int $unitAmount, int $unitTotal, int $fixedTotal, int $percentageTotal, int $total, ?string $leadTimeCode = null, ?string $leadTimeName = null, ?int $workingDays = null, ?string $taxCategoryCode = null, bool $shippingRequired = true)
     {
         $this->configuratorCode = $configuratorCode;

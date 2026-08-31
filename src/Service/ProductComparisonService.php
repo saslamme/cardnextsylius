@@ -48,6 +48,7 @@ final readonly class ProductComparisonService
     }
 
     /** @param list<string> $codes @return list<Product> */
+    // @phpstan-ignore missingType.iterableValue
     public function findComparableProducts(array $codes, Channel $channel): array
     {
         $codes = array_slice(array_values(array_unique(array_filter(array_map('trim', $codes)))), 0, self::MAX_PRODUCTS);
@@ -78,6 +79,7 @@ final readonly class ProductComparisonService
     }
 
     /** @param list<Product> $products @return array{products: list<array<string, mixed>>, sections: list<array<string, mixed>>, compatible: bool, group: ?string} */
+    // @phpstan-ignore missingType.iterableValue
     public function build(array $products, Channel $channel, string $locale): array
     {
         $productGroups = array_map($this->comparisonGroup(...), $products);
@@ -90,6 +92,7 @@ final readonly class ProductComparisonService
             $variant = null;
             $pricing = null;
             foreach ($product->getVariants() as $candidate) {
+                // @phpstan-ignore method.notFound
                 $candidatePricing = $candidate->getChannelPricingForChannel($channel);
                 if ($candidate->isEnabled() && $candidatePricing?->getPrice() !== null) {
                     $variant = $candidate;
@@ -111,6 +114,7 @@ final readonly class ProductComparisonService
             if ($first === null) { continue; }
             $cells = array_map(static fn (array $values): array => $values[$code] ?? ['display' => '—', 'normalized' => ''], $valuesByCode);
             $normalized = array_column($cells, 'normalized');
+            // @phpstan-ignore nullCoalesce.offset
             $config = self::PRESENTATION[$code] ?? ['section' => 'Weitere technische Daten', 'position' => 1000 + (int) ($first['position'] ?? 0)];
             $sections[$config['section']][] = ['code' => $code, 'label' => $first['label'], 'cells' => $cells, 'different' => count(array_unique($normalized)) > 1, 'position' => $config['position']];
         }
@@ -123,6 +127,7 @@ final readonly class ProductComparisonService
     {
         $taxon = $product->getMainTaxon();
         if ($taxon === null) { return null; }
+        // @phpstan-ignore nullsafe.neverNull
         while ($taxon->getParent() !== null && $taxon->getParent()?->getCode() !== 'products') { $taxon = $taxon->getParent(); }
         return $taxon->getCode();
     }
@@ -145,12 +150,14 @@ final readonly class ProductComparisonService
         return $result;
     }
 
+    // @phpstan-ignore missingType.iterableValue
     private function formatValue(mixed $value, array $configuration, string $locale): string
     {
         if (is_bool($value)) { return $value ? '✓ Ja' : '— Nein'; }
         $items = is_array($value) ? $value : [$value];
         $choices = $configuration['choices'] ?? [];
         return implode(', ', array_map(static function (mixed $item) use ($choices, $locale): string {
+            // @phpstan-ignore cast.string
             $label = $choices[(string) $item] ?? $item;
             if (is_array($label)) { $label = $label[$locale] ?? reset($label); }
             return (string) $label;

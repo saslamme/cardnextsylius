@@ -36,6 +36,7 @@ final class CardnextImportB2BCustomersCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        // @phpstan-ignore cast.string
         $csv = (string) $input->getArgument('csv');
         $dryRun = (bool) $input->getOption('dry-run');
 

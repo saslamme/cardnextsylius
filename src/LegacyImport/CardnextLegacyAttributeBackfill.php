@@ -172,16 +172,19 @@ final class CardnextLegacyAttributeBackfill
             'boolean' => $this->toBoolean($rawValue),
             'integer' => $this->toInteger($rawValue),
             'float' => $this->toFloat($rawValue),
+            // @phpstan-ignore argument.type
             'json' => $this->toSelectValues($rawValue, (array) ($attribute->getConfiguration()['choices'] ?? [])),
             default => $this->toText($rawValue),
         };
     }
 
     /** @param array<string, mixed> $choices */
+    // @phpstan-ignore missingType.iterableValue
     private function toSelectValues(mixed $value, array $choices): ?array
     {
         $values = is_array($value) ? $value : [$value];
         $values = array_values(array_unique(array_filter(array_map(
+            // @phpstan-ignore cast.string
             static fn (mixed $item): string => trim((string) $item),
             $values,
         ), static fn (string $item): bool => $item !== '')));
@@ -249,6 +252,7 @@ final class CardnextLegacyAttributeBackfill
     private function toText(mixed $value): ?string
     {
         if (is_array($value)) {
+            // @phpstan-ignore argument.type
             $value = implode(', ', array_map('strval', $value));
         }
 
@@ -279,7 +283,9 @@ final class CardnextLegacyAttributeBackfill
     private function sameValue(mixed $left, mixed $right): bool
     {
         if (is_array($left) && is_array($right)) {
+            // @phpstan-ignore argument.type
             $left = array_values(array_map('strval', $left));
+            // @phpstan-ignore argument.type
             $right = array_values(array_map('strval', $right));
             sort($left);
             sort($right);

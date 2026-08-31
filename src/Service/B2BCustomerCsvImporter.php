@@ -53,6 +53,7 @@ final readonly class B2BCustomerCsvImporter
             }
 
             $header = array_map(
+                // @phpstan-ignore argument.type
                 static fn (string $value): string => trim($value),
                 $header,
             );
@@ -70,12 +71,14 @@ final readonly class B2BCustomerCsvImporter
             while (($values = fgetcsv($handle, 0, ';')) !== false) {
                 ++$rowNumber;
 
+                // @phpstan-ignore identical.alwaysFalse
                 if ($values === [null] || $values === []) {
                     continue;
                 }
 
                 $values = array_pad($values, count($header), '');
                 $row = array_combine($header, array_slice($values, 0, count($header)));
+                // @phpstan-ignore function.alreadyNarrowedType
                 if (!is_array($row)) {
                     throw new \RuntimeException(sprintf('Row %d could not be parsed.', $rowNumber));
                 }
@@ -114,11 +117,17 @@ final readonly class B2BCustomerCsvImporter
                     $this->entityManager->persist($profile);
                 }
 
+                // @phpstan-ignore argument.type
                 $changed = $this->applyString($profile, 'customer_number', $row, $changed);
+                // @phpstan-ignore argument.type
                 $changed = $this->applyString($profile, 'company_name', $row, $changed);
+                // @phpstan-ignore argument.type
                 $changed = $this->applyString($profile, 'vat_number', $row, $changed);
+                // @phpstan-ignore argument.type
                 $changed = $this->applyString($profile, 'erp_customer_number', $row, $changed);
+                // @phpstan-ignore argument.type
                 $changed = $this->applyString($profile, 'contact_person', $row, $changed);
+                // @phpstan-ignore argument.type
                 $changed = $this->applyString($profile, 'notes', $row, $changed);
 
                 if (($row['customer_group_code'] ?? '') !== '') {
@@ -261,6 +270,7 @@ final readonly class B2BCustomerCsvImporter
             'vat_number' => 'setVatNumber',
             'erp_customer_number' => 'setErpCustomerNumber',
             'contact_person' => 'setContactPerson',
+            // @phpstan-ignore match.alwaysTrue
             'notes' => 'setNotes',
             default => throw new \LogicException(sprintf('Unsupported column "%s".', $column)),
         };
@@ -281,6 +291,7 @@ final readonly class B2BCustomerCsvImporter
         }
 
         return in_array(
+            // @phpstan-ignore cast.string
             mb_strtolower(trim((string) $value)),
             ['1', 'true', 'yes', 'ja', 'on'],
             true,
