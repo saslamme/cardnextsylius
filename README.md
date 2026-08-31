@@ -91,7 +91,7 @@ php bin/console about
 php bin/console lint:container
 php bin/console lint:yaml config translations
 php bin/console lint:twig templates
-vendor/bin/ecs check
+vendor/bin/ecs check --no-progress-bar
 vendor/bin/phpstan analyse --memory-limit=1G
 vendor/bin/phpunit tests
 php bin/console doctrine:schema:validate
@@ -99,7 +99,7 @@ php bin/console doctrine:migrations:status
 php bin/console debug:router
 ```
 
-ECS-Formatbereinigungen gehören in einen eigenen mechanischen PR. PHPStan soll über die versionierte `phpstan.dist.neon` deterministisch laufen; Fehler werden an der Ursache behoben und nicht durch breite Ignore-Listen verborgen.
+ECS prüft den Application Code unter `src/` mit dem Sylius Labs Coding Standard und ist ebenso wie PHPStan ein blockierendes CI-Gate. Formatbereinigungen gehören in einen eigenen mechanischen PR. PHPStan soll über die versionierte `phpstan.dist.neon` deterministisch laufen; Fehler werden an der Ursache behoben und nicht durch breite Ignore-Listen verborgen.
 
 ## Deployment
 

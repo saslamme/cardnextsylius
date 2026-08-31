@@ -73,6 +73,7 @@ final class CardnextLegacyAttributeBackfill
             $product = $productRepository->findOneBy(['code' => $productCode]);
             if (!$product instanceof Product) {
                 ++$result['products_missing'];
+
                 continue;
             }
 
@@ -95,23 +96,27 @@ final class CardnextLegacyAttributeBackfill
                 $slot = $this->findAttributeSlot($product, (string) $attributeCode);
                 if (!$slot instanceof ProductAttributeValue) {
                     ++$result['missing_profile_slots'];
+
                     continue;
                 }
 
                 $normalized = $this->normalizeForSlot($slot, $rawValue);
                 if (!$this->hasValue($normalized)) {
                     ++$result['invalid_values_skipped'];
+
                     continue;
                 }
 
                 $current = $slot->getValue();
                 if (!$overwrite && $this->hasValue($current)) {
                     ++$result['existing_values_skipped'];
+
                     continue;
                 }
 
                 if ($this->sameValue($current, $normalized)) {
                     ++$result['unchanged_values'];
+
                     continue;
                 }
 
@@ -211,7 +216,7 @@ final class CardnextLegacyAttributeBackfill
             return null;
         }
 
-        return filter_var((string) $value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+        return filter_var((string) $value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
     }
 
     private function toInteger(mixed $value): ?int
@@ -261,6 +266,7 @@ final class CardnextLegacyAttributeBackfill
         }
 
         $value = trim((string) $value);
+
         return $value !== '' ? $value : null;
     }
 
@@ -289,6 +295,7 @@ final class CardnextLegacyAttributeBackfill
             $right = array_values(array_map('strval', $right));
             sort($left);
             sort($right);
+
             return $left === $right;
         }
 

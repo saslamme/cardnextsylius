@@ -275,6 +275,7 @@ final class CardnextSetupCommercialMarketsCommand extends Command
         foreach ($zone->getMembers() as $member) {
             if ($member->getCode() === $countryCode) {
                 $hasCountry = true;
+
                 break;
             }
         }

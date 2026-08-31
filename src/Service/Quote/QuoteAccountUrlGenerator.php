@@ -10,7 +10,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 final class QuoteAccountUrlGenerator
 {
     /** @param array<string, string> $baseUrls */
-    public function __construct(private UrlGeneratorInterface $router, private array $baseUrls) {}
+    public function __construct(private UrlGeneratorInterface $router, private array $baseUrls)
+    {
+    }
 
     public function view(Quote $quote): string
     {
@@ -22,6 +24,6 @@ final class QuoteAccountUrlGenerator
             '_locale' => $quote->getLocaleCode(), 'number' => $quote->getNumber(), 'version' => $quote->getVersion(),
         ], UrlGeneratorInterface::ABSOLUTE_PATH);
 
-        return rtrim($baseUrl, '/').'/'.ltrim($path, '/');
+        return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
     }
 }

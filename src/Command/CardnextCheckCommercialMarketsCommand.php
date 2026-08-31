@@ -76,9 +76,9 @@ final class CardnextCheckCommercialMarketsCommand extends Command
                 $amount = $shippingMethod->getConfiguration()[$market->channelCode]['amount'] ?? null;
             }
 
-            $paymentAssigned = $vorkasse instanceof PaymentMethod
-                && $channel instanceof Channel
-                && $vorkasse->hasChannel($channel);
+            $paymentAssigned = $vorkasse instanceof PaymentMethod &&
+                $channel instanceof Channel &&
+                $vorkasse->hasChannel($channel);
 
             $taxStatus = 'offen';
             if ($channel instanceof Channel && $channel->getDefaultTaxZone() !== null) {

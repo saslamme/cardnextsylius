@@ -153,6 +153,7 @@ final class QuoteCartController extends AbstractController
         $countryCode = $this->markets->get($channel->getCode() ?? '')?->countryCode;
         foreach ($channel->getCountries() as $country) {
             $countryCode ??= $country->getCode();
+
             break;
         }
         if ($countryCode === null && preg_match('/_([A-Z]{2})$/', $channel->getCode() ?? '', $matches) === 1) {

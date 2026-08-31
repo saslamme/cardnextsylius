@@ -13,14 +13,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ProductComparisonController extends AbstractController
 {
-    public function __construct(private ProductComparisonService $comparison, private ChannelContextInterface $channelContext) {}
+    public function __construct(private ProductComparisonService $comparison, private ChannelContextInterface $channelContext)
+    {
+    }
 
     public function __invoke(Request $request): Response
     {
         $raw = array_filter(explode(',', (string) $request->query->get('products', '')));
         $limited = array_slice($raw, 0, ProductComparisonService::MAX_PRODUCTS);
         $channel = $this->channelContext->getChannel();
-        if (!$channel instanceof Channel) { throw new \LogicException('Cardnext channel expected.'); }
+        if (!$channel instanceof Channel) {
+            throw new \LogicException('Cardnext channel expected.');
+        }
         $products = $this->comparison->findComparableProducts($limited, $channel);
         // @phpstan-ignore argument.type
         $comparison = $this->comparison->build($products, $channel, $request->getLocale());

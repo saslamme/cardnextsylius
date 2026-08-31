@@ -9,16 +9,12 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 
 final class CardnextProductSearch
 {
-    /**
-     * @var list<array{key: string, terms: list<string>}>
-     */
+    /** @var list<array{key: string, terms: list<string>}> */
     private array $choiceSearchEntries = [];
 
     private ?string $choiceSearchLocale = null;
 
-    /**
-     * @var array<string, string>
-     */
+    /** @var array<string, string> */
     private array $fuzzyVocabulary = [];
 
     private ?string $fuzzyVocabularyLocale = null;
@@ -47,8 +43,8 @@ final class CardnextProductSearch
         $correctedQuery = $this->correctQuery($originalQuery, $localeCode);
 
         if (
-            $correctedQuery === $originalQuery
-            || mb_strtolower($correctedQuery) === mb_strtolower($originalQuery)
+            $correctedQuery === $originalQuery ||
+            mb_strtolower($correctedQuery) === mb_strtolower($originalQuery)
         ) {
             return $result;
         }
@@ -489,7 +485,7 @@ final class CardnextProductSearch
             $parameters[$parameterName] = '%' . mb_strtolower($alias) . '%';
 
             $aliasConditions[] = sprintf(
-                "LOWER(CAST(pav.json_value AS CHAR)) LIKE :%s",
+                'LOWER(CAST(pav.json_value AS CHAR)) LIKE :%s',
                 $parameterName,
             );
         }
@@ -554,11 +550,12 @@ final class CardnextProductSearch
         foreach ($this->choiceSearchEntries as $entry) {
             foreach ($entry['terms'] as $term) {
                 if (
-                    $term === $needle
-                    || str_contains($term, $needle)
-                    || (mb_strlen($term) >= 3 && str_contains($needle, $term))
+                    $term === $needle ||
+                    str_contains($term, $needle) ||
+                    (mb_strlen($term) >= 3 && str_contains($needle, $term))
                 ) {
                     $aliases[$entry['key']] = true;
+
                     break;
                 }
             }
@@ -718,8 +715,8 @@ final class CardnextProductSearch
 
         $firstCharacter = mb_substr($needle, 0, 1);
         $bestReplacement = null;
-        $bestDistance = PHP_INT_MAX;
-        $bestLengthDifference = PHP_INT_MAX;
+        $bestDistance = \PHP_INT_MAX;
+        $bestLengthDifference = \PHP_INT_MAX;
 
         foreach ($this->fuzzyVocabulary as $normalizedCandidate => $replacement) {
             $candidateLength = mb_strlen($normalizedCandidate);
@@ -746,8 +743,8 @@ final class CardnextProductSearch
             }
 
             if (
-                $distance < $bestDistance
-                || ($distance === $bestDistance && $lengthDifference < $bestLengthDifference)
+                $distance < $bestDistance ||
+                ($distance === $bestDistance && $lengthDifference < $bestLengthDifference)
             ) {
                 $bestDistance = $distance;
                 $bestLengthDifference = $lengthDifference;
@@ -774,7 +771,7 @@ final class CardnextProductSearch
         }
 
         $rows = $this->connection->fetchAllAssociative(
-            "
+            '
                 SELECT DISTINCT pt.name AS term
                 FROM sylius_product p
                 INNER JOIN sylius_product_translation pt
@@ -814,7 +811,7 @@ final class CardnextProductSearch
                 SELECT DISTINCT pat.name AS term
                 FROM sylius_product_attribute_translation pat
                 WHERE pat.locale = :localeCode
-            ",
+            ',
             [
                 'channelId' => $channelId,
                 'localeCode' => $localeCode,
@@ -860,8 +857,8 @@ final class CardnextProductSearch
         $normalized = $this->normalizeSearchTerm($replacement);
 
         if (
-            mb_strlen($normalized) < 4
-            || preg_match('/^\p{L}+$/u', $replacement) !== 1
+            mb_strlen($normalized) < 4 ||
+            preg_match('/^\p{L}+$/u', $replacement) !== 1
         ) {
             return;
         }
@@ -871,8 +868,8 @@ final class CardnextProductSearch
 
     private function unicodeLevenshtein(string $left, string $right): int
     {
-        $a = preg_split('//u', $left, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-        $b = preg_split('//u', $right, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $a = preg_split('//u', $left, -1, \PREG_SPLIT_NO_EMPTY) ?: [];
+        $b = preg_split('//u', $right, -1, \PREG_SPLIT_NO_EMPTY) ?: [];
 
         $aLength = count($a);
         $bLength = count($b);

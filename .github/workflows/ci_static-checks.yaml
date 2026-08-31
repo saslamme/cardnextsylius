@@ -105,5 +105,8 @@ jobs:
             -   name: Validate Yaml files
                 run: bin/console lint:yaml config translations
 
+            -   name: "Check coding standards"
+                run: vendor/bin/ecs check --no-progress-bar
+
             -   name: Run PHPStan
                 run: vendor/bin/phpstan analyse --memory-limit=1G

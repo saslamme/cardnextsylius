@@ -61,14 +61,15 @@ final class CardnextCheckMarketsCommand extends Command
             foreach ($channel->getCountries() as $country) {
                 if ($country->getCode() === $market->countryCode) {
                     $countryOk = true;
+
                     break;
                 }
             }
 
-            $coreOk = $channel->getHostname() === $market->hostname
-                && $locale === $market->localeCode
-                && $currency === $market->currencyCode
-                && $countryOk;
+            $coreOk = $channel->getHostname() === $market->hostname &&
+                $locale === $market->localeCode &&
+                $currency === $market->currencyCode &&
+                $countryOk;
 
             $rows[] = [
                 $market->channelCode,

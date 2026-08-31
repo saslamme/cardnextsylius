@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Channel\Channel;
-use App\Entity\Product\Product;
 use App\Entity\Product\PrinterAdvisorProfile;
+use App\Entity\Product\Product;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class ProductComparisonService
@@ -97,6 +97,7 @@ final readonly class ProductComparisonService
                 if ($candidate->isEnabled() && $candidatePricing?->getPrice() !== null) {
                     $variant = $candidate;
                     $pricing = $candidatePricing;
+
                     break;
                 }
             }
@@ -109,16 +110,24 @@ final readonly class ProductComparisonService
         foreach ($allCodes as $code) {
             $first = null;
             foreach ($valuesByCode as $values) {
-                if (isset($values[$code])) { $first = $values[$code]; break; }
+                if (isset($values[$code])) {
+                    $first = $values[$code];
+
+                    break;
+                }
             }
-            if ($first === null) { continue; }
+            if ($first === null) {
+                continue;
+            }
             $cells = array_map(static fn (array $values): array => $values[$code] ?? ['display' => '—', 'normalized' => ''], $valuesByCode);
             $normalized = array_column($cells, 'normalized');
             // @phpstan-ignore nullCoalesce.offset
             $config = self::PRESENTATION[$code] ?? ['section' => 'Weitere technische Daten', 'position' => 1000 + (int) ($first['position'] ?? 0)];
             $sections[$config['section']][] = ['code' => $code, 'label' => $first['label'], 'cells' => $cells, 'different' => count(array_unique($normalized)) > 1, 'position' => $config['position']];
         }
-        foreach ($sections as &$rows) { usort($rows, static fn (array $a, array $b): int => $a['position'] <=> $b['position']); }
+        foreach ($sections as &$rows) {
+            usort($rows, static fn (array $a, array $b): int => $a['position'] <=> $b['position']);
+        }
 
         return ['products' => $columns, 'sections' => array_map(static fn (string $title, array $rows): array => ['title' => $title, 'rows' => $rows], array_keys($sections), $sections), 'compatible' => $compatible, 'group' => $groups[0] ?? null];
     }
@@ -126,9 +135,14 @@ final readonly class ProductComparisonService
     private function comparisonGroup(Product $product): ?string
     {
         $taxon = $product->getMainTaxon();
-        if ($taxon === null) { return null; }
+        if ($taxon === null) {
+            return null;
+        }
         // @phpstan-ignore nullsafe.neverNull
-        while ($taxon->getParent() !== null && $taxon->getParent()?->getCode() !== 'products') { $taxon = $taxon->getParent(); }
+        while ($taxon->getParent() !== null && $taxon->getParent()?->getCode() !== 'products') {
+            $taxon = $taxon->getParent();
+        }
+
         return $taxon->getCode();
     }
 
@@ -137,29 +151,44 @@ final readonly class ProductComparisonService
     {
         $result = [];
         foreach ($product->getAttributes() as $attributeValue) {
-            if ($attributeValue->getLocaleCode() !== null && $attributeValue->getLocaleCode() !== $locale) { continue; }
+            if ($attributeValue->getLocaleCode() !== null && $attributeValue->getLocaleCode() !== $locale) {
+                continue;
+            }
             $value = $attributeValue->getValue();
-            if ($value === null || $value === '' || $value === []) { continue; }
+            if ($value === null || $value === '' || $value === []) {
+                continue;
+            }
             $attribute = $attributeValue->getAttribute();
-            if ($attribute === null) { continue; }
+            if ($attribute === null) {
+                continue;
+            }
             $display = $this->formatValue($value, $attribute->getConfiguration(), $locale);
             $result[(string) $attribute->getCode()] = ['label' => (string) $attribute->getName(), 'display' => $display, 'normalized' => mb_strtolower(trim($display)), 'position' => (int) $attribute->getPosition()];
         }
         $profile = $product->getPrinterAdvisorProfile();
-        if ($profile?->isEnabled()) { $this->addAdvisorValues($result, $profile); }
+        if ($profile?->isEnabled()) {
+            $this->addAdvisorValues($result, $profile);
+        }
+
         return $result;
     }
 
     // @phpstan-ignore missingType.iterableValue
     private function formatValue(mixed $value, array $configuration, string $locale): string
     {
-        if (is_bool($value)) { return $value ? '✓ Ja' : '— Nein'; }
+        if (is_bool($value)) {
+            return $value ? '✓ Ja' : '— Nein';
+        }
         $items = is_array($value) ? $value : [$value];
         $choices = $configuration['choices'] ?? [];
+
         return implode(', ', array_map(static function (mixed $item) use ($choices, $locale): string {
             // @phpstan-ignore cast.string
             $label = $choices[(string) $item] ?? $item;
-            if (is_array($label)) { $label = $label[$locale] ?? reset($label); }
+            if (is_array($label)) {
+                $label = $label[$locale] ?? reset($label);
+            }
+
             return (string) $label;
         }, $items));
     }
@@ -176,7 +205,9 @@ final readonly class ProductComparisonService
             'CN_ADVISOR_HIGH_DURABILITY' => ['Hochbeständiger Kartendruck', $profile->hasHighDurability(), 'Ausstattung', 30],
         ];
         foreach ($fallbacks as $code => [$label, $bool]) {
-            if (($code === 'CN_ADVISOR_DUPLEX' && isset($values['CN_PRINT_SIDES'])) || (($code === 'CN_ADVISOR_MAGNETIC' || $code === 'CN_ADVISOR_CONTACT_CHIP' || $code === 'CN_ADVISOR_RFID_NFC') && isset($values['CN_ENCODING_OPTIONS']))) { continue; }
+            if (($code === 'CN_ADVISOR_DUPLEX' && isset($values['CN_PRINT_SIDES'])) || (($code === 'CN_ADVISOR_MAGNETIC' || $code === 'CN_ADVISOR_CONTACT_CHIP' || $code === 'CN_ADVISOR_RFID_NFC') && isset($values['CN_ENCODING_OPTIONS']))) {
+                continue;
+            }
             $display = $bool ? '✓ Ja' : '— Nein';
             $values[$code] = ['label' => $label, 'display' => $display, 'normalized' => $bool ? '1' : '0', 'position' => 0];
         }

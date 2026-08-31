@@ -17,9 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
 class ProductCompatibility
 {
     public const TYPE_COMPATIBLE_WITH = 'compatible_with';
+
     public const TYPE_CONSUMABLE_FOR = 'consumable_for';
+
     public const TYPE_ACCESSORY_FOR = 'accessory_for';
+
     public const TYPE_ALTERNATIVE_TO = 'alternative_to';
+
     public const TYPE_REPLACEMENT_FOR = 'replacement_for';
 
     #[ORM\Id]

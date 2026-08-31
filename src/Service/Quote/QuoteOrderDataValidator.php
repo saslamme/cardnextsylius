@@ -23,11 +23,19 @@ final class QuoteOrderDataValidator
         ];
         $missing = [];
         foreach ($fields as $label => $value) {
-            if ($value === null || trim($value) === '') $missing[] = $label;
+            if ($value === null || trim($value) === '') {
+                $missing[] = $label;
+            }
         }
-        if (!in_array('Ansprechpartner', $missing, true) && preg_match('/^\S+\s+\S+/u', trim($quote->getCustomerContactName())) !== 1) $missing[] = 'Ansprechpartner';
-        if (!in_array('E-Mail', $missing, true) && !filter_var($quote->getCustomerEmail(), FILTER_VALIDATE_EMAIL)) $missing[] = 'E-Mail';
-        if (!in_array('Land', $missing, true) && !Countries::exists(strtoupper(trim((string) $quote->getCustomerCountryCode())))) $missing[] = 'Land';
+        if (!in_array('Ansprechpartner', $missing, true) && preg_match('/^\S+\s+\S+/u', trim($quote->getCustomerContactName())) !== 1) {
+            $missing[] = 'Ansprechpartner';
+        }
+        if (!in_array('E-Mail', $missing, true) && !filter_var($quote->getCustomerEmail(), \FILTER_VALIDATE_EMAIL)) {
+            $missing[] = 'E-Mail';
+        }
+        if (!in_array('Land', $missing, true) && !Countries::exists(strtoupper(trim((string) $quote->getCustomerCountryCode())))) {
+            $missing[] = 'Land';
+        }
 
         // @phpstan-ignore return.type
         return $missing;
@@ -46,6 +54,8 @@ final class QuoteOrderDataValidator
     private function assertComplete(Quote $quote, string $message): void
     {
         $missing = $this->missingRequiredFields($quote);
-        if ($missing !== []) throw new \DomainException(sprintf($message, implode(', ', $missing)));
+        if ($missing !== []) {
+            throw new \DomainException(sprintf($message, implode(', ', $missing)));
+        }
     }
 }

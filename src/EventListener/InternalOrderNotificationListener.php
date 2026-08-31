@@ -47,7 +47,7 @@ final class InternalOrderNotificationListener
                 ->to(self::RECIPIENT)
                 ->subject(sprintf(
                     'Neue Cardnext-Bestellung %s',
-                    $orderNumber !== null ? '#'.$orderNumber : '',
+                    $orderNumber !== null ? '#' . $orderNumber : '',
                 ))
                 ->html($this->twig->render('email/internal_order_notification.html.twig', [
                     'order' => $order,
