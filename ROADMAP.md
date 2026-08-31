@@ -42,13 +42,15 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 
 ### P1-002 — Expliziter QuoteItemType-Dispatch
 
-- **ID/Priorität/Status/Bereich:** P1-002 / P1 / bestätigt / Order-Modell, Money
+- **ID/Priorität/Status/Bereich:** P1-002 / P1 / Behoben in PR #120 / Order-Modell, Money
 - **Betroffene Dateien:** `src/Enum/Quote/QuoteItemType.php`, `src/Service/Quote/QuoteOrderConverter.php`, `src/Service/Quote/QuoteCalculator.php`
-- **Aktuelles Verhalten:** Nur `Custom` wird separat behandelt; `Product`, `Service` und `Shipping` laufen gemeinsam in den Product-OrderItem-Pfad. Service/Shipping können dabei eine null Variant erhalten, während zusätzlich globale Service-/Shipping-Adjustments angelegt werden.
+- **Ausgangsverhalten:** Nur `Custom` wurde separat behandelt; `Product`, `Service` und `Shipping` liefen gemeinsam in den Product-OrderItem-Pfad. Service/Shipping konnten dabei eine null Variant erhalten, während zusätzlich globale Service-/Shipping-Adjustments angelegt wurden.
 - **Risiko:** Ungültige Sylius-OrderItems oder doppelte Beträge; neue Enum-Werte fallen unbemerkt durch.
-- **Lösung:** Exhaustives `match`; zulässiges Domain-Modell festlegen. Product benötigt Variant. Service/Shipping entweder explizit ablehnen oder ausschließlich als eindeutig typisierte, gesperrte Adjustments modellieren – nicht gleichzeitig als Item und Summenfeld.
+- **Lösung:** Exhaustive `match`-Dispatches legen das zulässige Domain-Modell fest. Product benötigt eine Variant; Service/Shipping werden als QuoteItems explizit abgelehnt und ausschließlich über die Quote-Level-Totals in gesperrte Adjustments übernommen.
 - **Acceptance Criteria:** Jeder Enum-Wert hat einen dokumentierten Pfad; unbekannte/unzulässige Typen brechen vor Persistierung ab; Total-Invariante bleibt hart.
 - **Tests:** Datensätze für alle vier Enum-Werte, Null-Variant, doppelte Service-/Shipping-Erfassung und Totals.
+- **Umsetzung:** Product und Custom besitzen explizite Konvertierungssemantiken. Service- und Shipping-QuoteItems werden ausdrücklich abgelehnt, weil Service und Versand durch Quote-Level-Totals und die zugehörigen Order-Adjustments abgebildet werden.
+- **Repository-Audit:** `QuoteFactory::createFromRequest()` erzeugt Product-Items, freie Admin-Positionen sind Custom-Items, und die Admin-Kalkulation schreibt Service und Versand in `Quote.serviceTotal` bzw. `Quote.shippingTotal`. Es existiert aktuell kein produktiver Erzeugungspfad für Service-/Shipping-QuoteItems.
 
 ### P1-003 — Unvollständige CI Quality Gates
 
