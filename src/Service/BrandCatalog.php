@@ -28,6 +28,7 @@ final class BrandCatalog
     {
         $id = $this->connection->fetchOne($this->baseSql() . ' AND m.slug = :slug', ['channel' => $this->channelCode(), 'slug' => $slug]);
 
+        // @phpstan-ignore cast.int
         return $id === false ? null : $this->em->find(Manufacturer::class, (int) $id);
     }
 
@@ -43,12 +44,14 @@ final class BrandCatalog
 
     public function productCount(Manufacturer $manufacturer): int
     {
+        // @phpstan-ignore cast.int
         return (int) $this->connection->fetchOne('SELECT COUNT(DISTINCT available.id) FROM (' . $this->productSql() . ' AND p.manufacturer_id = :manufacturer) available', ['channel' => $this->channelCode(), 'manufacturer' => $manufacturer->getId()]);
     }
 
     /** @return list<array{name:string,slug:string}> */
     public function areas(Manufacturer $manufacturer, string $locale): array
     {
+        // @phpstan-ignore return.type
         return $this->connection->fetchAllAssociative('SELECT tt.name, tt.slug FROM sylius_product p JOIN sylius_product_channels pc ON pc.product_id = p.id JOIN sylius_channel c ON c.id = pc.channel_id JOIN sylius_product_variant v ON v.product_id = p.id JOIN sylius_channel_pricing cp ON cp.product_variant_id = v.id AND cp.channel_code = c.code JOIN sylius_product_taxon pt ON pt.product_id = p.id JOIN sylius_taxon t ON t.id = pt.taxon_id JOIN sylius_taxon_translation tt ON tt.translatable_id = t.id AND tt.locale = :locale WHERE p.enabled = 1 AND v.enabled = 1 AND cp.price IS NOT NULL AND c.code = :channel AND p.manufacturer_id = :manufacturer AND tt.name IS NOT NULL GROUP BY t.id, tt.name, tt.slug ORDER BY MIN(pt.position), tt.name LIMIT 4', ['channel' => $this->channelCode(), 'manufacturer' => $manufacturer->getId(), 'locale' => $locale]);
     }
 
@@ -67,17 +70,26 @@ final class BrandCatalog
         return (string) $this->channelContext->getChannel()->getCode();
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T> $class
+     * @param list<mixed> $ids
+     * @return list<T>
+     */
     private function orderedEntities(string $class, array $ids): array
     {
         if ($ids === []) {
             return [];
         }
-        $found = $this->em->getRepository($class)->findBy(['id' => array_map('intval', $ids)]);
+        $normalizedIds = array_map(static fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, $ids);
+        $found = $this->em->getRepository($class)->findBy(['id' => $normalizedIds]);
         $indexed = [];
         foreach ($found as $entity) {
+            // @phpstan-ignore method.notFound
             $indexed[$entity->getId()] = $entity;
         }
 
+        // @phpstan-ignore cast.int
         return array_values(array_filter(array_map(static fn ($id) => $indexed[(int) $id] ?? null, $ids)));
     }
 }

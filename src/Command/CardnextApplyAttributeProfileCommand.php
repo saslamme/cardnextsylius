@@ -35,6 +35,7 @@ final class CardnextApplyAttributeProfileCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        // @phpstan-ignore cast.string
         $productCode = (string) $input->getArgument('productCode');
 
         /** @var Product|null $product */

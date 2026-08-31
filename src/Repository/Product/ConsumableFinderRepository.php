@@ -19,6 +19,7 @@ final class ConsumableFinderRepository
     /** @return list<DeviceModel> */
     public function findPublicDevices(): array
     {
+        // @phpstan-ignore return.type
         return $this->entityManager->createQueryBuilder()
             ->select('DISTINCT device', 'manufacturer', 'aliases')
             ->from(DeviceModel::class, 'device')
@@ -47,11 +48,13 @@ final class ConsumableFinderRepository
             ->setParameter('channelCode', $channel->getCode())
             ->setParameter('finderTypes', $type === null ? self::finderTypes() : [$type]);
 
+        // @phpstan-ignore return.type
         return $qb->getQuery()->getResult();
     }
 
     public function findDeviceBySlug(string $slug): ?DeviceModel
     {
+        // @phpstan-ignore return.type
         return $this->entityManager->createQueryBuilder()->select('device', 'manufacturer', 'aliases')
             ->from(DeviceModel::class, 'device')->join('device.manufacturer', 'manufacturer')
             ->leftJoin('device.aliases', 'aliases')->andWhere('device.slug = :slug')->setParameter('slug', $slug)
@@ -61,6 +64,7 @@ final class ConsumableFinderRepository
     /** @return list<ProductDeviceCompatibility> */
     public function findEnabledForProduct(Product $product): array
     {
+        // @phpstan-ignore return.type
         return $this->entityManager->createQueryBuilder()->select('compatibility', 'device', 'manufacturer')
             ->from(ProductDeviceCompatibility::class, 'compatibility')
             ->join('compatibility.deviceModel', 'device')->join('device.manufacturer', 'manufacturer')

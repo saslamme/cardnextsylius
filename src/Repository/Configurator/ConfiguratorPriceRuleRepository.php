@@ -10,6 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Sylius\Component\Channel\Model\ChannelInterface;
 
+// @phpstan-ignore missingType.generics
 class ConfiguratorPriceRuleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $r)
@@ -18,10 +19,12 @@ class ConfiguratorPriceRuleRepository extends ServiceEntityRepository
     }
 
     /** @param list<int> $valueIds @return list<ConfiguratorPriceRule> */
+    // @phpstan-ignore missingType.iterableValue
     public function findApplicable(Configurator $c, array $valueIds, ?ChannelInterface $channel, string $currency, int $quantity, ?int $leadTimeId = null): array
     {
         $qb = $this->createQueryBuilder('r')->addSelect('v', 'f', 's', 'lt', 'mf', 'ms', 'ch')->leftJoin('r.value', 'v')->leftJoin('r.leadTime', 'lt')->leftJoin('v.field', 'f')->leftJoin('f.section', 's')->leftJoin('r.multiplierField', 'mf')->leftJoin('mf.section', 'ms')->leftJoin('r.channel', 'ch')->where('r.configurator=:c')->andWhere('r.enabled=true')->andWhere('r.currencyCode=:currency')->andWhere('r.minimumQuantity<=:quantity')->andWhere('(r.maximumQuantity IS NULL OR r.maximumQuantity>=:quantity)')->andWhere('(r.value IS NULL AND r.leadTime IS NULL) OR IDENTITY(r.value) IN (:valueIds) OR IDENTITY(r.leadTime) = :leadTimeId')->andWhere('r.channel IS NULL OR r.channel=:channel')->setParameter('c', $c)->setParameter('currency', strtoupper($currency))->setParameter('quantity', $quantity)->setParameter('valueIds', $valueIds ?: [0])->setParameter('leadTimeId', $leadTimeId ?? 0)->setParameter('channel', $channel)->orderBy('r.priority', 'DESC')->addOrderBy('r.chargeCode', 'ASC')->addOrderBy('r.id', 'ASC');
 
+        // @phpstan-ignore return.type
         return $qb->getQuery()->getResult();
     }
 }

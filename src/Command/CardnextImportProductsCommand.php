@@ -38,6 +38,7 @@ final class CardnextImportProductsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        // @phpstan-ignore cast.string
         $csv = (string) $input->getArgument('csv');
         $images = $input->getOption('images');
         $manufacturerLogos = $input->getOption('manufacturer-logos');

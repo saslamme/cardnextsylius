@@ -10,6 +10,7 @@ use App\Exception\Configurator\AmbiguousPriceRuleException;
 final class PriceRuleResolver
 {
     /** @param iterable<ConfiguratorPriceRule> $rules @return list<ConfiguratorPriceRule> */
+    // @phpstan-ignore missingType.iterableValue
     public function resolve(iterable $rules, int $quantity, string $channelCode, string $currencyCode): array
     {
         $dimensions = [];

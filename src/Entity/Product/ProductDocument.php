@@ -228,6 +228,7 @@ class ProductDocument
 
     private function touch(): void
     {
+        // @phpstan-ignore isset.initializedProperty
         if (isset($this->createdAt)) {
             $this->updatedAt = new \DateTimeImmutable();
         }

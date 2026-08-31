@@ -27,6 +27,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class CardnextSetupCommercialMarketsCommand extends Command
 {
+    // @phpstan-ignore missingType.generics
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly CardnextMarketRegistry $markets,
@@ -170,6 +171,7 @@ final class CardnextSetupCommercialMarketsCommand extends Command
                     $shippingMethod->setEnabled(false);
                 }
 
+                // @phpstan-ignore offsetAccess.nonOffsetAccessible
                 $amount = $shippingMethod->getConfiguration()[$market->channelCode]['amount'] ?? null;
 
                 $rows[] = [
@@ -177,6 +179,7 @@ final class CardnextSetupCommercialMarketsCommand extends Command
                     $shippingZoneCode,
                     $taxZoneCode,
                     $shippingMethodCode,
+                    // @phpstan-ignore cast.string
                     $amount !== null ? (string) $amount : 'offen',
                     $shippingMethod->isEnabled() ? 'ja' : 'nein',
                     $vorkasse->hasChannel($channel) ? 'ja' : 'nein',

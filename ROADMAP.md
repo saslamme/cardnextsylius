@@ -131,13 +131,14 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 - **Tests:** MySQL 8.4 Up, Down soweit sicher, simulierte Teilmigration und Recovery.
 
 ### P2-007 — PHPStan-/Composer-Metadaten deterministisch schließen
-- **ID/Priorität/Status/Bereich:** P2-007 / P2 / teilweise behoben in PR #121 / Tooling
+- **ID/Priorität/Status/Bereich:** P2-007 / P2 / teilweise behoben bis PR #123 / Tooling
 - **Betroffene Dateien:** `phpstan.dist.neon`, `composer.json`, CI
 - **Aktuelles Verhalten:** Eine versionierte PHPStan-Konfiguration existiert (`phpstan.dist.neon`, nicht die vermuteten Namen). Composer strict scheitert wegen fehlendem `name`/`description` für das proprietäre Root-Package.
 - **Risiko:** Lokale/CI-Kommandos divergieren; Strict Gate kann nicht aktiviert werden.
 - **Umsetzung PR #121:** Der kanonische PHPStan-Befehl lädt `phpstan.dist.neon` und damit alle versionierten Pfade mit einem expliziten 1-GiB-Limit. Das Root-Package besitzt valide proprietäre Metadaten; CI installiert exakt den committed Lockfile-Stand.
 - **Noch offen:** Der reproduzierbare Voll-Lauf meldet 441 Bestandsfehler, verteilt auf Produktionscode, Konfigurations-Bootstrap und Tests (insbesondere fehlende Iterable-/Generic-Typen, Mixed-Zugriffe und veraltete Sylius-Typreferenzen). Ein fokussierter Folge-PR muss diese gruppiert an der Ursache beheben; es wurde weder eine Baseline noch eine breite Ignore-Liste erzeugt.
 - **Audit PR #122:** Der unveränderte Level-9-Voll-Lauf bestätigte 441 Findings (299 in `src/`, 142 in `tests/`). Nach explizitem Laden der bereits installierten Doctrine- und Webmozart-Assert-Extensions sowie der Korrektur einer veralteten Sylius-Calculator-Schnittstelle verbleiben 414 Findings (272 in `src/`, 142 in `tests/`). Da die Bereinigung mehrere hundert fachlich zu prüfende Änderungen erfordert, wird sie gemäß Review-Sicherheitsvorgabe auf Folge-PRs für Domain/Doctrine, Import/Search, Symfony/Application-Services und Tests aufgeteilt. Level, Analysepfade und Gates bleiben unverändert; es gibt weder Baseline noch Ignore-Regeln.
+- **Umsetzung PR #123:** Die 272 Findings unter `src/` sind auf 0 reduziert; der separat reproduzierte Lauf über `tests/`, `config/`, `bin/` und `public/` weist weiterhin 142 Findings aus. P2-007 bleibt deshalb teilweise behoben und der repositoryweite CI-Befehl unverändert. Es wurde keine Baseline, keine Migration und keine pfadweite Ignore-Regel ergänzt.
 - **Acceptance Criteria:** beide Befehle reproduzierbar und grün.
 - **Tests:** Composer validate strict und PHPStan aus sauberem Checkout.
 

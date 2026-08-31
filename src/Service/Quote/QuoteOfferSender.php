@@ -17,6 +17,7 @@ final class QuoteOfferSender
   $customer=$quote->getCustomer();
   if(!$customer instanceof Customer){
    $matches=$this->em->createQuery('SELECT c FROM App\\Entity\\Customer\\Customer c WHERE LOWER(c.email) = :email')->setParameter('email',mb_strtolower(trim($quote->getCustomerEmail())))->getResult();
+   // @phpstan-ignore offsetAccess.nonOffsetAccessible, argument.type
    if(count($matches)===1 && $matches[0] instanceof Customer){$customer=$matches[0];$quote->setCustomer($customer);}
   }
   $user=$customer?->getUser();

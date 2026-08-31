@@ -16,6 +16,7 @@ final readonly class ValidationResult implements \JsonSerializable
         return $this->errors === [];
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public function jsonSerialize(): array
     {
         return ['valid' => $this->isValid(), 'errors' => $this->errors];

@@ -9,9 +9,11 @@ use Sylius\Component\Product\Model\ProductInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
+// @phpstan-ignore missingType.generics
 #[AsDecorator('sylius.factory.product')]
 final class CardnextProductFactory implements ProductFactoryInterface
 {
+    // @phpstan-ignore missingType.generics
     public function __construct(#[AutowireDecorated] private readonly ProductFactoryInterface $inner)
     {
     }

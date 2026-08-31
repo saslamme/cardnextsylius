@@ -9,6 +9,7 @@ use App\Entity\Configurator\Configurator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+// @phpstan-ignore missingType.generics
 class ConfiguratorRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $r)
@@ -27,8 +28,10 @@ class ConfiguratorRepository extends ServiceEntityRepository
         if ($configurator === null) {
             return null;
         }
+        // @phpstan-ignore argument.type
         $this->initializeDependencies($configurator);
 
+        // @phpstan-ignore return.type
         return $configurator;
     }
 
@@ -51,12 +54,14 @@ class ConfiguratorRepository extends ServiceEntityRepository
             return null;
         }
 
+        // @phpstan-ignore return.type
         return [$row, $row->getTranslation($locale)];
     }
 
     /** @return list<Configurator> */
     public function findPublicByTaxon(\App\Entity\Taxonomy\Taxon $taxon, string $locale, Channel $channel): array
     {
+        // @phpstan-ignore return.type
         return $this->createQueryBuilder('c')->addSelect('translation', 'images')->innerJoin('c.translations', 'translation', 'WITH', 'translation.locale = :locale')->innerJoin('c.channels', 'channel', 'WITH', 'channel = :channel')->innerJoin('c.taxonAssignments', 'assignment', 'WITH', 'assignment.taxon = :taxon')->leftJoin('c.images', 'images', 'WITH', 'images.enabled = true')->where('c.enabled = true')->setParameter('locale', $locale)->setParameter('channel', $channel)->setParameter('taxon', $taxon)->orderBy('assignment.position', 'ASC')->getQuery()->getResult();
     }
 

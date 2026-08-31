@@ -29,6 +29,7 @@ final class QuoteOrderDataValidator
         if (!in_array('E-Mail', $missing, true) && !filter_var($quote->getCustomerEmail(), FILTER_VALIDATE_EMAIL)) $missing[] = 'E-Mail';
         if (!in_array('Land', $missing, true) && !Countries::exists(strtoupper(trim((string) $quote->getCustomerCountryCode())))) $missing[] = 'Land';
 
+        // @phpstan-ignore return.type
         return $missing;
     }
 

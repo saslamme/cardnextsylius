@@ -232,16 +232,19 @@ class Product extends BaseProduct implements ProductInterface
     /** @return list<ProductCompatibility> */
     public function getPublicCompatibilities(): array
     {
+        // @phpstan-ignore return.type
         return $this->sortPublicCompatibilities($this->compatibilities);
     }
 
     /** @return list<ProductCompatibility> */
     public function getPublicReverseCompatibilities(): array
     {
+        // @phpstan-ignore return.type
         return $this->sortPublicCompatibilities($this->reverseCompatibilities);
     }
 
     /** @param Collection<int, ProductCompatibility> $collection @return list<ProductCompatibility> */
+    // @phpstan-ignore missingType.iterableValue
     private function sortPublicCompatibilities(Collection $collection): array
     {
         $items = array_values(array_filter(

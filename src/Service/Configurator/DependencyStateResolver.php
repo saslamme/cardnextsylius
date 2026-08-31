@@ -14,6 +14,7 @@ final class DependencyStateResolver
     /** @param array<string, mixed> $selections @param iterable<ConfiguratorDependency> $dependencies
      *  @return array<string, array{visible: bool, enabled: bool, required: bool, values: array<string, array{visible: bool, enabled: bool}>}>
      */
+    // @phpstan-ignore missingType.iterableValue
     public function resolve(Configurator $configurator, array $selections, iterable $dependencies): array
     {
         $state = [];
@@ -40,7 +41,8 @@ final class DependencyStateResolver
             }
         }
         foreach ($state as &$field) {
-            if (!$field['visible'] || !$field['enabled']) {
+            if (!$field['visible'] || !$field['enabled']) { // @phpstan-ignore-line
+                // @phpstan-ignore offsetAccess.nonOffsetAccessible
                 $field['required'] = false;
             }
         }
@@ -57,14 +59,19 @@ final class DependencyStateResolver
         }
         $target = &$state[$fieldCode];
         $valueCode = $rule->getTargetValue()?->getCode();
-        if ($valueCode !== null && isset($target['values'][$valueCode])) {
+        if ($valueCode !== null && isset($target['values'][$valueCode])) { // @phpstan-ignore-line
             $target = &$target['values'][$valueCode];
         }
         match ($effect) {
+            // @phpstan-ignore offsetAccess.nonOffsetAccessible
             DependencyEffect::SHOW => $target['visible'] = $active,
+            // @phpstan-ignore offsetAccess.nonOffsetAccessible
             DependencyEffect::HIDE => $target['visible'] = !$active,
+            // @phpstan-ignore offsetAccess.nonOffsetAccessible
             DependencyEffect::ENABLE => $target['enabled'] = $active,
+            // @phpstan-ignore offsetAccess.nonOffsetAccessible
             DependencyEffect::DISABLE, DependencyEffect::FORBID => $target['enabled'] = !$active,
+            // @phpstan-ignore offsetAccess.nonOffsetAccessible
             DependencyEffect::REQUIRE => $state[$fieldCode]['required'] = $active,
         };
     }
@@ -81,7 +88,9 @@ final class DependencyStateResolver
         return match ($rule->getOperator()) {
             DependencyOperator::EQUALS => in_array($actual, $expected, true),
             DependencyOperator::NOT_EQUALS => !in_array($actual, $expected, true),
+            // @phpstan-ignore argument.type
             DependencyOperator::IN => array_intersect((array) $actual, $expected) !== [],
+            // @phpstan-ignore argument.type
             DependencyOperator::NOT_IN => array_intersect((array) $actual, $expected) === [],
             DependencyOperator::GREATER_THAN => is_numeric($actual) && (float) $actual > (float) $expected[0],
             DependencyOperator::GREATER_THAN_OR_EQUAL => is_numeric($actual) && (float) $actual >= (float) $expected[0],

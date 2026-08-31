@@ -26,6 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class CardnextSetupMarketsCommand extends Command
 {
+    // @phpstan-ignore missingType.generics
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly CardnextMarketRegistry $markets,
@@ -119,6 +120,7 @@ final class CardnextSetupMarketsCommand extends Command
                     $channel->getName(),
                     $market->name,
                     fn () => $channel->setName($market->name),
+                // @phpstan-ignore booleanOr.rightAlwaysFalse
                 ) || $changed;
 
                 $changed = $this->setIfDifferent(

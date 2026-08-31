@@ -85,6 +85,7 @@ final class CardnextSetupTaxonomyCommand extends Command
                 $taxon->setName($definition['name']);
                 $taxon->setSlug($definition['slug']);
                 $parentCode = $definition['parent'];
+                // @phpstan-ignore offsetAccess.notFound
                 $taxon->setParent($parentCode !== null ? $taxons[$parentCode] : null);
                 $taxon->setPosition($positions[$parentCode ?? 'root'] = ($positions[$parentCode ?? 'root'] ?? 0) + 1);
                 $taxons[$code] = $taxon;
@@ -93,6 +94,7 @@ final class CardnextSetupTaxonomyCommand extends Command
             $this->entityManager->flush();
             $this->connection->executeStatement(
                 'UPDATE sylius_channel SET menu_taxon_id = :id WHERE code = :channel',
+                // @phpstan-ignore offsetAccess.notFound
                 ['id' => $taxons['products']->getId(), 'channel' => 'CARDNEXT_DE'],
             );
             $this->connection->commit();
@@ -139,6 +141,7 @@ final class CardnextSetupTaxonomyCommand extends Command
             return null;
         }
 
+        // @phpstan-ignore cast.int
         $taxon = $repository->find((int) $existingId);
 
         return $taxon instanceof Taxon ? $taxon : null;

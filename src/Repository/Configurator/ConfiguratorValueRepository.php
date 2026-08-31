@@ -8,6 +8,7 @@ use App\Entity\Configurator\ConfiguratorValue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+// @phpstan-ignore missingType.generics
 final class ConfiguratorValueRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $r)

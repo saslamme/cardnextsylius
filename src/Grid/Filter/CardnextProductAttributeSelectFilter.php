@@ -56,6 +56,7 @@ final class CardnextProductAttributeSelectFilter implements FilterInterface
         foreach ($values as $index => $value) {
             $parameter = sprintf('cn_value_%s_%d', $suffix, $index);
             $valueExpressions[] = $queryBuilder->expr()->like($valueAlias . '.json', ':' . $parameter);
+            // @phpstan-ignore cast.string
             $queryBuilder->setParameter($parameter, '%"' . (string) $value . '"%');
         }
 

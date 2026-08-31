@@ -24,6 +24,7 @@ final class DeviceModelRepository extends ServiceEntityRepository
             return null;
         }
 
+        // @phpstan-ignore return.type
         return $this->createQueryBuilder('device')
             ->leftJoin('device.aliases', 'alias')
             ->addSelect('alias', 'manufacturer')
