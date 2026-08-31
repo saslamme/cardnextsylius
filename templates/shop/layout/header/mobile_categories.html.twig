@@ -7,7 +7,7 @@
         method="get"
         action="{{ path('sylius_shop_product_index', {
             'slug': rootTaxon.slug,
-            '_locale': rootTaxon.translation.locale
+            '_locale': app.request.locale
         }) }}"
         role="search"
     >
@@ -19,12 +19,12 @@
         <input
             type="search"
             name="criteria[search][value]"
-            placeholder="Produkte durchsuchen …"
+            placeholder="{{ 'cardnext.storefront.header.search_placeholder'|trans }}"
             autocomplete="off"
-            aria-label="Produkte durchsuchen"
+            aria-label="{{ 'cardnext.storefront.header.search_label'|trans }}"
         >
 
-        <button type="submit" aria-label="Suchen">
+        <button type="submit" aria-label="{{ 'cardnext.storefront.header.search_submit'|trans }}">
             <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.7">
                 <path d="M3 8h9M9 4l4 4-4 4"/>
             </svg>
@@ -32,7 +32,7 @@
     </form>
 {% endif %}
 
-<nav class="cn-mobile-nav" aria-label="Produktkategorien">
+<nav class="cn-mobile-nav" aria-label="{{ 'cardnext.storefront.header.product_categories'|trans }}">
     {% for taxon in taxons %}
         {% set children = taxon.children %}
 
@@ -50,16 +50,16 @@
                         class="cn-mobile-nav__all"
                         href="{{ path('sylius_shop_product_index', {
                             'slug': taxon.slug,
-                            '_locale': taxon.translation.locale
+                            '_locale': app.request.locale
                         }) }}"
                     >
-                        Alle {{ taxon.name }}
+                        {{ 'cardnext.storefront.header.all_category'|trans({'%category%': taxon.name}) }}
                     </a>
 
                     {% for child in children %}
                         <a href="{{ path('sylius_shop_product_index', {
                             'slug': child.slug,
-                            '_locale': child.translation.locale
+                            '_locale': app.request.locale
                         }) }}">
                             {{ child.name }}
                         </a>
@@ -71,7 +71,7 @@
                 class="cn-mobile-nav__single"
                 href="{{ path('sylius_shop_product_index', {
                     'slug': taxon.slug,
-                    '_locale': taxon.translation.locale
+                    '_locale': app.request.locale
                 }) }}"
             >
                 <span>{{ taxon.name }}</span>

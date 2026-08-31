@@ -2,13 +2,13 @@
 {% set rootTaxon = firstTaxon ? firstTaxon.parent : null %}
 
 <div class="cn-nav-wrap">
-    <nav class="cn-nav" aria-label="Produktkategorien" data-cn-mega-nav>
+    <nav class="cn-nav" aria-label="{{ 'cardnext.storefront.header.product_categories'|trans }}" data-cn-mega-nav>
         <ul>
             {% for taxon in taxons %}
                 {% set children = taxon.children %}
                 <li class="cn-nav__item{% if children|length %} cn-nav__item--has-children{% endif %}" {% if children|length %}data-cn-mega-item{% endif %}>
                     <a class="cn-nav__link"
-                       href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': taxon.translation.locale}) }}"
+                       href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': app.request.locale}) }}"
                        {% if children|length %}data-cn-mega-trigger aria-haspopup="true" aria-expanded="false"{% endif %}>
                         <span>{{ taxon.name }}</span>
                         {% if children|length %}
@@ -23,8 +23,8 @@
                             <div class="cn-nav__mega-inner">
                                 <div class="cn-nav__mega-head">
                                     <strong>{{ taxon.name }}</strong>
-                                    <a href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': taxon.translation.locale}) }}">
-                                        Alle anzeigen
+                                    <a href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': app.request.locale}) }}">
+                                        {{ 'cardnext.storefront.header.show_all'|trans }}
                                         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
                                             <path d="M3 8h9M9 4l4 4-4 4"/>
                                         </svg>
@@ -34,7 +34,7 @@
                                 <div class="cn-nav__mega-grid">
                                     {% for child in children %}
                                         <a class="cn-nav__mega-link"
-                                           href="{{ path('sylius_shop_product_index', {'slug': child.slug, '_locale': child.translation.locale}) }}">
+                                           href="{{ path('sylius_shop_product_index', {'slug': child.slug, '_locale': app.request.locale}) }}">
                                             <span>{{ child.name }}</span>
                                             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
                                                 <path d="M3 8h9M9 4l4 4-4 4"/>
@@ -47,7 +47,7 @@
                     {% endif %}
                 </li>
             {% endfor %}
-            <li class="cn-nav__item"><a class="cn-nav__link" href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}"><span>Marken</span></a></li>
+            <li class="cn-nav__item"><a class="cn-nav__link" href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}"><span>{{ 'cardnext.storefront.header.brands'|trans }}</span></a></li>
         </ul>
     </nav>
 </div>

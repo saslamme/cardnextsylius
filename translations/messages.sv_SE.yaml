@@ -1,4 +1,128 @@
 cardnext:
+  storefront:
+    homepage:
+      meta_title: 'Cardnext – kortskrivare, RFID och Auto-ID'
+      hero:
+        kicker: 'Professionell identifieringsteknik'
+        title: 'Teknik för säkra identiteter.'
+        text: 'Kortskrivare, RFID-läsare, plastkort och Auto-ID-lösningar för företag, integratörer och professionella användare.'
+        products: 'Upptäck produkter'
+        consulting: 'Begär rådgivning'
+        visual_label: 'Kortskrivare, RFID-läsare och plastkort'
+        image_alt: 'Professionell kortskrivare med plastkort på arbetsplatsen'
+      categories:
+        title: 'Populära kategorier'
+      service:
+        kicker: 'Mer än hårdvara'
+        title: 'Teknikförsörjning med personlig service.'
+        text: 'Vi levererar inte bara produkten. Vi hjälper till med val, kompatibilitet och konfiguration samt säker tillgång till rätt tillbehör och förbrukningsmaterial.'
+        button: 'Läs mer om vår service'
+        image_alt: 'Personlig rådgivning om professionell identifieringsteknik'
+        items:
+          advice:
+            title: 'Val och rådgivning'
+            text: 'Vi hittar rätt lösning för era behov.'
+          configuration:
+            title: 'Konfiguration'
+            text: 'Kompatibelt och optimalt konfigurerat.'
+          projects:
+            title: 'Projektlösningar'
+            text: 'Individuella koncept för ert företag.'
+          consumables:
+            title: 'Förbrukningsmaterial'
+            text: 'Färgband, kort och rengöringskort direkt tillgängliga.'
+      products:
+        kicker: 'Utvalda produkter'
+        title: 'Professionell hårdvara.'
+        empty: 'Inga produkter har ännu publicerats för denna försäljningskanal.'
+      industries:
+        kicker: 'Användningsområden'
+        title: 'Teknik anpassad till er verksamhet.'
+        text: 'Från utfärdande av medarbetarkort till RFID-baserad identifiering: produkter och tillbehör väljs efter användning, inte enbart tillverkare.'
+        link: 'Se lösningar'
+        cards:
+          title: 'ID-kort och kortutfärdande'
+          text: 'Kortskrivare, färgband, plastkort och tillbehör för personal-, besöks- och medlemskort.'
+          image_alt: 'Medarbetarkort i en professionell korthållare'
+        identification:
+          title: 'Säker identifiering'
+          text: 'RFID-läsare, smartkort och identifieringsmedia för inloggning, åtkomst och entydig användaridentifiering.'
+          image_alt: 'Kontaktlös identifiering med RFID-kort vid en passerläsare'
+        logistics:
+          title: 'Lager och logistik'
+          text: 'RFID- och streckkodsteknik för registrering, spårbarhet och effektiva materialflöden.'
+          image_alt: 'Streckkodsregistrering i ett professionellt lager'
+      why:
+        kicker: 'Varför Cardnext'
+        title: 'Teknik. Kompetens. Tillförlitlighet.'
+        text: 'En specialiserad partner för professionell identifierings- och Auto-ID-teknik, med direkt rådgivning och ett tydligt strukturerat sortiment.'
+        items:
+          specialized:
+            title: 'Specialiserat sortiment'
+            text: 'Fokus på kortutskrift, RFID, identifiering och professionell Auto-ID-teknik.'
+          independent:
+            title: 'Tillverkaroberoende'
+            text: 'Jämför produkter från etablerade tillverkare utifrån användningsområdet.'
+          compatibility:
+            title: 'Kompatibilitet i fokus'
+            text: 'Tillbehör och förbrukningsmaterial matchas tekniskt med rätt enheter.'
+          personal:
+            title: 'Personlig kontakt'
+            text: 'För projekt och rådgivning får ni en direkt kontaktperson.'
+      cta:
+        title: 'Osäker på vilken produkt som passar?'
+        text: 'Vi hjälper er att välja.'
+        button: 'Få rådgivning'
+      promises:
+        shipping:
+          title: 'Snabb leverans'
+          text: 'För tillgängliga lagervaror'
+        advice:
+          title: 'Personlig rådgivning'
+          text: 'Före och efter köpet'
+        payment:
+          title: 'Säker betalning'
+          text: 'Professionell betalningshantering'
+        projects:
+          title: 'Projektlösningar'
+          text: 'Individuella lösningar på begäran'
+    header:
+      home: 'Cardnext startsida'
+      search_label: 'Sök produkter'
+      search_placeholder: 'Sök produkter, tillverkare eller artikelnummer'
+      search_submit: 'Starta sökning'
+      account: 'Mitt konto'
+      login: 'Logga in'
+      open_navigation: 'Öppna navigering'
+      close_navigation: 'Stäng navigering'
+      mobile_navigation: 'Mobil navigering'
+      cart: 'Varukorg'
+      contact_advice: 'Kontakt och rådgivning'
+      product_categories: 'Produktkategorier'
+      show_all: 'Visa alla'
+      all_category: 'Alla %category%'
+      brands: 'Varumärken'
+      support: 'Support'
+      downloads: 'Nedladdningar'
+      contact: 'Kontakt'
+    footer:
+      description: 'Professionella lösningar för kortutskrift, RFID, tidrapportering, streckkodssystem och ID-tillbehör.'
+      products: 'Produkter'
+      solutions: 'Lösningar'
+      service: 'Service'
+      company: 'Cardnext'
+      id_creation: 'ID-kortsproduktion'
+      access_control: 'Passerkontroll'
+      time_tracking: 'Tidrapportering'
+      rfid_identification: 'RFID-identifiering'
+      advice: 'Rådgivning'
+      about: 'Om oss'
+      legal: 'Juridisk information'
+      imprint: 'Företagsuppgifter'
+      privacy: 'Integritetspolicy'
+      terms: 'Allmänna villkor'
+      back_to_top: 'Till toppen'
+      language: 'Svenska'
   market:
     select: Välj land
   account:
