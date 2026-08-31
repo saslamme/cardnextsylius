@@ -1,15 +1,125 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Service\Quote;
-use App\Entity\Product\ProductVariant; use Doctrine\ORM\EntityManagerInterface; use Sylius\Component\Core\Model\ChannelInterface; use Symfony\Component\HttpFoundation\RequestStack;
-final class QuoteCartService {
- public const SESSION_KEY='cardnext.quote_cart'; public const MAX_QUANTITY=100000;
- public function __construct(private RequestStack $requests,private EntityManagerInterface $em){}
- /** @return array{channel:string,items:array<string,int>} */ public function cart(ChannelInterface $channel):array{$s=$this->requests->getSession();$stored=$s->get(self::SESSION_KEY);$cart=['channel'=>(string)$channel->getCode(),'items'=>[]];if(is_array($stored)&&isset($stored['channel'],$stored['items'])&&is_string($stored['channel'])&&is_array($stored['items'])){$cart['channel']=$stored['channel'];foreach($stored['items'] as $code=>$quantity){if(is_string($code)&&is_int($quantity))$cart['items'][$code]=$quantity;}}if($cart['channel']!==$channel->getCode()){$cart=['channel'=>(string)$channel->getCode(),'items'=>[]];$s->set(self::SESSION_KEY,$cart);}return $cart;}
- public function add(string $code,int $quantity,ChannelInterface $channel):bool {if($quantity<1||$quantity>self::MAX_QUANTITY||!$this->resolve($code,$channel))return false;$cart=$this->cart($channel);$cart['items'][$code]=min(self::MAX_QUANTITY,($cart['items'][$code]??0)+$quantity);$this->requests->getSession()->set(self::SESSION_KEY,$cart);return true;}
- public function update(string $code,int $quantity,ChannelInterface $channel):bool {if($quantity<1||$quantity>self::MAX_QUANTITY||!$this->resolve($code,$channel))return false;$cart=$this->cart($channel);if(!isset($cart['items'][$code]))return false;$cart['items'][$code]=$quantity;$this->requests->getSession()->set(self::SESSION_KEY,$cart);return true;}
- public function remove(string $code,ChannelInterface $channel):void{$cart=$this->cart($channel);unset($cart['items'][$code]);$this->requests->getSession()->set(self::SESSION_KEY,$cart);} public function clear():void{$this->requests->getSession()->remove(self::SESSION_KEY);} public function count(ChannelInterface $channel):int{return count($this->cart($channel)['items']);}
- /** @return list<array{variant:ProductVariant,quantity:int,unitPrice:int,lineTotal:int}> */ public function resolvedItems(ChannelInterface $channel):array{$cart=$this->cart($channel);$out=[];$changed=false;foreach($cart['items'] as $code=>$quantity){$variant=$this->resolve($code,$channel);if(!$variant){unset($cart['items'][$code]);$changed=true;continue;}$price=$variant->getChannelPricingForChannel($channel)?->getPrice();if($price===null){unset($cart['items'][$code]);$changed=true;continue;}$out[]=['variant'=>$variant,'quantity'=>$quantity,'unitPrice'=>$price,'lineTotal'=>$price*$quantity];}if($changed)$this->requests->getSession()->set(self::SESSION_KEY,$cart);return $out;}
- private function resolve(string $code,ChannelInterface $channel):?ProductVariant{$variant=$this->em->getRepository(ProductVariant::class)->findOneBy(['code'=>$code]);if(!$variant instanceof ProductVariant||!$variant->isEnabled())return null;$product=$variant->getProduct();if(!$product instanceof \Sylius\Component\Core\Model\ProductInterface||!$product->isEnabled()||!$product->getChannels()->contains($channel))return null;if($variant->getChannelPricingForChannel($channel)?->getPrice()===null)return null;return $variant;}
+
+use App\Entity\Product\ProductVariant;
+use Doctrine\ORM\EntityManagerInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+final class QuoteCartService
+{
+    public const SESSION_KEY = 'cardnext.quote_cart';
+
+    public const MAX_QUANTITY = 100000;
+
+    public function __construct(private RequestStack $requests, private EntityManagerInterface $em)
+    {
+    }
+
+    /** @return array{channel:string,items:array<string,int>} */
+    public function cart(ChannelInterface $channel): array
+    {
+        $s = $this->requests->getSession();
+        $stored = $s->get(self::SESSION_KEY);
+        $cart = ['channel' => (string) $channel->getCode(), 'items' => []];
+        if (is_array($stored) && isset($stored['channel'],$stored['items']) && is_string($stored['channel']) && is_array($stored['items'])) {
+            $cart['channel'] = $stored['channel'];
+            foreach ($stored['items'] as $code => $quantity) {
+                if (is_string($code) && is_int($quantity)) {
+                    $cart['items'][$code] = $quantity;
+                }
+            }
+        }if ($cart['channel'] !== $channel->getCode()) {
+            $cart = ['channel' => (string) $channel->getCode(), 'items' => []];
+            $s->set(self::SESSION_KEY, $cart);
+        }
+
+        return $cart;
+    }
+
+    public function add(string $code, int $quantity, ChannelInterface $channel): bool
+    {
+        if ($quantity < 1 || $quantity > self::MAX_QUANTITY || !$this->resolve($code, $channel)) {
+            return false;
+        }$cart = $this->cart($channel);
+        $cart['items'][$code] = min(self::MAX_QUANTITY, ($cart['items'][$code] ?? 0) + $quantity);
+        $this->requests->getSession()->set(self::SESSION_KEY, $cart);
+
+        return true;
+    }
+
+    public function update(string $code, int $quantity, ChannelInterface $channel): bool
+    {
+        if ($quantity < 1 || $quantity > self::MAX_QUANTITY || !$this->resolve($code, $channel)) {
+            return false;
+        }$cart = $this->cart($channel);
+        if (!isset($cart['items'][$code])) {
+            return false;
+        }$cart['items'][$code] = $quantity;
+        $this->requests->getSession()->set(self::SESSION_KEY, $cart);
+
+        return true;
+    }
+
+    public function remove(string $code, ChannelInterface $channel): void
+    {
+        $cart = $this->cart($channel);
+        unset($cart['items'][$code]);
+        $this->requests->getSession()->set(self::SESSION_KEY, $cart);
+    }
+
+    public function clear(): void
+    {
+        $this->requests->getSession()->remove(self::SESSION_KEY);
+    }
+
+    public function count(ChannelInterface $channel): int
+    {
+        return count($this->cart($channel)['items']);
+    }
+
+    /** @return list<array{variant:ProductVariant,quantity:int,unitPrice:int,lineTotal:int}> */
+    public function resolvedItems(ChannelInterface $channel): array
+    {
+        $cart = $this->cart($channel);
+        $out = [];
+        $changed = false;
+        foreach ($cart['items'] as $code => $quantity) {
+            $variant = $this->resolve($code, $channel);
+            if (!$variant) {
+                unset($cart['items'][$code]);
+                $changed = true;
+
+                continue;
+            }$price = $variant->getChannelPricingForChannel($channel)?->getPrice();
+            if ($price === null) {
+                unset($cart['items'][$code]);
+                $changed = true;
+
+                continue;
+            }$out[] = ['variant' => $variant, 'quantity' => $quantity, 'unitPrice' => $price, 'lineTotal' => $price * $quantity];
+        }if ($changed) {
+            $this->requests->getSession()->set(self::SESSION_KEY, $cart);
+        }
+
+        return $out;
+    }
+
+    private function resolve(string $code, ChannelInterface $channel): ?ProductVariant
+    {
+        $variant = $this->em->getRepository(ProductVariant::class)->findOneBy(['code' => $code]);
+        if (!$variant instanceof ProductVariant || !$variant->isEnabled()) {
+            return null;
+        }$product = $variant->getProduct();
+        if (!$product instanceof \Sylius\Component\Core\Model\ProductInterface || !$product->isEnabled() || !$product->getChannels()->contains($channel)) {
+            return null;
+        }if ($variant->getChannelPricingForChannel($channel)?->getPrice() === null) {
+            return null;
+        }
+
+        return $variant;
+    }
 }

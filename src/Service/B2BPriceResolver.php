@@ -104,7 +104,7 @@ final class B2BPriceResolver implements ResetInterface
         }
 
         $breakpoints = array_values(array_unique($breakpoints));
-        sort($breakpoints, SORT_NUMERIC);
+        sort($breakpoints, \SORT_NUMERIC);
 
         $tiers = [];
         $lastPrice = null;
@@ -214,7 +214,9 @@ final class B2BPriceResolver implements ResetInterface
 
     /**
      * @template T of CustomerVariantPriceRule|VariantPriceRule
+     *
      * @param iterable<T> $rules
+     *
      * @return T|null
      */
     private function findBestApplicableRule(iterable $rules, int $quantity): CustomerVariantPriceRule|VariantPriceRule|null
@@ -222,8 +224,8 @@ final class B2BPriceResolver implements ResetInterface
         $bestRule = null;
 
         foreach ($rules as $rule) {
-            if ($rule->getMinQuantity() <= $quantity
-                && ($bestRule === null || $rule->getMinQuantity() > $bestRule->getMinQuantity())) {
+            if ($rule->getMinQuantity() <= $quantity &&
+                ($bestRule === null || $rule->getMinQuantity() > $bestRule->getMinQuantity())) {
                 $bestRule = $rule;
             }
         }

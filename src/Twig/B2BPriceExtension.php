@@ -79,7 +79,6 @@ final class B2BPriceExtension extends AbstractExtension
         return $groups;
     }
 
-
     /**
      * Compact price ladder for the currently selected variant.
      *

@@ -39,12 +39,12 @@ final readonly class CardnextLegacyProductImporter
         }
 
         $payload = [
-            'generated_at' => (new \DateTimeImmutable())->format(DATE_ATOM),
+            'generated_at' => (new \DateTimeImmutable())->format(\DATE_ATOM),
             'source' => basename($zip),
             'dry_run' => $dryRun,
             'statistics' => $report,
         ];
-        if (file_put_contents($reportPath, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)."\n", LOCK_EX) === false) {
+        if (file_put_contents($reportPath, json_encode($payload, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE) . "\n", \LOCK_EX) === false) {
             throw new \RuntimeException("Cannot write report $reportPath.");
         }
 
@@ -58,7 +58,7 @@ final readonly class CardnextLegacyProductImporter
             throw new \RuntimeException('Cannot open temporary CSV.');
         }
 
-        $header = ['product_code','variant_code','locale','name','model','taxon_code','channel_codes','prices_json','manufacturer_name','manufacturer_code','manufacturer_part_number','gtin','short_description','description','attributes_json','compatibilities_json','device_compatibilities_json','images','documents_json','data_quality_status','enabled','variant_enabled','minimum_order_quantity','order_increment','pack_quantity','slug'];
+        $header = ['product_code', 'variant_code', 'locale', 'name', 'model', 'taxon_code', 'channel_codes', 'prices_json', 'manufacturer_name', 'manufacturer_code', 'manufacturer_part_number', 'gtin', 'short_description', 'description', 'attributes_json', 'compatibilities_json', 'device_compatibilities_json', 'images', 'documents_json', 'data_quality_status', 'enabled', 'variant_enabled', 'minimum_order_quantity', 'order_increment', 'pack_quantity', 'slug'];
         fputcsv($h, $header, ';');
 
         // Only products with at least one mapped taxon are emitted to the CSV.
@@ -93,10 +93,10 @@ final readonly class CardnextLegacyProductImporter
                     static fn (string $target): bool => isset($persistedProductCodes[$target]),
                 )),
             );
-            $manufacturerCode = $r->manufacturer !== '' ? 'LEGACY_MFR_'.CardnextLegacySourceParser::normalize($r->manufacturer) : '';
+            $manufacturerCode = $r->manufacturer !== '' ? 'LEGACY_MFR_' . CardnextLegacySourceParser::normalize($r->manufacturer) : '';
 
             foreach ($r->taxonCodes as $taxon) {
-                $row = [$code,$code,'de_DE',$r->name,$r->model,$taxon,'CARDNEXT_DE',json_encode($r->price === null ? [] : ['CARDNEXT_DE'=>$r->price], JSON_THROW_ON_ERROR),$r->manufacturer,$manufacturerCode,$r->manufacturerPartNumber,$r->gtin ?? '','',$r->description,json_encode($r->attributes, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE),json_encode($relations, JSON_THROW_ON_ERROR),'[]','','[]',$quality,$r->archived?'0':'1',$r->archived?'0':'1','1','1','1',$productSlugs[$code]];
+                $row = [$code, $code, 'de_DE', $r->name, $r->model, $taxon, 'CARDNEXT_DE', json_encode($r->price === null ? [] : ['CARDNEXT_DE' => $r->price], \JSON_THROW_ON_ERROR), $r->manufacturer, $manufacturerCode, $r->manufacturerPartNumber, $r->gtin ?? '', '', $r->description, json_encode($r->attributes, \JSON_THROW_ON_ERROR | \JSON_UNESCAPED_UNICODE), json_encode($relations, \JSON_THROW_ON_ERROR), '[]', '', '[]', $quality, $r->archived ? '0' : '1', $r->archived ? '0' : '1', '1', '1', '1', $productSlugs[$code]];
                 fputcsv($h, $row, ';');
             }
         }
@@ -154,11 +154,11 @@ final readonly class CardnextLegacyProductImporter
                 continue;
             }
 
-            sort($codes, SORT_STRING);
+            sort($codes, \SORT_STRING);
             foreach ($codes as $code) {
                 /** @var LegacyProductRecord $record */
                 $record = $recordsByCode[$code]['record'];
-                $suffixSource = trim($record->manufacturer.' '.$record->manufacturerPartNumber);
+                $suffixSource = trim($record->manufacturer . ' ' . $record->manufacturerPartNumber);
                 if ($suffixSource === '') {
                     $suffixSource = $code;
                 }
@@ -193,6 +193,6 @@ final readonly class CardnextLegacyProductImporter
         $maxBaseLength = max(1, 255 - strlen($suffix) - 1);
         $trimmedBase = rtrim(substr($base, 0, $maxBaseLength), '-');
 
-        return $trimmedBase.'-'.$suffix;
+        return $trimmedBase . '-' . $suffix;
     }
 }

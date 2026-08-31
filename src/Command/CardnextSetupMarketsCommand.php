@@ -120,7 +120,7 @@ final class CardnextSetupMarketsCommand extends Command
                     $channel->getName(),
                     $market->name,
                     fn () => $channel->setName($market->name),
-                // @phpstan-ignore booleanOr.rightAlwaysFalse
+                    // @phpstan-ignore booleanOr.rightAlwaysFalse
                 ) || $changed;
 
                 $changed = $this->setIfDifferent(
@@ -160,11 +160,11 @@ final class CardnextSetupMarketsCommand extends Command
                 }
 
                 if (
-                    $channel->getContactEmail() === null
-                    || trim((string) $channel->getContactEmail()) === ''
+                    $channel->getContactEmail() === null ||
+                    trim((string) $channel->getContactEmail()) === ''
                 ) {
-                    $contactEmail = $deChannel instanceof Channel
-                        && trim((string) $deChannel->getContactEmail()) !== ''
+                    $contactEmail = $deChannel instanceof Channel &&
+                        trim((string) $deChannel->getContactEmail()) !== ''
                         ? (string) $deChannel->getContactEmail()
                         : 'hello@cardnext.com';
 
@@ -173,9 +173,9 @@ final class CardnextSetupMarketsCommand extends Command
                 }
 
                 if (
-                    $channel->getContactPhoneNumber() === null
-                    && $deChannel instanceof Channel
-                    && $deChannel->getContactPhoneNumber() !== null
+                    $channel->getContactPhoneNumber() === null &&
+                    $deChannel instanceof Channel &&
+                    $deChannel->getContactPhoneNumber() !== null
                 ) {
                     $channel->setContactPhoneNumber($deChannel->getContactPhoneNumber());
                     $changed = true;
@@ -184,9 +184,9 @@ final class CardnextSetupMarketsCommand extends Command
                 // Existing non-DE channels are never disabled by this command.
                 // --enable-new may also be used to enable already-created Cardnext markets.
                 if (
-                    $enableNew
-                    && $market->channelCode !== 'CARDNEXT_DE'
-                    && !$channel->isEnabled()
+                    $enableNew &&
+                    $market->channelCode !== 'CARDNEXT_DE' &&
+                    !$channel->isEnabled()
                 ) {
                     $channel->setEnabled(true);
                     $changed = true;

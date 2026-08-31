@@ -15,16 +15,20 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class QuoteFactory
 {
-    public function __construct(private EntityManagerInterface $entityManager, private QuoteCalculator $calculator, private QuoteTaxRateResolver $taxRates) {}
+    public function __construct(private EntityManagerInterface $entityManager, private QuoteCalculator $calculator, private QuoteTaxRateResolver $taxRates)
+    {
+    }
 
     public function createFromRequest(QuoteRequest $request, ?AdminUser $admin = null): Quote
     {
         $existing = $request->getActiveQuote();
-        if ($existing !== null) return $existing;
+        if ($existing !== null) {
+            return $existing;
+        }
 
         $quote = new Quote();
         $request->addQuote($quote);
-        $quote->setNumber(preg_replace('/^AN-/', 'AG-', $request->getNumber()) ?? 'AG-'.$request->getNumber());
+        $quote->setNumber(preg_replace('/^AN-/', 'AG-', $request->getNumber()) ?? 'AG-' . $request->getNumber());
         $quote->setVersion(1);
         $quote->setChannelCode($request->getChannelCode());
         $quote->setLocaleCode($request->getLocaleCode());
@@ -32,10 +36,14 @@ final class QuoteFactory
         $quote->setCustomerCompany($request->getCompany());
         $quote->setCustomerContactName($request->getContactName());
         $quote->setCustomerEmail($request->getEmail());
-        $quote->setCustomerStreet($request->getStreet()); $quote->setCustomerHouseNumber($request->getHouseNumber());
-        $quote->setCustomerPostalCode($request->getPostalCode()); $quote->setCustomerCity($request->getCity());
-        $quote->setCustomerCountryCode($request->getCountryCode()); $quote->setCustomerNumber($request->getCustomerNumber());
-        $quote->setCustomerPhone($request->getPhone()); $quote->setProjectReference($request->getProjectReference());
+        $quote->setCustomerStreet($request->getStreet());
+        $quote->setCustomerHouseNumber($request->getHouseNumber());
+        $quote->setCustomerPostalCode($request->getPostalCode());
+        $quote->setCustomerCity($request->getCity());
+        $quote->setCustomerCountryCode($request->getCountryCode());
+        $quote->setCustomerNumber($request->getCustomerNumber());
+        $quote->setCustomerPhone($request->getPhone());
+        $quote->setProjectReference($request->getProjectReference());
         $quote->setCustomerPurchaseOrderNumber($request->getCustomerPurchaseOrderNumber());
         $quote->setDefaultTaxRate($this->taxRates->resolve($request->getChannelCode()));
         $quote->setCreatedBy($admin);
@@ -48,7 +56,7 @@ final class QuoteFactory
             $item->setVariant($source->getVariant());
             $item->setProductCode($source->getProductCode());
             $item->setVariantCode($source->getVariantCode());
-            $item->setName($source->getProductName().($source->getVariantName() ? ' – '.$source->getVariantName() : ''));
+            $item->setName($source->getProductName() . ($source->getVariantName() ? ' – ' . $source->getVariantName() : ''));
             $item->setQuantity($source->getQuantity());
             $item->setOriginalUnitPrice($source->getUnitPrice());
             $item->setUnitPrice($source->getUnitPrice());
@@ -58,7 +66,7 @@ final class QuoteFactory
 
         $this->calculator->calculate($quote);
         $request->setStatus(QuoteRequestStatus::InProgress);
-        $request->addHistory(new QuoteRequestHistory('quote_created', null, QuoteRequestStatus::InProgress->value, 'Angebot '.$quote->getNumber().' erstellt'));
+        $request->addHistory(new QuoteRequestHistory('quote_created', null, QuoteRequestStatus::InProgress->value, 'Angebot ' . $quote->getNumber() . ' erstellt'));
         $this->entityManager->persist($quote);
         $this->entityManager->flush();
 

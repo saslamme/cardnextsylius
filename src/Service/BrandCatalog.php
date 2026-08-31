@@ -72,8 +72,10 @@ final class BrandCatalog
 
     /**
      * @template T of object
+     *
      * @param class-string<T> $class
      * @param list<mixed> $ids
+     *
      * @return list<T>
      */
     private function orderedEntities(string $class, array $ids): array

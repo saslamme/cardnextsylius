@@ -27,7 +27,9 @@ final class QuoteCalculator
         $quote->setDiscountTotal($discountTotal);
         $taxBases[$quote->getDefaultTaxRate()] = ($taxBases[$quote->getDefaultTaxRate()] ?? 0) + $quote->getShippingTotal() + $quote->getServiceTotal();
         $taxTotal = 0;
-        foreach ($taxBases as $rate => $base) $taxTotal += self::taxFor($base, (int) $rate);
+        foreach ($taxBases as $rate => $base) {
+            $taxTotal += self::taxFor($base, (int) $rate);
+        }
         $quote->setTaxTotal($taxTotal);
         $quote->setGrandTotal($subtotal + $quote->getShippingTotal() + $quote->getServiceTotal() + $taxTotal);
     }
@@ -51,7 +53,10 @@ final class QuoteCalculator
 
     public static function taxFor(int $netAmount, int $taxRate): int
     {
-        if ($netAmount < 0 || $taxRate < 0) throw new \InvalidArgumentException('Tax basis and rate cannot be negative.');
+        if ($netAmount < 0 || $taxRate < 0) {
+            throw new \InvalidArgumentException('Tax basis and rate cannot be negative.');
+        }
+
         return intdiv($netAmount * $taxRate + 5000, 10000);
     }
 }

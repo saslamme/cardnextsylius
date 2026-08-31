@@ -41,11 +41,13 @@ final class CardnextImportLegacyAttributesCommand extends Command
 
         if (!is_string($zip) || $zip === '') {
             $io->error('ZIP path is required.');
+
             return self::INVALID;
         }
 
         if ($product !== null && !is_string($product)) {
             $io->error('Product code must be a string.');
+
             return self::INVALID;
         }
 
@@ -58,6 +60,7 @@ final class CardnextImportLegacyAttributesCommand extends Command
             );
         } catch (\Throwable $exception) {
             $io->error($exception->getMessage());
+
             return self::FAILURE;
         }
 
@@ -111,7 +114,7 @@ final class CardnextImportLegacyAttributesCommand extends Command
             return $value ? 'true' : 'false';
         }
         if (is_array($value)) {
-            return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
+            return json_encode($value, \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES) ?: '[]';
         }
 
         // @phpstan-ignore cast.string

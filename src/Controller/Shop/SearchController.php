@@ -99,6 +99,7 @@ final class SearchController extends AbstractController
 
     /**
      * @param list<array{id: int}> $searchRows
+     *
      * @return list<\App\Entity\Product\Product>
      */
     private function loadProductsInSearchOrder(

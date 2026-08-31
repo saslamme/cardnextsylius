@@ -13,7 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class ProductImportRun
 {
     public const STATUS_VALIDATED = 'validated';
+
     public const STATUS_SUCCESS = 'success';
+
     public const STATUS_FAILED = 'failed';
 
     #[ORM\Id]
@@ -75,9 +77,7 @@ class ProductImportRun
     #[ORM\Column(name: 'variants_updated', type: 'integer', nullable: true)]
     private ?int $variantsUpdated = null;
 
-    /**
-     * @var list<string>
-     */
+    /** @var list<string> */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $warnings = null;
 

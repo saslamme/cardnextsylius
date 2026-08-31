@@ -57,6 +57,7 @@ final class MarketOverviewAdminController extends AbstractController
                 foreach ($channel->getCountries() as $country) {
                     if ($country->getCode() === $market->countryCode) {
                         $countryAssigned = true;
+
                         break;
                     }
                 }
@@ -72,18 +73,18 @@ final class MarketOverviewAdminController extends AbstractController
                 'definition' => $market,
                 'channel' => $channel,
                 'country_assigned' => $countryAssigned,
-                'core_ready' => $channel instanceof Channel
-                    && $channel->getHostname() === $market->hostname
-                    && $channel->getDefaultLocale()?->getCode() === $market->localeCode
-                    && $channel->getBaseCurrency()?->getCode() === $market->currencyCode
-                    && $countryAssigned,
+                'core_ready' => $channel instanceof Channel &&
+                    $channel->getHostname() === $market->hostname &&
+                    $channel->getDefaultLocale()?->getCode() === $market->localeCode &&
+                    $channel->getBaseCurrency()?->getCode() === $market->currencyCode &&
+                    $countryAssigned,
                 'shipping_zone' => $shippingZone,
                 'tax_zone' => $taxZone,
                 'shipping_method' => $shippingMethod,
                 'shipping_amount' => $shippingAmount,
-                'vorkasse_assigned' => $channel instanceof Channel
-                    && $vorkasse instanceof PaymentMethod
-                    && $vorkasse->hasChannel($channel),
+                'vorkasse_assigned' => $channel instanceof Channel &&
+                    $vorkasse instanceof PaymentMethod &&
+                    $vorkasse->hasChannel($channel),
             ];
         }
 

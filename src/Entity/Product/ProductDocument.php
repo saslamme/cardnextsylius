@@ -11,10 +11,15 @@ use Doctrine\ORM\Mapping as ORM;
 class ProductDocument
 {
     public const TYPE_DATASHEET = 'datasheet';
+
     public const TYPE_MANUAL = 'manual';
+
     public const TYPE_DRIVER = 'driver';
+
     public const TYPE_CERTIFICATE = 'certificate';
+
     public const TYPE_BROCHURE = 'brochure';
+
     public const TYPE_OTHER = 'other';
 
     #[ORM\Id]

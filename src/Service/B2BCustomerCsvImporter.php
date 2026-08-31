@@ -231,6 +231,7 @@ final readonly class B2BCustomerCsvImporter
             }
 
             $this->entityManager->clear();
+
             throw $exception;
         } finally {
             fclose($handle);
