@@ -12,10 +12,14 @@ use Twig\TwigFunction;
 
 final class CartBadgeTemplateTest extends TestCase
 {
+    /**
+     * @param list<object> $items
+     * @param list<object> $configuredItems
+     */
     #[DataProvider('cartPositions')]
     public function testBadgeCountsCartPositions(array $items, array $configuredItems, ?int $expectedCount): void
     {
-        $twig = new Environment(new FilesystemLoader(dirname(__DIR__, 2).'/templates'));
+        $twig = new Environment(new FilesystemLoader(dirname(__DIR__, 2) . '/templates'));
         $twig->addFunction(new TwigFunction('sylius_test_html_attribute', static fn (): string => '', ['is_safe' => ['html']]));
 
         $html = $twig->render('shop/layout/header/cart.html.twig', [
@@ -30,9 +34,10 @@ final class CartBadgeTemplateTest extends TestCase
         }
 
         self::assertStringContainsString('cardnext-cart-badge', $html);
-        self::assertMatchesRegularExpression('/cardnext-cart-badge[^>]*>\s*'.$expectedCount.'\s*</', $html);
+        self::assertMatchesRegularExpression('/cardnext-cart-badge[^>]*>\s*' . $expectedCount . '\s*</', $html);
     }
 
+    /** @return iterable<string, array{list<object>, list<object>, int|null}> */
     public static function cartPositions(): iterable
     {
         yield 'empty cart' => [[], [], null];

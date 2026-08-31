@@ -89,11 +89,17 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
 
         $valueMetadata = new ClassMetadata(ConfiguratorValue::class);
         $driver->loadMetadataForClass(ConfiguratorValue::class, $valueMetadata);
-        self::assertFalse($valueMetadata->getFieldMapping('preselected')->options['default']);
+        $valueOptions = $valueMetadata->getFieldMapping('preselected')->options;
+        self::assertIsArray($valueOptions);
+        self::assertArrayHasKey('default', $valueOptions);
+        self::assertFalse($valueOptions['default']);
 
         $leadTimeMetadata = new ClassMetadata(ConfiguratorLeadTime::class);
         $driver->loadMetadataForClass(ConfiguratorLeadTime::class, $leadTimeMetadata);
-        self::assertFalse($leadTimeMetadata->getFieldMapping('preselected')->options['default']);
+        $leadTimeOptions = $leadTimeMetadata->getFieldMapping('preselected')->options;
+        self::assertIsArray($leadTimeOptions);
+        self::assertArrayHasKey('default', $leadTimeOptions);
+        self::assertFalse($leadTimeOptions['default']);
     }
 
     public function testProductAndConfiguratorMappingsAreIndependent(): void

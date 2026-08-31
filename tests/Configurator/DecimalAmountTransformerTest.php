@@ -16,6 +16,7 @@ final class DecimalAmountTransformerTest extends TestCase
         self::assertSame($expected, (new DecimalAmountTransformer())->toMinorUnits($input, $currency));
     }
 
+    /** @return iterable<int, array{string, string, int}> */
     public static function money(): iterable
     {
         yield ['0.89', 'EUR', 89];
@@ -31,6 +32,7 @@ final class DecimalAmountTransformerTest extends TestCase
         self::assertSame($expected, (new DecimalAmountTransformer())->percentageToBasisPoints($input));
     }
 
+    /** @return iterable<int, array{string, int}> */
     public static function percentages(): iterable
     {
         yield ['20', 2000];

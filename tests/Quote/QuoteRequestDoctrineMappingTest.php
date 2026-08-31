@@ -7,6 +7,7 @@ namespace App\Tests\Quote;
 use App\Entity\Quote\QuoteRequest;
 use App\Entity\Quote\QuoteRequestHistory;
 use App\Entity\Quote\QuoteRequestItem;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\ManagerRegistry;
@@ -35,7 +36,10 @@ final class QuoteRequestDoctrineMappingTest extends KernelTestCase
     public function testQuoteWithItemAndHistoryCanBePersistedAndLoadedAgain(): void
     {
         self::bootKernel();
-        $entityManager = self::getContainer()->get(ManagerRegistry::class)->getManager();
+        $registry = self::getContainer()->get(ManagerRegistry::class);
+        self::assertInstanceOf(ManagerRegistry::class, $registry);
+        $entityManager = $registry->getManager();
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
         $entityManager->getConnection()->beginTransaction();
 
         try {
@@ -74,8 +78,12 @@ final class QuoteRequestDoctrineMappingTest extends KernelTestCase
             self::assertInstanceOf(QuoteRequest::class, $reloaded);
             self::assertCount(1, $reloaded->getItems());
             self::assertCount(1, $reloaded->getHistory());
-            self::assertSame('TEST-PRODUCT', $reloaded->getItems()->first()->getProductCode());
-            self::assertSame('created', $reloaded->getHistory()->first()->getType());
+            $reloadedItem = $reloaded->getItems()->first();
+            $reloadedHistory = $reloaded->getHistory()->first();
+            self::assertNotFalse($reloadedItem);
+            self::assertNotFalse($reloadedHistory);
+            self::assertSame('TEST-PRODUCT', $reloadedItem->getProductCode());
+            self::assertSame('created', $reloadedHistory->getType());
             self::assertEquals(new \DateTimeImmutable('2030-01-02'), $reloaded->getRequestedDeliveryDate());
         } finally {
             $entityManager->getConnection()->rollBack();

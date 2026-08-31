@@ -93,18 +93,22 @@ final class OrderCartContentsTest extends TestCase
         self::assertStringContainsString("{% hook 'body' with { form: form_item, item, index } %}", $template);
         self::assertStringContainsString('data-configured-cart-items', $template);
 
-        preg_match('/<tr class="cn-configured-item".*?<\/tr>/s', $template, $configuredRow);
-        self::assertArrayHasKey(0, $configuredRow);
-        self::assertSame(6, substr_count($configuredRow[0], '<td'));
+        self::assertSame(1, preg_match('/<tr class="cn-configured-item".*?<\/tr>/s', $template, $configuredRow));
+        $configuredRowHtml = array_shift($configuredRow);
+        self::assertIsString($configuredRowHtml);
+        self::assertSame(6, substr_count($configuredRowHtml, '<td'));
 
-        preg_match_all('/data-configured-item-column="([^"]+)"/', $configuredRow[0], $columns);
+        self::assertSame(6, preg_match_all('/data-configured-item-column="([^"]+)"/', $configuredRowHtml, $columns));
+        self::assertArrayHasKey(1, $columns);
         self::assertSame(
             ['remove', 'product', 'subscription', 'unit-price', 'quantity', 'total'],
             $columns[1],
             'Configured rows must match the six current cart header columns.',
         );
 
-        preg_match_all('/<td\b[^>]*>(.*?)<\/td>/s', $configuredRow[0], $cells);
+        self::assertSame(6, preg_match_all('/<td\b[^>]*>(.*?)<\/td>/s', $configuredRowHtml, $cells));
+        self::assertArrayHasKey(1, $cells);
+        self::assertCount(6, $cells[1]);
         self::assertStringContainsString('item.unitAmount|sylius_format_money', $cells[1][3]);
         self::assertStringContainsString('data-configured-item-quantity', $cells[1][4]);
         self::assertStringContainsString('item.total|sylius_format_money', $cells[1][5]);
@@ -115,7 +119,15 @@ final class OrderCartContentsTest extends TestCase
         $root = dirname(__DIR__, 2);
         $sylius = Yaml::parseFile($root . '/vendor/sylius/sylius/src/Sylius/Bundle/ShopBundle/Resources/config/app/twig_hooks/cart/index.yaml');
         $mollie = Yaml::parseFile($root . '/vendor/sylius/mollie-plugin/config/twig_hooks/shop/cart/index.yaml');
+        self::assertIsArray($sylius);
+        self::assertIsArray($mollie);
+        self::assertIsArray($sylius['sylius_twig_hooks']);
+        self::assertIsArray($mollie['sylius_twig_hooks']);
+        self::assertIsArray($sylius['sylius_twig_hooks']['hooks']);
+        self::assertIsArray($mollie['sylius_twig_hooks']['hooks']);
         $hook = 'sylius_shop.cart.index.content.form.sections.general.items.head';
+        self::assertIsArray($sylius['sylius_twig_hooks']['hooks'][$hook]);
+        self::assertIsArray($mollie['sylius_twig_hooks']['hooks'][$hook]);
         $columns = array_merge($sylius['sylius_twig_hooks']['hooks'][$hook], $mollie['sylius_twig_hooks']['hooks'][$hook]);
         uasort($columns, static fn (array $left, array $right): int => $right['priority'] <=> $left['priority']);
 
@@ -141,13 +153,13 @@ final class OrderCartContentsTest extends TestCase
         $javascript = file_get_contents(dirname(__DIR__, 2) . '/assets/shop/cardnext.js');
         self::assertIsString($javascript);
 
-        self::assertStringContainsString("fetch(endpoint", $javascript);
+        self::assertStringContainsString('fetch(endpoint', $javascript);
         self::assertStringContainsString("body.set('quantity', quantity)", $javascript);
         self::assertStringContainsString("document.addEventListener('change'", $javascript);
         self::assertStringContainsString("event.key !== 'Enter'", $javascript);
-        self::assertStringContainsString("event.preventDefault()", $javascript);
-        self::assertStringContainsString("control.disabled = true", $javascript);
-        self::assertStringContainsString("window.location.reload()", $javascript);
+        self::assertStringContainsString('event.preventDefault()', $javascript);
+        self::assertStringContainsString('control.disabled = true', $javascript);
+        self::assertStringContainsString('window.location.reload()', $javascript);
     }
 
     private function configuredItem(): ConfiguredOrderItem

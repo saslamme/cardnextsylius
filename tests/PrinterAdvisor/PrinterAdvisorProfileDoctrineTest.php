@@ -6,6 +6,7 @@ namespace App\Tests\PrinterAdvisor;
 
 use App\Entity\Product\PrinterAdvisorProfile;
 use App\Entity\Product\Product;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,7 +48,10 @@ final class PrinterAdvisorProfileDoctrineTest extends KernelTestCase
     public function testProfileCanBePersistedAndLoadedAgain(): void
     {
         self::bootKernel();
-        $entityManager = self::getContainer()->get(ManagerRegistry::class)->getManager();
+        $registry = self::getContainer()->get(ManagerRegistry::class);
+        self::assertInstanceOf(ManagerRegistry::class, $registry);
+        $entityManager = $registry->getManager();
+        self::assertInstanceOf(EntityManagerInterface::class, $entityManager);
         $entityManager->getConnection()->beginTransaction();
 
         try {

@@ -245,8 +245,8 @@ final class ConfiguratorCoreTest extends TestCase
             try {
                 $calculator->calculate(new ConfiguratorConfiguration('generic', 1, 'EUR', 'DE_WEB'), $this->channel($channel), $currency);
                 self::fail('Mismatch was accepted.');
-            } catch (InvalidConfigurationException) {
-                self::assertTrue(true);
+            } catch (InvalidConfigurationException $exception) {
+                self::assertNotSame('', $exception->getMessage());
             }
         }
     }
@@ -349,6 +349,7 @@ final class ConfiguratorCoreTest extends TestCase
         self::assertSame($valid, (new ConfiguratorValidator())->validate(new ConfiguratorConfiguration('typed', 1, 'EUR', 'DE', ['value' => $value]), $model)->isValid());
     }
 
+    /** @return iterable<string, array{FieldType, mixed, bool}> */
     public static function invalidTypedSelections(): iterable
     {
         yield 'integer decimal' => [FieldType::INTEGER, 1.5, false];
@@ -384,6 +385,7 @@ final class ConfiguratorCoreTest extends TestCase
         }
     }
 
+    /** @return iterable<string, array{PriceType, MultiplierType, bool}> */
     public static function multiplierMatrix(): iterable
     {
         foreach (PriceType::cases() as $priceType) {
@@ -476,8 +478,8 @@ final class ConfiguratorCoreTest extends TestCase
         try {
             $second->addSection($section);
             self::fail('Section reparented.');
-        } catch (\DomainException) {
-            self::assertTrue(true);
+        } catch (\DomainException $exception) {
+            self::assertNotSame('', $exception->getMessage());
         }
         $otherSection = new ConfiguratorSection('other', 'Other');
         $first->addSection($otherSection);
@@ -485,18 +487,19 @@ final class ConfiguratorCoreTest extends TestCase
         try {
             $otherSection->addField($field);
             self::fail('Field reparented.');
-        } catch (\DomainException) {
-            self::assertTrue(true);
+        } catch (\DomainException $exception) {
+            self::assertNotSame('', $exception->getMessage());
         }
         $value = $field->getValues()->first();
+        self::assertNotFalse($value);
         $otherField = new ConfiguratorField('other', 'Other', FieldType::SINGLE_CHOICE);
         $otherSection->addField($otherField);
 
         try {
             $otherField->addValue($value);
             self::fail('Value reparented.');
-        } catch (\DomainException) {
-            self::assertTrue(true);
+        } catch (\DomainException $exception) {
+            self::assertNotSame('', $exception->getMessage());
         }
         $this->expectException(\DomainException::class);
         $field->addValue(new ConfiguratorValue('premium', 'Duplicate'));
@@ -509,8 +512,8 @@ final class ConfiguratorCoreTest extends TestCase
             try {
                 $field->setMinimumValue($invalid);
                 self::fail('Invalid minimum accepted.');
-            } catch (\DomainException) {
-                self::assertTrue(true);
+            } catch (\DomainException $exception) {
+                self::assertNotSame('', $exception->getMessage());
             }
         }
         $field->setMinimumValue('1');
@@ -530,8 +533,8 @@ final class ConfiguratorCoreTest extends TestCase
         try {
             new ConfiguratorDependency($model, $source, DependencyOperator::GREATER_THAN, [], DependencyEffect::REQUIRE);
             self::fail('Empty comparison accepted.');
-        } catch (\DomainException) {
-            self::assertTrue(true);
+        } catch (\DomainException $exception) {
+            self::assertNotSame('', $exception->getMessage());
         }
         $dependency = new ConfiguratorDependency($model, $source, DependencyOperator::NOT_EQUALS, ['premium'], DependencyEffect::REQUIRE);
         $dependency->setTargetField($target);
@@ -563,6 +566,7 @@ final class ConfiguratorCoreTest extends TestCase
         return $calculator->calculate($configuration, $this->channel($configuration->channelCode), $configuration->currencyCode);
     }
 
+    /** @return array{Configurator, ConfiguratorField, ConfiguratorValue} */
     private function foreignModel(): array
     {
         $m = new Configurator('foreign', 'Foreign');
@@ -613,6 +617,7 @@ final class ConfiguratorCoreTest extends TestCase
         self::assertContains($result->errors[0]->errorCode, ['above_maximum', 'below_minimum']);
     }
 
+    /** @return iterable<string, array{FieldType, string, mixed, mixed}> */
     public static function fixedNumericValues(): iterable
     {
         yield 'integer' => [FieldType::INTEGER, '1', 1, 2];
@@ -620,6 +625,7 @@ final class ConfiguratorCoreTest extends TestCase
         yield 'decimal' => [FieldType::DECIMAL, '1.25', '1.25', '2.0'];
     }
 
+    /** @return array{Configurator, ConfiguratorField, ConfiguratorValue} */
     private function model(): array
     {
         $m = new Configurator('generic', 'Generic');

@@ -12,7 +12,11 @@ final class OffcanvasCartTemplateTest extends TestCase
     public function testConfiguredItemsOverrideTheSyliusOffcanvasHooks(): void
     {
         $root = dirname(__DIR__, 2);
-        $hooks = Yaml::parseFile($root . '/config/packages/cardnext_twig_hooks.yaml')['sylius_twig_hooks']['hooks'];
+        $configuration = Yaml::parseFile($root . '/config/packages/cardnext_twig_hooks.yaml');
+        self::assertIsArray($configuration);
+        self::assertIsArray($configuration['sylius_twig_hooks']);
+        self::assertIsArray($configuration['sylius_twig_hooks']['hooks']);
+        $hooks = $configuration['sylius_twig_hooks']['hooks'];
 
         self::assertSame(
             'shop/layout/offcanvas/cart/body/items.html.twig',

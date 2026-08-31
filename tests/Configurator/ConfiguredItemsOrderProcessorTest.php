@@ -97,7 +97,9 @@ final class ConfiguredItemsOrderProcessorTest extends TestCase
         $this->processor->process($order);
 
         $this->assertConfiguredAdjustment($order, 30000);
-        self::assertSame(500, $order->getAdjustments('other_adjustment')->first()->getAmount());
+        $adjustment = $order->getAdjustments('other_adjustment')->first();
+        self::assertNotFalse($adjustment);
+        self::assertSame(500, $adjustment->getAmount());
         self::assertSame(54500, $order->getTotal());
     }
 
@@ -138,7 +140,9 @@ final class ConfiguredItemsOrderProcessorTest extends TestCase
         $adjustments = $order->getAdjustments(ConfiguredItemsOrderProcessor::ADJUSTMENT_TYPE);
 
         self::assertCount(1, $adjustments);
-        self::assertSame($amount, $adjustments->first()->getAmount());
+        $adjustment = $adjustments->first();
+        self::assertNotFalse($adjustment);
+        self::assertSame($amount, $adjustment->getAmount());
     }
 
     private function configuredItem(int $total): ConfiguredOrderItem

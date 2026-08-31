@@ -88,9 +88,15 @@ final class InternalOrderNotificationTemplateTest extends TestCase
         $html = $this->render($normalItems, $configuredItems, 100000);
 
         self::assertMatchesRegularExpression(sprintf('/Positionen\s*<div[^>]*>\s*%d\s*<\/div>/', $expected), $html);
-        foreach (array_merge($normalItems, $configuredItems) as $item) {
-            $name = $item->productName ?? $item->configuratorName;
-            self::assertSame(1, substr_count($html, $name));
+        foreach ($normalItems as $item) {
+            $values = get_object_vars($item);
+            self::assertIsString($values['productName']);
+            self::assertSame(1, substr_count($html, $values['productName']));
+        }
+        foreach ($configuredItems as $item) {
+            $values = get_object_vars($item);
+            self::assertIsString($values['configuratorName']);
+            self::assertSame(1, substr_count($html, $values['configuratorName']));
         }
     }
 
@@ -140,6 +146,12 @@ final class InternalOrderNotificationTemplateTest extends TestCase
      */
     private function render(array $normalItems, array $configuredItems, int $total = 100): string
     {
+        $itemsTotal = 0;
+        foreach ($normalItems as $item) {
+            $values = get_object_vars($item);
+            self::assertIsInt($values['total']);
+            $itemsTotal += $values['total'];
+        }
         $order = (object) [
             'billingAddress' => null,
             'shippingAddress' => null,
@@ -149,7 +161,7 @@ final class InternalOrderNotificationTemplateTest extends TestCase
             'number' => 'CN-123',
             'items' => $normalItems,
             'configuredItems' => $configuredItems,
-            'itemsTotal' => array_sum(array_map(static fn (object $item): int => $item->total, $normalItems)),
+            'itemsTotal' => $itemsTotal,
             'shippingTotal' => 590,
             'taxTotal' => 0,
             'total' => $total,

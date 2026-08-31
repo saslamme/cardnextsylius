@@ -12,7 +12,7 @@ final class QuoteMigrationTest extends TestCase
 {
     public function testEditableQuoteTablesHaveVersioningIndexesAndForeignKeys(): void
     {
-        $migration = file_get_contents(\dirname(__DIR__, 2).'/migrations/Version20260829140000.php');
+        $migration = file_get_contents(\dirname(__DIR__, 2) . '/migrations/Version20260829140000.php');
         self::assertIsString($migration);
         self::assertStringContainsString('CREATE TABLE cardnext_quote ', $migration);
         self::assertStringContainsString('CREATE TABLE cardnext_quote_item ', $migration);
@@ -33,7 +33,7 @@ final class QuoteMigrationTest extends TestCase
 
     public function testCustomerAccountMigrationHandlesFreshAndPartiallyMigratedSchemas(): void
     {
-        require_once \dirname(__DIR__, 2).'/migrations/Version20260830190000.php';
+        require_once \dirname(__DIR__, 2) . '/migrations/Version20260830190000.php';
 
         $schema = new Schema();
         $freshTable = $schema->createTable('cardnext_quote');
@@ -65,7 +65,7 @@ final class QuoteMigrationTest extends TestCase
 
     public function testCustomerAccountMigrationMatchesForeignKeysByRelationshipNotName(): void
     {
-        require_once \dirname(__DIR__, 2).'/migrations/Version20260830190000.php';
+        require_once \dirname(__DIR__, 2) . '/migrations/Version20260830190000.php';
 
         $schema = new Schema();
         $table = $schema->createTable('cardnext_quote');
@@ -87,8 +87,13 @@ final class QuoteMigrationTest extends TestCase
 
     private function migrationDecision(string $method, object $table): bool
     {
-        $decision = new ReflectionMethod(\DoctrineMigrations\Version20260830190000::class, $method);
+        require_once \dirname(__DIR__, 2) . '/migrations/Version20260830190000.php';
+        $migrationClass = 'DoctrineMigrations\\Version20260830190000';
+        self::assertTrue(class_exists($migrationClass));
+        $decision = new ReflectionMethod($migrationClass, $method);
+        $result = $decision->invoke(null, $table);
+        self::assertIsBool($result);
 
-        return $decision->invoke(null, $table);
+        return $result;
     }
 }

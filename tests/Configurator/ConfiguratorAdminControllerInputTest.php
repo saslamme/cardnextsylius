@@ -46,7 +46,7 @@ final class ConfiguratorAdminControllerInputTest extends TestCase
 
         self::assertIsString($controller);
         self::assertStringNotContainsString("redirectToRoute('sylius_admin_product_create')", $controller);
-        self::assertStringContainsString("new Configurator($this->required", $controller);
+        self::assertStringContainsString('new Configurator($this->required', $controller);
     }
 
     public function testEmptyOptionalPriceRuleIdsAreAccepted(): void
@@ -78,6 +78,7 @@ final class ConfiguratorAdminControllerInputTest extends TestCase
         self::assertNull($rule->getPercentageBase());
     }
 
+    /** @return iterable<string, array{PriceType}> */
     public static function nonPercentagePriceTypes(): iterable
     {
         yield 'UNIT' => [PriceType::UNIT];
@@ -157,6 +158,7 @@ final class ConfiguratorAdminControllerInputTest extends TestCase
         $this->applyPriceRule($this->rule(), $this->createMock(EntityManagerInterface::class), [$key => $value]);
     }
 
+    /** @return iterable<string, array{string, mixed, string}> */
     public static function invalidOptionalPriceRuleIds(): iterable
     {
         yield 'value' => ['value_id', 'abc', 'Die Wert-ID ist ungültig.'];
@@ -173,6 +175,7 @@ final class ConfiguratorAdminControllerInputTest extends TestCase
         $this->applyPriceRule($this->rule(), $this->createMock(EntityManagerInterface::class), ['minimum_quantity' => $value]);
     }
 
+    /** @return iterable<string, array{mixed}> */
     public static function invalidMinimumQuantities(): iterable
     {
         yield 'empty' => [''];

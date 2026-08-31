@@ -29,6 +29,7 @@ final class B2BPriceResolverTest extends TestCase
         self::assertSame(800, $resolver->resolve(new ProductVariant(), $this->channel(), 1, $customer));
     }
 
+    /** @return iterable<string, array{Customer|null}> */
     public static function ineligibleCustomers(): iterable
     {
         yield 'guest' => [null];
@@ -123,6 +124,7 @@ final class B2BPriceResolverTest extends TestCase
         self::assertSame(1, $queryCount);
     }
 
+    /** @param list<list<VariantPriceRule|CustomerVariantPriceRule>> $results */
     private function resolverWithRuleSets(array $results, int &$queryCount = 0): B2BPriceResolver
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
@@ -199,6 +201,7 @@ final class B2BPriceResolverTest extends TestCase
         return $rule;
     }
 
+    /** @return array{min_quantity: int, price: int, source: string, customer_group_code: string, customer_email: string} */
     private function tier(
         int $quantity,
         int $price,

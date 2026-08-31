@@ -123,10 +123,10 @@ final class StorefrontRegressionTest extends TestCase
     {
         $template = $this->readProjectFile('templates/shop/configurator/product.html.twig');
 
-        self::assertStringContainsString("{% if value.preselected %} selected{% endif %}", $template);
-        self::assertStringContainsString("{% if value.preselected %} checked{% endif %}", $template);
+        self::assertStringContainsString('{% if value.preselected %} selected{% endif %}', $template);
+        self::assertStringContainsString('{% if value.preselected %} checked{% endif %}', $template);
         self::assertStringContainsString("field.type.value == 'single_choice' and activeValues|length == 2", $template);
-        self::assertStringContainsString("visualValues = activeValues|filter(value => value.imagePath or value.colorHex or value.icon)", $template);
+        self::assertStringContainsString('visualValues = activeValues|filter(value => value.imagePath or value.colorHex or value.icon)', $template);
         self::assertStringContainsString("field.type.value == 'multiple_choice' ? '[]' : ''", $template);
         self::assertStringContainsString('<option value="">', $template, 'The empty option must remain when no default is configured.');
     }
@@ -168,7 +168,9 @@ final class StorefrontRegressionTest extends TestCase
         self::assertSame(5, substr_count($template, '<svg aria-hidden="true"'));
         self::assertStringContainsString('fill="#20272D"', $template);
         self::assertStringContainsString('fill="#E95126"', $template);
-        self::assertStringNotContainsString('<img', substr($template, strpos($template, '<section class="cn-configurator-process"')));
+        $processOffset = strpos($template, '<section class="cn-configurator-process"');
+        self::assertIsInt($processOffset);
+        self::assertStringNotContainsString('<img', substr($template, $processOffset));
         self::assertStringNotContainsString('font-awesome', strtolower($template));
         self::assertStringNotContainsString('bootstrap-icons', strtolower($template));
 
@@ -181,7 +183,9 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringContainsString('background: #eef0f1;', $stylesheet);
         self::assertStringContainsString('grid-template-columns: repeat(5, minmax(0, 1fr));', $stylesheet);
         self::assertStringNotContainsString('border-top: 1px solid rgba(255,255,255,.24)', $stylesheet);
-        self::assertStringNotContainsString('background: var(--cn-ink);', substr($stylesheet, strpos($stylesheet, '.cn-configurator-process {'), 250));
+        $processCssOffset = strpos($stylesheet, '.cn-configurator-process {');
+        self::assertIsInt($processCssOffset);
+        self::assertStringNotContainsString('background: var(--cn-ink);', substr($stylesheet, $processCssOffset, 250));
         self::assertStringNotContainsString('process.kicker', $template);
     }
 
@@ -234,6 +238,7 @@ final class StorefrontRegressionTest extends TestCase
 
             $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($absolutePath));
             foreach ($iterator as $file) {
+                self::assertInstanceOf(\SplFileInfo::class, $file);
                 if ($file->isFile()) {
                     $files[] = $file->getPathname();
                 }
