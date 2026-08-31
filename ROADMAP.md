@@ -54,9 +54,10 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 
 ### P1-003 — Unvollständige CI Quality Gates
 
-- **ID/Priorität/Status/Bereich:** P1-003 / P1 / bestätigt / CI
+- **ID/Priorität/Status/Bereich:** P1-003 / P1 / teilweise behoben in PR #121 / CI
 - **Betroffene Dateien:** `.github/workflows/ci_static-checks.yaml`, `.github/workflows/build.yml`, `composer.json`
-- **Aktuelles Verhalten:** Twig/YAML linten `src` statt `templates` bzw. `config translations`; Composer validate ist auskommentiert; Security Check nutzt `continue-on-error: true`; ECS, Composer Audit und Schema Validate fehlen. PHPStan läuft ohne explizites `src tests`.
+- **Umsetzung PR #121:** Composer Validate, Composer Audit und Plattformanforderungen sind blockierend. Twig, YAML und Container werden auf den tatsächlichen Projektpfaden geprüft; PHPStan verwendet deterministisch `phpstan.dist.neon` mit 1 GiB Speicher. Die MySQL-Testinstallation validiert anschließend Schema und Migrationsstatus; die bewusst unmanaged `cardnext_quote_sequence` ist aus ORM-Schemavergleichen ausgeschlossen.
+- **Noch offen:** Repository-weite ECS-Bereinigung und anschließend ECS als Required Gate (separater mechanischer Folge-PR; aktuell rund 48 Bestandsfunde).
 - **Risiko:** Defekte Templates/Config, Coding-Standard- und Dependency-Security-Regressionen können grün mergen. Markdown-only Audit-PRs triggern den Build wegen `*.md`-Ignore nicht.
 - **Lösung:** Gates mit den im README genannten exakten Pfaden hinzufügen; `composer audit` blockierend; ECS als eigener Gate nach separatem Cleanup; Schema Validate mit MySQL-Service.
 - **Acceptance Criteria:** Jeder Gate wird auf PRs ausgeführt und Fehler blockieren; keine `continue-on-error`-Ausnahme für Security.
@@ -129,11 +130,12 @@ Keine bestätigten P0-Findings. Insbesondere wurde kein öffentlicher Zugriff au
 - **Tests:** MySQL 8.4 Up, Down soweit sicher, simulierte Teilmigration und Recovery.
 
 ### P2-007 — PHPStan-/Composer-Metadaten deterministisch schließen
-- **ID/Priorität/Status/Bereich:** P2-007 / P2 / bestätigt / Tooling
+- **ID/Priorität/Status/Bereich:** P2-007 / P2 / teilweise behoben in PR #121 / Tooling
 - **Betroffene Dateien:** `phpstan.dist.neon`, `composer.json`, CI
 - **Aktuelles Verhalten:** Eine versionierte PHPStan-Konfiguration existiert (`phpstan.dist.neon`, nicht die vermuteten Namen). Composer strict scheitert wegen fehlendem `name`/`description` für das proprietäre Root-Package.
 - **Risiko:** Lokale/CI-Kommandos divergieren; Strict Gate kann nicht aktiviert werden.
-- **Lösung:** canonical PHPStan-Befehl `analyse src tests`; Root-Package-Metadaten ergänzen oder den bewusst gewählten Validate-Modus dokumentieren, ohne Fehler zu maskieren.
+- **Umsetzung PR #121:** Der kanonische PHPStan-Befehl lädt `phpstan.dist.neon` und damit alle versionierten Pfade mit einem expliziten 1-GiB-Limit. Das Root-Package besitzt valide proprietäre Metadaten; CI installiert exakt den committed Lockfile-Stand.
+- **Noch offen:** Der reproduzierbare Voll-Lauf meldet 441 Bestandsfehler, verteilt auf Produktionscode, Konfigurations-Bootstrap und Tests (insbesondere fehlende Iterable-/Generic-Typen, Mixed-Zugriffe und veraltete Sylius-Typreferenzen). Ein fokussierter Folge-PR muss diese gruppiert an der Ursache beheben; es wurde weder eine Baseline noch eine breite Ignore-Liste erzeugt.
 - **Acceptance Criteria:** beide Befehle reproduzierbar und grün.
 - **Tests:** Composer validate strict und PHPStan aus sauberem Checkout.
 

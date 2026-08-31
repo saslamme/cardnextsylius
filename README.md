@@ -92,7 +92,7 @@ php bin/console lint:container
 php bin/console lint:yaml config translations
 php bin/console lint:twig templates
 vendor/bin/ecs check
-vendor/bin/phpstan analyse src tests
+vendor/bin/phpstan analyse --memory-limit=1G
 vendor/bin/phpunit tests
 php bin/console doctrine:schema:validate
 php bin/console doctrine:migrations:status
