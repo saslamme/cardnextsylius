@@ -1,4 +1,6 @@
 cardnext:
+  market:
+    select: Land auswählen
   account:
     quotes: Angebote
     maintenance_contracts: Wartungsverträge

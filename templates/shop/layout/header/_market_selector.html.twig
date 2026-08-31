@@ -1,0 +1,15 @@
+{% set currentMarket = cardnext_current_market() %}
+<details class="cn-market-selector" data-cardnext-market-selector>
+    <summary aria-label="{{ 'cardnext.market.select'|trans }}">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg>
+        <span>{{ currentMarket ? currentMarket.countryDisplayName : 'cardnext.market.select'|trans }}</span>
+        {% if currentMarket %}<b>{{ currentMarket.countryCode }}</b>{% endif %}
+    </summary>
+    <div class="cn-market-selector__menu">
+        {% for link in cardnext_market_links() %}
+            <a href="{{ link.url }}" hreflang="{{ link.market.hreflang }}"{% if currentMarket and currentMarket.channelCode == link.market.channelCode %} aria-current="true"{% endif %}>
+                <span>{{ link.market.countryDisplayName }}</span><b>{{ link.market.countryCode }}</b>
+            </a>
+        {% endfor %}
+    </div>
+</details>

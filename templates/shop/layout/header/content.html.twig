@@ -43,6 +43,7 @@
             </form>
 
             <div class="cn-shop-header__actions">
+                {% include 'shop/layout/header/_market_selector.html.twig' %}
                 {% if is_granted('ROLE_USER') %}
                     <a class="cn-shop-header__action" href="{{ path('sylius_shop_account_dashboard') }}" aria-label="Mein Konto">
                 {% else %}
@@ -92,6 +93,7 @@
             <button type="button" class="cardnext-mobile-nav__close" data-cardnext-menu-close aria-label="Navigation schließen">×</button>
         </div>
         <div class="cardnext-mobile-nav__body">
+            {% include 'shop/layout/header/_market_selector.html.twig' %}
             {{ component('sylius_shop:common:taxon_menu', {
                 template: 'shop/layout/header/mobile_categories.html.twig'
             }) }}

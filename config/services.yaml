@@ -9,9 +9,6 @@
 parameters:
     cardnext.quote_recipient: '%env(CARDNEXT_QUOTE_RECIPIENT)%'
     cardnext.erp.maintenance_field_map: '%env(json:CARDNEXT_ERP_MAINTENANCE_FIELD_MAP)%'
-    cardnext.quote_account_base_urls:
-        CARDNEXT_DE: 'https://www.cardnext.de'
-        CARDNEXT_AT: 'https://at.cardnext.de'
     # Structured source for all legal and contact details printed on quote PDFs.
     # Deliberately keep unknown details empty; never derive these from legal-page HTML.
     cardnext.quote_issuer_profiles:
@@ -39,7 +36,7 @@ parameters:
             country: 'Österreich'
             email: null
             phone: null
-            website: 'www.cardnext.at'
+            website: 'at.cardnext.de'
             vatId: null
             registrationCourt: null
             registrationNumber: null
@@ -79,6 +76,10 @@ services:
         arguments:
             $localeRepository: '@sylius.repository.locale'
 
+    App\International\MarketUrlResolver:
+        arguments:
+            $channelRepository: '@sylius.repository.channel'
+
     # Controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
@@ -100,7 +101,7 @@ services:
 
     App\Service\Quote\QuoteAccountUrlGenerator:
         arguments:
-            $baseUrls: '%cardnext.quote_account_base_urls%'
+            $allowedChannels: ['CARDNEXT_DE', 'CARDNEXT_AT']
 
     App\Service\Quote\QuoteOrderConverter:
         arguments:

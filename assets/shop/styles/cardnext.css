@@ -209,6 +209,15 @@ textarea.form-control { min-height: 150px; resize: vertical; line-height: 1.6; }
 .cn-utility a { color: inherit; text-decoration: none; }
 .cn-utility a:hover { color: var(--cn-primary-hover); }
 .cn-utility__market { font-weight: 700; }
+.cn-market-selector { position: relative; font-size: .78rem; }
+.cn-market-selector summary { display: flex; align-items: center; gap: .4rem; padding: .45rem .6rem; cursor: pointer; list-style: none; white-space: nowrap; }
+.cn-market-selector summary::-webkit-details-marker { display: none; }
+.cn-market-selector summary svg { width: 1.15rem; height: 1.15rem; stroke-width: 1.6; }
+.cn-market-selector__menu { position: absolute; z-index: 120; right: 0; top: 100%; min-width: 13rem; padding: .4rem; background: #fff; border: 1px solid var(--cn-border); border-radius: .35rem; box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.12); }
+.cn-market-selector__menu a { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem .65rem; color: inherit; text-decoration: none; }
+.cn-market-selector__menu a:hover, .cn-market-selector__menu a[aria-current="true"] { background: #f2f6f8; color: var(--cn-primary); }
+.cardnext-mobile-nav .cn-market-selector { margin-bottom: 1rem; }
+.cardnext-mobile-nav .cn-market-selector__menu { position: static; box-shadow: none; }
 .cn-header { position: sticky; top: 0; z-index: 1030; background: rgba(255,255,255,.98); border-bottom: 1px solid var(--cn-border); backdrop-filter: blur(8px); }
 .cn-header__inner { min-height: var(--cn-header-height); display: grid; grid-template-columns: 200px minmax(0,1fr) auto; align-items: center; gap: 26px; }
 .cn-logo { min-width: 0; display: inline-flex; align-items: center; text-decoration: none; }

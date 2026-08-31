@@ -204,6 +204,16 @@ Ein Finding ist erledigt, wenn Acceptance Criteria und positive/negative Tests e
 
 ## Working Roadmap
 
+### Country shop rollout tracks
+
+- **Technical market enablement:** seven hostname-bound Sylius channels, locale/currency records, selector, safe URL fallback and host-aware SEO/sitemap are implemented by the internationalization foundation.
+- **Translations and content:** translate catalogue, taxonomy, navigation and editorial content independently for each enabled locale.
+- **Country pricing:** explicitly load approved EUR, DKK and SEK channel pricings; never infer exchange rates.
+- **Taxes:** obtain approval and configure country tax zones/categories/rates separately.
+- **Shipping:** approve destinations, methods, calculators and fulfilment constraints per channel.
+- **Payments:** approve providers, credentials, currencies and methods per country.
+- **Legal:** assign reviewed legal pages and quote issuer data through the existing channel-aware administration; do not copy DE/AT texts.
+
 - **Jetzt:** Audit-Dokumente reviewen; Product Owner entscheidet das zulässige Service-/Shipping-Modell und Pflicht-Ausstellerdaten.
 - **Vor Feature-Entwicklung:** P1-001 bis P1-004.
 - **Danach:** P2 in der empfohlenen Reihenfolge, jeweils fokussiert.

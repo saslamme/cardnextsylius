@@ -1,19 +1,15 @@
-# Cardnext Markt-Matrix
+# Cardnext market matrix
 
-| Channel | Land | Hostname | Locale | Währung |
+`CardnextMarketRegistry` is the single application-level source for market metadata. Sylius channels persist the matching hostname, default locale and base currency and remain authoritative for catalogue availability and prices.
+
+| Channel | Country | Hostname | Locale | Currency |
 |---|---|---|---|---|
 | CARDNEXT_DE | DE | www.cardnext.de | de_DE | EUR |
-| CARDNEXT_AT | AT | www.cardnext.at | de_AT | EUR |
-| CARDNEXT_CH | CH | www.cardnext.ch | de_CH | CHF |
-| CARDNEXT_NL | NL | www.cardnext.nl | nl_NL | EUR |
-| CARDNEXT_DK | DK | www.cardnext.dk | da_DK | DKK |
-| CARDNEXT_SE | SE | www.cardnext.se | sv_SE | SEK |
-| CARDNEXT_NO | NO | www.cardnext.no | nb_NO | NOK |
-| CARDNEXT_IT | IT | www.cardnext.it | it_IT | EUR |
-| CARDNEXT_ES | ES | www.cardnext.es | es_ES | EUR |
-| CARDNEXT_PL | PL | www.cardnext.pl | pl_PL | PLN |
-| CARDNEXT_PT | PT | www.cardnext.pt | pt_PT | EUR |
-| CARDNEXT_HU | HU | www.cardnext.hu | hu_HU | HUF |
-| CARDNEXT_UA | UA | www.cardnext.ua | uk_UA | UAH |
+| CARDNEXT_AT | AT | at.cardnext.de | de_AT | EUR |
+| CARDNEXT_DK | DK | dk.cardnext.de | da_DK | DKK |
+| CARDNEXT_ES | ES | es.cardnext.de | es_ES | EUR |
+| CARDNEXT_IT | IT | it.cardnext.de | it_IT | EUR |
+| CARDNEXT_NL | NL | nl.cardnext.de | nl_NL | EUR |
+| CARDNEXT_SE | SE | se.cardnext.de | sv_SE | SEK |
 
-Neue Nicht-DE-Channels werden von Phase 17A standardmäßig deaktiviert angelegt.
+Run `php bin/console app:cardnext:setup-markets` during deployment to idempotently create/update the locale, currency, country and channel records. It does not assign products, prices, tax rules, shipping, payments, issuer profiles or legal pages.

@@ -1,4 +1,6 @@
 cardnext:
+  market:
+    select: Select country
   account:
     quotes: Quotes
     maintenance_contracts: Maintenance contracts

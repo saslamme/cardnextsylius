@@ -57,6 +57,7 @@ final readonly class PublicSlugController
         // @phpstan-ignore argument.type
         $product = $this->productRepository->findOneByChannelAndSlug($channel, $locale, $slug);
         if ($product !== null) {
+            $request->attributes->set('cardnext_product', $product);
             $request->attributes->set('_sylius', [
                 'template' => '@SyliusShop/product/show.html.twig',
                 'repository' => [
