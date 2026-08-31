@@ -52,7 +52,7 @@
             {% for recommendation in recommendations %}
                 <article class="cn-panel cn-advisor__result">
                     <strong class="cn-advisor__badge">{{ recommendation.label }}</strong>
-                    <div class="cn-advisor__image">{% if recommendation.product.images|length %}{{ component('sylius_shop:main_image', {product: recommendation.product, class: 'img-fluid', filter: 'cardnext_product_card'}) }}{% else %}<span>Produktbild folgt</span>{% endif %}</div>
+                    <div class="cn-advisor__image">{% if recommendation.product.images|length %}{{ component('sylius_shop:main_image', {product: recommendation.product, class: 'img-fluid', filter: 'cardnext_product_card'}) }}{% else %}<span>{{ 'cardnext.storefront.product_card.image_pending'|trans }}</span>{% endif %}</div>
                     {% if recommendation.product.manufacturer %}<p class="cn-advisor__manufacturer">{{ recommendation.product.manufacturer.name }}</p>{% endif %}
                     <h3>{{ recommendation.product.name }}</h3>
                     {% if recommendation.product.model %}<p>{{ recommendation.product.model }}</p>{% endif %}

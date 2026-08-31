@@ -123,6 +123,56 @@ cardnext:
       terms: Condiciones generales
       back_to_top: Volver arriba
       language: Español
+    common:
+      home: 'Inicio'
+    catalog:
+      overview_aria: 'Vista general de productos'
+      filter_aria: 'Filtros de productos'
+      filters: 'Filtros'
+      reset: 'Restablecer'
+      apply_filters: 'Aplicar filtros'
+      manufacturer: 'Fabricante'
+      show_more: 'Mostrar más (%count%)'
+      show_less: 'Mostrar menos'
+      configure: 'Configurar'
+      categories: 'Categorías'
+      subcategories_aria: 'Subcategorías de %category%'
+      all_category: 'Todo en %category%'
+      advisor:
+        aria: 'Asesor de impresoras de tarjetas'
+        title: '¿Qué impresora de tarjetas se adapta a tus necesidades?'
+        text: 'Encuentra una recomendación adecuada en aproximadamente 1 minuto.'
+        start: 'Iniciar el asesor de impresoras'
+      product_count: "{0} %count% productos|{1} %count% producto|]1,Inf] %count% productos"
+      sort:
+        label: 'Ordenar'
+        position: 'Posición'
+        name_asc: 'Nombre A–Z'
+        name_desc: 'Nombre Z–A'
+        newest: 'Más recientes'
+        price_asc: 'Precio: de menor a mayor'
+        price_desc: 'Precio: de mayor a menor'
+      per_page: '%count% por página'
+      empty:
+        title: 'No se han encontrado productos.'
+        text: 'Modifica la búsqueda o selecciona otra categoría de productos.'
+    product_card:
+      image_pending: 'Imagen del producto próximamente'
+      available: 'Disponible'
+      on_request: 'Bajo pedido'
+      sku: 'N.º de artículo'
+      details: 'Detalles'
+      compare: 'Comparar'
+      compare_aria: 'Añadir %product% a la comparación'
+    advice:
+      kicker: 'Guía de compra'
+      printer_title: '¿Qué impresora de tarjetas es la adecuada?'
+      printer_text: 'La tecnología de impresión adecuada depende principalmente del volumen de tarjetas, la calidad deseada, las caras de impresión y las opciones de codificación. Los sistemas direct-to-card suelen ser la opción más rentable; los sistemas de retransferencia ofrecen ventajas para impresión sin bordes y mayor calidad de imagen.'
+      printer_operation: 'Para el funcionamiento diario también son esenciales las cintas, los kits de limpieza y las tarjetas adecuados. Cardnext garantiza la compatibilidad entre impresora y consumibles.'
+      generic_title: 'Selecciona %category% según la aplicación.'
+      generic_text: 'No solo importa el producto, sino también su compatibilidad con el entorno existente y el uso previsto. Cardnext te ayuda con la selección, la integración y los accesorios adecuados.'
+      contact: 'Solicitar asesoramiento'
+      more: 'Otras áreas de productos'
   market:
     select: Seleccionar país
   account:

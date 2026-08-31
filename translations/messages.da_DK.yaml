@@ -123,6 +123,56 @@ cardnext:
       terms: 'Handelsbetingelser'
       back_to_top: 'Til toppen'
       language: 'Dansk'
+    common:
+      home: 'Forside'
+    catalog:
+      overview_aria: 'Produktoversigt'
+      filter_aria: 'Produktfiltre'
+      filters: 'Filtre'
+      reset: 'Nulstil'
+      apply_filters: 'Anvend filtre'
+      manufacturer: 'Producent'
+      show_more: 'Vis mere (%count%)'
+      show_less: 'Vis mindre'
+      configure: 'Konfigurer'
+      categories: 'Kategorier'
+      subcategories_aria: 'Underkategorier til %category%'
+      all_category: 'Alle %category%'
+      advisor:
+        aria: 'Rådgiver til kortprintere'
+        title: 'Hvilken kortprinter passer til dine behov?'
+        text: 'Få en passende anbefaling på cirka 1 minut.'
+        start: 'Start kortprinterrådgiveren'
+      product_count: "{0} %count% produkter|{1} %count% produkt|]1,Inf] %count% produkter"
+      sort:
+        label: 'Sortér'
+        position: 'Placering'
+        name_asc: 'Navn A–Å'
+        name_desc: 'Navn Å–A'
+        newest: 'Nyeste først'
+        price_asc: 'Pris stigende'
+        price_desc: 'Pris faldende'
+      per_page: '%count% pr. side'
+      empty:
+        title: 'Ingen produkter fundet.'
+        text: 'Tilpas søgningen, eller vælg en anden produktkategori.'
+    product_card:
+      image_pending: 'Produktbillede følger'
+      available: 'På lager'
+      on_request: 'På forespørgsel'
+      sku: 'Varenr.'
+      details: 'Detaljer'
+      compare: 'Sammenlign'
+      compare_aria: 'Føj %product% til sammenligningen'
+    advice:
+      kicker: 'Købsvejledning'
+      printer_title: 'Hvilken kortprinter er den rigtige?'
+      printer_text: 'Den rette printteknologi afhænger især af kortmængden, den ønskede kvalitet, printsider og kodningsmuligheder. Direct-to-card-systemer er ofte økonomiske; retransfer giver fordele ved kantløst print og højere billedkvalitet.'
+      printer_operation: 'Til den daglige drift er passende farvebånd, rensesæt og kort også afgørende. Cardnext sikrer, at printer og forbrugsmaterialer passer sammen.'
+      generic_title: 'Vælg %category% efter anvendelsen.'
+      generic_text: 'Det handler både om produktet, kompatibiliteten med det eksisterende miljø og den planlagte anvendelse. Cardnext hjælper med valg, integration og tilbehør.'
+      contact: 'Anmod om rådgivning'
+      more: 'Flere produktområder'
   market:
     select: Vælg land
   account:

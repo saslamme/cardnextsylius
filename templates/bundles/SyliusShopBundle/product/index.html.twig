@@ -11,40 +11,40 @@
     {{ component('sylius_shop:product:show:breadcrumbs', {template: 'shop/category/breadcrumbs.html.twig'}) }}
     {{ component('sylius_shop:product:show:header', {template: 'shop/category/hero.html.twig'}) }}
     {{ component('sylius_shop:product:show:taxonomy', {template: 'shop/category/subcategories.html.twig'}) }}
-    <section class="cn-section cn-section--compact" aria-label="Produktübersicht">
+    <section class="cn-section cn-section--compact" aria-label="{{ 'cardnext.storefront.catalog.overview_aria'|trans }}">
         <div class="cn-container cn-catalog">
-            <aside class="cn-sidebar" aria-label="Produktfilter">
-                <div class="cn-sidebar__head"><h2>Filter</h2>{% if app.request.query.has('criteria') %}<a href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">Zurücksetzen</a>{% endif %}</div>
-                <form class="cn-filter-form" method="get" action="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">
+            <aside class="cn-sidebar" aria-label="{{ 'cardnext.storefront.catalog.filter_aria'|trans }}">
+                <div class="cn-sidebar__head"><h2>{{ 'cardnext.storefront.catalog.filters'|trans }}</h2>{% if app.request.query.has('criteria') %}<a href="{{ path('sylius_shop_product_index', {'_locale': app.request.locale, 'slug': app.request.attributes.get('slug')}) }}">{{ 'cardnext.storefront.catalog.reset'|trans }}</a>{% endif %}</div>
+                <form class="cn-filter-form" method="get" action="{{ path('sylius_shop_product_index', {'_locale': app.request.locale, 'slug': app.request.attributes.get('slug')}) }}">
                     {% for key, value in current_sorting %}<input type="hidden" name="sorting[{{ key }}]" value="{{ value }}">{% endfor %}
                     <input type="hidden" name="limit" value="{{ current_limit }}"><input type="hidden" name="page" value="1">
                     {% for filter in products.definition.enabledFilters %}{% if filter.name != 'search' %}<div class="cn-filter">{{ sylius_grid_render_filter(products, filter) }}</div>{% endif %}{% endfor %}
-                    <button class="cn-btn cn-btn--secondary cn-btn--small cn-btn--block mt-3" type="submit">Filter anwenden</button>
+                    <button class="cn-btn cn-btn--secondary cn-btn--small cn-btn--block mt-3" type="submit">{{ 'cardnext.storefront.catalog.apply_filters'|trans }}</button>
                 </form>
             </aside>
             <div>
                 {% if cardnext_taxon and cardnext_taxon.code == 'card_printers' %}
-                    <aside class="cn-panel mb-4" aria-label="Kartendrucker-Beratung">
-                        <h2>Welcher Kartendrucker passt zu mir?</h2>
-                        <p>In etwa 1 Minute zur passenden Empfehlung.</p>
-                        <a class="cn-btn cn-btn--primary" href="{{ path('cardnext_shop_printer_advisor', {'_locale': app.request.locale}) }}">Kartendrucker-Berater starten</a>
+                    <aside class="cn-panel mb-4" aria-label="{{ 'cardnext.storefront.catalog.advisor.aria'|trans }}">
+                        <h2>{{ 'cardnext.storefront.catalog.advisor.title'|trans }}</h2>
+                        <p>{{ 'cardnext.storefront.catalog.advisor.text'|trans }}</p>
+                        <a class="cn-btn cn-btn--primary" href="{{ path('cardnext_shop_printer_advisor', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.catalog.advisor.start'|trans }}</a>
                     </aside>
                 {% endif %}
                 <div class="cn-toolbar">
-                    <div class="cn-toolbar__count"><strong>{{ result_count }} {{ result_count == 1 ? 'Produkt' : 'Produkte' }}</strong></div>
+                    <div class="cn-toolbar__count"><strong>{{ 'cardnext.storefront.catalog.product_count'|trans({'%count%': result_count}) }}</strong></div>
                     <div class="cn-toolbar__actions">
-                        <div class="dropdown"><button class="cn-btn cn-btn--secondary cn-btn--small dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Sortieren</button>
+                        <div class="dropdown"><button class="cn-btn cn-btn--secondary cn-btn--small dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ 'cardnext.storefront.catalog.sort.label'|trans }}</button>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {}, 'page': 1})) }}">Position</a>
-                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'name': 'asc'}, 'page': 1})) }}">Name A–Z</a>
-                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'name': 'desc'}, 'page': 1})) }}">Name Z–A</a>
-                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'createdAt': 'desc'}, 'page': 1})) }}">Neueste zuerst</a>
-                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'price': 'asc'}, 'page': 1})) }}">Preis aufsteigend</a>
-                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'price': 'desc'}, 'page': 1})) }}">Preis absteigend</a>
+                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {}, 'page': 1})) }}">{{ 'cardnext.storefront.catalog.sort.position'|trans }}</a>
+                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'name': 'asc'}, 'page': 1})) }}">{{ 'cardnext.storefront.catalog.sort.name_asc'|trans }}</a>
+                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'name': 'desc'}, 'page': 1})) }}">{{ 'cardnext.storefront.catalog.sort.name_desc'|trans }}</a>
+                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'createdAt': 'desc'}, 'page': 1})) }}">{{ 'cardnext.storefront.catalog.sort.newest'|trans }}</a>
+                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'price': 'asc'}, 'page': 1})) }}">{{ 'cardnext.storefront.catalog.sort.price_asc'|trans }}</a>
+                                <a class="dropdown-item" href="{{ path(route, route_parameters|merge({'sorting': {'price': 'desc'}, 'page': 1})) }}">{{ 'cardnext.storefront.catalog.sort.price_desc'|trans }}</a>
                             </div>
                         </div>
-                        <div class="dropdown"><button class="cn-btn cn-btn--secondary cn-btn--small dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ current_limit }} pro Seite</button>
-                            <div class="dropdown-menu dropdown-menu-end">{% for limit in [9,18,27] %}<a class="dropdown-item" href="{{ path(route, route_parameters|merge({'limit': limit, 'page': 1})) }}">{{ limit }} pro Seite</a>{% endfor %}</div>
+                        <div class="dropdown"><button class="cn-btn cn-btn--secondary cn-btn--small dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ 'cardnext.storefront.catalog.per_page'|trans({'%count%': current_limit}) }}</button>
+                            <div class="dropdown-menu dropdown-menu-end">{% for limit in [9,18,27] %}<a class="dropdown-item" href="{{ path(route, route_parameters|merge({'limit': limit, 'page': 1})) }}">{{ 'cardnext.storefront.catalog.per_page'|trans({'%count%': limit}) }}</a>{% endfor %}</div>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="cn-product-grid cn-product-grid--lined" {{ sylius_test_html_attribute('products') }}>{% for product in resources.data %}{{ component('cardnext:product:card', {product: product, showQuoteAction: false, showCompareAction: false}) }}{% endfor %}</div>
                     <div class="mt-4">{{ pagination.simple(resources.data) }}</div>
                 {% else %}
-                    <div class="cn-panel"><strong>Keine Produkte gefunden.</strong><p class="mb-0 mt-1">Ändern Sie die Suche oder wählen Sie eine andere Produktkategorie.</p></div>
+                    <div class="cn-panel"><strong>{{ 'cardnext.storefront.catalog.empty.title'|trans }}</strong><p class="mb-0 mt-1">{{ 'cardnext.storefront.catalog.empty.text'|trans }}</p></div>
                 {% endif %}
             </div>
         </div>

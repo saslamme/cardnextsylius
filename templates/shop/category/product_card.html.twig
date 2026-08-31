@@ -13,7 +13,7 @@
                     <circle cx="9" cy="10" r="1.5"/>
                     <path d="m5.5 17 4.5-4 3 2.5 2.5-2 3 3.5"/>
                 </svg>
-                <span>Produktbild folgt</span>
+                <span>{{ 'cardnext.storefront.product_card.image_pending'|trans }}</span>
             </span>
         {% endif %}
     </a>
@@ -29,9 +29,9 @@
 
         {% if variant %}
             <div class="cn-status {{ variant.tracked and variant.onHand <= 0 ? 'cn-status--warning' : '' }}">
-                {% if variant.tracked and variant.onHand <= 0 %}Auf Anfrage{% else %}Lieferbar{% endif %}
+                {{ (variant.tracked and variant.onHand <= 0 ? 'cardnext.storefront.product_card.on_request' : 'cardnext.storefront.product_card.available')|trans }}
             </div>
-            <div class="cn-product-card__sku">Art.-Nr. {{ variant.code }}</div>
+            <div class="cn-product-card__sku">{{ 'cardnext.storefront.product_card.sku'|trans }} {{ variant.code }}</div>
         {% endif %}
 
         <div class="cn-product-card__meta">
@@ -45,7 +45,7 @@
             </div>
 
             <a class="cn-link cn-link--arrow cn-link--small" href="{{ cardnext_product_url(product) }}">
-                {{ 'Details' }}
+                {{ 'cardnext.storefront.product_card.details'|trans }}
             </a>
         </div>
         {% if show_quote_action and variant and channel_pricing and channel_pricing.price is not null %}
@@ -57,7 +57,7 @@
             </form>
         {% endif %}
         {% if show_compare_action %}
-            <button class="cn-compare-toggle" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_group }}" data-compare-url="{{ path('cardnext_shop_product_compare', {_locale: app.request.locale}) }}" aria-pressed="false" aria-label="{{ product.name }} zum Vergleich hinzufügen">+ Vergleichen</button>
+            <button class="cn-compare-toggle" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_group }}" data-compare-url="{{ path('cardnext_shop_product_compare', {_locale: app.request.locale}) }}" aria-pressed="false" aria-label="{{ 'cardnext.storefront.product_card.compare_aria'|trans({'%product%': product.name}) }}">+ {{ 'cardnext.storefront.product_card.compare'|trans }}</button>
         {% endif %}
     </div>
 </article>

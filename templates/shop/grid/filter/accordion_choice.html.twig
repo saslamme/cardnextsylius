@@ -11,6 +11,6 @@
         <div class="cn-accordion__options">
             {% for choice in choices_form %}<div class="{{ loop.index > 5 ? 'is-extra' : '' }}">{{ form_widget(choice) }}</div>{% endfor %}
         </div>
-        {% if option_count > 5 %}<label class="cn-accordion__more-label" for="{{ toggle_id }}"><span class="more">Mehr anzeigen ({{ option_count - 5 }})</span><span class="less">Weniger anzeigen</span></label>{% endif %}
+        {% if option_count > 5 %}<label class="cn-accordion__more-label" for="{{ toggle_id }}"><span class="more">{{ 'cardnext.storefront.catalog.show_more'|trans({'%count%': option_count - 5}) }}</span><span class="less">{{ 'cardnext.storefront.catalog.show_less'|trans }}</span></label>{% endif %}
     </div>
 </details>

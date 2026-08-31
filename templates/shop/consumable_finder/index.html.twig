@@ -11,7 +11,7 @@
 {% set manufacturers = {} %}
 {% for item in devices %}{% set key = item.manufacturer.code %}{% set manufacturers = manufacturers|merge({(key): {name: item.manufacturer.name, devices: (manufacturers[key].devices|default([]))|merge([item])}}) %}{% endfor %}
 <main class="cn-page cn-finder" data-consumable-finder>
-    <nav class="cn-breadcrumbs" aria-label="Breadcrumb"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage') }}">Startseite</a><span class="cn-breadcrumbs__sep">/</span><span>Verbrauchsmaterial-Finder</span></div></nav>
+    <nav class="cn-breadcrumbs" aria-label="Breadcrumb"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep">/</span><span>Verbrauchsmaterial-Finder</span></div></nav>
     <section class="cn-section"><div class="cn-container">
         <header class="cn-finder__header"><span class="cn-kicker">Verbrauchsmaterial &amp; Zubehör</span><h1 class="cn-title cn-title--section">Das passende Material für Ihr Gerät</h1><p>Wählen Sie Hersteller und Modell aus. Wir zeigen Ihnen kompatible Farbbänder, Reinigungsprodukte und Zubehör.</p></header>
         <form class="cn-finder__form" method="get" action="{{ path('cardnext_shop_consumable_finder', {_locale: app.request.locale}) }}">

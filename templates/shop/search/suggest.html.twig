@@ -35,7 +35,7 @@
                 <span class="cn-search-suggest__product-bottom">
                     <span class="cn-search-suggest__availability {{ available ? 'is-available' : 'is-unavailable' }}">
                         <span class="cn-search-suggest__availability-dot"></span>
-                        {{ available ? 'Lieferbar' : 'Auf Anfrage' }}
+                        {{ (available ? 'cardnext.storefront.product_card.available' : 'cardnext.storefront.product_card.on_request')|trans }}
                     </span>
 
                     {% if variant %}
