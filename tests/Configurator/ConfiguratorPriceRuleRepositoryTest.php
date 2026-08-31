@@ -43,13 +43,18 @@ final class ConfiguratorPriceRuleRepositoryTest extends TestCase
             public function loadMetadataForClass(string $className, ClassMetadataInterface $metadata): void
             {
                 if (\in_array($className, [\App\Entity\Channel\Channel::class, \App\Entity\Product\Product::class], true)) {
-                    \assert($metadata instanceof ClassMetadata);
+                    if (!$metadata instanceof ClassMetadata) {
+                        throw new \LogicException('Doctrine ORM metadata expected.');
+                    }
                     $metadata->setPrimaryTable(['name' => $className === \App\Entity\Channel\Channel::class ? 'sylius_channel' : 'sylius_product']);
                     $metadata->mapField(['fieldName' => 'id', 'type' => 'integer', 'id' => true]);
 
                     return;
                 }
 
+                if (!$metadata instanceof ClassMetadata) {
+                    throw new \LogicException('Doctrine ORM metadata expected.');
+                }
                 $this->attributeDriver->loadMetadataForClass($className, $metadata);
             }
 

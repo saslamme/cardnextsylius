@@ -30,8 +30,8 @@ final class CheckoutMetadataTest extends TestCase
 
         $configurator->setTaxCategory(null);
         self::assertNull($configurator->getTaxCategory());
-        self::assertFalse(method_exists($configurator, 'getProduct'));
-        self::assertFalse(method_exists($configurator, 'getVariant'));
+        self::assertFalse(method_exists(Configurator::class, 'getProduct'));
+        self::assertFalse(method_exists(Configurator::class, 'getVariant'));
     }
 
     public function testFactorySnapshotsServerSideCheckoutMetadataIncludingNullCategory(): void

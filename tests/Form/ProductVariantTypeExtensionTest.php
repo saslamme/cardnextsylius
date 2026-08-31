@@ -53,6 +53,7 @@ final class ProductVariantTypeExtensionTest extends TestCase
             'minimumOrderQuantity' => $variant->getMinimumOrderQuantity(),
             'orderIncrement' => $variant->getOrderIncrement(),
             'packQuantity' => $variant->getPackQuantity(),
+            default => self::fail('Unexpected quantity field.'),
         });
     }
 

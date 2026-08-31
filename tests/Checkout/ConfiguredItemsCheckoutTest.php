@@ -50,7 +50,13 @@ final class ConfiguredItemsCheckoutTest extends TestCase
     public function testCheckoutHooksExposeCompactAndDetailedConfiguredItems(): void
     {
         $root = \dirname(__DIR__, 2);
-        $hooks = Yaml::parseFile($root . '/config/packages/cardnext_twig_hooks.yaml')['sylius_twig_hooks']['hooks'];
+        $configuration = Yaml::parseFile($root . '/config/packages/cardnext_twig_hooks.yaml');
+        self::assertIsArray($configuration);
+        self::assertIsArray($configuration['sylius_twig_hooks']);
+        self::assertIsArray($configuration['sylius_twig_hooks']['hooks']);
+        $hooks = $configuration['sylius_twig_hooks']['hooks'];
+        self::assertIsArray($hooks['sylius_shop.checkout.common.sidebar.summary.items']);
+        self::assertIsArray($hooks['sylius_shop.shared.order.show.summary.table']);
 
         self::assertArrayHasKey('configured_items', $hooks['sylius_shop.checkout.common.sidebar.summary.items']);
         self::assertArrayHasKey('configured_items', $hooks['sylius_shop.shared.order.show.summary.table']);

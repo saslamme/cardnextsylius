@@ -20,7 +20,7 @@ final class StandaloneConfiguratorArchitectureTest extends TestCase
 
         self::assertSame('plastikkarten/plastikkarten-bedrucken', $translation->getPath());
         self::assertSame($translation, $configurator->getTranslation('de_DE'));
-        self::assertFalse(method_exists($configurator, 'getProduct'));
+        self::assertFalse(method_exists(Configurator::class, 'getProduct'));
     }
 
     public function testProductDomainHasNoConfiguratorOrProductKindApi(): void

@@ -110,7 +110,11 @@ final class QuoteRequestTypeTest extends TypeTestCase
         ];
     }
 
-    /** @param array<string, string> $overrides */
+    /**
+     * @param array<string, string> $overrides
+     *
+     * @return array<string, string>
+     */
     private function validSubmission(array $overrides = []): array
     {
         return array_merge([

@@ -36,6 +36,7 @@ final class PrinterAdvisorRecommendationServiceTest extends TestCase
         self::assertSame([], $this->service->recommend($answers, [$this->candidate('NO', 0, 500, 90000)]));
     }
 
+    /** @return iterable<string, array{string, string, string}> */
     public static function hardRequirementProvider(): iterable
     {
         yield 'duplex' => ['duplex', 'none', 'standard'];

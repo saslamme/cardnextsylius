@@ -19,8 +19,9 @@ final class OrderItemQuantityTest extends TestCase
         $violations = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator()->validate($item);
 
         self::assertCount(1, $violations);
-        self::assertSame('quantity', $violations[0]->getPropertyPath());
-        self::assertStringContainsString('10', (string) $violations[0]->getMessage());
+        $violation = $violations->get(0);
+        self::assertSame('quantity', $violation->getPropertyPath());
+        self::assertStringContainsString('10', (string) $violation->getMessage());
     }
 
     public function testItRejectsAQuantityOutsideTheVariantIncrement(): void
@@ -30,7 +31,8 @@ final class OrderItemQuantityTest extends TestCase
         $violations = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator()->validate($item);
 
         self::assertCount(1, $violations);
-        self::assertStringContainsString('5', (string) $violations[0]->getMessage());
+        $violation = $violations->get(0);
+        self::assertStringContainsString('5', (string) $violation->getMessage());
     }
 
     public function testItAcceptsAValidVariantQuantity(): void
