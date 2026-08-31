@@ -1,0 +1,8 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% block content %}
+{% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'cardnext.account.maintenance_contracts'|trans }] } %}
+{% block account_content %}<section class="cn-account-panel"><div class="cn-account-table-wrap"><table class="cn-account-table"><thead><tr><th>{{ 'cardnext.maintenance_contract.printer'|trans }}</th><th>{{ 'cardnext.maintenance_contract.serial'|trans }}</th><th>{{ 'cardnext.maintenance_contract.reference'|trans }}</th><th>{{ 'cardnext.maintenance_contract.starts'|trans }}</th><th>{{ 'cardnext.maintenance_contract.ends'|trans }}</th><th>{{ 'cardnext.maintenance_contract.status.label'|trans }}</th></tr></thead><tbody>
+{% for contract in contracts %}{% set status = contract.statusAt(today).value %}<tr><td>{{ contract.printerModel ?? '–' }}</td><td><strong>{{ contract.serialNumber }}</strong></td><td>{{ contract.contractReference ?? '–' }}</td><td>{{ contract.startsAt|format_date }}</td><td>{{ contract.endsAt|format_date }}</td><td><span class="cn-account-status cn-account-status--{{ status }}">{{ ('cardnext.maintenance_contract.status.' ~ status)|trans }}</span></td></tr>
+{% else %}<tr><td colspan="6"><div class="cn-account-empty"><h2>{{ 'cardnext.maintenance_contract.empty.title'|trans }}</h2><p>{{ 'cardnext.maintenance_contract.empty.text'|trans }}</p></div></td></tr>{% endfor %}
+</tbody></table></div></section>{% endblock %}{% endembed %}
+{% endblock %}

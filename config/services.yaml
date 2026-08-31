@@ -8,6 +8,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     cardnext.quote_recipient: '%env(CARDNEXT_QUOTE_RECIPIENT)%'
+    cardnext.erp.maintenance_field_map: '%env(json:CARDNEXT_ERP_MAINTENANCE_FIELD_MAP)%'
     cardnext.quote_account_base_urls:
         CARDNEXT_DE: 'https://www.cardnext.de'
         CARDNEXT_AT: 'https://at.cardnext.de'
@@ -111,3 +112,17 @@ services:
             $addressFactory: '@sylius.factory.address'
             $channelRepository: '@sylius.repository.channel'
             $numberAssigner: '@sylius.number_assigner.order_number'
+
+    App\Integration\Erp\Maintenance\ErpMaintenanceContractProviderInterface: '@App\Integration\Erp\Maintenance\HttpErpMaintenanceContractProvider'
+
+    App\Integration\Erp\Maintenance\HttpErpMaintenanceContractProvider:
+        arguments:
+            $baseUri: '%env(CARDNEXT_ERP_BASE_URI)%'
+            $endpoint: '%env(CARDNEXT_ERP_MAINTENANCE_CONTRACTS_ENDPOINT)%'
+            $authHeader: '%env(CARDNEXT_ERP_AUTH_HEADER)%'
+            $authValue: '%env(CARDNEXT_ERP_AUTH_VALUE)%'
+            $fieldMap: '%cardnext.erp.maintenance_field_map%'
+
+    App\Command\CardnextSyncMaintenanceContractsCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'

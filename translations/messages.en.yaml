@@ -1,4 +1,24 @@
 cardnext:
+  account:
+    maintenance_contracts: Maintenance contracts
+  maintenance_contract:
+    printer: Card printer
+    serial: Serial number
+    reference: Contract number
+    starts: Start
+    ends: End
+    status:
+      label: Status
+      active: Active
+      upcoming: Upcoming
+      expired: Expired
+    empty:
+      title: No maintenance contracts
+      text: There are currently no maintenance contracts associated with your customer account.
+    admin:
+      menu: Maintenance contracts
+      source_notice: Contract data is synchronized from ERP. Only the internal note is maintained locally.
+      sync: Synchronize now
   order:
     configured_product: Configured product
     configured_items: Configured items
