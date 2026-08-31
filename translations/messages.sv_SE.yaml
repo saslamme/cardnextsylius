@@ -123,6 +123,56 @@ cardnext:
       terms: 'Allmänna villkor'
       back_to_top: 'Till toppen'
       language: 'Svenska'
+    common:
+      home: 'Startsida'
+    catalog:
+      overview_aria: 'Produktöversikt'
+      filter_aria: 'Filter för produkter'
+      filters: 'Filter'
+      reset: 'Återställ'
+      apply_filters: 'Använd filter'
+      manufacturer: 'Tillverkare'
+      show_more: 'Visa fler (%count%)'
+      show_less: 'Visa färre'
+      configure: 'Konfigurera'
+      categories: 'Kategorier'
+      subcategories_aria: 'Underkategorier för %category%'
+      all_category: 'Alla %category%'
+      advisor:
+        aria: 'Rådgivare för kortskrivare'
+        title: 'Vilken kortskrivare passar dina behov?'
+        text: 'Få en lämplig rekommendation på cirka 1 minut.'
+        start: 'Starta kortskrivarrådgivaren'
+      product_count: "{0} %count% produkter|{1} %count% produkt|]1,Inf] %count% produkter"
+      sort:
+        label: 'Sortera'
+        position: 'Position'
+        name_asc: 'Namn A–Ö'
+        name_desc: 'Namn Ö–A'
+        newest: 'Nyaste först'
+        price_asc: 'Pris stigande'
+        price_desc: 'Pris fallande'
+      per_page: '%count% per sida'
+      empty:
+        title: 'Inga produkter hittades.'
+        text: 'Ändra sökningen eller välj en annan produktkategori.'
+    product_card:
+      image_pending: 'Produktbild kommer snart'
+      available: 'Tillgänglig'
+      on_request: 'På begäran'
+      sku: 'Art.nr'
+      details: 'Detaljer'
+      compare: 'Jämför'
+      compare_aria: 'Lägg till %product% i jämförelsen'
+    advice:
+      kicker: 'Köpguide'
+      printer_title: 'Vilken kortskrivare är rätt?'
+      printer_text: 'Rätt utskriftsteknik beror främst på kortvolym, önskad kvalitet, utskriftssidor och kodningsalternativ. Direct-to-card-system är ofta ekonomiska; retransfer ger fördelar vid kantlös utskrift och högre bildkvalitet.'
+      printer_operation: 'För den dagliga driften är även rätt färgband, rengöringskit och kort avgörande. Cardnext säkerställer att skrivare och förbrukningsmaterial passar ihop.'
+      generic_title: 'Välj %category% efter användningsområdet.'
+      generic_text: 'Det är både produkten, kompatibiliteten med den befintliga miljön och den planerade användningen som är avgörande. Cardnext hjälper till med val, integration och tillbehör.'
+      contact: 'Begär rådgivning'
+      more: 'Fler produktområden'
   market:
     select: Välj land
   account:

@@ -1004,6 +1004,16 @@ final readonly class ProductAttributeProfileService
             return [];
         }
 
+        $attributes = $this->entityManager->getRepository(ProductAttribute::class)->findBy([
+            'code' => self::PROFILES[$profileCode],
+        ]);
+        $attributesByCode = [];
+        foreach ($attributes as $attribute) {
+            if ($attribute->getCode() !== null) {
+                $attributesByCode[$attribute->getCode()] = $attribute;
+            }
+        }
+
         $result = [];
         foreach (self::PROFILES[$profileCode] as $code) {
             // @phpstan-ignore nullCoalesce.offset
@@ -1026,8 +1036,10 @@ final readonly class ProductAttributeProfileService
                 $choices = $locale === 'de_DE' ? ['1' => 'Ja', '0' => 'Nein'] : ['1' => 'Yes', '0' => 'No'];
             }
 
+            $attribute = $attributesByCode[$code] ?? null;
+            $translatedName = $attribute?->getTranslation($locale)->getName();
             $result[$code] = [
-                'name' => $definition['name'],
+                'name' => is_string($translatedName) && $translatedName !== '' ? $translatedName : $definition['name'],
                 'type' => $definition['type'],
                 'position' => $definition['position'],
                 'choices' => $choices,

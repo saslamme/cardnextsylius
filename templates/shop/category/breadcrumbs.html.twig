@@ -1,5 +1,5 @@
 <div class="cn-breadcrumbs"><div class="cn-container cn-breadcrumbs__inner">
-<a href="{{ path('sylius_shop_homepage') }}">Startseite</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>
-{% if taxon.parent %}<a href="{{ path('sylius_shop_product_index', {'slug': taxon.parent.slug}) }}">{{ taxon.parent.name }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>{% endif %}
+<a href="{{ path('sylius_shop_homepage', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>
+{% if taxon.parent %}<a href="{{ path('sylius_shop_product_index', {'_locale': app.request.locale, 'slug': taxon.parent.slug}) }}">{{ taxon.parent.name }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>{% endif %}
 <span aria-current="page">{{ taxon.name }}</span>
 </div></div>

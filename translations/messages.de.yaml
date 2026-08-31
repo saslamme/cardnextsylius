@@ -123,6 +123,56 @@ cardnext:
       terms: 'AGB'
       back_to_top: 'Nach oben'
       language: 'Deutsch'
+    common:
+      home: 'Startseite'
+    catalog:
+      overview_aria: 'Produktübersicht'
+      filter_aria: 'Produktfilter'
+      filters: 'Filter'
+      reset: 'Zurücksetzen'
+      apply_filters: 'Filter anwenden'
+      manufacturer: 'Hersteller'
+      show_more: 'Mehr anzeigen (%count%)'
+      show_less: 'Weniger anzeigen'
+      configure: 'Konfigurieren'
+      categories: 'Kategorien'
+      subcategories_aria: 'Unterkategorien %category%'
+      all_category: 'Alle %category%'
+      advisor:
+        aria: 'Kartendrucker-Beratung'
+        title: 'Welcher Kartendrucker passt zu mir?'
+        text: 'In etwa 1 Minute zur passenden Empfehlung.'
+        start: 'Kartendrucker-Berater starten'
+      product_count: "{0} %count% Produkte|{1} %count% Produkt|]1,Inf] %count% Produkte"
+      sort:
+        label: 'Sortieren'
+        position: 'Position'
+        name_asc: 'Name A–Z'
+        name_desc: 'Name Z–A'
+        newest: 'Neueste zuerst'
+        price_asc: 'Preis aufsteigend'
+        price_desc: 'Preis absteigend'
+      per_page: '%count% pro Seite'
+      empty:
+        title: 'Keine Produkte gefunden.'
+        text: 'Ändern Sie die Suche oder wählen Sie eine andere Produktkategorie.'
+    product_card:
+      image_pending: 'Produktbild folgt'
+      available: 'Lieferbar'
+      on_request: 'Auf Anfrage'
+      sku: 'Art.-Nr.'
+      details: 'Details'
+      compare: 'Vergleichen'
+      compare_aria: '%product% zum Vergleich hinzufügen'
+    advice:
+      kicker: 'Kaufberatung'
+      printer_title: 'Welcher Kartendrucker ist der richtige?'
+      printer_text: 'Die passende Drucktechnologie hängt vor allem von Kartenmenge, gewünschter Druckqualität, Druckseiten und benötigten Kodieroptionen ab. Direct-to-Card-Systeme sind oft wirtschaftlich; für randlosen Druck und höhere Bildqualität bieten Retransfer-Systeme Vorteile.'
+      printer_operation: 'Für den laufenden Betrieb sind passende Farbbänder, Reinigungskits und Karten entscheidend. Cardnext stimmt Drucker und Verbrauchsmaterial zuverlässig aufeinander ab.'
+      generic_title: '%category% passend zur Anwendung auswählen.'
+      generic_text: 'Entscheidend sind das Produkt, seine Kompatibilität mit der vorhandenen Umgebung und der geplante Einsatz. Cardnext unterstützt bei Auswahl, Integration und Zubehör.'
+      contact: 'Beratung anfragen'
+      more: 'Weitere Produktbereiche'
   market:
     select: Land auswählen
   account:

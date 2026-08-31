@@ -15,6 +15,7 @@ use Sylius\Component\Grid\Builder\GridBuilderInterface;
 use Sylius\Component\Grid\Mutator\GridMutatorInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AutoconfigureTag('sylius.grid_mutator', [
     'grid' => 'sylius_shop_product',
@@ -29,6 +30,7 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
         private ProductFacetService $facetValues,
         private ChannelContextInterface $channelContext,
         private LoggerInterface $logger,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -72,7 +74,7 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
         if ($manufacturerChoices !== []) {
             $gridBuilder->addFilter(
                 Filter::create('manufacturer', 'cardnext_manufacturer')
-                    ->setLabel('Hersteller')
+                    ->setLabel($this->translator->trans('cardnext.storefront.catalog.manufacturer'))
                     ->setTemplate('shop/grid/filter/accordion_choice.html.twig')
                     ->addFormOption('choices', $manufacturerChoices)
                     ->addFormOption('expanded', true)

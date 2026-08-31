@@ -123,6 +123,56 @@ cardnext:
       terms: Algemene voorwaarden
       back_to_top: Naar boven
       language: Nederlands
+    common:
+      home: 'Home'
+    catalog:
+      overview_aria: 'Productoverzicht'
+      filter_aria: 'Productfilters'
+      filters: 'Filters'
+      reset: 'Resetten'
+      apply_filters: 'Filters toepassen'
+      manufacturer: 'Fabrikant'
+      show_more: 'Meer tonen (%count%)'
+      show_less: 'Minder tonen'
+      configure: 'Configureren'
+      categories: 'Categorieën'
+      subcategories_aria: 'Subcategorieën van %category%'
+      all_category: 'Alle %category%'
+      advisor:
+        aria: 'Adviseur voor kaartprinters'
+        title: 'Welke kaartprinter past bij uw behoeften?'
+        text: 'Ontvang binnen ongeveer 1 minuut een passende aanbeveling.'
+        start: 'Kaartprinteradviseur starten'
+      product_count: "{0} %count% producten|{1} %count% product|]1,Inf] %count% producten"
+      sort:
+        label: 'Sorteren'
+        position: 'Positie'
+        name_asc: 'Naam A–Z'
+        name_desc: 'Naam Z–A'
+        newest: 'Nieuwste eerst'
+        price_asc: 'Prijs oplopend'
+        price_desc: 'Prijs aflopend'
+      per_page: '%count% per pagina'
+      empty:
+        title: 'Geen producten gevonden.'
+        text: 'Pas uw zoekopdracht aan of kies een andere productcategorie.'
+    product_card:
+      image_pending: 'Productafbeelding volgt'
+      available: 'Beschikbaar'
+      on_request: 'Op aanvraag'
+      sku: 'Artikelnr.'
+      details: 'Details'
+      compare: 'Vergelijken'
+      compare_aria: '%product% toevoegen aan vergelijking'
+    advice:
+      kicker: 'Aankoopadvies'
+      printer_title: 'Welke kaartprinter is de juiste?'
+      printer_text: 'De juiste printtechnologie hangt vooral af van het kaartvolume, de gewenste kwaliteit, de te bedrukken zijden en coderingsopties. Direct-to-card-systemen zijn vaak voordelig; retransfer biedt voordelen voor randloos printen en een hogere beeldkwaliteit.'
+      printer_operation: 'Voor dagelijks gebruik zijn ook geschikte linten, reinigingssets en kaarten essentieel. Cardnext stemt printer en verbruiksmaterialen betrouwbaar op elkaar af.'
+      generic_title: 'Kies %category% passend bij de toepassing.'
+      generic_text: 'Niet alleen het product telt, maar ook de compatibiliteit met de bestaande omgeving en het beoogde gebruik. Cardnext helpt bij selectie, integratie en accessoires.'
+      contact: 'Advies aanvragen'
+      more: 'Meer productcategorieën'
   market:
     select: Selecteer land
   account:

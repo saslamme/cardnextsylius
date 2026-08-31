@@ -123,6 +123,56 @@ cardnext:
       terms: Condizioni generali
       back_to_top: Torna in alto
       language: Italiano
+    common:
+      home: 'Home'
+    catalog:
+      overview_aria: 'Panoramica prodotti'
+      filter_aria: 'Filtri prodotti'
+      filters: 'Filtri'
+      reset: 'Reimposta'
+      apply_filters: 'Applica filtri'
+      manufacturer: 'Produttore'
+      show_more: 'Mostra altro (%count%)'
+      show_less: 'Mostra meno'
+      configure: 'Configura'
+      categories: 'Categorie'
+      subcategories_aria: 'Sottocategorie di %category%'
+      all_category: 'Tutti in %category%'
+      advisor:
+        aria: 'Consulente per stampanti di carte'
+        title: 'Quale stampante di carte è adatta alle tue esigenze?'
+        text: 'Trova una raccomandazione adatta in circa 1 minuto.'
+        start: 'Avvia il consulente per stampanti'
+      product_count: "{0} %count% prodotti|{1} %count% prodotto|]1,Inf] %count% prodotti"
+      sort:
+        label: 'Ordina'
+        position: 'Posizione'
+        name_asc: 'Nome A–Z'
+        name_desc: 'Nome Z–A'
+        newest: 'Più recenti'
+        price_asc: 'Prezzo crescente'
+        price_desc: 'Prezzo decrescente'
+      per_page: '%count% per pagina'
+      empty:
+        title: 'Nessun prodotto trovato.'
+        text: 'Modifica la ricerca o seleziona un’altra categoria di prodotti.'
+    product_card:
+      image_pending: 'Immagine del prodotto in arrivo'
+      available: 'Disponibile'
+      on_request: 'Su richiesta'
+      sku: 'Cod. articolo'
+      details: 'Dettagli'
+      compare: 'Confronta'
+      compare_aria: 'Aggiungi %product% al confronto'
+    advice:
+      kicker: 'Guida all’acquisto'
+      printer_title: 'Qual è la stampante di carte giusta?'
+      printer_text: 'La tecnologia di stampa adatta dipende soprattutto dal volume, dalla qualità desiderata, dai lati da stampare e dalle opzioni di codifica. I sistemi direct-to-card sono spesso più convenienti; quelli a ritrasferimento offrono vantaggi per stampa senza bordi e qualità superiore.'
+      printer_operation: 'Per l’uso quotidiano sono essenziali anche nastri, kit di pulizia e carte adatti. Cardnext garantisce la compatibilità tra stampante e materiali di consumo.'
+      generic_title: 'Scegli %category% in base all’applicazione.'
+      generic_text: 'Contano il prodotto, la compatibilità con l’ambiente esistente e l’impiego previsto. Cardnext assiste nella scelta, nell’integrazione e negli accessori.'
+      contact: 'Richiedi consulenza'
+      more: 'Altre aree di prodotto'
   market:
     select: Seleziona il paese
   account:
