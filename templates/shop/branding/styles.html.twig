@@ -5,4 +5,4 @@
 {% endfor %}}
 </style>
 {% endif %}
-{% if branding.faviconPath %}<link rel="icon" href="{{ asset(branding.faviconPath) }}">{% endif %}
+{% if branding.faviconPath %}<link rel="icon" href="{{ asset(branding.faviconPath) }}"{% if branding.faviconPath ends with '.svg' %} type="image/svg+xml"{% endif %}>{% endif %}
