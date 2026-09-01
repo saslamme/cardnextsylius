@@ -20,6 +20,21 @@ class Channel extends BaseChannel
     #[ORM\Column(name: 'brand_name', length: 128, nullable: true)]
     private ?string $brandName = null;
 
+    #[ORM\Column(name: 'email_sender_name', length: 128, nullable: true)]
+    #[Assert\Length(max: 128)]
+    #[Assert\Regex(pattern: '/^[^\r\n]*$/D', message: 'Der Absendername darf keine Zeilenumbrüche enthalten.')]
+    private ?string $emailSenderName = null;
+
+    #[ORM\Column(name: 'email_sender_address', length: 255, nullable: true)]
+    #[Assert\Email]
+    #[Assert\Regex(pattern: '/^[^\r\n]*$/D', message: 'Die Absenderadresse darf keine Zeilenumbrüche enthalten.')]
+    private ?string $emailSenderAddress = null;
+
+    #[ORM\Column(name: 'email_reply_to_address', length: 255, nullable: true)]
+    #[Assert\Email]
+    #[Assert\Regex(pattern: '/^[^\r\n]*$/D', message: 'Die Antwortadresse darf keine Zeilenumbrüche enthalten.')]
+    private ?string $emailReplyToAddress = null;
+
     #[ORM\Column(name: 'logo_path', length: 255, nullable: true)]
     private ?string $logoPath = null;
 
@@ -86,6 +101,43 @@ class Channel extends BaseChannel
     public function setBrandName(?string $value): void
     {
         $this->brandName = $value ?: null;
+    }
+
+    public function getEmailSenderName(): ?string
+    {
+        return $this->emailSenderName;
+    }
+
+    public function setEmailSenderName(?string $value): void
+    {
+        $this->emailSenderName = self::trimmedOrNull($value);
+    }
+
+    public function getEmailSenderAddress(): ?string
+    {
+        return $this->emailSenderAddress;
+    }
+
+    public function setEmailSenderAddress(?string $value): void
+    {
+        $this->emailSenderAddress = self::trimmedOrNull($value);
+    }
+
+    public function getEmailReplyToAddress(): ?string
+    {
+        return $this->emailReplyToAddress;
+    }
+
+    public function setEmailReplyToAddress(?string $value): void
+    {
+        $this->emailReplyToAddress = self::trimmedOrNull($value);
+    }
+
+    private static function trimmedOrNull(?string $value): ?string
+    {
+        $value = $value === null ? null : trim($value);
+
+        return $value === '' ? null : $value;
     }
 
     public function getLogoPath(): ?string

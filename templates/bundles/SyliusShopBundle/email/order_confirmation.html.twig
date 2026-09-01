@@ -3,6 +3,7 @@
 {% block body %}
         {% import 'shared/order/_configured_item_snapshot.html.twig' as snapshot %}
         {% set is_de = localeCode starts with 'de' %}
+        {% set emailBranding = cardnext_channel_email_branding(channel) %}
         {% set order_url = sylius_bundle_loaded_checker('SyliusShopBundle')
             ? sylius_channel_url(
                 path('sylius_shop_order_show', {
@@ -26,10 +27,10 @@
                     {% if sylius_bundle_loaded_checker('SyliusShopBundle') %}
                         {% set homepage_url = sylius_channel_url(path('sylius_shop_homepage', {'_locale': localeCode}), channel) %}
                         <a href="{{ homepage_url|e('html_attr') }}" style="display:inline-block;text-decoration:none;">
-                            <span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#111111;">cardne</span><span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#f04b23;">X</span><span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#111111;">t</span>
+                            <img src="{{ emailBranding.logoUrl|e('html_attr') }}" alt="{{ emailBranding.brandName|e('html_attr') }}" width="190" style="display:block;width:190px;max-width:100%;height:auto;border:0;">
                         </a>
                     {% else %}
-                        <span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#111111;">cardne</span><span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#f04b23;">X</span><span style="font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:1;font-weight:800;letter-spacing:-1.4px;color:#111111;">t</span>
+                        <img src="{{ emailBranding.logoUrl|e('html_attr') }}" alt="{{ emailBranding.brandName|e('html_attr') }}" width="190" style="display:block;width:190px;max-width:100%;height:auto;border:0;">
                     {% endif %}
                 </div>
 
@@ -270,8 +271,8 @@
                 </div>
 
                 <div style="padding:22px 6px 0;color:#8a93a3;font-size:11px;line-height:1.65;text-align:center;">
-                    <div style="font-weight:700;color:#667085;">Cardnext</div>
-                    <div>cardnext.de · info@cardnext.de</div>
+                    <div style="font-weight:700;color:#667085;">{{ emailBranding.brandName }}</div>
+                    {% if channel.hostname %}<div>{{ channel.hostname }}{% if emailBranding.replyToAddress %} · {{ emailBranding.replyToAddress }}{% endif %}</div>{% endif %}
                     <div style="margin-top:4px;">
                         {{ is_de
                             ? 'Bei Fragen zu Ihrer Bestellung helfen wir Ihnen gerne weiter.'

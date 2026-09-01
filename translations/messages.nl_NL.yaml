@@ -519,8 +519,8 @@ quote_mail:
   accepted_internal: Offerte %number% v%version% is geaccepteerd.
   rejected_customer: Wij bevestigen de ontvangst van uw afwijzing van het aanbod.
   rejected_internal: Offerte %number% v%version% is afgewezen.
-  request_subject: Uw offerteaanvraag %number% bij Cardnext
-  offer_subject: Jouw offerte %number% van Cardnext
+  request_subject: Uw offerteaanvraag %number% bij %brand%
+  offer_subject: Jouw offerte %number% van %brand%
   accepted_subject: Bevestiging van uw aanvaarding van het aanbod
   rejected_subject: Bevestiging van de afwijzing van uw bod
   personal_offer: Jouw persoonlijke aanbod
@@ -530,4 +530,4 @@ quote_mail:
   request_greeting: Hallo %name%,
   request_reference: 'Uw referentie: %number%'
   request_body: Uw verzoek omvat %count%-posities. Wij controleren de prijzen, beschikbaarheid en uw gegevens en nemen dan contact met u op.
-  regards: Beste wensen – uw Cardnext-team
+  regards: Beste wensen – uw %brand%-team
