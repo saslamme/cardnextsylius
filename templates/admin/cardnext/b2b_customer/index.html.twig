@@ -189,6 +189,16 @@
                             </div>
 
                             <div class="col-12 col-md-6 col-xl-3">
+                                <label class="form-label">Verkaufskanal</label>
+                                <select class="form-select" name="sales_channel_code">
+                                    <option value="">Nicht zugeordnet</option>
+                                    {% for channel in sales_channels %}
+                                        <option value="{{ channel.code }}" {{ customer.salesChannel and customer.salesChannel.code == channel.code ? 'selected' : '' }}>{{ channel.name }} ({{ channel.code }}){% if not channel.enabled %} – deaktiviert{% endif %}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xl-3">
                                 <label class="form-label">Kundengruppe</label>
                                 <select class="form-select" name="customer_group_code">
                                     <option value="">Keine Kundengruppe</option>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Channel\Channel;
 use App\Entity\Customer\Customer;
 use App\Entity\Customer\CustomerB2BProfile;
 use App\Entity\Customer\CustomerGroup;
@@ -71,6 +72,7 @@ final class B2BCustomerAdminController extends AbstractController
             'page_title' => 'B2B-Kunden',
             'profiles' => $profiles,
             'customer_groups' => $entityManager->getRepository(CustomerGroup::class)->findBy([], ['name' => 'ASC']),
+            'sales_channels' => $entityManager->getRepository(Channel::class)->findBy([], ['enabled' => 'DESC', 'code' => 'ASC']),
             'query' => $query,
             'page' => $page,
             'pages' => max(1, (int) ceil($total / $limit)),
@@ -173,6 +175,18 @@ final class B2BCustomerAdminController extends AbstractController
             }
 
             $profile->getCustomer()->setGroup($group);
+        }
+
+        $channelCode = trim((string) $request->request->get('sales_channel_code'));
+        if ($channelCode === '') {
+            $profile->getCustomer()->setSalesChannel(null);
+        } else {
+            /** @var Channel|null $salesChannel */
+            $salesChannel = $entityManager->getRepository(Channel::class)->findOneBy(['code' => $channelCode]);
+            if (!$salesChannel instanceof Channel) {
+                throw new \InvalidArgumentException(sprintf('Verkaufskanal "%s" wurde nicht gefunden.', $channelCode));
+            }
+            $profile->getCustomer()->setSalesChannel($salesChannel);
         }
 
         $entityManager->flush();

@@ -1,0 +1,20 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+{% block title %}Kundenimport | {{ parent() }}{% endblock %}
+{% block body %}
+<div class="container-xl"><div class="page-header"><h1>Kundenimport</h1></div>
+{% for type, messages in app.flashes %}{% for message in messages %}<div class="alert alert-{{ type == 'error' ? 'danger' : type }}">{{ message }}</div>{% endfor %}{% endfor %}
+<div class="card mb-4"><div class="card-body">
+<form method="post" enctype="multipart/form-data" action="{{ path('cardnext_admin_customer_import_preview') }}">
+<input type="hidden" name="_token" value="{{ csrf_token('customer-import-preview') }}">
+<div class="mb-3"><label class="form-label">Datei</label><input class="form-control" type="file" name="customer_file" required accept=".txt,.csv,.dat,text/plain"></div>
+<div class="mb-3"><label class="form-label">Verkaufskanal</label><select class="form-select" name="channel" required><option value="">Bitte wählen</option>{% for channel in channels %}<option value="{{ channel.code }}">{{ channel.name }} – {{ channel.code }}{% if channel.hostname %} – {{ channel.hostname }}{% endif %}{% if not channel.enabled %} – deaktiviert{% endif %}</option>{% endfor %}</select></div>
+<div class="mb-3"><label class="form-label">Zeichensatz</label><select class="form-select" name="encoding"><option>ISO-8859-1</option><option>UTF-8</option><option>Windows-1252</option></select></div>
+<label class="form-check mb-3"><input class="form-check-input" type="checkbox" name="update_existing" value="1"><span class="form-check-label">Bestehende Kunden aktualisieren</span></label>
+<button class="btn btn-primary" type="submit">Testlauf starten</button></form></div></div>
+{% if preview %}<div class="card"><div class="card-header"><h2>Kundenimport – Testlauf</h2></div><div class="card-body">
+<p><strong>Verkaufskanal:</strong> {{ channel_code }}<br><strong>Zeichensatz:</strong> {{ encoding }}</p>
+<div class="row">{% for label, value in {'Datensätze gelesen':preview.rows,'Gültig':preview.valid,'Neue Kunden':preview.created,'Zu aktualisieren':preview.updated,'Übersprungen':preview.skipped,'Konflikte':preview.conflicts,'Fehlerhaft':preview.invalidEmail + preview.invalidHash + preview.unknownCountry + preview.encodingErrors + preview.otherErrors} %}<div class="col-md-3 mb-2"><strong>{{ label }}</strong><br>{{ value }}</div>{% endfor %}</div>
+<div class="table-responsive"><table class="table"><thead><tr><th>Kundennr.</th><th>Firma</th><th>Ansprechpartner</th><th>E-Mail</th><th>PLZ</th><th>Ort</th><th>Verkaufskanal</th><th>Status</th></tr></thead><tbody>{% for row in preview.preview %}<tr><td>{{ row.customerNumber }}</td><td>{{ row.company }}</td><td>{{ row.contact }}</td><td>{{ row.email }}</td><td>{{ row.postcode }}</td><td>{{ row.city }}</td><td>{{ channel_code }}</td><td>{{ row.status }}</td></tr>{% endfor %}</tbody></table></div>
+<form method="post" action="{{ path('cardnext_admin_customer_import_run', {token: import_token}) }}"><input type="hidden" name="_token" value="{{ csrf_token('customer-import-run-' ~ import_token) }}"><button class="btn btn-success" type="submit">Import jetzt durchführen</button></form>
+</div></div>{% endif %}</div>
+{% endblock %}

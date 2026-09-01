@@ -10,7 +10,11 @@ security:
             id: sylius.shop_user_provider.email_or_name_based
 
     password_hashers:
-        Sylius\Component\User\Model\UserInterface: argon2i
+        Sylius\Component\User\Model\UserInterface:
+            # Symfony 7.4 supports Argon2id as the modern Argon2 variant.
+            algorithm: argon2id
+            migrate_from:
+                - App\Security\Hasher\LegacyInteraktivShopPasswordHasher
 
     firewalls:
         admin:
