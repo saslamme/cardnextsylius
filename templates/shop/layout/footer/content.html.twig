@@ -1,5 +1,6 @@
 {% set currentMarket = cardnext_current_market() %}
 {% set branding = cardnext_channel_branding() %}
+{% set homepage = cardnext_homepage_content() %}
 {% set footerTaxons = [
     {'code': 'card_printers'}, {'code': 'rfid_readers'}, {'code': 'plastic_cards'},
     {'code': 'id_accessories'}, {'code': 'barcode_scanners'}
@@ -9,7 +10,7 @@
         <div class="cn-footer__grid">
             <div class="cn-footer__brand">
                 <a class="cn-footer__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ branding.brandName }}"><img src="{{ asset(branding.logoDarkPath) }}" width="180" height="35" alt="{{ branding.brandName }}"></a>
-                <p>{{ 'cardnext.storefront.footer.description'|trans }}</p>
+                <p>{{ homepage.footerText }}</p>
             </div>
             <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.products'|trans }}</div><ul class="cn-footer__links">
                 {% for item in footerTaxons %}{% set taxon = cardnext_taxon_by_code(item.code) %}{% if taxon %}<li><a href="{{ path('sylius_shop_product_index', {slug: taxon.slug, _locale: app.request.locale}) }}">{{ taxon.name }}</a></li>{% endif %}{% endfor %}
