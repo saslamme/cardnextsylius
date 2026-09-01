@@ -9,6 +9,7 @@ use App\Entity\Channel\Channel;
 use App\Entity\Content\ChannelHomepageContent;
 use App\Repository\Content\ChannelHomepageContentRepository;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
@@ -16,6 +17,28 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ChannelHomepageContentResolverTest extends TestCase
 {
+    #[DataProvider('brandFallbacks')]
+    public function testMetaTitleFallbackUsesChannelBrand(string $brand): void
+    {
+        $channel = new Channel();
+        $channel->setBrandName($brand);
+
+        $title = $this->resolver($channel, 'de_DE', [])->resolve()->metaTitle;
+
+        self::assertStringContainsString($brand, $title);
+        if ($brand !== 'Cardnext') {
+            self::assertStringNotContainsString('Cardnext', $title);
+        }
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function brandFallbacks(): iterable
+    {
+        yield 'Cardnext' => ['Cardnext'];
+        yield 'Identible' => ['Identible'];
+        yield 'Inplastor' => ['Inplastor'];
+    }
+
     public function testTranslationFallbackIsBrandAwareAndPartialOverridesWork(): void
     {
         $channel = new Channel();
@@ -28,6 +51,8 @@ final class ChannelHomepageContentResolverTest extends TestCase
         $resolved = $this->resolver($channel, 'de_DE', [$content])->resolve();
 
         self::assertSame('Eigener Hero', $resolved->heroTitle);
+        self::assertSame('Identible SEO', $resolved->metaTitle);
+        self::assertSame($resolved->heroText, $resolved->metaDescription);
         self::assertSame('fallback:cardnext.storefront.homepage.hero.text', $resolved->heroText);
         self::assertSame('Warum Identible', $resolved->whyKicker);
         self::assertSame('fallback:cardnext.storefront.footer.description', $resolved->footerText);
@@ -79,6 +104,22 @@ final class ChannelHomepageContentResolverTest extends TestCase
         $resolved = $this->resolver(new Channel(), 'de_DE', [])->resolve();
         self::assertSame('fallback:cardnext.storefront.homepage.hero.title', $resolved->heroTitle);
         self::assertSame('Warum Cardnext', $resolved->whyKicker);
+        self::assertSame('Cardnext SEO', $resolved->metaTitle);
+    }
+
+    public function testCustomSeoOverridesFallbacks(): void
+    {
+        $channel = new Channel();
+        $channel->setBrandName('Inplastor');
+        $content = $this->content($channel, 'de_AT', 'Hero');
+        $content->setHeroText('Markenspezifischer Hero-Text');
+        $content->setMetaTitle('Eigener Titel');
+        $content->setMetaDescription('Eigene Beschreibung');
+
+        $resolved = $this->resolver($channel, 'de_AT', [$content])->resolve();
+
+        self::assertSame('Eigener Titel', $resolved->metaTitle);
+        self::assertSame('Eigene Beschreibung', $resolved->metaDescription);
     }
 
     private function content(Channel $channel, string $locale, string $title): ChannelHomepageContent
@@ -116,7 +157,11 @@ final class ChannelHomepageContentResolverTest extends TestCase
             }
         };
         $translator = $this->createStub(TranslatorInterface::class);
-        $translator->method('trans')->willReturnCallback(static fn (string $id, array $parameters = []): string => $id === 'cardnext.storefront.homepage.why.kicker' ? 'Warum ' . ($parameters['%brand%'] ?? 'Cardnext') : 'fallback:' . $id);
+        $translator->method('trans')->willReturnCallback(static fn (string $id, array $parameters = []): string => match ($id) {
+            'cardnext.storefront.homepage.why.kicker' => 'Warum ' . ($parameters['%brand%'] ?? 'Cardnext'),
+            'cardnext.storefront.homepage.meta_title' => ($parameters['%brand%'] ?? 'Cardnext') . ' SEO',
+            default => 'fallback:' . $id,
+        });
 
         return new ChannelHomepageContentResolver($channelContext, $localeContext, $repository, $translator);
     }

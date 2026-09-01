@@ -1,7 +1,21 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 {% set branding = cardnext_channel_branding() %}
 {% set homepage = cardnext_homepage_content() %}
-{% block title %}{{ 'cardnext.storefront.homepage.meta_title'|trans }}{% endblock %}
+{% block title %}{{ homepage.metaTitle }}{% endblock %}
+{% block metatags %}
+    {{ parent() }}
+    <meta name="description" content="{{ homepage.metaDescription }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ homepage.metaTitle }}">
+    <meta property="og:description" content="{{ homepage.metaDescription }}">
+    <meta property="og:url" content="{{ cardnext_canonical_url() }}">
+    <meta property="og:site_name" content="{{ branding.brandName }}">
+    <meta property="og:image" content="{{ cardnext_channel_asset_url(homepage.heroImagePath) }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ homepage.metaTitle }}">
+    <meta name="twitter:description" content="{{ homepage.metaDescription }}">
+    <meta name="twitter:image" content="{{ cardnext_channel_asset_url(homepage.heroImagePath) }}">
+{% endblock %}
 {% block content %}
 <main id="main-content" class="cn-page">
 <section class="cn-hero" aria-labelledby="cn-hero-title">

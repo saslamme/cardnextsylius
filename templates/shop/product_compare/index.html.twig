@@ -1,6 +1,7 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% set branding = cardnext_channel_branding() %}
 
-{% block title %}Produktvergleich | Cardnext{% endblock %}
+{% block title %}Produktvergleich | {{ branding.brandName }}{% endblock %}
 {% block metatags %}{{ parent() }}<meta name="robots" content="noindex,follow">{% endblock %}
 
 {% block content %}

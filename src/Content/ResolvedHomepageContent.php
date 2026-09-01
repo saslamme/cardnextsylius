@@ -7,6 +7,8 @@ namespace App\Content;
 final readonly class ResolvedHomepageContent
 {
     public function __construct(
+        public string $metaTitle,
+        public string $metaDescription,
         public string $heroKicker,
         public string $heroTitle,
         public string $heroText,

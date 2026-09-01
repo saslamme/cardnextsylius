@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Twig;
 
 use App\International\MarketUrlResolver;
+use App\Seo\ChannelCanonicalUrlResolver;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 final class MarketExtension extends AbstractExtension
 {
-    public function __construct(private readonly MarketUrlResolver $resolver, private readonly RequestStack $requests)
+    public function __construct(private readonly MarketUrlResolver $resolver, private readonly ChannelCanonicalUrlResolver $canonicalResolver, private readonly RequestStack $requests)
     {
     }
 
@@ -21,6 +22,7 @@ final class MarketExtension extends AbstractExtension
             new TwigFunction('cardnext_current_market', $this->resolver->currentMarket(...)),
             new TwigFunction('cardnext_market_links', $this->links(...)),
             new TwigFunction('cardnext_canonical_url', $this->canonical(...)),
+            new TwigFunction('cardnext_channel_asset_url', $this->assetUrl(...)),
         ];
     }
 
@@ -36,6 +38,13 @@ final class MarketExtension extends AbstractExtension
     {
         $request = $this->requests->getCurrentRequest();
 
-        return $request === null ? '' : $this->resolver->canonical($request);
+        return $request === null ? '' : ($this->canonicalResolver->resolve($request) ?? '');
+    }
+
+    public function assetUrl(string $path): string
+    {
+        $request = $this->requests->getCurrentRequest();
+
+        return $request === null ? '' : ($this->canonicalResolver->absoluteAsset($request, $path) ?? '');
     }
 }

@@ -29,6 +29,16 @@ final class ChannelHomepageContentType extends AbstractType
     {
         $builder->add('channel', ChannelChoiceType::class, ['label' => 'Verkaufskanal', 'required' => true])
             ->add('localeCode', ChoiceType::class, ['label' => 'Sprache', 'choices' => $this->localeChoices(), 'choice_translation_domain' => false])
+            ->add('metaTitle', TextType::class, [
+                'label' => 'Meta-Titel', 'required' => false,
+                'help' => 'Optionaler Seitentitel für Suchmaschinen. Ohne Angabe wird ein markenbezogener Standardtitel verwendet. Empfehlung: etwa 60 Zeichen.',
+                'attr' => ['maxlength' => 255],
+            ])
+            ->add('metaDescription', TextareaType::class, [
+                'label' => 'Meta-Beschreibung', 'required' => false,
+                'help' => 'Optionaler Beschreibungstext für Suchmaschinen. Ohne Angabe wird der Hero-Text verwendet. Empfehlung: etwa 155–160 Zeichen.',
+                'attr' => ['maxlength' => 320, 'rows' => 4],
+            ])
         ;
         foreach (['hero', 'intro', 'why', 'cta'] as $prefix) {
             $builder->add($prefix . 'Kicker', TextType::class, ['label' => 'Kicker', 'required' => false])

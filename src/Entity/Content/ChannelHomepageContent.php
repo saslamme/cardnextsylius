@@ -30,6 +30,14 @@ class ChannelHomepageContent
     #[Assert\NotBlank(message: 'Bitte wählen Sie eine Sprache aus.')]
     private string $localeCode = '';
 
+    #[ORM\Column(name: 'meta_title', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $metaTitle = null;
+
+    #[ORM\Column(name: 'meta_description', length: 320, nullable: true)]
+    #[Assert\Length(max: 320)]
+    private ?string $metaDescription = null;
+
     #[ORM\Column(name: 'hero_kicker', length: 255, nullable: true)]
     private ?string $heroKicker = null;
 
@@ -124,6 +132,26 @@ class ChannelHomepageContent
     public function setLocaleCode(string $localeCode): void
     {
         $this->localeCode = $localeCode;
+    }
+
+    public function getMetaTitle(): ?string
+    {
+        return $this->metaTitle;
+    }
+
+    public function setMetaTitle(?string $metaTitle): void
+    {
+        $this->metaTitle = self::optional($metaTitle);
+    }
+
+    public function getMetaDescription(): ?string
+    {
+        return $this->metaDescription;
+    }
+
+    public function setMetaDescription(?string $metaDescription): void
+    {
+        $this->metaDescription = self::optional($metaDescription);
     }
 
     public function getCreatedAt(): \DateTimeImmutable
