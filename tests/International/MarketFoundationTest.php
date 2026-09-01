@@ -138,6 +138,49 @@ final class MarketFoundationTest extends TestCase
         self::assertSame('https://dk.cardnext.de/da_DK/' . $slugs['da_DK'], $resolver->switchUrl($request, $denmark));
     }
 
+    public function testSharedPublicRouteUsesExplicitTranslationQueryWhenProductCollectionIsPartial(): void
+    {
+        $slugs = [
+            'de_DE' => 'zebra-zc350-kartendrucker-usb-eth', 'de_AT' => 'zebra-zc350-kartendrucker-usb-eth',
+            'da_DK' => 'zebra-zc350-kortprinter-usb-eth', 'es_ES' => 'zebra-zc350-impresora-de-tarjetas-usb-eth',
+            'it_IT' => 'zebra-zc350-stampante-per-tessere-usb-eth', 'nl_NL' => 'zebra-zc350-kaartprinter-usb-eth',
+            'sv_SE' => 'zebra-zc350-kortskrivare-usb-eth',
+        ];
+        [$product, $channels] = $this->productAndChannels(['de_DE' => $slugs['de_DE']]);
+        $translations = [];
+        foreach ($slugs as $locale => $slug) {
+            $translation = new ProductTranslation();
+            $translation->setLocale($locale);
+            $translation->setSlug($slug);
+            $translations[] = $translation;
+        }
+        $translationRepository = $this->createMock(RepositoryInterface::class);
+        $translationRepository->expects(self::once())->method('findBy')->with([
+            'translatable' => $product,
+            'locale' => array_keys($slugs),
+        ])->willReturn($translations);
+        $request = Request::create('https://www.cardnext.de/de_DE/' . $slugs['de_DE']);
+        $request->attributes->add([
+            '_route' => 'sylius_shop_product_index',
+            '_route_params' => ['_locale' => 'de_DE', 'slug' => $slugs['de_DE']],
+            'cardnext_product' => $product,
+        ]);
+        $resolver = $this->resolver('CARDNEXT_DE', $channels, productTranslationRepository: $translationRepository);
+
+        $alternates = $this->alternateMap($resolver, $request);
+        self::assertCount(7, $alternates);
+        self::assertSame('https://dk.cardnext.de/da_DK/' . $slugs['da_DK'], $alternates['da-DK']);
+        self::assertSame('https://es.cardnext.de/es_ES/' . $slugs['es_ES'], $alternates['es-ES']);
+        self::assertSame('https://it.cardnext.de/it_IT/' . $slugs['it_IT'], $alternates['it-IT']);
+        self::assertSame('https://nl.cardnext.de/nl_NL/' . $slugs['nl_NL'], $alternates['nl-NL']);
+        self::assertSame('https://se.cardnext.de/sv_SE/' . $slugs['sv_SE'], $alternates['sv-SE']);
+        self::assertNotContains('https://dk.cardnext.de/da_DK/', $alternates);
+        $denmark = (new CardnextMarketRegistry())->get('CARDNEXT_DK');
+        self::assertNotNull($denmark);
+        self::assertSame('https://dk.cardnext.de/da_DK/' . $slugs['da_DK'], $resolver->switchUrl($request, $denmark));
+        self::assertSame('https://www.cardnext.de/de_DE/' . $slugs['de_DE'], $resolver->canonical($request));
+    }
+
     public function testDanishProductRouteProducesReciprocalSevenMarketCluster(): void
     {
         $slugs = [
@@ -202,7 +245,12 @@ final class MarketFoundationTest extends TestCase
      * @param list<ChannelInterface> $availableChannels
      * @param ProductRepositoryInterface<Product>|null $productRepository
      */
-    private function resolver(string $channelCode, array $availableChannels = [], ?ProductRepositoryInterface $productRepository = null): MarketUrlResolver
+    private function resolver(
+        string $channelCode,
+        array $availableChannels = [],
+        ?ProductRepositoryInterface $productRepository = null,
+        ?RepositoryInterface $productTranslationRepository = null,
+    ): MarketUrlResolver
     {
         $channel = $this->createMock(ChannelInterface::class);
         $channel->method('getCode')->willReturn($channelCode);
@@ -218,6 +266,12 @@ final class MarketFoundationTest extends TestCase
         $router->method('generate')->willReturnCallback(static function (string $route, array $parameters): string {
             return $route === 'sylius_shop_homepage' ? '/' . $parameters['_locale'] . '/' : '/' . $parameters['_locale'] . '/' . ($parameters['slug'] ?? '');
         });
+        $defaultTranslations = $this->createMock(RepositoryInterface::class);
+        $defaultTranslations->method('findBy')->willReturnCallback(static function (array $criteria): array {
+            $resource = $criteria['translatable'] ?? null;
+
+            return is_object($resource) && method_exists($resource, 'getTranslations') ? $resource->getTranslations()->toArray() : [];
+        });
 
         return new MarketUrlResolver(
             new CardnextMarketRegistry(),
@@ -226,6 +280,8 @@ final class MarketFoundationTest extends TestCase
             $router,
             $productRepository ?? $this->createMock(ProductRepositoryInterface::class),
             $this->createMock(TaxonRepositoryInterface::class),
+            $productTranslationRepository ?? $defaultTranslations,
+            $defaultTranslations,
         );
     }
 
