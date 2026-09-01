@@ -26,6 +26,16 @@ final class ChannelBrandingResolverTest extends TestCase
         self::assertSame([], $branding->cssVariables);
     }
 
+    public function testItProvidesCardnextFallbackForEmptyCustomBranding(): void
+    {
+        $channel = new Channel();
+        $channel->setBrandName('');
+        $context = $this->createStub(ChannelContextInterface::class);
+        $context->method('getChannel')->willReturn($channel);
+
+        self::assertSame('Cardnext', (new ChannelBrandingResolver($context))->resolve()->brandName);
+    }
+
     public function testItResolvesCustomBranding(): void
     {
         $channel = new Channel();

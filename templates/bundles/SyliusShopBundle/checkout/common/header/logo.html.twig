@@ -1,5 +1,6 @@
 <div class="col">
-    <a class="cn-commerce__checkout-brand" href="{{ path('sylius_shop_homepage') }}" aria-label="Cardnext Startseite">
-        <img src="{{ asset('cardnext/cardnext.svg') }}" width="190" height="38" alt="Cardnext">
+    {% set branding = cardnext_channel_branding() %}
+    <a class="cn-commerce__checkout-brand" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ 'cardnext.storefront.header.home'|trans({'%brand%': branding.brandName}) }}">
+        <img src="{{ asset(branding.logoPath) }}" width="190" height="38" alt="{{ branding.brandName }}">
     </a>
 </div>

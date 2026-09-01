@@ -1,5 +1,9 @@
 cardnext:
   storefront:
+    account:
+      brand_account: '%brand% Account'
+    contact:
+      request_to_brand: 'Uw aanvraag bij %brand%'
     homepage:
       meta_title: Cardnext – Kaartprinters, RFID & Auto-ID
       hero:
@@ -53,7 +57,7 @@ cardnext:
           text: RFID- en barcodetechnologie voor gegevensregistratie, traceerbaarheid en efficiënte materiaalstromen.
           image_alt: Barcodes registreren in een professioneel magazijn
       why:
-        kicker: Waarom Cardnext
+        kicker: 'Waarom %brand%'
         title: Technologie. Expertise. Betrouwbaarheid.
         text: Een gespecialiseerde partner voor professionele identificatie- en Auto-ID-technologie, met direct advies en een overzichtelijk productassortiment.
         items:
@@ -87,7 +91,7 @@ cardnext:
           title: Projectoplossingen
           text: Oplossingen op maat op aanvraag
     header:
-      home: Cardnext-homepage
+      home: '%brand%-homepage'
       search_label: Producten zoeken
       search_placeholder: Zoek producten, fabrikanten of artikelnummers
       search_submit: Zoeken
@@ -110,7 +114,7 @@ cardnext:
       products: Producten
       solutions: Oplossingen
       service: Service
-      company: Cardnext
+      company: '%brand%'
       id_creation: Passen maken
       access_control: Toegangscontrole
       time_tracking: Tijdregistratie
@@ -165,7 +169,7 @@ cardnext:
       compare: 'Vergelijken'
       compare_aria: '%product% toevoegen aan vergelijking'
     product_detail:
-      default_brand: 'Cardnext-assortiment'
+      default_brand: '%brand%-assortiment'
       product_code: 'Productcode'
       add_to_cart: 'In winkelwagen'
       add_to_compare: 'Toevoegen aan vergelijking'
@@ -212,9 +216,9 @@ cardnext:
       kicker: 'Aankoopadvies'
       printer_title: 'Welke kaartprinter is de juiste?'
       printer_text: 'De juiste printtechnologie hangt vooral af van het kaartvolume, de gewenste kwaliteit, de te bedrukken zijden en coderingsopties. Direct-to-card-systemen zijn vaak voordelig; retransfer biedt voordelen voor randloos printen en een hogere beeldkwaliteit.'
-      printer_operation: 'Voor dagelijks gebruik zijn ook geschikte linten, reinigingssets en kaarten essentieel. Cardnext stemt printer en verbruiksmaterialen betrouwbaar op elkaar af.'
+      printer_operation: 'Voor dagelijks gebruik zijn ook geschikte linten, reinigingssets en kaarten essentieel. %brand% stemt printer en verbruiksmaterialen betrouwbaar op elkaar af.'
       generic_title: 'Kies %category% passend bij de toepassing.'
-      generic_text: 'Niet alleen het product telt, maar ook de compatibiliteit met de bestaande omgeving en het beoogde gebruik. Cardnext helpt bij selectie, integratie en accessoires.'
+      generic_text: 'Niet alleen het product telt, maar ook de compatibiliteit met de bestaande omgeving en het beoogde gebruik. %brand% helpt bij selectie, integratie en accessoires.'
       contact: 'Advies aanvragen'
       more: 'Meer productcategorieën'
   market:

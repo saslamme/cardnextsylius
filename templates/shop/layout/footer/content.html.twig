@@ -20,7 +20,7 @@
             <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.service'|trans }}</div><ul class="cn-footer__links">
                 <li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.footer.advice'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#downloads">{{ 'cardnext.storefront.header.downloads'|trans }}</a></li><li><a href="{{ path('sylius_shop_cart_summary') }}">{{ 'cardnext.storefront.header.cart'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>
             </ul></div>
-            <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.company'|trans }}</div><ul class="cn-footer__links">
+            <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.company'|trans({'%brand%': branding.brandName}) }}</div><ul class="cn-footer__links">
                 <li><a href="{{ path('sylius_shop_homepage') }}#company">{{ 'cardnext.storefront.footer.about'|trans }}</a></li><li><a href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}">{{ 'cardnext.storefront.header.brands'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">{{ 'cardnext.storefront.header.account'|trans }}</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">{{ 'cardnext.storefront.header.login'|trans }}</a></li>{% endif %}
             </ul></div>
         </div>

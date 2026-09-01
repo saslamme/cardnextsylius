@@ -1,4 +1,5 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% set contactEmail = sylius.channel.contactEmail|default('info@cardnext.de', true) %}
 
 {% block content %}
 <main class="cn-page cn-advisor" id="main-content" data-printer-advisor>
@@ -64,7 +65,7 @@
             {% endfor %}
             </div>
         {% else %}
-            <div class="cn-panel cn-advisor__empty"><h3>Für diese Kombination empfehlen wir eine persönliche Beratung.</h3><p>Ihre technischen Anforderungen wurden nicht abgeschwächt. Gemeinsam finden wir eine passende Lösung für Druckvolumen, Funktionen und Budget.</p><a class="cn-btn cn-btn--primary" href="mailto:info@cardnext.de?subject=Kartendrucker-Beratung" data-advisor-event="advisor_contact_clicked">Persönliche Beratung anfragen</a></div>
+            <div class="cn-panel cn-advisor__empty"><h3>Für diese Kombination empfehlen wir eine persönliche Beratung.</h3><p>Ihre technischen Anforderungen wurden nicht abgeschwächt. Gemeinsam finden wir eine passende Lösung für Druckvolumen, Funktionen und Budget.</p><a class="cn-btn cn-btn--primary" href="mailto:{{ contactEmail }}?subject=Kartendrucker-Beratung" data-advisor-event="advisor_contact_clicked">Persönliche Beratung anfragen</a></div>
         {% endif %}
     {% endif %}
     </section>

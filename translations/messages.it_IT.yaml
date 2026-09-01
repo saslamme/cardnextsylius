@@ -1,5 +1,9 @@
 cardnext:
   storefront:
+    account:
+      brand_account: '%brand% Account'
+    contact:
+      request_to_brand: 'La tua richiesta a %brand%'
     homepage:
       meta_title: Cardnext – Stampanti per tessere, RFID e Auto-ID
       hero:
@@ -53,7 +57,7 @@ cardnext:
           text: Tecnologia RFID e barcode per acquisizione dati, tracciabilità e movimentazione efficiente dei materiali.
           image_alt: Lettura di codici a barre in un magazzino professionale
       why:
-        kicker: Perché Cardnext
+        kicker: 'Perché %brand%'
         title: Tecnologia. Competenza. Affidabilità.
         text: Un partner specializzato in tecnologie professionali per l'identificazione e l'Auto-ID, con consulenza diretta e una gamma di prodotti ben strutturata.
         items:
@@ -87,7 +91,7 @@ cardnext:
           title: Soluzioni per progetti
           text: Soluzioni personalizzate su richiesta
     header:
-      home: Homepage Cardnext
+      home: 'Homepage %brand%'
       search_label: Cerca prodotti
       search_placeholder: Cerca prodotti, produttori o codici articolo
       search_submit: Avvia la ricerca
@@ -110,7 +114,7 @@ cardnext:
       products: Prodotti
       solutions: Soluzioni
       service: Servizio
-      company: Cardnext
+      company: '%brand%'
       id_creation: Creazione di badge
       access_control: Controllo accessi
       time_tracking: Rilevazione presenze
@@ -165,7 +169,7 @@ cardnext:
       compare: 'Confronta'
       compare_aria: 'Aggiungi %product% al confronto'
     product_detail:
-      default_brand: 'Gamma Cardnext'
+      default_brand: 'Gamma %brand%'
       product_code: 'Codice prodotto'
       add_to_cart: 'Aggiungi al carrello'
       add_to_compare: 'Aggiungi al confronto'
@@ -212,9 +216,9 @@ cardnext:
       kicker: 'Guida all’acquisto'
       printer_title: 'Qual è la stampante di carte giusta?'
       printer_text: 'La tecnologia di stampa adatta dipende soprattutto dal volume, dalla qualità desiderata, dai lati da stampare e dalle opzioni di codifica. I sistemi direct-to-card sono spesso più convenienti; quelli a ritrasferimento offrono vantaggi per stampa senza bordi e qualità superiore.'
-      printer_operation: 'Per l’uso quotidiano sono essenziali anche nastri, kit di pulizia e carte adatti. Cardnext garantisce la compatibilità tra stampante e materiali di consumo.'
+      printer_operation: 'Per l’uso quotidiano sono essenziali anche nastri, kit di pulizia e carte adatti. %brand% garantisce la compatibilità tra stampante e materiali di consumo.'
       generic_title: 'Scegli %category% in base all’applicazione.'
-      generic_text: 'Contano il prodotto, la compatibilità con l’ambiente esistente e l’impiego previsto. Cardnext assiste nella scelta, nell’integrazione e negli accessori.'
+      generic_text: 'Contano il prodotto, la compatibilità con l’ambiente esistente e l’impiego previsto. %brand% assiste nella scelta, nell’integrazione e negli accessori.'
       contact: 'Richiedi consulenza'
       more: 'Altre aree di prodotto'
   market:
