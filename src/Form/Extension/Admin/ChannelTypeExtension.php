@@ -34,7 +34,11 @@ final class ChannelTypeExtension extends AbstractTypeExtension
             ->add('primarySoftColor', TextType::class, $this->color('Primärfarbe hell'))
             ->add('inkColor', TextType::class, $this->color('Dunkelfarbe'))
             ->add('textColor', TextType::class, $this->color('Textfarbe'))
-            ->add('footerColor', TextType::class, $this->color('Footerfarbe'));
+            ->add('footerColor', TextType::class, $this->color('Footerfarbe'))
+            ->add('navigationBackgroundColor', TextType::class, $this->color('Navigation Hintergrund'))
+            ->add('navigationTextColor', TextType::class, $this->color('Navigation Textfarbe'))
+            ->add('navigationHoverColor', TextType::class, $this->color('Navigation Hoverfarbe'))
+            ->add('navigationBorderColor', TextType::class, $this->color('Navigation Rahmenfarbe'));
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
             $data = $event->getData();
             if ($data instanceof Channel && $event->getForm()->isValid()) {
