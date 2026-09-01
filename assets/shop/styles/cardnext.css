@@ -13,9 +13,9 @@
     --cn-subtle: #8b9499;
     --cn-border: #dce1e4;
     --cn-border-strong: #aeb6bb;
-    --cn-nav-bg: rgba(255,255,255,.98);
-    --cn-nav-text: var(--cn-ink);
-    --cn-nav-hover: var(--cn-primary-hover);
+    --cn-nav-bg: #020239;
+    --cn-nav-text: #ffffff;
+    --cn-nav-hover: #f5a38c;
     --cn-nav-border: var(--cn-border);
     --cn-surface: #ffffff;
     --cn-surface-soft: #f5f6f7;
@@ -1921,7 +1921,7 @@ body.cn-nav-open { overflow: hidden; }
     left: 50%;
     width: 100vw;
     transform: translateX(-50%);
-    background: #020239;
+    background: var(--cn-nav-bg);
 }
 
 .cardnext-header .cn-shop-header__nav > .cardnext-shop-navigation {
@@ -1956,7 +1956,7 @@ body.cn-nav-open { overflow: hidden; }
     display: inline-flex !important;
     align-items: center;
     min-height: 58px;
-    color: #fff !important;
+    color: var(--cn-nav-text) !important;
     font-size: .82rem;
     font-weight: 700;
     text-decoration: none !important;
@@ -1964,9 +1964,22 @@ body.cn-nav-open { overflow: hidden; }
 }
 
 .cardnext-header .cn-shop-header__nav .cn-nav > ul > li > a:hover,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li > a:focus,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li > a:focus-visible,
 .cardnext-header .cn-shop-header__nav .cn-nav > ul > li > button:hover,
-.cardnext-header .cn-shop-header__nav [data-cn-mega-trigger]:hover {
-    color: #f5a38c !important;
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li > button:focus,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li > button:focus-visible,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li.is-open > a,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li.is-open > button,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li.active > a,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li.active > button,
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li > a[aria-current="page"],
+.cardnext-header .cn-shop-header__nav .cn-nav > ul > li > button[aria-current="page"],
+.cardnext-header .cn-shop-header__nav [data-cn-mega-trigger]:hover,
+.cardnext-header .cn-shop-header__nav [data-cn-mega-trigger]:focus,
+.cardnext-header .cn-shop-header__nav [data-cn-mega-trigger]:focus-visible,
+.cardnext-header .cn-shop-header__nav [data-cn-mega-trigger][aria-expanded="true"] {
+    color: var(--cn-nav-hover) !important;
 }
 
 .cardnext-header .cn-shop-header__nav .cardnext-product-search {
