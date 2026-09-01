@@ -68,6 +68,56 @@ final class ProductCardComponentTest extends TestCase
         self::assertNull($component->channelPricing);
     }
 
+    public function testItMarksAnEnabledProductInTheCurrentChannelAsEligible(): void
+    {
+        $product = $this->product($this->variant('CURRENT', true, 1299));
+        $product->setEnabled(true);
+        $product->addChannel($this->channel);
+
+        self::assertTrue($this->mount($product)->channelEligible);
+    }
+
+    public function testItRejectsAProductAssignedOnlyToAnotherChannelWithoutLeakingItsPrice(): void
+    {
+        $otherChannel = new Channel();
+        $otherChannel->setCode('OTHER_MARKET');
+        $variant = new ProductVariant();
+        $variant->setCode('OTHER_PRICE');
+        $variant->setEnabled(true);
+        $pricing = new ChannelPricing();
+        $pricing->setChannelCode('OTHER_MARKET');
+        $pricing->setPrice(9900);
+        $variant->addChannelPricing($pricing);
+        $product = $this->product($variant);
+        $product->setEnabled(true);
+        $product->addChannel($otherChannel);
+
+        $component = $this->mount($product);
+
+        self::assertFalse($component->channelEligible);
+        self::assertNull($component->channelPricing);
+    }
+
+    public function testItRejectsADisabledProductInTheCurrentChannel(): void
+    {
+        $product = $this->product($this->variant('DISABLED_PRODUCT', true, 1299));
+        $product->setEnabled(false);
+        $product->addChannel($this->channel);
+
+        self::assertFalse($this->mount($product)->channelEligible);
+    }
+
+    public function testItNeverSelectsADisabledVariantEvenWhenItHasTheOnlyPrice(): void
+    {
+        $component = $this->mount($this->product(
+            $this->variant('A_DISABLED', false, 1299),
+            $this->variant('B_ENABLED', true),
+        ));
+
+        self::assertSame('B_ENABLED', $component->variant?->getCode());
+        self::assertNull($component->channelPricing);
+    }
+
     private function mount(Product $product): ProductCardComponent
     {
         $context = $this->createMock(ChannelContextInterface::class);

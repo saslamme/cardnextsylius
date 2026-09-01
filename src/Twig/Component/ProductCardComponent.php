@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Component;
 
+use App\Entity\Product\ProductCompatibility;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ChannelPricingInterface;
@@ -34,12 +35,19 @@ final class ProductCardComponent
     #[ExposeInTemplate(name: 'channel_pricing')]
     public ?ChannelPricingInterface $channelPricing = null;
 
+    /** Whether the product itself may be exposed in the current storefront. */
+    #[ExposeInTemplate]
+    public bool $channelEligible = false;
+
     #[ExposeInTemplate(name: 'comparison_group')]
     public ?string $comparisonGroup = null;
 
     public bool $showQuoteAction = true;
 
     public bool $showCompareAction = true;
+
+    /** Used only by the compatibility-card template override. */
+    public ?ProductCompatibility $relation = null;
 
     public function __construct(private readonly ChannelContextInterface $channelContext)
     {
@@ -50,6 +58,7 @@ final class ProductCardComponent
     {
         /** @var ChannelInterface $channel */
         $channel = $this->channelContext->getChannel();
+        $this->channelEligible = $this->product->isEnabled() && $this->product->hasChannel($channel);
         $taxon = $this->product->getMainTaxon();
         if ($taxon !== null) {
             // @phpstan-ignore nullsafe.neverNull
