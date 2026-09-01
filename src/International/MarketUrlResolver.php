@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\International;
 
+use App\Entity\Product\Product;
+use App\Entity\Taxonomy\Taxon;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
+use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,11 +28,17 @@ final readonly class MarketUrlResolver
         'cardnext_shop_legal_terms',
     ];
 
+    /**
+     * @param ProductRepositoryInterface<Product> $productRepository
+     * @param TaxonRepositoryInterface<Taxon> $taxonRepository
+     */
     public function __construct(
         private CardnextMarketRegistry $markets,
         private ChannelContextInterface $channelContext,
         private RepositoryInterface $channelRepository,
         private UrlGeneratorInterface $router,
+        private ProductRepositoryInterface $productRepository,
+        private TaxonRepositoryInterface $taxonRepository,
     ) {
     }
 
@@ -53,9 +63,9 @@ final readonly class MarketUrlResolver
     /** @return list<array{market: MarketDefinition, url: string}> */
     public function alternateLinks(Request $request): array
     {
-        $product = $request->attributes->get('cardnext_product');
-        $taxon = $request->attributes->get('cardnext_taxon');
-        $channels = ($product instanceof ProductInterface || $taxon instanceof TaxonInterface) ? $this->enabledChannels() : [];
+        $product = $this->currentProduct($request);
+        $taxon = $product instanceof ProductInterface ? null : $this->currentTaxon($request);
+        $channels = ($product instanceof ProductInterface || $taxon instanceof TaxonInterface) ? $this->enabledChannels($request) : [];
         $links = [];
 
         foreach ($this->markets->all() as $market) {
@@ -91,17 +101,18 @@ final readonly class MarketUrlResolver
     {
         $routeAttribute = $request->attributes->get('_route');
         $route = is_string($routeAttribute) ? $routeAttribute : '';
-        $resource = $request->attributes->get('cardnext_product') ?? $request->attributes->get('cardnext_taxon');
+        $resource = $this->currentProduct($request) ?? $this->currentTaxon($request);
         $parameters = ['_locale' => $target->localeCode];
 
-        if ($resource instanceof ProductInterface && $this->productIsAvailable($resource, $target)) {
+        $targetChannel = $this->enabledChannels($request)[$target->channelCode] ?? null;
+        if ($resource instanceof ProductInterface && $targetChannel instanceof ChannelInterface && $this->productIsAvailableInChannel($resource, $targetChannel)) {
             $slug = $this->translatedSlug($resource, $target->localeCode);
             if ($slug !== null) {
                 return $this->absolute($target, 'sylius_shop_product_show', $parameters + ['slug' => $slug]);
             }
         }
 
-        if ($resource instanceof TaxonInterface && $this->taxonIsAvailable($resource, $target)) {
+        if ($resource instanceof TaxonInterface && $targetChannel instanceof ChannelInterface && $this->taxonIsAvailableInChannel($resource, $targetChannel)) {
             $slug = $this->translatedSlug($resource, $target->localeCode);
             if ($slug !== null) {
                 return $this->absolute($target, 'sylius_shop_product_index', $parameters + ['slug' => $slug]);
@@ -129,7 +140,7 @@ final readonly class MarketUrlResolver
             return $request->getUri();
         }
 
-        $product = $request->attributes->get('cardnext_product');
+        $product = $this->currentProduct($request);
         if ($product instanceof ProductInterface) {
             $slug = $this->translatedSlug($product, $market->localeCode);
             if ($slug !== null) {
@@ -137,7 +148,7 @@ final readonly class MarketUrlResolver
             }
         }
 
-        $taxon = $request->attributes->get('cardnext_taxon');
+        $taxon = $this->currentTaxon($request);
         if ($taxon instanceof TaxonInterface) {
             $slug = $this->translatedSlug($taxon, $market->localeCode);
             if ($slug !== null) {
@@ -146,24 +157,6 @@ final readonly class MarketUrlResolver
         }
 
         return $market->baseUrl() . $request->getBaseUrl() . $request->getPathInfo();
-    }
-
-    private function productIsAvailable(ProductInterface $product, MarketDefinition $target): bool
-    {
-        if (!$product->isEnabled()) {
-            return false;
-        }
-
-        $channel = $this->channelRepository->findOneBy(['code' => $target->channelCode]);
-
-        return $channel instanceof ChannelInterface && $this->productIsAvailableInChannel($product, $channel);
-    }
-
-    private function taxonIsAvailable(TaxonInterface $taxon, MarketDefinition $target): bool
-    {
-        $channel = $this->channelRepository->findOneBy(['code' => $target->channelCode]);
-
-        return $channel instanceof ChannelInterface && $this->taxonIsAvailableInChannel($taxon, $channel);
     }
 
     private function productIsAvailableInChannel(ProductInterface $product, ChannelInterface $channel): bool
@@ -184,8 +177,20 @@ final readonly class MarketUrlResolver
     }
 
     /** @return array<string, ChannelInterface> */
-    private function enabledChannels(): array
+    private function enabledChannels(Request $request): array
     {
+        $cached = $request->attributes->get('_cardnext_market_channels');
+        if (is_array($cached)) {
+            $channels = [];
+            foreach ($cached as $code => $channel) {
+                if (is_string($code) && $channel instanceof ChannelInterface) {
+                    $channels[$code] = $channel;
+                }
+            }
+
+            return $channels;
+        }
+
         $codes = array_map(static fn (MarketDefinition $market): string => $market->channelCode, $this->markets->all());
         $channels = [];
         foreach ($this->channelRepository->findBy(['code' => $codes]) as $channel) {
@@ -194,7 +199,91 @@ final readonly class MarketUrlResolver
             }
         }
 
+        $request->attributes->set('_cardnext_market_channels', $channels);
+
         return $channels;
+    }
+
+    private function currentProduct(Request $request): ?ProductInterface
+    {
+        $product = $request->attributes->get('cardnext_product');
+        if ($product instanceof ProductInterface) {
+            return $product;
+        }
+
+        if ($request->attributes->get('_cardnext_market_product_resolved') === true) {
+            return null;
+        }
+        $request->attributes->set('_cardnext_market_product_resolved', true);
+
+        $route = $request->attributes->get('_route');
+        if ($route !== 'sylius_shop_product_show') {
+            return null;
+        }
+
+        $locale = $this->routeString($request, '_locale');
+        $slug = $this->routeString($request, 'slug');
+        if ($locale === null || $slug === null) {
+            return null;
+        }
+
+        $channel = $this->channelContext->getChannel();
+        if (!$channel instanceof ChannelInterface) {
+            return null;
+        }
+
+        $product = $this->productRepository->findOneByChannelAndSlug($channel, $locale, $slug);
+        if (!$product instanceof ProductInterface) {
+            return null;
+        }
+
+        $request->attributes->set('cardnext_product', $product);
+
+        return $product;
+    }
+
+    private function currentTaxon(Request $request): ?TaxonInterface
+    {
+        $taxon = $request->attributes->get('cardnext_taxon');
+        if ($taxon instanceof TaxonInterface) {
+            return $taxon;
+        }
+
+        if ($request->attributes->get('_cardnext_market_taxon_resolved') === true) {
+            return null;
+        }
+        $request->attributes->set('_cardnext_market_taxon_resolved', true);
+
+        if ($request->attributes->get('_route') !== 'sylius_shop_product_index') {
+            return null;
+        }
+
+        $locale = $this->routeString($request, '_locale');
+        $slug = $this->routeString($request, 'slug');
+        if ($locale === null || $slug === null) {
+            return null;
+        }
+
+        $channel = $this->channelContext->getChannel();
+        $taxon = $this->taxonRepository->findOneBySlug($slug, $locale);
+        if (!$channel instanceof ChannelInterface || !$taxon instanceof TaxonInterface || !$this->taxonIsAvailableInChannel($taxon, $channel)) {
+            return null;
+        }
+
+        $request->attributes->set('cardnext_taxon', $taxon);
+
+        return $taxon;
+    }
+
+    private function routeString(Request $request, string $name): ?string
+    {
+        $value = $request->attributes->get($name);
+        if (!is_string($value) || trim($value) === '') {
+            $parameters = $request->attributes->get('_route_params', []);
+            $value = is_array($parameters) ? ($parameters[$name] ?? null) : null;
+        }
+
+        return is_string($value) && trim($value) !== '' ? $value : null;
     }
 
     private function localeOnlySeoUrl(Request $request, MarketDefinition $market): ?string
