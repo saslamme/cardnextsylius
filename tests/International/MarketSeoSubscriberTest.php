@@ -33,6 +33,8 @@ final class MarketSeoSubscriberTest extends TestCase
             $this->createMock(UrlGeneratorInterface::class),
             $this->createMock(ProductRepositoryInterface::class),
             $this->createMock(TaxonRepositoryInterface::class),
+            $this->createMock(RepositoryInterface::class),
+            $this->createMock(RepositoryInterface::class),
         );
         $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
         $request = Request::create('http://unknown.example.test/');
@@ -64,6 +66,8 @@ final class MarketSeoSubscriberTest extends TestCase
             $router,
             $this->createMock(ProductRepositoryInterface::class),
             $this->createMock(TaxonRepositoryInterface::class),
+            $this->createMock(RepositoryInterface::class),
+            $this->createMock(RepositoryInterface::class),
         );
         $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
         $request = Request::create('https://es.cardnext.de/es_ES/');
@@ -93,6 +97,8 @@ final class MarketSeoSubscriberTest extends TestCase
         $resolver = new MarketUrlResolver(
             new CardnextMarketRegistry(), $channels, $this->createMock(RepositoryInterface::class), $router,
             $this->createMock(ProductRepositoryInterface::class), $this->createMock(TaxonRepositoryInterface::class),
+            $this->createMock(RepositoryInterface::class),
+            $this->createMock(RepositoryInterface::class),
         );
         $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
         $request = Request::create('https://www.cardnext.de/de_DE/');

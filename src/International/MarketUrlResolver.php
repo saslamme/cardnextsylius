@@ -39,6 +39,8 @@ final readonly class MarketUrlResolver
         private UrlGeneratorInterface $router,
         private ProductRepositoryInterface $productRepository,
         private TaxonRepositoryInterface $taxonRepository,
+        private RepositoryInterface $productTranslationRepository,
+        private RepositoryInterface $taxonTranslationRepository,
     ) {
     }
 
@@ -76,12 +78,12 @@ final readonly class MarketUrlResolver
             $url = null;
             $channel = $channels[$market->channelCode] ?? null;
             if ($product instanceof ProductInterface && $channel instanceof ChannelInterface && $this->productIsAvailableInChannel($product, $channel)) {
-                $slug = $this->translatedSlug($product, $market->localeCode);
+                $slug = $this->translatedSlugs($request, $product)[$market->localeCode] ?? null;
                 if ($slug !== null) {
                     $url = $this->absolute($market, 'sylius_shop_product_show', ['_locale' => $market->localeCode, 'slug' => $slug]);
                 }
             } elseif ($taxon instanceof TaxonInterface && $channel instanceof ChannelInterface && $this->taxonIsAvailableInChannel($taxon, $channel)) {
-                $slug = $this->translatedSlug($taxon, $market->localeCode);
+                $slug = $this->translatedSlugs($request, $taxon)[$market->localeCode] ?? null;
                 if ($slug !== null) {
                     $url = $this->absolute($market, 'sylius_shop_product_index', ['_locale' => $market->localeCode, 'slug' => $slug]);
                 }
@@ -106,14 +108,14 @@ final readonly class MarketUrlResolver
 
         $targetChannel = $this->enabledChannels($request)[$target->channelCode] ?? null;
         if ($resource instanceof ProductInterface && $targetChannel instanceof ChannelInterface && $this->productIsAvailableInChannel($resource, $targetChannel)) {
-            $slug = $this->translatedSlug($resource, $target->localeCode);
+            $slug = $this->translatedSlugs($request, $resource)[$target->localeCode] ?? null;
             if ($slug !== null) {
                 return $this->absolute($target, 'sylius_shop_product_show', $parameters + ['slug' => $slug]);
             }
         }
 
         if ($resource instanceof TaxonInterface && $targetChannel instanceof ChannelInterface && $this->taxonIsAvailableInChannel($resource, $targetChannel)) {
-            $slug = $this->translatedSlug($resource, $target->localeCode);
+            $slug = $this->translatedSlugs($request, $resource)[$target->localeCode] ?? null;
             if ($slug !== null) {
                 return $this->absolute($target, 'sylius_shop_product_index', $parameters + ['slug' => $slug]);
             }
@@ -142,7 +144,7 @@ final readonly class MarketUrlResolver
 
         $product = $this->currentProduct($request);
         if ($product instanceof ProductInterface) {
-            $slug = $this->translatedSlug($product, $market->localeCode);
+            $slug = $this->translatedSlugs($request, $product)[$market->localeCode] ?? null;
             if ($slug !== null) {
                 return $this->absolute($market, 'sylius_shop_product_show', ['_locale' => $market->localeCode, 'slug' => $slug]);
             }
@@ -150,7 +152,7 @@ final readonly class MarketUrlResolver
 
         $taxon = $this->currentTaxon($request);
         if ($taxon instanceof TaxonInterface) {
-            $slug = $this->translatedSlug($taxon, $market->localeCode);
+            $slug = $this->translatedSlugs($request, $taxon)[$market->localeCode] ?? null;
             if ($slug !== null) {
                 return $this->absolute($market, 'sylius_shop_product_index', ['_locale' => $market->localeCode, 'slug' => $slug]);
             }
@@ -301,20 +303,36 @@ final readonly class MarketUrlResolver
         }
     }
 
-    private function translatedSlug(object $resource, string $locale): ?string
+    /** @return array<string, string> */
+    private function translatedSlugs(Request $request, object $resource): array
     {
-        if (!method_exists($resource, 'getTranslations')) {
-            return null;
+        $cacheKey = $resource instanceof ProductInterface ? '_cardnext_product_translation_slugs' : '_cardnext_taxon_translation_slugs';
+        $cached = $request->attributes->get($cacheKey);
+        if (is_array($cached)) {
+            return $cached;
         }
-        foreach ($resource->getTranslations() as $translation) {
-            if (is_object($translation) && method_exists($translation, 'getLocale') && $translation->getLocale() === $locale && method_exists($translation, 'getSlug')) {
-                $slug = $translation->getSlug();
 
-                return is_string($slug) && trim($slug) !== '' ? $slug : null;
+        $repository = $resource instanceof ProductInterface ? $this->productTranslationRepository : $this->taxonTranslationRepository;
+        $locales = array_values(array_map(
+            static fn (MarketDefinition $market): string => $market->localeCode,
+            array_filter($this->markets->all(), static fn (MarketDefinition $market): bool => $market->enabled),
+        ));
+        $slugs = [];
+        // An explicit translation query is required here: Sylius' product slug
+        // lookup leaves getTranslations() initialized with only the current locale.
+        foreach ($repository->findBy(['translatable' => $resource, 'locale' => $locales]) as $translation) {
+            if (is_object($translation) && method_exists($translation, 'getLocale') && method_exists($translation, 'getSlug')) {
+                $locale = $translation->getLocale();
+                $slug = $translation->getSlug();
+                if (is_string($locale) && is_string($slug) && trim($slug) !== '') {
+                    $slugs[$locale] = $slug;
+                }
             }
         }
 
-        return null;
+        $request->attributes->set($cacheKey, $slugs);
+
+        return $slugs;
     }
 
     /** @param array<string, string> $parameters */
