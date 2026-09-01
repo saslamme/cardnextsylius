@@ -1,1 +1,11 @@
-<article class="cn-product-card cn-product-card--compact" {{ sylius_test_html_attribute('product', product.code) }}><a class="cn-product-card__media" href="{{ cardnext_product_url(product) }}">{{ component('sylius_shop:main_image', {product: product, class: 'cn-product-card__image'}) }}</a><div class="cn-product-card__body"><div class="cn-product-card__code">{{ product.code }}</div><h4 class="cn-product-card__title"><a href="{{ cardnext_product_url(product) }}">{{ product.name }}</a></h4>{% if variant  %}<div class="cn-product-card__price mt-auto mb-2">{{ component('sylius_shop:product:card:price', {variant: variant, template: '@SyliusShop/product/common/price.html.twig'}) }}</div>{% endif %}<a class="cn-link cn-link--arrow cn-link--small" href="{{ cardnext_product_url(product) }}">{{ 'cardnext.storefront.product_card.details'|trans }}</a></div></article>
+{% if channelEligible %}
+    <article class="cn-product-card cn-product-card--compact" {{ sylius_test_html_attribute('product', product.code) }}>
+        <a class="cn-product-card__media" href="{{ cardnext_product_url(product) }}">{{ component('sylius_shop:main_image', {product: product, class: 'cn-product-card__image'}) }}</a>
+        <div class="cn-product-card__body">
+            <div class="cn-product-card__code">{{ product.code }}</div>
+            <h4 class="cn-product-card__title"><a href="{{ cardnext_product_url(product) }}">{{ product.name }}</a></h4>
+            {% if variant and channel_pricing and channel_pricing.price is not null %}<div class="cn-product-card__price mt-auto mb-2">{{ component('sylius_shop:product:card:price', {variant: variant, template: '@SyliusShop/product/common/price.html.twig'}) }}</div>{% endif %}
+            <a class="cn-link cn-link--arrow cn-link--small" href="{{ cardnext_product_url(product) }}">{{ 'cardnext.storefront.product_card.details'|trans }}</a>
+        </div>
+    </article>
+{% endif %}
