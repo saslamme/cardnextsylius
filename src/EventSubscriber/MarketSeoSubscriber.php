@@ -41,7 +41,7 @@ final readonly class MarketSeoSubscriber implements EventSubscriberInterface
         }
 
         $tags = sprintf("\n<link rel=\"canonical\" href=\"%s\">", htmlspecialchars($this->resolver->canonical($request), \ENT_QUOTES));
-        foreach ($this->resolver->links($request) as $link) {
+        foreach ($this->resolver->alternateLinks($request) as $link) {
             $tags .= sprintf(
                 "\n<link rel=\"alternate\" hreflang=\"%s\" href=\"%s\">",
                 $link['market']->hreflang(),
