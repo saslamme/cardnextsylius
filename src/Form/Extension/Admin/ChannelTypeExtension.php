@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Form\Extension\Admin;
 
 use App\Branding\ChannelBrandingUploader;
@@ -14,10 +16,13 @@ use Symfony\Component\Form\FormEvents;
 
 final class ChannelTypeExtension extends AbstractTypeExtension
 {
-    public function __construct(private readonly ChannelBrandingUploader $uploader) {}
+    public function __construct(private readonly ChannelBrandingUploader $uploader)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('themeKey', TextType::class, ['required' => false, 'label' => 'Theme / Marke', 'help' => 'Sicherer technischer Bezeichner, z. B. identible. Leer = cardnext.'])
+        $builder->add('themeKey', TextType::class, ['required' => false, 'label' => 'Branding-Key', 'help' => 'Technischer Markenbezeichner, z. B. cardnext, identible oder inplastor. Unabhängig vom Sylius-Theme.'])
             ->add('brandName', TextType::class, ['required' => false, 'label' => 'Markenname'])
             ->add('logoFile', FileType::class, ['required' => false, 'label' => 'Logo', 'help' => 'PNG, WebP oder JPEG; maximal 2 MB.'])
             ->add('logoDarkFile', FileType::class, ['required' => false, 'label' => 'Logo dunkel / Footer-Logo'])
@@ -28,9 +33,22 @@ final class ChannelTypeExtension extends AbstractTypeExtension
             ->add('inkColor', TextType::class, $this->color('Dunkelfarbe'))
             ->add('textColor', TextType::class, $this->color('Textfarbe'))
             ->add('footerColor', TextType::class, $this->color('Footerfarbe'));
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void { $data = $event->getData(); if ($data instanceof Channel && $event->getForm()->isValid()) $this->uploader->upload($data); });
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $data = $event->getData();
+            if ($data instanceof Channel && $event->getForm()->isValid()) {
+                $this->uploader->upload($data);
+            }
+        });
     }
+
     /** @return array<string, mixed> */
-    private function color(string $label): array { return ['required' => false, 'label' => $label, 'help' => 'Optionales Hex-Format (#RGB oder #RRGGBB); leer verwendet den Cardnext-Standard.', 'attr' => ['placeholder' => '#123456', 'pattern' => '^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$']]; }
-    public static function getExtendedTypes(): iterable { return [ChannelType::class]; }
+    private function color(string $label): array
+    {
+        return ['required' => false, 'label' => $label, 'help' => 'Optionales Hex-Format (#RGB oder #RRGGBB); leer verwendet den Cardnext-Standard.', 'attr' => ['placeholder' => '#123456', 'pattern' => '^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$']];
+    }
+
+    public static function getExtendedTypes(): iterable
+    {
+        return [ChannelType::class];
+    }
 }

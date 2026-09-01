@@ -1,0 +1,69 @@
+{% set form = hookable_metadata.context.form %}
+{% set channel = hookable_metadata.context.resource %}
+
+<div class="g-col-12 card mb-3" data-testid="channel-branding-section">
+    <div class="card-header">
+        <div class="card-title">Branding</div>
+    </div>
+
+    <div class="card-body">
+        <div class="mb-4">
+            <h3 class="h5 mb-3">Marke</h3>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.themeKey) }}
+                </div>
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.brandName) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="border-top pt-4 mb-4">
+            <h3 class="h5 mb-3">Logos</h3>
+            <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                    {% if channel.logoPath %}
+                        <div class="mb-3">
+                            <div class="form-label">Aktuelles Logo</div>
+                            <img src="{{ asset(channel.logoPath) }}" alt="Aktuelles Logo" class="img-thumbnail d-block" style="max-width: 240px; max-height: 100px; object-fit: contain;">
+                        </div>
+                    {% endif %}
+                    {{ form_row(form.logoFile) }}
+                </div>
+                <div class="col-12 col-lg-6">
+                    {% if channel.logoDarkPath %}
+                        <div class="mb-3">
+                            <div class="form-label">Aktuelles Footer-Logo</div>
+                            <div class="bg-dark rounded p-2 d-inline-block">
+                                <img src="{{ asset(channel.logoDarkPath) }}" alt="Aktuelles Footer-Logo" class="d-block" style="max-width: 240px; max-height: 100px; object-fit: contain;">
+                            </div>
+                        </div>
+                    {% endif %}
+                    {{ form_row(form.logoDarkFile) }}
+                </div>
+                <div class="col-12 col-lg-6">
+                    {% if channel.faviconPath %}
+                        <div class="mb-3">
+                            <div class="form-label">Aktuelles Favicon</div>
+                            <img src="{{ asset(channel.faviconPath) }}" alt="Aktuelles Favicon" class="img-thumbnail d-block" style="width: 48px; height: 48px; object-fit: contain;">
+                        </div>
+                    {% endif %}
+                    {{ form_row(form.faviconFile) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="border-top pt-4">
+            <h3 class="h5 mb-3">Farben</h3>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">{{ form_row(form.primaryColor) }}</div>
+                <div class="col-12 col-md-6">{{ form_row(form.primaryHoverColor) }}</div>
+                <div class="col-12 col-md-6">{{ form_row(form.primarySoftColor) }}</div>
+                <div class="col-12 col-md-6">{{ form_row(form.inkColor) }}</div>
+                <div class="col-12 col-md-6">{{ form_row(form.textColor) }}</div>
+                <div class="col-12 col-md-6">{{ form_row(form.footerColor) }}</div>
+            </div>
+        </div>
+    </div>
+</div>

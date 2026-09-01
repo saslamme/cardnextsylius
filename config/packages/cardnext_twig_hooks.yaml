@@ -66,3 +66,13 @@ sylius_twig_hooks:
             configured_items_total:
                 template: 'admin/order/show/configured_items_total.html.twig'
                 priority: 250
+
+        'sylius_admin.channel.create.content.form.sections':
+            branding:
+                template: 'admin/channel/form/sections/branding.html.twig'
+                priority: -100
+
+        'sylius_admin.channel.update.content.form.sections':
+            branding:
+                template: 'admin/channel/form/sections/branding.html.twig'
+                priority: -100
