@@ -1,6 +1,7 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% set branding = cardnext_channel_branding() %}
 
-{% block title %}Verbrauchsmaterial-Finder für Kartendrucker | Cardnext{% endblock %}
+{% block title %}Verbrauchsmaterial-Finder für Kartendrucker | {{ branding.brandName }}{% endblock %}
 {% block metatags %}
     {{ parent() }}
     <meta name="description" content="Finden Sie passende Farbbänder, Reinigungsprodukte und Zubehör für Ihren Kartendrucker. Hersteller und Modell auswählen und kompatible Produkte anzeigen.">

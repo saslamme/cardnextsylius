@@ -5,7 +5,7 @@ cardnext:
     contact:
       request_to_brand: 'Tu consulta a %brand%'
     homepage:
-      meta_title: Cardnext – Impresoras de tarjetas, RFID y Auto-ID
+      meta_title: '%brand% – Impresoras de tarjetas, RFID y Auto-ID'
       hero:
         kicker: Tecnología profesional de identificación
         title: Tecnología para identidades seguras.

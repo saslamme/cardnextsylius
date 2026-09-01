@@ -1,0 +1,10 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% set prefixes = ['sylius_shop.product.show'] %}
+{% set branding = cardnext_channel_branding() %}
+
+{% block title %}{{ product.name }} | {{ branding.brandName }}{% endblock %}
+
+{% block content %}
+    {% hook 'sylius_shop.product.show' with { product, configuration } %}
+{% endblock %}

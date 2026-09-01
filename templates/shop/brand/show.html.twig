@@ -1,6 +1,7 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
-{% block title %}{{ manufacturer.seoTitle ?: manufacturer.name ~ ' Produkte & Lösungen | Cardnext' }}{% endblock %}
-{% block metatags %}{{ parent() }}<meta name="description" content="{{ manufacturer.seoDescription ?: 'Entdecken Sie ' ~ manufacturer.name ~ ' Produkte für professionelle Identifikation und Auto-ID bei Cardnext.' }}"><link rel="canonical" href="{{ absolute_url(path('cardnext_shop_brand_show', {_locale: app.request.locale, slug: manufacturer.slug})) }}">{% endblock %}
+{% set branding = cardnext_channel_branding() %}
+{% block title %}{{ manufacturer.seoTitle ?: manufacturer.name ~ ' Produkte & Lösungen | ' ~ branding.brandName }}{% endblock %}
+{% block metatags %}{{ parent() }}<meta name="description" content="{{ manufacturer.seoDescription ?: 'Entdecken Sie ' ~ manufacturer.name ~ ' Produkte für professionelle Identifikation und Auto-ID bei ' ~ branding.brandName ~ '.' }}"><link rel="canonical" href="{{ absolute_url(path('cardnext_shop_brand_show', {_locale: app.request.locale, slug: manufacturer.slug})) }}">{% endblock %}
 {% block content %}
 <main class="cn-brands cn-brand-detail">
  <div class="cn-breadcrumbs"><nav class="cn-container cn-breadcrumbs__inner" aria-label="Breadcrumb"><a href="{{ path('sylius_shop_homepage', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span><a href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}">Marken</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span><span aria-current="page">{{ manufacturer.name }}</span></nav></div>

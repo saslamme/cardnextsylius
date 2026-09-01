@@ -6,6 +6,8 @@
 {% set current_limit = app.request.query.get('limit', 9) %}
 {% set result_count = resources.data.nbResults %}
 {% set cardnext_taxon = app.request.attributes.get('cardnext_taxon') %}
+{% set branding = cardnext_channel_branding() %}
+{% block title %}{{ cardnext_taxon ? cardnext_taxon.name ~ ' | ' ~ branding.brandName : branding.brandName }}{% endblock %}
 {% block content %}
 <main class="cn-page" id="main-content">
     {{ component('sylius_shop:product:show:breadcrumbs', {template: 'shop/category/breadcrumbs.html.twig'}) }}

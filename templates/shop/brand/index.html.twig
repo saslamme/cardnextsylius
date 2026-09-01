@@ -1,6 +1,7 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
-{% block title %}Marken & Hersteller für Kartendruck, RFID & Auto-ID | Cardnext{% endblock %}
-{% block metatags %}{{ parent() }}<meta name="description" content="Entdecken Sie Hersteller für Kartendrucker, RFID, Barcode-Scanner und Auto-ID bei Cardnext. Alle Marken übersichtlich von A bis Z."><link rel="canonical" href="{{ absolute_url(path('cardnext_shop_brands', {_locale: app.request.locale})) }}">{% endblock %}
+{% set branding = cardnext_channel_branding() %}
+{% block title %}Marken & Hersteller für Kartendruck, RFID & Auto-ID | {{ branding.brandName }}{% endblock %}
+{% block metatags %}{{ parent() }}<meta name="description" content="Entdecken Sie Hersteller für Kartendrucker, RFID, Barcode-Scanner und Auto-ID bei {{ branding.brandName }}. Alle Marken übersichtlich von A bis Z."><link rel="canonical" href="{{ absolute_url(path('cardnext_shop_brands', {_locale: app.request.locale})) }}">{% endblock %}
 {% block content %}
 <main class="cn-brands" data-cn-brands>
  <div class="cn-breadcrumbs"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span><span aria-current="page">Marken</span></div></div>

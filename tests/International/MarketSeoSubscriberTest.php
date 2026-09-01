@@ -7,6 +7,7 @@ namespace App\Tests\International;
 use App\EventSubscriber\MarketSeoSubscriber;
 use App\International\CardnextMarketRegistry;
 use App\International\MarketUrlResolver;
+use App\Seo\ChannelCanonicalUrlResolver;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
@@ -22,10 +23,36 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class MarketSeoSubscriberTest extends TestCase
 {
+    public function testSeparateBrandGetsCanonicalWithoutCardnextHreflang(): void
+    {
+        $channel = $this->createMock(ChannelInterface::class);
+        $channel->method('getCode')->willReturn('IDENTIBLE_DE');
+        $channel->method('getHostname')->willReturn('identible.cardnext.de');
+        $channel->method('isEnabled')->willReturn(true);
+        $channels = $this->createStub(ChannelContextInterface::class);
+        $channels->method('getChannel')->willReturn($channel);
+        $resolver = new MarketUrlResolver(
+            new CardnextMarketRegistry(), $channels, $this->createMock(RepositoryInterface::class), $this->createMock(UrlGeneratorInterface::class),
+            $this->createMock(ProductRepositoryInterface::class), $this->createMock(TaxonRepositoryInterface::class),
+            $this->createMock(RepositoryInterface::class), $this->createMock(RepositoryInterface::class),
+        );
+        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry(), new ChannelCanonicalUrlResolver($channels));
+        $request = Request::create('https://temporary-alias.invalid/de_DE/');
+        $request->attributes->add(['_route' => 'sylius_shop_homepage', '_route_params' => ['_locale' => 'de_DE']]);
+        $response = new Response('<html><head></head><body></body></html>', headers: ['Content-Type' => 'text/html']);
+        $event = new ResponseEvent($this->createMock(KernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response);
+
+        $subscriber->addMarketLinks($event);
+
+        self::assertStringContainsString('href="https://identible.cardnext.de/de_DE/"', (string) $response->getContent());
+        self::assertStringNotContainsString('hreflang=', (string) $response->getContent());
+        self::assertSame(1, substr_count((string) $response->getContent(), 'rel="canonical"'));
+    }
+
     public function testUnknownTestHostDoesNotFallBackToAMarketChannel(): void
     {
         $channels = $this->createMock(ChannelContextInterface::class);
-        $channels->expects(self::never())->method('getChannel');
+        $channels->expects(self::once())->method('getChannel')->willThrowException(new \RuntimeException('No channel'));
         $resolver = new MarketUrlResolver(
             new CardnextMarketRegistry(),
             $channels,
@@ -36,7 +63,7 @@ final class MarketSeoSubscriberTest extends TestCase
             $this->createMock(RepositoryInterface::class),
             $this->createMock(RepositoryInterface::class),
         );
-        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
+        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry(), new ChannelCanonicalUrlResolver($channels));
         $request = Request::create('http://unknown.example.test/');
         $response = new Response('<html><head></head><body></body></html>', headers: ['Content-Type' => 'text/html']);
         $event = new ResponseEvent(
@@ -55,6 +82,8 @@ final class MarketSeoSubscriberTest extends TestCase
     {
         $channel = $this->createMock(ChannelInterface::class);
         $channel->method('getCode')->willReturn('CARDNEXT_ES');
+        $channel->method('getHostname')->willReturn('es.cardnext.de');
+        $channel->method('isEnabled')->willReturn(true);
         $channels = $this->createMock(ChannelContextInterface::class);
         $channels->method('getChannel')->willReturn($channel);
         $router = $this->createMock(UrlGeneratorInterface::class);
@@ -69,7 +98,7 @@ final class MarketSeoSubscriberTest extends TestCase
             $this->createMock(RepositoryInterface::class),
             $this->createMock(RepositoryInterface::class),
         );
-        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
+        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry(), new ChannelCanonicalUrlResolver($channels));
         $request = Request::create('https://es.cardnext.de/es_ES/');
         $request->attributes->set('_route', 'sylius_shop_homepage');
         $request->attributes->set('_route_params', ['_locale' => 'es_ES']);
@@ -90,6 +119,8 @@ final class MarketSeoSubscriberTest extends TestCase
     {
         $channel = $this->createMock(ChannelInterface::class);
         $channel->method('getCode')->willReturn('CARDNEXT_DE');
+        $channel->method('getHostname')->willReturn('www.cardnext.de');
+        $channel->method('isEnabled')->willReturn(true);
         $channels = $this->createMock(ChannelContextInterface::class);
         $channels->method('getChannel')->willReturn($channel);
         $router = $this->createMock(UrlGeneratorInterface::class);
@@ -100,7 +131,7 @@ final class MarketSeoSubscriberTest extends TestCase
             $this->createMock(RepositoryInterface::class),
             $this->createMock(RepositoryInterface::class),
         );
-        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
+        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry(), new ChannelCanonicalUrlResolver($channels));
         $request = Request::create('https://www.cardnext.de/de_DE/');
         $request->attributes->add(['_route' => 'sylius_shop_homepage', '_route_params' => ['_locale' => 'de_DE']]);
         $response = new Response(

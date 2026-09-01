@@ -32,10 +32,14 @@ final class ChannelHomepageContentResolver
         $fallback = fn (string $key, array $parameters = []): string => $this->translator->trans($key, $parameters, null, $locale);
         $value = static fn (?string $custom, string $default): string => $custom !== null && trim($custom) !== '' ? $custom : $default;
 
+        $heroText = $value($content?->getHeroText(), $fallback('cardnext.storefront.homepage.hero.text'));
+
         return $this->resolved[$key] = new ResolvedHomepageContent(
+            $value($content?->getMetaTitle(), $fallback('cardnext.storefront.homepage.meta_title', ['%brand%' => $brand])),
+            $value($content?->getMetaDescription(), $heroText),
             $value($content?->getHeroKicker(), $fallback('cardnext.storefront.homepage.hero.kicker')),
             $value($content?->getHeroTitle(), $fallback('cardnext.storefront.homepage.hero.title')),
-            $value($content?->getHeroText(), $fallback('cardnext.storefront.homepage.hero.text')),
+            $heroText,
             $value($content?->getIntroKicker(), $fallback('cardnext.storefront.homepage.service.kicker')),
             $value($content?->getIntroTitle(), $fallback('cardnext.storefront.homepage.service.title')),
             $value($content?->getIntroText(), $fallback('cardnext.storefront.homepage.service.text')),

@@ -5,7 +5,7 @@ cardnext:
     contact:
       request_to_brand: 'Din förfrågan till %brand%'
     homepage:
-      meta_title: 'Cardnext – kortskrivare, RFID och Auto-ID'
+      meta_title: '%brand% – kortskrivare, RFID och Auto-ID'
       hero:
         kicker: 'Professionell identifieringsteknik'
         title: 'Teknik för säkra identiteter.'
