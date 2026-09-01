@@ -49,8 +49,10 @@ final readonly class MarketSeoSubscriber implements EventSubscriberInterface
             );
         }
 
-        // Consolidate older page-level canonicals into the host-aware source.
+        // Consolidate older page-level SEO links into the host-aware source. This
+        // deliberately matches link elements only; selector anchors are untouched.
         $content = preg_replace('/<link\s+rel=["\']canonical["\'][^>]*>/i', '', $content) ?? $content;
+        $content = preg_replace('/<link\b(?=[^>]*\brel=["\']alternate["\'])(?=[^>]*\bhreflang=["\'][^"\']+["\'])[^>]*>/i', '', $content) ?? $content;
         $response->setContent(str_replace('</head>', $tags . "\n</head>", $content));
     }
 }

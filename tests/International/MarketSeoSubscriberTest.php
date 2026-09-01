@@ -10,7 +10,9 @@ use App\International\MarketUrlResolver;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -29,6 +31,8 @@ final class MarketSeoSubscriberTest extends TestCase
             $channels,
             $this->createMock(RepositoryInterface::class),
             $this->createMock(UrlGeneratorInterface::class),
+            $this->createMock(ProductRepositoryInterface::class),
+            $this->createMock(TaxonRepositoryInterface::class),
         );
         $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
         $request = Request::create('http://unknown.example.test/');
@@ -53,7 +57,14 @@ final class MarketSeoSubscriberTest extends TestCase
         $channels->method('getChannel')->willReturn($channel);
         $router = $this->createMock(UrlGeneratorInterface::class);
         $router->method('generate')->willReturnCallback(static fn (string $route, array $parameters): string => '/' . $parameters['_locale'] . '/');
-        $resolver = new MarketUrlResolver(new CardnextMarketRegistry(), $channels, $this->createMock(RepositoryInterface::class), $router);
+        $resolver = new MarketUrlResolver(
+            new CardnextMarketRegistry(),
+            $channels,
+            $this->createMock(RepositoryInterface::class),
+            $router,
+            $this->createMock(ProductRepositoryInterface::class),
+            $this->createMock(TaxonRepositoryInterface::class),
+        );
         $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
         $request = Request::create('https://es.cardnext.de/es_ES/');
         $request->attributes->set('_route', 'sylius_shop_homepage');
@@ -69,5 +80,35 @@ final class MarketSeoSubscriberTest extends TestCase
         self::assertStringContainsString('href="https://es.cardnext.de/es_ES/"', $content);
         self::assertStringContainsString('hreflang="sv-SE" href="https://se.cardnext.de/sv_SE/"', $content);
         self::assertStringNotContainsString('x-default', $content);
+    }
+
+    public function testExistingHeadHreflangIsReplacedWithoutRemovingSelectorAnchors(): void
+    {
+        $channel = $this->createMock(ChannelInterface::class);
+        $channel->method('getCode')->willReturn('CARDNEXT_DE');
+        $channels = $this->createMock(ChannelContextInterface::class);
+        $channels->method('getChannel')->willReturn($channel);
+        $router = $this->createMock(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturnCallback(static fn (string $route, array $parameters): string => '/' . $parameters['_locale'] . '/');
+        $resolver = new MarketUrlResolver(
+            new CardnextMarketRegistry(), $channels, $this->createMock(RepositoryInterface::class), $router,
+            $this->createMock(ProductRepositoryInterface::class), $this->createMock(TaxonRepositoryInterface::class),
+        );
+        $subscriber = new MarketSeoSubscriber($resolver, new CardnextMarketRegistry());
+        $request = Request::create('https://www.cardnext.de/de_DE/');
+        $request->attributes->add(['_route' => 'sylius_shop_homepage', '_route_params' => ['_locale' => 'de_DE']]);
+        $response = new Response(
+            '<html><head><link class="legacy" href="/old" hreflang="de-DE" rel="alternate"></head>' .
+            '<body><a rel="alternate" hreflang="da-DK" href="/selector">DK</a></body></html>',
+            headers: ['Content-Type' => 'text/html'],
+        );
+        $event = new ResponseEvent($this->createMock(KernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST, $response);
+
+        $subscriber->addMarketLinks($event);
+
+        $content = (string) $response->getContent();
+        self::assertStringNotContainsString('href="/old"', $content);
+        self::assertSame(7, substr_count($content, '<link rel="alternate"'));
+        self::assertStringContainsString('<a rel="alternate" hreflang="da-DK" href="/selector">', $content);
     }
 }
