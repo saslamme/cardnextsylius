@@ -164,6 +164,50 @@ cardnext:
       details: 'Detalles'
       compare: 'Comparar'
       compare_aria: 'Añadir %product% a la comparación'
+    product_detail:
+      default_brand: 'Gama Cardnext'
+      product_code: 'Código de producto'
+      add_to_cart: 'Añadir al carrito'
+      add_to_compare: 'Añadir a la comparación'
+      pricing:
+        your_price: 'Su precio'
+        tax_notice: 'neto · IVA legal no incluido'
+        tier_prices: 'Precios por volumen'
+        order_more_save: 'Pida más y ahorre'
+        from_quantity: 'desde %quantity% unidades'
+        saving_title: 'Ahorra %saving% por unidad (precio por volumen %price%)'
+      stock:
+        variant_availability: 'Disponibilidad de esta variante'
+        out_of_stock: 'Sin existencias'
+        ask_availability: 'Consulte la disponibilidad'
+      quantity:
+        label: 'Cantidad'
+        decrease: 'Reducir cantidad'
+        increase: 'Aumentar cantidad'
+        minimum: 'Cantidad mínima: %quantity%'
+        increment: 'Incremento de pedido: %quantity%'
+        pack: 'Unidad de embalaje: %quantity% unidades'
+      gallery:
+        image_pending_aria: 'Todavía no hay imagen del producto'
+        additional_images: 'Más imágenes del producto'
+        show_image: 'Mostrar imagen del producto %index%'
+        variant_notice: 'La imagen puede variar según la variante seleccionada.'
+      tabs:
+        label: 'Información del producto'
+        description: 'Descripción'
+        specifications: 'Datos técnicos'
+        downloads: 'Descargas'
+        compatibility: 'Compatibilidad'
+        accessories: 'Accesorios y recomendaciones'
+      documents:
+        types: { datasheet: 'Ficha técnica', manual: 'Manual', driver: 'Controlador / software', certificate: 'Certificado', brochure: 'Folleto', other: 'Documento' }
+      compatibility:
+        compatible_with: 'Compatible con'
+        consumables: 'Consumibles adecuados'
+        consumables_text: 'Cintas, productos de limpieza y accesorios para %product%.'
+        find_consumables: 'Buscar consumibles adecuados'
+        suitable_for_product: 'Adecuado para este producto'
+        types: { compatible_with: 'Compatible', consumable_for: 'Consumible', accessory_for: 'Accesorio', alternative_to: 'Alternativa', replacement_for: 'Producto de sustitución' }
     advice:
       kicker: 'Guía de compra'
       printer_title: '¿Qué impresora de tarjetas es la adecuada?'

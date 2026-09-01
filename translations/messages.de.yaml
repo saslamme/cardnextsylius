@@ -164,6 +164,61 @@ cardnext:
       details: 'Details'
       compare: 'Vergleichen'
       compare_aria: '%product% zum Vergleich hinzufügen'
+    product_detail:
+      default_brand: 'Cardnext Sortiment'
+      product_code: 'Produktcode'
+      add_to_cart: 'In den Warenkorb'
+      add_to_compare: 'Zum Vergleich hinzufügen'
+      pricing:
+        your_price: 'Ihr Preis'
+        tax_notice: 'netto · zzgl. gesetzlicher MwSt.'
+        tier_prices: 'Staffelpreise'
+        order_more_save: 'Mehr bestellen & sparen'
+        from_quantity: 'ab %quantity% Stück'
+        saving_title: 'Sie sparen %saving% pro Stück (Staffelpreis %price%)'
+      stock:
+        variant_availability: 'Verfügbarkeit für diese Variante'
+        out_of_stock: 'Nicht auf Lager'
+        ask_availability: 'Bitte Verfügbarkeit anfragen'
+      quantity:
+        label: 'Menge'
+        decrease: 'Menge verringern'
+        increase: 'Menge erhöhen'
+        minimum: 'Mindestmenge: %quantity%'
+        increment: 'Bestellschritt: %quantity%'
+        pack: 'Verpackungseinheit: %quantity% Stück'
+      gallery:
+        image_pending_aria: 'Noch kein Produktbild hinterlegt'
+        additional_images: 'Weitere Produktbilder'
+        show_image: 'Produktbild %index% anzeigen'
+        variant_notice: 'Abbildung kann je nach gewählter Variante abweichen.'
+      tabs:
+        label: 'Produktinformationen'
+        description: 'Beschreibung'
+        specifications: 'Technische Daten'
+        downloads: 'Downloads'
+        compatibility: 'Kompatibilität'
+        accessories: 'Zubehör & Empfehlungen'
+      documents:
+        types:
+          datasheet: 'Datenblatt'
+          manual: 'Handbuch'
+          driver: 'Treiber / Software'
+          certificate: 'Zertifikat'
+          brochure: 'Broschüre'
+          other: 'Dokument'
+      compatibility:
+        compatible_with: 'Kompatibel mit'
+        consumables: 'Passendes Verbrauchsmaterial'
+        consumables_text: 'Farbbänder, Reinigungsprodukte und Zubehör für %product%.'
+        find_consumables: 'Passendes Verbrauchsmaterial finden'
+        suitable_for_product: 'Passend zu diesem Produkt'
+        types:
+          compatible_with: 'Kompatibel'
+          consumable_for: 'Verbrauchsmaterial'
+          accessory_for: 'Zubehör'
+          alternative_to: 'Alternative'
+          replacement_for: 'Ersatzprodukt'
     advice:
       kicker: 'Kaufberatung'
       printer_title: 'Welcher Kartendrucker ist der richtige?'

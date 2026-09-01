@@ -164,6 +164,50 @@ cardnext:
       details: 'Details'
       compare: 'Vergelijken'
       compare_aria: '%product% toevoegen aan vergelijking'
+    product_detail:
+      default_brand: 'Cardnext-assortiment'
+      product_code: 'Productcode'
+      add_to_cart: 'In winkelwagen'
+      add_to_compare: 'Toevoegen aan vergelijking'
+      pricing:
+        your_price: 'Uw prijs'
+        tax_notice: 'netto · exclusief wettelijke btw'
+        tier_prices: 'Staffelprijzen'
+        order_more_save: 'Bestel meer en bespaar'
+        from_quantity: 'vanaf %quantity% stuks'
+        saving_title: 'U bespaart %saving% per stuk (staffelprijs %price%)'
+      stock:
+        variant_availability: 'Beschikbaarheid van deze variant'
+        out_of_stock: 'Niet op voorraad'
+        ask_availability: 'Vraag naar de beschikbaarheid'
+      quantity:
+        label: 'Aantal'
+        decrease: 'Aantal verlagen'
+        increase: 'Aantal verhogen'
+        minimum: 'Minimumaantal: %quantity%'
+        increment: 'Bestelstap: %quantity%'
+        pack: 'Verpakkingseenheid: %quantity% stuks'
+      gallery:
+        image_pending_aria: 'Er is nog geen productafbeelding beschikbaar'
+        additional_images: 'Meer productafbeeldingen'
+        show_image: 'Productafbeelding %index% tonen'
+        variant_notice: 'De afbeelding kan afwijken afhankelijk van de gekozen variant.'
+      tabs:
+        label: 'Productinformatie'
+        description: 'Beschrijving'
+        specifications: 'Technische gegevens'
+        downloads: 'Downloads'
+        compatibility: 'Compatibiliteit'
+        accessories: 'Accessoires en aanbevelingen'
+      documents:
+        types: { datasheet: 'Gegevensblad', manual: 'Handleiding', driver: 'Stuurprogramma / software', certificate: 'Certificaat', brochure: 'Brochure', other: 'Document' }
+      compatibility:
+        compatible_with: 'Compatibel met'
+        consumables: 'Geschikte verbruiksartikelen'
+        consumables_text: 'Linten, reinigingsproducten en accessoires voor %product%.'
+        find_consumables: 'Geschikte verbruiksartikelen zoeken'
+        suitable_for_product: 'Geschikt voor dit product'
+        types: { compatible_with: 'Compatibel', consumable_for: 'Verbruiksartikel', accessory_for: 'Accessoire', alternative_to: 'Alternatief', replacement_for: 'Vervangend product' }
     advice:
       kicker: 'Aankoopadvies'
       printer_title: 'Welke kaartprinter is de juiste?'

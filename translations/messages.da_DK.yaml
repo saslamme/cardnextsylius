@@ -164,6 +164,50 @@ cardnext:
       details: 'Detaljer'
       compare: 'Sammenlign'
       compare_aria: 'Føj %product% til sammenligningen'
+    product_detail:
+      default_brand: 'Cardnext-sortiment'
+      product_code: 'Produktkode'
+      add_to_cart: 'Læg i kurv'
+      add_to_compare: 'Føj til sammenligning'
+      pricing:
+        your_price: 'Din pris'
+        tax_notice: 'netto · ekskl. gældende moms'
+        tier_prices: 'Mængderabatter'
+        order_more_save: 'Bestil mere og spar'
+        from_quantity: 'fra %quantity% stk.'
+        saving_title: 'Du sparer %saving% pr. stk. (mængdepris %price%)'
+      stock:
+        variant_availability: 'Tilgængelighed for denne variant'
+        out_of_stock: 'Ikke på lager'
+        ask_availability: 'Kontakt os om tilgængelighed'
+      quantity:
+        label: 'Antal'
+        decrease: 'Reducer antal'
+        increase: 'Forøg antal'
+        minimum: 'Minimumsantal: %quantity%'
+        increment: 'Bestillingsinterval: %quantity%'
+        pack: 'Pakkeenhed: %quantity% stk.'
+      gallery:
+        image_pending_aria: 'Der er endnu ikke noget produktbillede'
+        additional_images: 'Flere produktbilleder'
+        show_image: 'Vis produktbillede %index%'
+        variant_notice: 'Billedet kan afvige afhængigt af den valgte variant.'
+      tabs:
+        label: 'Produktoplysninger'
+        description: 'Beskrivelse'
+        specifications: 'Tekniske data'
+        downloads: 'Downloads'
+        compatibility: 'Kompatibilitet'
+        accessories: 'Tilbehør og anbefalinger'
+      documents:
+        types: { datasheet: 'Datablad', manual: 'Brugervejledning', driver: 'Driver / software', certificate: 'Certifikat', brochure: 'Brochure', other: 'Dokument' }
+      compatibility:
+        compatible_with: 'Kompatibel med'
+        consumables: 'Passende forbrugsvarer'
+        consumables_text: 'Farvebånd, rengøringsprodukter og tilbehør til %product%.'
+        find_consumables: 'Find passende forbrugsvarer'
+        suitable_for_product: 'Passer til dette produkt'
+        types: { compatible_with: 'Kompatibel', consumable_for: 'Forbrugsvare', accessory_for: 'Tilbehør', alternative_to: 'Alternativ', replacement_for: 'Erstatningsprodukt' }
     advice:
       kicker: 'Købsvejledning'
       printer_title: 'Hvilken kortprinter er den rigtige?'
