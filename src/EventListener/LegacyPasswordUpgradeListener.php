@@ -39,6 +39,9 @@ final readonly class LegacyPasswordUpgradeListener
         /** @var PasswordUpgradeBadge $badge */
         $badge = $passport->getBadge(PasswordUpgradeBadge::class);
         $plainPassword = $badge->getAndErasePlaintextPassword();
+        // The standard listener runs afterwards, but Sylius' provider cannot persist
+        // an upgrade. Leave it a resolved, empty badge rather than consumed plaintext.
+        $passport->addBadge(new PasswordUpgradeBadge(''));
         if ($plainPassword === '' || !$this->legacyHasher->verify((string) $user->getPassword(), $plainPassword)) {
             return;
         }
