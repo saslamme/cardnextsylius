@@ -83,6 +83,9 @@ final class AdminMenuListener
         if ($customers !== null && $customers->getChild('cardnext_maintenance_contracts') === null) {
             $customers->addChild('cardnext_maintenance_contracts', ['route' => 'cardnext_admin_maintenance_contract_index', 'extras' => ['routes' => [['route' => 'cardnext_admin_maintenance_contract_*']]]])->setLabel('cardnext.maintenance_contract.admin.menu')->setLabelAttribute('icon', 'tabler:shield-check');
         }
+        if ($customers !== null && $customers->getChild('cardnext_customer_import') === null) {
+            $customers->addChild('cardnext_customer_import', ['route' => 'cardnext_admin_customer_import', 'extras' => ['routes' => [['route' => 'cardnext_admin_customer_import_*']]]])->setLabel('Kundenimport')->setLabelAttribute('icon', 'tabler:file-import');
+        }
 
         if ($menu->getChild('cardnext_quotes') === null) {
             $menu->addChild('cardnext_quotes', [

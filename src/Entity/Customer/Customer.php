@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Customer;
 
+use App\Entity\Channel\Channel;
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Core\Model\Customer as BaseCustomer;
 
@@ -11,6 +12,10 @@ use Sylius\Component\Core\Model\Customer as BaseCustomer;
 #[ORM\Table(name: 'sylius_customer')]
 class Customer extends BaseCustomer
 {
+    #[ORM\ManyToOne(targetEntity: Channel::class)]
+    #[ORM\JoinColumn(name: 'sales_channel_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Channel $salesChannel = null;
+
     #[ORM\OneToOne(
         mappedBy: 'customer',
         targetEntity: CustomerB2BProfile::class,
@@ -36,5 +41,15 @@ class Customer extends BaseCustomer
     public function isB2bCustomer(): bool
     {
         return $this->b2bProfile?->isEnabled() ?? false;
+    }
+
+    public function getSalesChannel(): ?Channel
+    {
+        return $this->salesChannel;
+    }
+
+    public function setSalesChannel(?Channel $salesChannel): void
+    {
+        $this->salesChannel = $salesChannel;
     }
 }
