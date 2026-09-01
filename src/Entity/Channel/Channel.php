@@ -13,20 +13,20 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'sylius_channel')]
 class Channel extends BaseChannel
 {
-    #[ORM\Column(length: 64, nullable: true)]
+    #[ORM\Column(name: 'theme_key', length: 64, nullable: true)]
     #[Assert\Regex(pattern: '/^[a-z0-9][a-z0-9_-]*$/')]
     private ?string $themeKey = null;
 
-    #[ORM\Column(length: 128, nullable: true)]
+    #[ORM\Column(name: 'brand_name', length: 128, nullable: true)]
     private ?string $brandName = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(name: 'logo_path', length: 255, nullable: true)]
     private ?string $logoPath = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(name: 'logo_dark_path', length: 255, nullable: true)]
     private ?string $logoDarkPath = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(name: 'favicon_path', length: 255, nullable: true)]
     private ?string $faviconPath = null;
 
     #[Assert\Image(maxSize: '2M', mimeTypes: ['image/png', 'image/webp', 'image/jpeg'])]
@@ -38,12 +38,12 @@ class Channel extends BaseChannel
     #[Assert\Image(maxSize: '512k', mimeTypes: ['image/png', 'image/webp', 'image/jpeg'])]
     public ?UploadedFile $faviconFile = null;
 
-    #[ORM\Column(length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $primaryColor = null;
-    #[ORM\Column(length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $primaryHoverColor = null;
-    #[ORM\Column(length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $primarySoftColor = null;
-    #[ORM\Column(length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $inkColor = null;
-    #[ORM\Column(length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $textColor = null;
-    #[ORM\Column(length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $footerColor = null;
+    #[ORM\Column(name: 'primary_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $primaryColor = null;
+    #[ORM\Column(name: 'primary_hover_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $primaryHoverColor = null;
+    #[ORM\Column(name: 'primary_soft_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $primarySoftColor = null;
+    #[ORM\Column(name: 'ink_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $inkColor = null;
+    #[ORM\Column(name: 'text_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $textColor = null;
+    #[ORM\Column(name: 'footer_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')] private ?string $footerColor = null;
 
     public function getThemeKey(): ?string { return $this->themeKey; }
     public function setThemeKey(?string $value): void { $this->themeKey = $value ?: null; }
