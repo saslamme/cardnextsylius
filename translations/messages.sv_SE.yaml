@@ -1,5 +1,9 @@
 cardnext:
   storefront:
+    account:
+      brand_account: '%brand% Account'
+    contact:
+      request_to_brand: 'Din förfrågan till %brand%'
     homepage:
       meta_title: 'Cardnext – kortskrivare, RFID och Auto-ID'
       hero:
@@ -53,7 +57,7 @@ cardnext:
           text: 'RFID- och streckkodsteknik för registrering, spårbarhet och effektiva materialflöden.'
           image_alt: 'Streckkodsregistrering i ett professionellt lager'
       why:
-        kicker: 'Varför Cardnext'
+        kicker: 'Varför %brand%'
         title: 'Teknik. Kompetens. Tillförlitlighet.'
         text: 'En specialiserad partner för professionell identifierings- och Auto-ID-teknik, med direkt rådgivning och ett tydligt strukturerat sortiment.'
         items:
@@ -87,7 +91,7 @@ cardnext:
           title: 'Projektlösningar'
           text: 'Individuella lösningar på begäran'
     header:
-      home: 'Cardnext startsida'
+      home: '%brand% startsida'
       search_label: 'Sök produkter'
       search_placeholder: 'Sök produkter, tillverkare eller artikelnummer'
       search_submit: 'Starta sökning'
@@ -110,7 +114,7 @@ cardnext:
       products: 'Produkter'
       solutions: 'Lösningar'
       service: 'Service'
-      company: 'Cardnext'
+      company: '%brand%'
       id_creation: 'ID-kortsproduktion'
       access_control: 'Passerkontroll'
       time_tracking: 'Tidrapportering'
@@ -165,7 +169,7 @@ cardnext:
       compare: 'Jämför'
       compare_aria: 'Lägg till %product% i jämförelsen'
     product_detail:
-      default_brand: 'Cardnext-sortiment'
+      default_brand: '%brand%-sortiment'
       product_code: 'Produktkod'
       add_to_cart: 'Lägg i varukorgen'
       add_to_compare: 'Lägg till i jämförelse'
@@ -212,9 +216,9 @@ cardnext:
       kicker: 'Köpguide'
       printer_title: 'Vilken kortskrivare är rätt?'
       printer_text: 'Rätt utskriftsteknik beror främst på kortvolym, önskad kvalitet, utskriftssidor och kodningsalternativ. Direct-to-card-system är ofta ekonomiska; retransfer ger fördelar vid kantlös utskrift och högre bildkvalitet.'
-      printer_operation: 'För den dagliga driften är även rätt färgband, rengöringskit och kort avgörande. Cardnext säkerställer att skrivare och förbrukningsmaterial passar ihop.'
+      printer_operation: 'För den dagliga driften är även rätt färgband, rengöringskit och kort avgörande. %brand% säkerställer att skrivare och förbrukningsmaterial passar ihop.'
       generic_title: 'Välj %category% efter användningsområdet.'
-      generic_text: 'Det är både produkten, kompatibiliteten med den befintliga miljön och den planerade användningen som är avgörande. Cardnext hjälper till med val, integration och tillbehör.'
+      generic_text: 'Det är både produkten, kompatibiliteten med den befintliga miljön och den planerade användningen som är avgörande. %brand% hjälper till med val, integration och tillbehör.'
       contact: 'Begär rådgivning'
       more: 'Fler produktområden'
   market:

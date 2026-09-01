@@ -1,5 +1,9 @@
 cardnext:
   storefront:
+    account:
+      brand_account: '%brand% Account'
+    contact:
+      request_to_brand: 'Ihre Anfrage an %brand%'
     homepage:
       meta_title: 'Cardnext – Kartendrucker, RFID & Auto-ID'
       hero:
@@ -53,7 +57,7 @@ cardnext:
           text: 'RFID- und Barcode-Technologie für Erfassung, Rückverfolgbarkeit und effiziente Materialbewegungen.'
           image_alt: 'Barcode-Erfassung in einem professionellen Lager'
       why:
-        kicker: 'Warum Cardnext'
+        kicker: 'Warum %brand%'
         title: 'Technik. Know-how. Verlässlichkeit.'
         text: 'Ein fokussierter Partner für professionelle Identifikations- und Auto-ID-Technik – mit direkter Beratung und einem klar strukturierten Produktsortiment.'
         items:
@@ -87,7 +91,7 @@ cardnext:
           title: 'Projektgeschäft'
           text: 'Individuelle Lösungen auf Anfrage'
     header:
-      home: 'Cardnext Startseite'
+      home: '%brand% Startseite'
       search_label: 'Produkte suchen'
       search_placeholder: 'Produkte, Hersteller oder Artikelnummer suchen'
       search_submit: 'Suche starten'
@@ -110,7 +114,7 @@ cardnext:
       products: 'Produkte'
       solutions: 'Lösungen'
       service: 'Service'
-      company: 'Cardnext'
+      company: '%brand%'
       id_creation: 'Ausweiserstellung'
       access_control: 'Zutrittskontrolle'
       time_tracking: 'Zeiterfassung'
@@ -165,7 +169,7 @@ cardnext:
       compare: 'Vergleichen'
       compare_aria: '%product% zum Vergleich hinzufügen'
     product_detail:
-      default_brand: 'Cardnext Sortiment'
+      default_brand: '%brand% Sortiment'
       product_code: 'Produktcode'
       add_to_cart: 'In den Warenkorb'
       add_to_compare: 'Zum Vergleich hinzufügen'
@@ -223,9 +227,9 @@ cardnext:
       kicker: 'Kaufberatung'
       printer_title: 'Welcher Kartendrucker ist der richtige?'
       printer_text: 'Die passende Drucktechnologie hängt vor allem von Kartenmenge, gewünschter Druckqualität, Druckseiten und benötigten Kodieroptionen ab. Direct-to-Card-Systeme sind oft wirtschaftlich; für randlosen Druck und höhere Bildqualität bieten Retransfer-Systeme Vorteile.'
-      printer_operation: 'Für den laufenden Betrieb sind passende Farbbänder, Reinigungskits und Karten entscheidend. Cardnext stimmt Drucker und Verbrauchsmaterial zuverlässig aufeinander ab.'
+      printer_operation: 'Für den laufenden Betrieb sind passende Farbbänder, Reinigungskits und Karten entscheidend. %brand% stimmt Drucker und Verbrauchsmaterial zuverlässig aufeinander ab.'
       generic_title: '%category% passend zur Anwendung auswählen.'
-      generic_text: 'Entscheidend sind das Produkt, seine Kompatibilität mit der vorhandenen Umgebung und der geplante Einsatz. Cardnext unterstützt bei Auswahl, Integration und Zubehör.'
+      generic_text: 'Entscheidend sind das Produkt, seine Kompatibilität mit der vorhandenen Umgebung und der geplante Einsatz. %brand% unterstützt bei Auswahl, Integration und Zubehör.'
       contact: 'Beratung anfragen'
       more: 'Weitere Produktbereiche'
   market:

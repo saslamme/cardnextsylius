@@ -73,7 +73,8 @@
 
         <aside class="cn-advisor-guide__cta" aria-labelledby="advisor-guide-cta-title">
             <div><p class="cn-advisor-guide__eyebrow">Ihre nächsten Schritte</p><h2 id="advisor-guide-cta-title">Nutzen Sie jetzt den Kartendrucker-Berater</h2><p>Beantworten Sie wenige Fragen und erhalten Sie eine erste passende Orientierung für Ihre Kartendrucker-Auswahl.</p></div>
-            <div class="cn-advisor-guide__cta-actions"><a class="cn-btn cn-btn--primary" href="#kartendrucker-berater">Berater starten</a><a class="cn-btn cn-btn--secondary" href="mailto:info@cardnext.de?subject=Persönliche%20Kartendrucker-Beratung">Persönliche Beratung anfragen</a></div>
+            {% set contactEmail = sylius.channel.contactEmail|default('info@cardnext.de', true) %}
+            <div class="cn-advisor-guide__cta-actions"><a class="cn-btn cn-btn--primary" href="#kartendrucker-berater">Berater starten</a><a class="cn-btn cn-btn--secondary" href="mailto:{{ contactEmail }}?subject=Persönliche%20Kartendrucker-Beratung">Persönliche Beratung anfragen</a></div>
         </aside>
     </div>
 </section>

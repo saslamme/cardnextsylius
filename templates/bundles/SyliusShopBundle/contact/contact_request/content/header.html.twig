@@ -1,1 +1,2 @@
-<div class="cn-panel__head cn-stack cn-stack--sm"><span class="cn-kicker">Nachricht senden</span><h2 class="cn-title cn-title--section">Ihre Anfrage an Cardnext</h2><p class="cn-lead">Je konkreter Ihre Angaben, desto gezielter können wir antworten.</p></div>
+{% set branding = cardnext_channel_branding() %}
+<div class="cn-panel__head cn-stack cn-stack--sm"><span class="cn-kicker">Nachricht senden</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.contact.request_to_brand'|trans({'%brand%': branding.brandName}) }}</h2><p class="cn-lead">Je konkreter Ihre Angaben, desto gezielter können wir antworten.</p></div>

@@ -1,7 +1,8 @@
 <section class="cn-auth">
     <div class="cn-container cn-container--narrow">
         <div class="cn-auth__single">
-            <span class="cn-kicker">Cardnext Account</span>
+            {% set branding = cardnext_channel_branding() %}
+            <span class="cn-kicker">{{ 'cardnext.storefront.account.brand_account'|trans({'%brand%': branding.brandName}) }}</span>
             {% hook 'content' %}
         </div>
     </div>

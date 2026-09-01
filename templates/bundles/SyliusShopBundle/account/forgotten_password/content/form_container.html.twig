@@ -1,4 +1,5 @@
 <div class="cn-auth__form-panel">
-    <span class="cn-kicker">Cardnext Account</span>
+    {% set branding = cardnext_channel_branding() %}
+    <span class="cn-kicker">{{ 'cardnext.storefront.account.brand_account'|trans({'%brand%': branding.brandName}) }}</span>
     {% hook 'form_container' %}
 </div>

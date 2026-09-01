@@ -2,7 +2,7 @@
 <header class="cardnext-header cn-shop-header" data-cardnext-header data-cn-brand="{{ branding.themeKey }}">
     <div class="cardnext-container cn-shop-header__inner">
         <div class="cn-shop-header__top">
-            <a class="cn-shop-header__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ 'cardnext.storefront.header.home'|trans }}">
+            <a class="cn-shop-header__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ 'cardnext.storefront.header.home'|trans({'%brand%': branding.brandName}) }}">
                 <img src="{{ asset(branding.logoPath) }}" width="184" height="36" alt="{{ branding.brandName }}">
             </a>
 
