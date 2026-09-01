@@ -1,4 +1,5 @@
 {% set currentMarket = cardnext_current_market() %}
+{% set branding = cardnext_channel_branding() %}
 {% set footerTaxons = [
     {'code': 'card_printers'}, {'code': 'rfid_readers'}, {'code': 'plastic_cards'},
     {'code': 'id_accessories'}, {'code': 'barcode_scanners'}
@@ -7,7 +8,7 @@
     <div class="cn-container">
         <div class="cn-footer__grid">
             <div class="cn-footer__brand">
-                <a class="cn-footer__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ 'cardnext.storefront.header.home'|trans }}"><img src="{{ asset('cardnext/cardnext.svg') }}" width="180" height="35" alt="Cardnext"></a>
+                <a class="cn-footer__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ branding.brandName }}"><img src="{{ asset(branding.logoDarkPath) }}" width="180" height="35" alt="{{ branding.brandName }}"></a>
                 <p>{{ 'cardnext.storefront.footer.description'|trans }}</p>
             </div>
             <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.products'|trans }}</div><ul class="cn-footer__links">
@@ -23,7 +24,7 @@
                 <li><a href="{{ path('sylius_shop_homepage') }}#company">{{ 'cardnext.storefront.footer.about'|trans }}</a></li><li><a href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}">{{ 'cardnext.storefront.header.brands'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">{{ 'cardnext.storefront.header.account'|trans }}</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">{{ 'cardnext.storefront.header.login'|trans }}</a></li>{% endif %}
             </ul></div>
         </div>
-        <div class="cn-footer__bottom"><span>© {{ 'now'|date('Y') }} Cardnext</span>
+        <div class="cn-footer__bottom"><span>© {{ 'now'|date('Y') }} {{ branding.brandName }}</span>
             <nav class="cn-footer__legal cardnext-footer__legal" aria-label="{{ 'cardnext.storefront.footer.legal'|trans }}">
                 <a href="{{ path('cardnext_shop_legal_imprint', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.imprint'|trans }}</a>
                 <a href="{{ path('cardnext_shop_legal_privacy', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.privacy'|trans }}</a>

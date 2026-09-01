@@ -1,8 +1,9 @@
-<header class="cardnext-header cn-shop-header" data-cardnext-header>
+{% set branding = cardnext_channel_branding() %}
+<header class="cardnext-header cn-shop-header" data-cardnext-header data-cn-brand="{{ branding.themeKey }}">
     <div class="cardnext-container cn-shop-header__inner">
         <div class="cn-shop-header__top">
             <a class="cn-shop-header__logo" href="{{ path('sylius_shop_homepage') }}" aria-label="{{ 'cardnext.storefront.header.home'|trans }}">
-                <img src="{{ asset('cardnext/cardnext.svg') }}" width="184" height="36" alt="Cardnext">
+                <img src="{{ asset(branding.logoPath) }}" width="184" height="36" alt="{{ branding.brandName }}">
             </a>
 
             <form
@@ -87,7 +88,7 @@
     <aside class="cardnext-mobile-nav" id="cardnext-mobile-navigation" aria-label="{{ 'cardnext.storefront.header.mobile_navigation'|trans }}">
         <div class="cardnext-mobile-nav__head">
             <a class="cardnext-logo" href="{{ path('sylius_shop_homepage') }}">
-                <img src="{{ asset('cardnext/cardnext.svg') }}" width="170" height="33" alt="Cardnext">
+                <img src="{{ asset(branding.logoPath) }}" width="170" height="33" alt="{{ branding.brandName }}">
             </a>
             <button type="button" class="cardnext-mobile-nav__close" data-cardnext-menu-close aria-label="{{ 'cardnext.storefront.header.close_navigation'|trans }}">×</button>
         </div>
