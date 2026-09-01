@@ -1,0 +1,18 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% set page_title = 'Channelpreise übertragen' %}
+{% block cardnext_content %}
+<div class="page-header mb-4"><div><div class="page-pretitle">Katalog</div><h2 class="page-title">Channelpreise übertragen</h2></div></div>
+<div class="card"><div class="card-body">
+<p class="text-secondary">Kopiert ausschließlich native Sylius-Basispreise aktivierter Varianten. Produktzuordnungen und B2B-Preisregeln bleiben unverändert.</p>
+<form method="post" action="{{ path('cardnext_admin_channel_pricing_copy') }}">
+<input type="hidden" name="_token" value="{{ csrf_token('channel-pricing-copy-preview') }}">
+<div class="row g-3"><div class="col-md-4"><label class="form-label" for="source">Quell-Channel</label><select class="form-select" id="source" name="source" required><option value="">Bitte wählen</option>{% for channel in channels %}<option value="{{ channel.code }}" {{ values.source == channel.code ? 'selected' }}>{{ channel.name }} ({{ channel.code }})</option>{% endfor %}</select></div>
+<div class="col-md-4"><label class="form-label" for="target">Ziel-Channel</label><select class="form-select" id="target" name="target" required><option value="">Bitte wählen</option>{% for channel in channels %}<option value="{{ channel.code }}" {{ values.target == channel.code ? 'selected' }}>{{ channel.name }} ({{ channel.code }})</option>{% endfor %}</select></div>
+<div class="col-md-2"><label class="form-label" for="adjustment">Preisanpassung in %</label><input class="form-control" id="adjustment" name="adjustment" value="{{ values.adjustment }}" required></div>
+<div class="col-md-2 d-flex align-items-end"><label class="form-check mb-2"><input class="form-check-input" type="checkbox" name="overwrite" value="1" {{ values.overwrite ? 'checked' }}><span class="form-check-label">Zielpreise überschreiben</span></label></div></div>
+<button class="btn btn-primary mt-4" type="submit">Vorschau</button></form></div></div>
+{% if preview %}<div class="card mt-4"><div class="card-header"><h3 class="card-title">Vorschau (keine Änderungen geschrieben)</h3></div><div class="card-body">
+<div class="row row-cards mb-4">{% set counters = {'Geprüft': preview.scanned, 'Geeignet': preview.eligible, 'Erstellen': preview.created, 'Überschreiben': preview.overwritten, 'Bestehend/übersprungen': preview.skippedExisting, 'Quellpreis fehlt': preview.skippedMissingSource, 'Nicht im Ziel-Channel': preview.skippedNotInTargetChannel, 'Ungültig': preview.skippedInvalidSource} %}{% for label, count in counters %}<div class="col-6 col-md-3"><div class="text-secondary small">{{ label }}</div><div class="h2">{{ count }}</div></div>{% endfor %}</div>
+<div class="table-responsive"><table class="table table-vcenter"><thead><tr><th>Produkt</th><th>Variante / SKU</th><th>Quelle</th><th>Ziel aktuell</th><th>Neu</th><th>Aktion</th></tr></thead><tbody>{% for row in preview.rows %}<tr><td>{{ row.product }}</td><td>{{ row.variant }}<br><code>{{ row.sku }}</code></td><td>{{ row.sourcePrice ?? '–' }}</td><td>{{ row.currentTargetPrice ?? '–' }}</td><td>{{ row.newTargetPrice ?? '–' }}</td><td><code>{{ row.action }}</code></td></tr>{% endfor %}</tbody></table></div>
+</div><div class="card-footer text-end"><form method="post" action="{{ path('cardnext_admin_channel_pricing_copy_execute') }}"><input type="hidden" name="_token" value="{{ csrf_token('channel-pricing-copy-execute') }}"><button class="btn btn-danger" type="submit" onclick="return confirm('Preise jetzt wirklich übertragen?')">Preise übertragen</button></form></div></div>{% endif %}
+{% endblock %}
