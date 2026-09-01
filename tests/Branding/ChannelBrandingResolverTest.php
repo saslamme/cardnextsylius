@@ -33,6 +33,10 @@ final class ChannelBrandingResolverTest extends TestCase
         $channel->setBrandName('Identible');
         $channel->setLogoPath('uploads/channel-branding/logo.webp');
         $channel->setPrimaryColor('#123456');
+        $channel->setNavigationBackgroundColor('#111111');
+        $channel->setNavigationTextColor('#FFFFFF');
+        $channel->setNavigationHoverColor('#FF0000');
+        $channel->setNavigationBorderColor('#222222');
         $context = $this->createStub(ChannelContextInterface::class);
         $context->method('getChannel')->willReturn($channel);
 
@@ -41,12 +45,16 @@ final class ChannelBrandingResolverTest extends TestCase
         self::assertSame('identible', $branding->themeKey);
         self::assertSame('Identible', $branding->brandName);
         self::assertSame('#123456', $branding->cssVariables['--cn-primary']);
+        self::assertSame('#111111', $branding->cssVariables['--cn-nav-bg']);
+        self::assertSame('#FFFFFF', $branding->cssVariables['--cn-nav-text']);
+        self::assertSame('#FF0000', $branding->cssVariables['--cn-nav-hover']);
+        self::assertSame('#222222', $branding->cssVariables['--cn-nav-border']);
     }
 
     public function testItRejectsCssInjectionAsAColor(): void
     {
         $channel = new Channel();
-        $channel->setPrimaryColor('red; background:url(x)');
+        $channel->setNavigationBackgroundColor('red; background:url(x)');
 
         $violations = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator()->validate($channel);
 

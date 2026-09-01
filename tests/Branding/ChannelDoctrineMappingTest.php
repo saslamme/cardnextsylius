@@ -28,6 +28,10 @@ final class ChannelDoctrineMappingTest extends TestCase
             'inkColor' => 'ink_color',
             'textColor' => 'text_color',
             'footerColor' => 'footer_color',
+            'navigationBackgroundColor' => 'navigation_background_color',
+            'navigationTextColor' => 'navigation_text_color',
+            'navigationHoverColor' => 'navigation_hover_color',
+            'navigationBorderColor' => 'navigation_border_color',
         ];
 
         foreach ($expectedColumns as $property => $column) {

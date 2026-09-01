@@ -56,6 +56,18 @@ class Channel extends BaseChannel
     #[ORM\Column(name: 'footer_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')]
     private ?string $footerColor = null;
 
+    #[ORM\Column(name: 'navigation_background_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')]
+    private ?string $navigationBackgroundColor = null;
+
+    #[ORM\Column(name: 'navigation_text_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')]
+    private ?string $navigationTextColor = null;
+
+    #[ORM\Column(name: 'navigation_hover_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')]
+    private ?string $navigationHoverColor = null;
+
+    #[ORM\Column(name: 'navigation_border_color', length: 7, nullable: true)] #[Assert\Regex(pattern: '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/D')]
+    private ?string $navigationBorderColor = null;
+
     public function getThemeKey(): ?string
     {
         return $this->themeKey;
@@ -164,5 +176,45 @@ class Channel extends BaseChannel
     public function setFooterColor(?string $v): void
     {
         $this->footerColor = $v ?: null;
+    }
+
+    public function getNavigationBackgroundColor(): ?string
+    {
+        return $this->navigationBackgroundColor;
+    }
+
+    public function setNavigationBackgroundColor(?string $value): void
+    {
+        $this->navigationBackgroundColor = $value ?: null;
+    }
+
+    public function getNavigationTextColor(): ?string
+    {
+        return $this->navigationTextColor;
+    }
+
+    public function setNavigationTextColor(?string $value): void
+    {
+        $this->navigationTextColor = $value ?: null;
+    }
+
+    public function getNavigationHoverColor(): ?string
+    {
+        return $this->navigationHoverColor;
+    }
+
+    public function setNavigationHoverColor(?string $value): void
+    {
+        $this->navigationHoverColor = $value ?: null;
+    }
+
+    public function getNavigationBorderColor(): ?string
+    {
+        return $this->navigationBorderColor;
+    }
+
+    public function setNavigationBorderColor(?string $value): void
+    {
+        $this->navigationBorderColor = $value ?: null;
     }
 }
