@@ -29,7 +29,9 @@ final class StorefrontBrandCopyTest extends TestCase
         $homepage = self::contents('templates/bundles/SyliusShopBundle/homepage/index.html.twig');
         $footer = self::contents('templates/shop/layout/footer/content.html.twig');
 
-        self::assertStringContainsString("why.kicker'|trans({'%brand%': branding.brandName})", $homepage);
+        self::assertStringContainsString('{% set homepage = cardnext_homepage_content() %}', $homepage);
+        self::assertStringContainsString('{{ homepage.whyKicker }}', $homepage);
+        self::assertStringContainsString("['%brand%' => \$brand]", self::contents('src/Content/ChannelHomepageContentResolver.php'));
         self::assertStringContainsString("footer.company'|trans({'%brand%': branding.brandName})", $footer);
     }
 

@@ -1,0 +1,7 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% block cardnext_content %}
+<div class="page-header mb-4"><div class="row align-items-center"><div class="col"><div class="page-pretitle">Inhalte</div><h2 class="page-title">Homepage-Inhalte</h2></div><div class="col-auto"><a class="btn btn-primary" href="{{ path('cardnext_admin_homepage_content_create') }}">Neu anlegen</a></div></div></div>
+<div class="card"><div class="table-responsive"><table class="table table-vcenter"><thead><tr><th>Verkaufskanal</th><th>Sprache</th><th>Hero-Titel</th><th>Zuletzt geändert</th><th></th></tr></thead><tbody>
+{% for content in contents %}<tr><td>{{ content.channel.name|default(content.channel.code) }}</td><td>{{ content.localeCode }}</td><td>{{ content.heroTitle|default('–') }}</td><td>{{ content.updatedAt|date('d.m.Y H:i') }}</td><td class="text-end"><a class="btn btn-primary" href="{{ path('cardnext_admin_homepage_content_edit', {id: content.id}) }}">Bearbeiten</a></td></tr>{% else %}<tr><td colspan="5">Noch keine Homepage-Inhalte vorhanden.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

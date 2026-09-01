@@ -76,6 +76,10 @@ services:
         arguments:
             $localeRepository: '@sylius.repository.locale'
 
+    App\Form\Type\ChannelHomepageContentType:
+        arguments:
+            $localeRepository: '@sylius.repository.locale'
+
     App\Branding\ChannelBrandingUploader:
         arguments:
             $projectDir: '%kernel.project_dir%'

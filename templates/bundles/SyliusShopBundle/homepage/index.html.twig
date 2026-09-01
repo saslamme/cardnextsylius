@@ -1,14 +1,15 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 {% set branding = cardnext_channel_branding() %}
+{% set homepage = cardnext_homepage_content() %}
 {% block title %}{{ 'cardnext.storefront.homepage.meta_title'|trans }}{% endblock %}
 {% block content %}
 <main id="main-content" class="cn-page">
 <section class="cn-hero" aria-labelledby="cn-hero-title">
     <div class="cn-container cn-hero__grid">
         <div class="cn-stack cn-hero__copy">
-            <span class="cn-kicker">{{ 'cardnext.storefront.homepage.hero.kicker'|trans }}</span>
-            <h1 class="cn-title cn-title--hero" id="cn-hero-title">{{ 'cardnext.storefront.homepage.hero.title'|trans }}</h1>
-            <p class="cn-lead">{{ 'cardnext.storefront.homepage.hero.text'|trans }}</p>
+            <span class="cn-kicker">{{ homepage.heroKicker }}</span>
+            <h1 class="cn-title cn-title--hero" id="cn-hero-title">{{ homepage.heroTitle }}</h1>
+            <p class="cn-lead">{{ homepage.heroText }}</p>
             <div class="cn-cluster"><a class="cn-btn cn-btn--primary" href="#products">{{ 'cardnext.storefront.homepage.hero.products'|trans }} →</a><a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.homepage.hero.consulting'|trans }}</a></div>
         </div>
         <div class="cn-hero__visual cn-hero__visual--photo" aria-label="{{ 'cardnext.storefront.homepage.hero.visual_label'|trans }}">
@@ -61,12 +62,12 @@
     <div class="cn-container cn-home-service__grid">
         <div class="cn-home-service__feature">
             <div class="cn-home-service__copy">
-                <span class="cn-kicker">{{ 'cardnext.storefront.homepage.service.kicker'|trans }}</span>
+                <span class="cn-kicker">{{ homepage.introKicker }}</span>
                 <h2 class="cn-title cn-title--section" id="cn-home-service-title">
-                    {{ 'cardnext.storefront.homepage.service.title'|trans }}
+                    {{ homepage.introTitle }}
                 </h2>
                 <p class="cn-lead">
-                    {{ 'cardnext.storefront.homepage.service.text'|trans }}
+                    {{ homepage.introText }}
                 </p>
                 <a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">
                     {{ 'cardnext.storefront.homepage.service.button'|trans }} &#8594;
@@ -157,7 +158,7 @@
         <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-logistics.webp') }}" alt="{{ 'cardnext.storefront.homepage.industries.logistics.image_alt'|trans }}" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>{{ 'cardnext.storefront.homepage.industries.logistics.title'|trans }}</h3><p>{{ 'cardnext.storefront.homepage.industries.logistics.text'|trans }}</p><a class="cn-link cn-link--arrow" href="#products">{{ 'cardnext.storefront.homepage.industries.link'|trans }}</a></div></article>
     </div>
 </div></section>
-<section class="cn-section" id="why-cardnext"><div class="cn-container"><div class="cn-split mb-4"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.why.kicker'|trans({'%brand%': branding.brandName}) }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.why.title'|trans }}</h2></div><p class="cn-lead">{{ 'cardnext.storefront.homepage.why.text'|trans }}</p></div><div class="cn-grid cn-grid--4 cn-grid--lined">{% set advantages = [['01','specialized'],['02','independent'],['03','compatibility'],['04','personal']] %}{% for item in advantages %}<div class="cn-feature"><span class="cn-feature__index">{{ item[0] }}</span><h3>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.title')|trans }}</h3><p>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.text')|trans }}</p></div>{% endfor %}</div></div></section>
+<section class="cn-section" id="why-cardnext"><div class="cn-container"><div class="cn-split mb-4"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ homepage.whyKicker }}</span><h2 class="cn-title cn-title--section">{{ homepage.whyTitle }}</h2></div><p class="cn-lead">{{ homepage.whyText }}</p></div><div class="cn-grid cn-grid--4 cn-grid--lined">{% set advantages = [['01','specialized'],['02','independent'],['03','compatibility'],['04','personal']] %}{% for item in advantages %}<div class="cn-feature"><span class="cn-feature__index">{{ item[0] }}</span><h3>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.title')|trans }}</h3><p>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.text')|trans }}</p></div>{% endfor %}</div></div></section>
 <section class="cn-cta cn-cta--support">
     <img class="cn-cta__background"
         src="{{ asset('cardnext/homepage/support-advisor.webp') }}"
@@ -168,8 +169,8 @@
         aria-hidden="true">
     <div class="cn-container cn-cta__inner">
         <div class="cn-cta__copy">
-            <h2>{{ 'cardnext.storefront.homepage.cta.title'|trans }}</h2>
-            <p>{{ 'cardnext.storefront.homepage.cta.text'|trans }}</p>
+            {% if homepage.ctaKicker %}<span class="cn-kicker">{{ homepage.ctaKicker }}</span>{% endif %}<h2>{{ homepage.ctaTitle }}</h2>
+            <p>{{ homepage.ctaText }}</p>
         </div>
 
         <a class="cn-btn cn-btn--primary cn-cta__button" href="{{ path('sylius_shop_contact_request') }}">
