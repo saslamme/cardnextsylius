@@ -1,0 +1,8 @@
+{% set branding = cardnext_channel_branding() %}
+{% if branding.cssVariables is not empty %}
+<style id="cn-channel-branding">:root {
+{% for property, value in branding.cssVariables %}    {{ property }}: {{ value }};
+{% endfor %}}
+</style>
+{% endif %}
+{% if branding.faviconPath %}<link rel="icon" href="{{ asset(branding.faviconPath) }}">{% endif %}
