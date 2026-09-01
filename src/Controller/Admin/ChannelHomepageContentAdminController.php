@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Content\ChannelHomepageImageUploader;
+use App\Content\ChannelHomepageImageUploadException;
 use App\Entity\Content\ChannelHomepageContent;
 use App\Form\Type\ChannelHomepageContentType;
 use App\Repository\Content\ChannelHomepageContentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,7 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(AdminUserInterface::DEFAULT_ADMIN_ROLE)]
 final class ChannelHomepageContentAdminController extends AbstractController
 {
-    public function __construct(private readonly ChannelHomepageContentRepository $repository, private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly ChannelHomepageContentRepository $repository, private readonly EntityManagerInterface $entityManager, private readonly ChannelHomepageImageUploader $imageUploader)
     {
     }
 
@@ -50,6 +53,13 @@ final class ChannelHomepageContentAdminController extends AbstractController
         $form = $this->createForm(ChannelHomepageContentType::class, $content);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $this->imageUploader->upload($content);
+            } catch (ChannelHomepageImageUploadException $exception) {
+                $form->get($exception->field)->addError(new FormError($exception->getMessage()));
+
+                return $this->render('admin/cardnext/homepage_content/edit.html.twig', ['form' => $form, 'content' => $content, 'page_title' => $new ? 'Homepage-Inhalte anlegen' : 'Homepage-Inhalte bearbeiten']);
+            }
             if ($new) {
                 $this->entityManager->persist($content);
             }

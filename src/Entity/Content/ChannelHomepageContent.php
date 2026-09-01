@@ -9,6 +9,7 @@ use App\Repository\Content\ChannelHomepageContentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChannelHomepageContentRepository::class)]
@@ -38,6 +39,13 @@ class ChannelHomepageContent
     #[ORM\Column(name: 'hero_text', type: Types::TEXT, nullable: true)]
     private ?string $heroText = null;
 
+    #[ORM\Column(name: 'hero_image_path', length: 255, nullable: true)]
+    private ?string $heroImagePath = null;
+
+    private ?UploadedFile $heroImageFile = null;
+
+    private bool $removeHeroImage = false;
+
     #[ORM\Column(name: 'intro_kicker', length: 255, nullable: true)]
     private ?string $introKicker = null;
 
@@ -46,6 +54,13 @@ class ChannelHomepageContent
 
     #[ORM\Column(name: 'intro_text', type: Types::TEXT, nullable: true)]
     private ?string $introText = null;
+
+    #[ORM\Column(name: 'intro_image_path', length: 255, nullable: true)]
+    private ?string $introImagePath = null;
+
+    private ?UploadedFile $introImageFile = null;
+
+    private bool $removeIntroImage = false;
 
     #[ORM\Column(name: 'why_kicker', length: 255, nullable: true)]
     private ?string $whyKicker = null;
@@ -64,6 +79,13 @@ class ChannelHomepageContent
 
     #[ORM\Column(name: 'cta_text', type: Types::TEXT, nullable: true)]
     private ?string $ctaText = null;
+
+    #[ORM\Column(name: 'cta_image_path', length: 255, nullable: true)]
+    private ?string $ctaImagePath = null;
+
+    private ?UploadedFile $ctaImageFile = null;
+
+    private bool $removeCtaImage = false;
 
     #[ORM\Column(name: 'footer_text', type: Types::TEXT, nullable: true)]
     private ?string $footerText = null;
@@ -157,6 +179,36 @@ class ChannelHomepageContent
         $this->heroText = self::optional($v);
     }
 
+    public function getHeroImagePath(): ?string
+    {
+        return $this->heroImagePath;
+    }
+
+    public function setHeroImagePath(?string $path): void
+    {
+        $this->heroImagePath = self::optional($path);
+    }
+
+    public function getHeroImageFile(): ?UploadedFile
+    {
+        return $this->heroImageFile;
+    }
+
+    public function setHeroImageFile(?UploadedFile $file): void
+    {
+        $this->heroImageFile = $file;
+    }
+
+    public function isRemoveHeroImage(): bool
+    {
+        return $this->removeHeroImage;
+    }
+
+    public function setRemoveHeroImage(bool $remove): void
+    {
+        $this->removeHeroImage = $remove;
+    }
+
     public function getIntroKicker(): ?string
     {
         return $this->introKicker;
@@ -185,6 +237,36 @@ class ChannelHomepageContent
     public function setIntroText(?string $v): void
     {
         $this->introText = self::optional($v);
+    }
+
+    public function getIntroImagePath(): ?string
+    {
+        return $this->introImagePath;
+    }
+
+    public function setIntroImagePath(?string $path): void
+    {
+        $this->introImagePath = self::optional($path);
+    }
+
+    public function getIntroImageFile(): ?UploadedFile
+    {
+        return $this->introImageFile;
+    }
+
+    public function setIntroImageFile(?UploadedFile $file): void
+    {
+        $this->introImageFile = $file;
+    }
+
+    public function isRemoveIntroImage(): bool
+    {
+        return $this->removeIntroImage;
+    }
+
+    public function setRemoveIntroImage(bool $remove): void
+    {
+        $this->removeIntroImage = $remove;
     }
 
     public function getWhyKicker(): ?string
@@ -245,6 +327,36 @@ class ChannelHomepageContent
     public function setCtaText(?string $v): void
     {
         $this->ctaText = self::optional($v);
+    }
+
+    public function getCtaImagePath(): ?string
+    {
+        return $this->ctaImagePath;
+    }
+
+    public function setCtaImagePath(?string $path): void
+    {
+        $this->ctaImagePath = self::optional($path);
+    }
+
+    public function getCtaImageFile(): ?UploadedFile
+    {
+        return $this->ctaImageFile;
+    }
+
+    public function setCtaImageFile(?UploadedFile $file): void
+    {
+        $this->ctaImageFile = $file;
+    }
+
+    public function isRemoveCtaImage(): bool
+    {
+        return $this->removeCtaImage;
+    }
+
+    public function setRemoveCtaImage(bool $remove): void
+    {
+        $this->removeCtaImage = $remove;
     }
 
     public function getFooterText(): ?string
