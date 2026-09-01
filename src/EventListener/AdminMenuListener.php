@@ -60,6 +60,10 @@ final class AdminMenuListener
                     'extras' => ['routes' => [['route' => 'cardnext_admin_device_model_create'], ['route' => 'cardnext_admin_device_model_update']]],
                 ])->setLabel('Gerätemodelle')->setLabelAttribute('icon', 'tabler:devices');
             }
+            $catalog->addChild('cardnext_channel_pricing_copy', [
+                'route' => 'cardnext_admin_channel_pricing_copy',
+                'extras' => ['routes' => [['route' => 'cardnext_admin_channel_pricing_copy*']]],
+            ])->setLabel('Channelpreise übertragen')->setLabelAttribute('icon', 'tabler:transfer');
         }
 
         $customers = $menu->getChild('customers');

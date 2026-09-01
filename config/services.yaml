@@ -129,6 +129,7 @@ services:
     App\Service\Quote\QuoteOrderConverter:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
+
             $orderFactory: '@sylius.custom_factory.order'
             $orderItemFactory: '@sylius.custom_factory.order_item'
             $quantityModifier: '@sylius.modifier.order_item_quantity'
@@ -136,6 +137,10 @@ services:
             $addressFactory: '@sylius.factory.address'
             $channelRepository: '@sylius.repository.channel'
             $numberAssigner: '@sylius.number_assigner.order_number'
+
+    App\Pricing\ChannelPricingCopyService:
+        arguments:
+            $channelPricingFactory: '@sylius.factory.channel_pricing'
 
     App\Integration\Erp\Maintenance\ErpMaintenanceContractProviderInterface: '@App\Integration\Erp\Maintenance\HttpErpMaintenanceContractProvider'
 
