@@ -1,20 +1,272 @@
-{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+{% extends 'admin/cardnext/layout.html.twig' %}
+
 {% block title %}Kundenimport | {{ parent() }}{% endblock %}
-{% block body %}
-<div class="container-xl"><div class="page-header"><h1>Kundenimport</h1></div>
-{% for type, messages in app.flashes %}{% for message in messages %}<div class="alert alert-{{ type == 'error' ? 'danger' : type }}">{{ message }}</div>{% endfor %}{% endfor %}
-<div class="card mb-4"><div class="card-body">
-<form method="post" enctype="multipart/form-data" action="{{ path('cardnext_admin_customer_import_preview') }}">
-<input type="hidden" name="_token" value="{{ csrf_token('customer-import-preview') }}">
-<div class="mb-3"><label class="form-label">Datei</label><input class="form-control" type="file" name="customer_file" required accept=".txt,.csv,.dat,text/plain"></div>
-<div class="mb-3"><label class="form-label">Verkaufskanal</label><select class="form-select" name="channel" required><option value="">Bitte wählen</option>{% for channel in channels %}<option value="{{ channel.code }}">{{ channel.name }} – {{ channel.code }}{% if channel.hostname %} – {{ channel.hostname }}{% endif %}{% if not channel.enabled %} – deaktiviert{% endif %}</option>{% endfor %}</select></div>
-<div class="mb-3"><label class="form-label">Zeichensatz</label><select class="form-select" name="encoding"><option>ISO-8859-1</option><option>UTF-8</option><option>Windows-1252</option></select></div>
-<label class="form-check mb-3"><input class="form-check-input" type="checkbox" name="update_existing" value="1"><span class="form-check-label">Bestehende Kunden aktualisieren</span></label>
-<button class="btn btn-primary" type="submit">Testlauf starten</button></form></div></div>
-{% if preview %}<div class="card"><div class="card-header"><h2>Kundenimport – Testlauf</h2></div><div class="card-body">
-<p><strong>Verkaufskanal:</strong> {{ channel_code }}<br><strong>Zeichensatz:</strong> {{ encoding }}</p>
-<div class="row">{% for label, value in {'Datensätze gelesen':preview.rows,'Gültig':preview.valid,'Neue Kunden':preview.created,'Zu aktualisieren':preview.updated,'Übersprungen':preview.skipped,'Konflikte':preview.conflicts,'Fehlerhaft':preview.invalidEmail + preview.invalidHash + preview.unknownCountry + preview.encodingErrors + preview.otherErrors} %}<div class="col-md-3 mb-2"><strong>{{ label }}</strong><br>{{ value }}</div>{% endfor %}</div>
-<div class="table-responsive"><table class="table"><thead><tr><th>Kundennr.</th><th>Firma</th><th>Ansprechpartner</th><th>E-Mail</th><th>PLZ</th><th>Ort</th><th>Verkaufskanal</th><th>Status</th></tr></thead><tbody>{% for row in preview.preview %}<tr><td>{{ row.customerNumber }}</td><td>{{ row.company }}</td><td>{{ row.contact }}</td><td>{{ row.email }}</td><td>{{ row.postcode }}</td><td>{{ row.city }}</td><td>{{ channel_code }}</td><td>{{ row.status }}</td></tr>{% endfor %}</tbody></table></div>
-<form method="post" action="{{ path('cardnext_admin_customer_import_run', {token: import_token}) }}"><input type="hidden" name="_token" value="{{ csrf_token('customer-import-run-' ~ import_token) }}"><button class="btn btn-success" type="submit">Import jetzt durchführen</button></form>
-</div></div>{% endif %}</div>
+
+{% block cardnext_content %}
+    <div class="page-header mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="avatar bg-primary-lt text-primary" aria-hidden="true">
+                        {{ ux_icon('tabler:file-import') }}
+                    </span>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <h1 class="page-title mb-0">Kundenimport</h1>
+                            <span class="badge bg-secondary-lt">interaktiv.shop Import</span>
+                        </div>
+                        <div class="text-secondary mt-1">Kunden aus dem bisherigen Shopsystem sicher in Cardnext übernehmen.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 align-items-start">
+        <div class="col-12 col-xl-8">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title mb-1">Import vorbereiten</h2>
+                        <div class="text-secondary small">Datei auswählen und Ziel-Verkaufskanal festlegen.</div>
+                    </div>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" action="{{ path('cardnext_admin_customer_import_preview') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('customer-import-preview') }}">
+
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label required" for="customer-import-file">Kundendatei auswählen</label>
+                            <div class="border rounded p-3 bg-light">
+                                <div class="d-flex align-items-start gap-3 mb-3">
+                                    <span class="avatar avatar-sm bg-primary-lt text-primary" aria-hidden="true">
+                                        {{ ux_icon('tabler:file-upload') }}
+                                    </span>
+                                    <div>
+                                        <div class="fw-semibold">Kundendatei auswählen</div>
+                                        <div class="text-secondary small">Pipe-getrennte TXT-, CSV- oder DAT-Datei · maximal 20 MB</div>
+                                    </div>
+                                </div>
+                                <input class="form-control bg-white" id="customer-import-file" type="file" name="customer_file" required accept=".txt,.csv,.dat,text/plain,text/csv">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label required" for="customer-import-channel">Verkaufskanal</label>
+                            <div class="input-icon">
+                                <span class="input-icon-addon" aria-hidden="true">{{ ux_icon('tabler:world') }}</span>
+                                <select class="form-select" id="customer-import-channel" name="channel" required aria-describedby="customer-import-channel-help">
+                                    <option value="">Bitte wählen</option>
+                                    {% for channel in channels %}
+                                        <option value="{{ channel.code }}">
+                                            {{ channel.name }} · {{ channel.code }}{% if channel.enabled and channel.hostname %} · {{ channel.hostname }}{% elseif not channel.enabled %} · deaktiviert{% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-hint" id="customer-import-channel-help">Alle neu importierten Kunden werden diesem Verkaufskanal zugeordnet.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label" for="customer-import-encoding">Zeichensatz</label>
+                            <select class="form-select" id="customer-import-encoding" name="encoding" aria-describedby="customer-import-encoding-help">
+                                <option>ISO-8859-1</option>
+                                <option>Windows-1252</option>
+                                <option>UTF-8</option>
+                            </select>
+                            <div class="form-hint" id="customer-import-encoding-help">Der alte interaktiv.shop verwendet normalerweise ISO-8859-1.</div>
+                        </div>
+
+                        <fieldset class="border rounded p-3 bg-light">
+                            <legend class="float-none w-auto px-1 fs-4 fw-semibold mb-2">Importoptionen</legend>
+                            <label class="form-check mb-0" for="customer-import-update-existing">
+                                <input class="form-check-input" id="customer-import-update-existing" type="checkbox" name="update_existing" value="1">
+                                <span class="form-check-label">
+                                    <span class="fw-semibold d-block">Vorhandene Kunden aktualisieren</span>
+                                    <span class="text-secondary small d-block mt-1">Bereits vorhandene Kundendaten dürfen mit sicheren Stammdaten aus der Importdatei aktualisiert werden. Moderne Passwörter werden niemals überschrieben.</span>
+                                </span>
+                            </label>
+                        </fieldset>
+                    </div>
+
+                    <div class="card-footer d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+                        <div class="text-secondary small d-flex align-items-center gap-2">
+                            {{ ux_icon('tabler:shield-check', {class: 'icon text-success'}) }}
+                            <span>Der Testlauf verändert keine Daten.</span>
+                        </div>
+                        <button class="btn btn-primary" type="submit">
+                            {{ ux_icon('tabler:player-play') }}
+                            Testlauf starten
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">So funktioniert der Import</h2>
+                </div>
+                <div class="card-body">
+                    {% set steps = [
+                        ['Datei prüfen', 'Die Datei wird gelesen und validiert.'],
+                        ['Testlauf ansehen', 'Neue Kunden, vorhandene Kunden und Konflikte werden vorab angezeigt.'],
+                        ['Import bestätigen', 'Erst nach Ihrer Bestätigung werden Daten gespeichert.']
+                    ] %}
+                    <ol class="list-unstyled mb-4">
+                        {% for step in steps %}
+                            <li class="d-flex gap-3 {{ not loop.last ? 'mb-3' }}">
+                                <span class="avatar avatar-sm rounded-circle bg-primary-lt text-primary fw-bold flex-shrink-0">{{ loop.index }}</span>
+                                <div>
+                                    <div class="fw-semibold">{{ step[0] }}</div>
+                                    <div class="text-secondary small">{{ step[1] }}</div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+
+                    <div class="alert alert-info mb-0" role="note">
+                        <div class="d-flex gap-3">
+                            <span class="flex-shrink-0" aria-hidden="true">{{ ux_icon('tabler:lock') }}</span>
+                            <div>
+                                <div class="fw-semibold mb-1">Bestehende Passwörter bleiben erhalten</div>
+                                <div class="small">Importierte Kunden können sich weiterhin mit ihrem bisherigen Passwort anmelden. Nach dem ersten erfolgreichen Login wird das alte Passwort automatisch auf das aktuelle Cardnext-Verfahren migriert.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if preview %}
+        {% set error_count = preview.invalidEmail + preview.invalidHash + preview.unknownCountry + preview.encodingErrors + preview.otherErrors %}
+        <section class="mt-4" aria-labelledby="customer-import-preview-heading">
+            <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-3">
+                <div>
+                    <h2 class="page-title mb-1" id="customer-import-preview-heading">Ergebnis des Testlaufs</h2>
+                    <div class="text-secondary">Es wurden noch keine Daten gespeichert.</div>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <span class="badge bg-secondary-lt">Verkaufskanal: {{ channel_code }}</span>
+                    <span class="badge bg-secondary-lt">Zeichensatz: {{ encoding }}</span>
+                </div>
+            </div>
+
+            {% set statistics = [
+                ['Datensätze', preview.rows, 'tabler:file-description', ''],
+                ['Neue Kunden', preview.created, 'tabler:user-plus', 'text-success'],
+                ['Aktualisierungen', preview.updated, 'tabler:user-edit', 'text-info'],
+                ['Konflikte', preview.conflicts, 'tabler:alert-triangle', preview.conflicts > 0 ? 'text-warning' : ''],
+                ['Fehler', error_count, 'tabler:circle-x', error_count > 0 ? 'text-danger' : '']
+            ] %}
+            <div class="row row-cards mb-4">
+                {% for statistic in statistics %}
+                    <div class="col-6 col-md-4 col-xl">
+                        <div class="card h-100">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="avatar avatar-sm bg-secondary-lt {{ statistic[3] }}" aria-hidden="true">{{ ux_icon(statistic[2]) }}</span>
+                                    <div>
+                                        <div class="text-secondary small">{{ statistic[0] }}</div>
+                                        <div class="h2 mb-0 {{ statistic[3] }}">{{ statistic[1] }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title mb-1">Kundenvorschau</h3>
+                        <div class="text-secondary small">Vorschau der ersten Datensätze aus der Importdatei.</div>
+                    </div>
+                </div>
+                {% if preview.preview|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-vcenter card-table">
+                            <thead>
+                                <tr><th>Kundennr.</th><th>Firma</th><th>Ansprechpartner</th><th>E-Mail</th><th>Ort</th><th>Verkaufskanal</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for row in preview.preview %}
+                                    {% set status_class = row.status == 'Neu' ? 'bg-success-lt text-success' : (row.status == 'Aktualisieren' ? 'bg-info-lt text-info' : 'bg-secondary-lt') %}
+                                    <tr>
+                                        <td class="text-nowrap">{{ row.customerNumber ?: '–' }}</td>
+                                        <td>{{ row.company ?: '–' }}</td>
+                                        <td>{{ row.contact ?: '–' }}</td>
+                                        <td><a href="mailto:{{ row.email }}">{{ row.email }}</a></td>
+                                        <td class="text-nowrap">{{ (row.postcode ~ ' ' ~ row.city)|trim ?: '–' }}</td>
+                                        <td><span class="badge bg-secondary-lt">{{ channel_code }}</span></td>
+                                        <td><span class="badge {{ status_class }}">{{ row.status }}</span></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="card-body text-center py-5">
+                        <div class="text-secondary mb-2" aria-hidden="true">{{ ux_icon('tabler:users-off', {class: 'icon icon-lg'}) }}</div>
+                        <div class="fw-semibold">Keine Kunden für die Vorschau</div>
+                        <div class="text-secondary small">Die Datei enthält keine darstellbaren Kundendatensätze.</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if preview.issues|length > 0 %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title mb-1">Hinweise und Konflikte</h3>
+                            <div class="text-secondary small">Bitte prüfen Sie diese Datensätze vor dem Import.</div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-vcenter card-table">
+                            <thead><tr><th>Zeile</th><th>Kundennummer</th><th>E-Mail</th><th>Status</th><th>Grund</th></tr></thead>
+                            <tbody>
+                                {% for issue in preview.issues %}
+                                    <tr>
+                                        <td>{{ issue.row }}</td>
+                                        <td>{{ issue.customerNumber ?: '–' }}</td>
+                                        <td>{{ issue.email ?: '–' }}</td>
+                                        <td><span class="badge {{ issue.status == 'conflict' ? 'bg-warning-lt text-warning' : 'bg-danger-lt text-danger' }}">{{ issue.status == 'conflict' ? 'Konflikt' : 'Fehler' }}</span></td>
+                                        <td class="text-secondary">{{ issue.reason }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="card border-success">
+                <div class="card-body d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
+                    <div class="d-flex gap-3">
+                        <span class="avatar bg-success-lt text-success flex-shrink-0" aria-hidden="true">{{ ux_icon('tabler:circle-check') }}</span>
+                        <div>
+                            <h3 class="card-title mb-1">Testlauf abgeschlossen</h3>
+                            <p class="text-secondary mb-1">Bitte prüfen Sie die Ergebnisse. Erst mit dem folgenden Schritt werden Kundendaten gespeichert.</p>
+                            <div class="small fw-medium d-flex align-items-center gap-2">
+                                {{ ux_icon('tabler:shield-lock', {class: 'icon text-success'}) }}
+                                <span>Der Verkaufskanal und die hochgeladene Datei entsprechen exakt diesem Testlauf.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <form method="post" action="{{ path('cardnext_admin_customer_import_run', {token: import_token}) }}" class="flex-shrink-0">
+                        <input type="hidden" name="_token" value="{{ csrf_token('customer-import-run-' ~ import_token) }}">
+                        <button class="btn btn-success" type="submit">
+                            {{ ux_icon('tabler:database-import') }}
+                            Import jetzt durchführen
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    {% endif %}
 {% endblock %}
