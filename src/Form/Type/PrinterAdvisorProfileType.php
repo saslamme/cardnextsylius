@@ -17,7 +17,13 @@ final class PrinterAdvisorProfileType extends AbstractType
     {
         $builder
             ->add('enabled', CheckboxType::class, ['required' => false, 'label' => 'Im Kartendrucker-Berater verwenden'])
-            ->add('minAnnualVolume', IntegerType::class, ['label' => 'Mindest-Druckvolumen pro Jahr', 'attr' => ['min' => 0]])
+            ->add('minAnnualVolume', IntegerType::class, [
+                // Imported profiles can contain an empty form value. Keep null
+                // from reaching the int-only setter by restoring its domain default.
+                'empty_data' => '0',
+                'label' => 'Mindest-Druckvolumen pro Jahr',
+                'attr' => ['min' => 0],
+            ])
             ->add('maxAnnualVolume', IntegerType::class, ['required' => false, 'label' => 'Maximales Druckvolumen (leer = unbegrenzt)', 'attr' => ['min' => 1]])
             ->add('singleSided', CheckboxType::class, ['required' => false, 'label' => 'Einseitiger Druck'])
             ->add('duplex', CheckboxType::class, ['required' => false, 'label' => 'Automatischer Duplexdruck'])
@@ -28,8 +34,16 @@ final class PrinterAdvisorProfileType extends AbstractType
             ->add('retransfer', CheckboxType::class, ['required' => false, 'label' => 'Retransfer / randlos'])
             ->add('lamination', CheckboxType::class, ['required' => false, 'label' => 'Laminierung möglich'])
             ->add('highDurability', CheckboxType::class, ['required' => false, 'label' => 'Für besonders haltbare Karten'])
-            ->add('performanceClass', IntegerType::class, ['label' => 'Geschwindigkeitsklasse (1–5)', 'attr' => ['min' => 1, 'max' => 5]])
-            ->add('priority', IntegerType::class, ['label' => 'Business-Priorität (−100 bis 100)', 'attr' => ['min' => -100, 'max' => 100]]);
+            ->add('performanceClass', IntegerType::class, [
+                'empty_data' => '1',
+                'label' => 'Geschwindigkeitsklasse (1–5)',
+                'attr' => ['min' => 1, 'max' => 5],
+            ])
+            ->add('priority', IntegerType::class, [
+                'empty_data' => '0',
+                'label' => 'Business-Priorität (−100 bis 100)',
+                'attr' => ['min' => -100, 'max' => 100],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
