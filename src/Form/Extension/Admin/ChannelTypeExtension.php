@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Form\Extension\Admin;
 
 use App\Branding\ChannelBrandingUploader;
+use App\Branding\ChannelBrandingUploadException;
 use App\Entity\Channel\Channel;
 use Sylius\Bundle\ChannelBundle\Form\Type\ChannelType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
@@ -24,9 +26,9 @@ final class ChannelTypeExtension extends AbstractTypeExtension
     {
         $builder->add('themeKey', TextType::class, ['required' => false, 'label' => 'Branding-Key', 'help' => 'Technischer Markenbezeichner, z. B. cardnext, identible oder inplastor. Unabhängig vom Sylius-Theme.'])
             ->add('brandName', TextType::class, ['required' => false, 'label' => 'Markenname'])
-            ->add('logoFile', FileType::class, ['required' => false, 'label' => 'Logo', 'help' => 'PNG, WebP oder JPEG; maximal 2 MB.'])
-            ->add('logoDarkFile', FileType::class, ['required' => false, 'label' => 'Logo dunkel / Footer-Logo'])
-            ->add('faviconFile', FileType::class, ['required' => false, 'label' => 'Favicon'])
+            ->add('logoFile', FileType::class, $this->upload('Logo', 'SVG, PNG, WebP oder JPEG; maximal 2 MB.'))
+            ->add('logoDarkFile', FileType::class, $this->upload('Logo dunkel / Footer-Logo', 'SVG, PNG, WebP oder JPEG; maximal 2 MB.'))
+            ->add('faviconFile', FileType::class, $this->upload('Favicon', 'SVG, PNG, WebP oder JPEG; maximal 512 KB.'))
             ->add('primaryColor', TextType::class, $this->color('Primärfarbe'))
             ->add('primaryHoverColor', TextType::class, $this->color('Primärfarbe Hover'))
             ->add('primarySoftColor', TextType::class, $this->color('Primärfarbe hell'))
@@ -36,9 +38,21 @@ final class ChannelTypeExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
             $data = $event->getData();
             if ($data instanceof Channel && $event->getForm()->isValid()) {
-                $this->uploader->upload($data);
+                try {
+                    $this->uploader->upload($data);
+                } catch (ChannelBrandingUploadException $exception) {
+                    $event->getForm()->get($exception->field)->addError(new FormError($exception->getMessage()));
+                } catch (\Throwable) {
+                    $event->getForm()->addError(new FormError('Die Datei konnte nicht gespeichert werden.'));
+                }
             }
         });
+    }
+
+    /** @return array<string, mixed> */
+    private function upload(string $label, string $help): array
+    {
+        return ['required' => false, 'label' => $label, 'help' => $help, 'attr' => ['accept' => 'image/svg+xml,image/png,image/webp,image/jpeg']];
     }
 
     /** @return array<string, mixed> */
