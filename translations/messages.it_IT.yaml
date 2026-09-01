@@ -519,8 +519,8 @@ quote_mail:
   accepted_internal: L'offerta %number% v%version% è stata accettata.
   rejected_customer: Confermiamo la ricezione del rifiuto dell'offerta.
   rejected_internal: L'offerta %number% v%version% è stata rifiutata.
-  request_subject: La tua richiesta di offerta %number% su Cardnext
-  offer_subject: La tua offerta %number% da Cardnext
+  request_subject: La tua richiesta di offerta %number% su %brand%
+  offer_subject: La tua offerta %number% da %brand%
   accepted_subject: Conferma dell'accettazione dell'offerta
   rejected_subject: Conferma del rifiuto della tua offerta
   personal_offer: La tua offerta personale
@@ -530,4 +530,4 @@ quote_mail:
   request_greeting: Ciao %name%,
   request_reference: 'Il tuo riferimento: %number%'
   request_body: La tua richiesta include posizioni %count%. Controlleremo prezzi, disponibilità e i tuoi dati e poi ti ricontatteremo.
-  regards: 'I migliori auguri: il tuo team Cardnext'
+  regards: 'I migliori auguri: il tuo team %brand%'

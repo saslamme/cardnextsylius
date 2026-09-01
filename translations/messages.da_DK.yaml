@@ -519,8 +519,8 @@ quote_mail:
   accepted_internal: Tilbud %number% v%version% blev accepteret.
   rejected_customer: Vi bekræfter modtagelsen af ​​dit tilbudsafslag.
   rejected_internal: Tilbud %number% v%version% blev afvist.
-  request_subject: Din tilbudsanmodning %number% hos Cardnext
-  offer_subject: Dit tilbud %number% fra Cardnext
+  request_subject: Din tilbudsanmodning %number% hos %brand%
+  offer_subject: Dit tilbud %number% fra %brand%
   accepted_subject: Bekræftelse på din accept af tilbuddet
   rejected_subject: Bekræftelse af dit tilbudsafslag
   personal_offer: Dit personlige tilbud
@@ -530,4 +530,4 @@ quote_mail:
   request_greeting: Hej %name%,
   request_reference: 'Din reference: %number%'
   request_body: Din anmodning omfatter %count% positioner. Vi tjekker priser, tilgængelighed og dine detaljer og vender derefter tilbage til dig.
-  regards: De bedste ønsker – dit Cardnext-team
+  regards: De bedste ønsker – dit %brand%-team

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Branding;
 
 final readonly class ChannelBranding
@@ -12,5 +14,6 @@ final readonly class ChannelBranding
         public string $logoDarkPath,
         public ?string $faviconPath,
         public array $cssVariables,
-    ) {}
+    ) {
+    }
 }

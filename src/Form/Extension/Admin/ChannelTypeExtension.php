@@ -26,6 +26,9 @@ final class ChannelTypeExtension extends AbstractTypeExtension
     {
         $builder->add('themeKey', TextType::class, ['required' => false, 'label' => 'Branding-Key', 'help' => 'Technischer Markenbezeichner, z. B. cardnext, identible oder inplastor. Unabhängig vom Sylius-Theme.'])
             ->add('brandName', TextType::class, ['required' => false, 'label' => 'Markenname'])
+            ->add('emailSenderName', TextType::class, ['required' => false, 'label' => 'Absendername', 'help' => 'Angezeigter Absendername für transaktionale E-Mails dieses Verkaufskanals.'])
+            ->add('emailSenderAddress', TextType::class, ['required' => false, 'label' => 'Absender-E-Mail', 'help' => 'Technische Absenderadresse. Die Domain sollte für den verwendeten Mailserver freigegeben sein.'])
+            ->add('emailReplyToAddress', TextType::class, ['required' => false, 'label' => 'Antwortadresse', 'help' => 'Optional. Antworten des Kunden werden an diese Adresse gesendet.'])
             ->add('logoFile', FileType::class, $this->upload('Logo', 'SVG, PNG, WebP oder JPEG; maximal 2 MB.'))
             ->add('logoDarkFile', FileType::class, $this->upload('Logo dunkel / Footer-Logo', 'SVG, PNG, WebP oder JPEG; maximal 2 MB.'))
             ->add('faviconFile', FileType::class, $this->upload('Favicon', 'SVG, PNG, WebP oder JPEG; maximal 512 KB.'))

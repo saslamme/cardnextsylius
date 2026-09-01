@@ -6,6 +6,7 @@ namespace App\Branding;
 
 use App\Entity\Channel\Channel;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Channel\Model\ChannelInterface;
 
 final readonly class ChannelBrandingResolver
 {
@@ -15,7 +16,11 @@ final readonly class ChannelBrandingResolver
 
     public function resolve(): ChannelBranding
     {
-        $channel = $this->channelContext->getChannel();
+        return $this->resolveChannel($this->channelContext->getChannel());
+    }
+
+    public function resolveChannel(ChannelInterface $channel): ChannelBranding
+    {
         if (!$channel instanceof Channel) {
             return new ChannelBranding('cardnext', 'Cardnext', 'cardnext/cardnext.svg', 'cardnext/cardnext.svg', null, []);
         }

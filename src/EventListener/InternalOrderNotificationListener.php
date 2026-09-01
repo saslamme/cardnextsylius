@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
+use App\Email\ChannelEmailBranding;
+use App\Email\ChannelEmailBrandingResolver;
+use App\Entity\Channel\Channel;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -22,6 +25,7 @@ final class InternalOrderNotificationListener
         private readonly MailerInterface $mailer,
         private readonly Environment $twig,
         private readonly LoggerInterface $logger,
+        private readonly ?ChannelEmailBrandingResolver $brandingResolver = null,
     ) {
     }
 
@@ -40,17 +44,23 @@ final class InternalOrderNotificationListener
         $orderNumber = $order->getNumber();
 
         try {
+            $channel = $order->getChannel();
+            $branding = $channel instanceof Channel && $this->brandingResolver !== null
+                ? $this->brandingResolver->resolve($channel)
+                : new ChannelEmailBranding('Cardnext', 'cardnext/cardnext.svg', '/cardnext/cardnext.svg', 'Cardnext Shop', self::RECIPIENT, null);
             $customerEmail = $order->getCustomer()?->getEmail();
 
             $email = (new Email())
-                ->from(new Address(self::RECIPIENT, 'Cardnext Shop'))
+                ->from(new Address($branding->senderAddress, $branding->senderName))
                 ->to(self::RECIPIENT)
                 ->subject(sprintf(
-                    'Neue Cardnext-Bestellung %s',
+                    'Neue %s-Bestellung %s',
+                    $branding->brandName,
                     $orderNumber !== null ? '#' . $orderNumber : '',
                 ))
                 ->html($this->twig->render('email/internal_order_notification.html.twig', [
                     'order' => $order,
+                    'emailBranding' => $branding,
                 ]));
 
             if (is_string($customerEmail) && $customerEmail !== '') {
