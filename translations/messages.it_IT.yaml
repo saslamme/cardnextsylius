@@ -164,6 +164,50 @@ cardnext:
       details: 'Dettagli'
       compare: 'Confronta'
       compare_aria: 'Aggiungi %product% al confronto'
+    product_detail:
+      default_brand: 'Gamma Cardnext'
+      product_code: 'Codice prodotto'
+      add_to_cart: 'Aggiungi al carrello'
+      add_to_compare: 'Aggiungi al confronto'
+      pricing:
+        your_price: 'Il tuo prezzo'
+        tax_notice: 'netto · IVA di legge esclusa'
+        tier_prices: 'Prezzi a scaglioni'
+        order_more_save: 'Ordina di più e risparmia'
+        from_quantity: 'da %quantity% pezzi'
+        saving_title: 'Risparmi %saving% per pezzo (prezzo a scaglioni %price%)'
+      stock:
+        variant_availability: 'Disponibilità per questa variante'
+        out_of_stock: 'Non disponibile'
+        ask_availability: 'Richiedi la disponibilità'
+      quantity:
+        label: 'Quantità'
+        decrease: 'Riduci la quantità'
+        increase: 'Aumenta la quantità'
+        minimum: 'Quantità minima: %quantity%'
+        increment: 'Incremento ordine: %quantity%'
+        pack: 'Unità di imballaggio: %quantity% pezzi'
+      gallery:
+        image_pending_aria: 'Immagine del prodotto non ancora disponibile'
+        additional_images: 'Altre immagini del prodotto'
+        show_image: 'Mostra immagine del prodotto %index%'
+        variant_notice: "L'immagine può variare in base alla variante selezionata."
+      tabs:
+        label: 'Informazioni sul prodotto'
+        description: 'Descrizione'
+        specifications: 'Dati tecnici'
+        downloads: 'Download'
+        compatibility: 'Compatibilità'
+        accessories: 'Accessori e consigli'
+      documents:
+        types: { datasheet: 'Scheda tecnica', manual: 'Manuale', driver: 'Driver / software', certificate: 'Certificato', brochure: 'Brochure', other: 'Documento' }
+      compatibility:
+        compatible_with: 'Compatibile con'
+        consumables: 'Materiali di consumo adatti'
+        consumables_text: 'Nastri, prodotti per la pulizia e accessori per %product%.'
+        find_consumables: 'Trova materiali di consumo adatti'
+        suitable_for_product: 'Adatto a questo prodotto'
+        types: { compatible_with: 'Compatibile', consumable_for: 'Materiale di consumo', accessory_for: 'Accessorio', alternative_to: 'Alternativa', replacement_for: 'Prodotto sostitutivo' }
     advice:
       kicker: 'Guida all’acquisto'
       printer_title: 'Qual è la stampante di carte giusta?'

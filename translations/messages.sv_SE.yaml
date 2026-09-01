@@ -164,6 +164,50 @@ cardnext:
       details: 'Detaljer'
       compare: 'Jämför'
       compare_aria: 'Lägg till %product% i jämförelsen'
+    product_detail:
+      default_brand: 'Cardnext-sortiment'
+      product_code: 'Produktkod'
+      add_to_cart: 'Lägg i varukorgen'
+      add_to_compare: 'Lägg till i jämförelse'
+      pricing:
+        your_price: 'Ditt pris'
+        tax_notice: 'netto · exkl. lagstadgad moms'
+        tier_prices: 'Volympriser'
+        order_more_save: 'Beställ mer och spara'
+        from_quantity: 'från %quantity% stycken'
+        saving_title: 'Du sparar %saving% per styck (volympris %price%)'
+      stock:
+        variant_availability: 'Tillgänglighet för denna variant'
+        out_of_stock: 'Ej i lager'
+        ask_availability: 'Kontakta oss om tillgänglighet'
+      quantity:
+        label: 'Antal'
+        decrease: 'Minska antal'
+        increase: 'Öka antal'
+        minimum: 'Minsta antal: %quantity%'
+        increment: 'Beställningsintervall: %quantity%'
+        pack: 'Förpackningsenhet: %quantity% stycken'
+      gallery:
+        image_pending_aria: 'Det finns ännu ingen produktbild'
+        additional_images: 'Fler produktbilder'
+        show_image: 'Visa produktbild %index%'
+        variant_notice: 'Bilden kan avvika beroende på vald variant.'
+      tabs:
+        label: 'Produktinformation'
+        description: 'Beskrivning'
+        specifications: 'Tekniska data'
+        downloads: 'Nedladdningar'
+        compatibility: 'Kompatibilitet'
+        accessories: 'Tillbehör och rekommendationer'
+      documents:
+        types: { datasheet: 'Datablad', manual: 'Handbok', driver: 'Drivrutin / programvara', certificate: 'Certifikat', brochure: 'Broschyr', other: 'Dokument' }
+      compatibility:
+        compatible_with: 'Kompatibel med'
+        consumables: 'Passande förbrukningsmaterial'
+        consumables_text: 'Färgband, rengöringsprodukter och tillbehör för %product%.'
+        find_consumables: 'Hitta passande förbrukningsmaterial'
+        suitable_for_product: 'Passar till den här produkten'
+        types: { compatible_with: 'Kompatibel', consumable_for: 'Förbrukningsmaterial', accessory_for: 'Tillbehör', alternative_to: 'Alternativ', replacement_for: 'Ersättningsprodukt' }
     advice:
       kicker: 'Köpguide'
       printer_title: 'Vilken kortskrivare är rätt?'
@@ -361,7 +405,7 @@ cardnext:
     header: Offert (%count%)
     request: Begäran om offert
     intro: Sätt ihop dina önskade produkter. Vi kontrollerar priser, tillgänglighet och projektkrav och skapar sedan ett individuellt offert åt dig.
-    add: Lägg till i offertt
+    add: Lägg till i offert
     add_product: Lägg till %product% i offertkorg
     added: Produkten har lagts till i offertkorgen.
     invalid_item: Produkten är inte tillgänglig för en offertförfrågan i denna försäljningskanal.

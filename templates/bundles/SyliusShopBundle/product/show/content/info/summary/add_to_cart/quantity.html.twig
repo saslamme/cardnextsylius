@@ -3,15 +3,15 @@
 {% set minimum = variant ? variant.minimumOrderQuantity : 1 %}
 {% set increment = variant ? variant.orderIncrement : 1 %}
 <div class="cn-quantity">
-    <label class="cn-visually-hidden" for="{{ quantity.vars.id }}">Menge</label>
+    <label class="cn-visually-hidden" for="{{ quantity.vars.id }}">{{ 'cardnext.storefront.product_detail.quantity.label'|trans }}</label>
     <div class="cn-qty" data-cn-product-qty>
-        <button type="button" data-cn-qty-minus aria-label="Menge verringern">−</button>
+        <button type="button" data-cn-qty-minus aria-label="{{ 'cardnext.storefront.product_detail.quantity.decrease'|trans }}">−</button>
         {{ form_widget(quantity, sylius_test_form_attribute('quantity')|merge({'attr': {'min': minimum, 'step': increment}})) }}
-        <button type="button" data-cn-qty-plus aria-label="Menge erhöhen">+</button>
+        <button type="button" data-cn-qty-plus aria-label="{{ 'cardnext.storefront.product_detail.quantity.increase'|trans }}">+</button>
     </div>
     {% if variant and (minimum > 1 or increment > 1 or variant.packQuantity > 1) %}
         <small class="form-text text-muted">
-            Mindestmenge: {{ minimum }}{% if increment > 1 %} · Bestellschritt: {{ increment }}{% endif %}{% if variant.packQuantity > 1 %} · Verpackungseinheit: {{ variant.packQuantity }} Stück{% endif %}
+            {{ 'cardnext.storefront.product_detail.quantity.minimum'|trans({'%quantity%': minimum}) }}{% if increment > 1 %} · {{ 'cardnext.storefront.product_detail.quantity.increment'|trans({'%quantity%': increment}) }}{% endif %}{% if variant.packQuantity > 1 %} · {{ 'cardnext.storefront.product_detail.quantity.pack'|trans({'%quantity%': variant.packQuantity}) }}{% endif %}
         </small>
     {% endif %}
     {{ form_errors(quantity) }}

@@ -36,6 +36,16 @@ final class StorefrontTemplatesDoNotContainGermanCopyTest extends TestCase
         '>Details<',
         '>Vergleichen<',
         'Keine Produkte gefunden.',
+        'Produktcode:',
+        'Ihr Preis',
+        'In den Warenkorb',
+        'Zum Vergleich hinzufügen',
+        'Abbildung kann je nach gewählter Variante abweichen.',
+        '>Beschreibung<',
+        '>Technische Daten<',
+        '>Kompatibilität<',
+        'Zubehör &amp; Empfehlungen',
+        'Verfügbarkeit für diese Variante',
     ];
 
     /** @return iterable<string, array{string}> */
@@ -58,8 +68,12 @@ final class StorefrontTemplatesDoNotContainGermanCopyTest extends TestCase
             'templates/shop/printer_advisor',
             'templates/shop/consumable_finder',
         ] as $directory) {
-            foreach (glob(dirname(__DIR__, 2) . '/' . $directory . '/*.html.twig') ?: [] as $file) {
-                $paths[] = substr($file, strlen(dirname(__DIR__, 2)) + 1);
+            $root = dirname(__DIR__, 2) . '/' . $directory;
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root));
+            foreach ($files as $file) {
+                if ($file->isFile() && str_ends_with($file->getFilename(), '.html.twig')) {
+                    $paths[] = substr($file->getPathname(), strlen(dirname(__DIR__, 2)) + 1);
+                }
             }
         }
 
