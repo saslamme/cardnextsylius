@@ -4,6 +4,7 @@
 {% set branding = cardnext_channel_branding() %}
 
 {% block title %}{{ product.name }} | {{ branding.brandName }}{% endblock %}
+{% block metatags %}{{ parent() }}{% set structured_data = cardnext_product_structured_data(product) %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}{% endblock %}
 
 {% block content %}
     {% hook 'sylius_shop.product.show' with { product, configuration } %}

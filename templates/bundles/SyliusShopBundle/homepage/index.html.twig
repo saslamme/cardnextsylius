@@ -15,6 +15,7 @@
     <meta name="twitter:title" content="{{ homepage.metaTitle }}">
     <meta name="twitter:description" content="{{ homepage.metaDescription }}">
     <meta name="twitter:image" content="{{ cardnext_channel_asset_url(homepage.heroImagePath) }}">
+    {% set structured_data = cardnext_homepage_structured_data() %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}
 {% endblock %}
 {% block content %}
 <main id="main-content" class="cn-page">

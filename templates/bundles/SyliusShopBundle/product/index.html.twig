@@ -8,6 +8,7 @@
 {% set cardnext_taxon = app.request.attributes.get('cardnext_taxon') %}
 {% set branding = cardnext_channel_branding() %}
 {% block title %}{{ cardnext_taxon ? cardnext_taxon.name ~ ' | ' ~ branding.brandName : branding.brandName }}{% endblock %}
+{% block metatags %}{{ parent() }}{% if cardnext_taxon %}{% set structured_data = cardnext_taxon_structured_data(cardnext_taxon) %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}{% endif %}{% endblock %}
 {% block content %}
 <main class="cn-page" id="main-content">
     {{ component('sylius_shop:product:show:breadcrumbs', {template: 'shop/category/breadcrumbs.html.twig'}) }}
