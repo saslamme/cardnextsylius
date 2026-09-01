@@ -20,6 +20,9 @@ final readonly class ResolvedHomepageContent
         public string $ctaTitle,
         public string $ctaText,
         public string $footerText,
+        public string $heroImagePath,
+        public string $introImagePath,
+        public string $ctaImagePath,
     ) {
     }
 }

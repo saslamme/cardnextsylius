@@ -13,7 +13,7 @@
             <div class="cn-cluster"><a class="cn-btn cn-btn--primary" href="#products">{{ 'cardnext.storefront.homepage.hero.products'|trans }} →</a><a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.homepage.hero.consulting'|trans }}</a></div>
         </div>
         <div class="cn-hero__visual cn-hero__visual--photo" aria-label="{{ 'cardnext.storefront.homepage.hero.visual_label'|trans }}">
-            <img class="cn-hero__photo" src="{{ asset('cardnext/homepage/hero-card-printer.webp') }}" alt="{{ 'cardnext.storefront.homepage.hero.image_alt'|trans }}" width="1600" height="900" loading="eager" fetchpriority="high">
+            <img class="cn-hero__photo" src="{{ asset(homepage.heroImagePath) }}" alt="{{ 'cardnext.storefront.homepage.hero.image_alt'|trans }}" width="1600" height="900" loading="eager" fetchpriority="high">
 </div>
     </div>
 </section>
@@ -76,7 +76,7 @@
 
             <div class="cn-home-service__photo">
                 <img
-                    src="{{ asset('cardnext/homepage/service-consultation.webp') }}"
+                    src="{{ asset(homepage.introImagePath) }}"
                     alt="{{ 'cardnext.storefront.homepage.service.image_alt'|trans }}"
                     width="1200"
                     height="1060"
@@ -161,7 +161,7 @@
 <section class="cn-section" id="why-cardnext"><div class="cn-container"><div class="cn-split mb-4"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ homepage.whyKicker }}</span><h2 class="cn-title cn-title--section">{{ homepage.whyTitle }}</h2></div><p class="cn-lead">{{ homepage.whyText }}</p></div><div class="cn-grid cn-grid--4 cn-grid--lined">{% set advantages = [['01','specialized'],['02','independent'],['03','compatibility'],['04','personal']] %}{% for item in advantages %}<div class="cn-feature"><span class="cn-feature__index">{{ item[0] }}</span><h3>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.title')|trans }}</h3><p>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.text')|trans }}</p></div>{% endfor %}</div></div></section>
 <section class="cn-cta cn-cta--support">
     <img class="cn-cta__background"
-        src="{{ asset('cardnext/homepage/support-advisor.webp') }}"
+        src="{{ asset(homepage.ctaImagePath) }}"
         alt=""
         width="1800"
         height="360"

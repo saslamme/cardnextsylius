@@ -84,6 +84,10 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
+    App\Content\ChannelHomepageImageUploader:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
     App\International\MarketUrlResolver:
         arguments:
             $channelRepository: '@sylius.repository.channel'

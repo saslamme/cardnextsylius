@@ -31,6 +31,9 @@ final class ChannelHomepageContentResolverTest extends TestCase
         self::assertSame('fallback:cardnext.storefront.homepage.hero.text', $resolved->heroText);
         self::assertSame('Warum Identible', $resolved->whyKicker);
         self::assertSame('fallback:cardnext.storefront.footer.description', $resolved->footerText);
+        self::assertSame('cardnext/homepage/hero-card-printer.webp', $resolved->heroImagePath);
+        self::assertSame('cardnext/homepage/service-consultation.webp', $resolved->introImagePath);
+        self::assertSame('cardnext/homepage/support-advisor.webp', $resolved->ctaImagePath);
     }
 
     public function testSameLocaleDoesNotLeakBetweenChannels(): void
@@ -42,6 +45,23 @@ final class ChannelHomepageContentResolverTest extends TestCase
 
         self::assertSame('Cardnext Hero', $this->resolver($cardnext, 'de_DE', [$first, $second])->resolve()->heroTitle);
         self::assertSame('Identible Hero', $this->resolver($identible, 'de_DE', [$first, $second])->resolve()->heroTitle);
+    }
+
+    public function testCustomImagesAreIsolatedByChannelAndLocale(): void
+    {
+        $identible = new Channel();
+        $inplastor = new Channel();
+        $identibleGerman = $this->content($identible, 'de_DE', 'Identible');
+        $identibleGerman->setHeroImagePath('uploads/channel-homepage/identible.webp');
+        $identibleAustrian = $this->content($identible, 'de_AT', 'Identible AT');
+        $identibleAustrian->setHeroImagePath('uploads/channel-homepage/identible-at.webp');
+        $inplastorAustrian = $this->content($inplastor, 'de_AT', 'Inplastor');
+        $inplastorAustrian->setHeroImagePath('uploads/channel-homepage/inplastor.webp');
+        $contents = [$identibleGerman, $identibleAustrian, $inplastorAustrian];
+
+        self::assertSame('uploads/channel-homepage/identible.webp', $this->resolver($identible, 'de_DE', $contents)->resolve()->heroImagePath);
+        self::assertSame('uploads/channel-homepage/identible-at.webp', $this->resolver($identible, 'de_AT', $contents)->resolve()->heroImagePath);
+        self::assertSame('uploads/channel-homepage/inplastor.webp', $this->resolver($inplastor, 'de_AT', $contents)->resolve()->heroImagePath);
     }
 
     public function testSameChannelSelectsTheCurrentLocale(): void

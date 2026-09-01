@@ -46,6 +46,9 @@ final class ChannelHomepageContentResolver
             $value($content?->getCtaTitle(), $fallback('cardnext.storefront.homepage.cta.title')),
             $value($content?->getCtaText(), $fallback('cardnext.storefront.homepage.cta.text')),
             $value($content?->getFooterText(), $fallback('cardnext.storefront.footer.description')),
+            $value($content?->getHeroImagePath(), 'cardnext/homepage/hero-card-printer.webp'),
+            $value($content?->getIntroImagePath(), 'cardnext/homepage/service-consultation.webp'),
+            $value($content?->getCtaImagePath(), 'cardnext/homepage/support-advisor.webp'),
         );
     }
 }
