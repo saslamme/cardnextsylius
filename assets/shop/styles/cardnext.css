@@ -4795,8 +4795,9 @@ tbody td:nth-child(2) {
 .cn-auth { min-height: 620px; display: flex; align-items: center; padding-block: 68px; background: linear-gradient(135deg,var(--cn-surface-softer),#fff 65%); }
 .cn-auth__split { display: grid; grid-template-columns: minmax(0,.9fr) minmax(360px,.72fr); border: 1px solid var(--cn-border); border-radius: var(--cn-radius); box-shadow: 0 20px 55px rgba(32,39,45,.08); overflow: hidden; }
 .cn-auth__form-panel { order: 2; padding: clamp(34px,5vw,64px); background: #fff; }
-.cn-auth__aside { order: 1; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(34px,5vw,64px); color: #fff; background: var(--cn-ink); }
+.cn-auth__aside { order: 1; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: clamp(34px,5vw,64px); color: #fff; background: var(--cn-ink); text-align: center; }
 .cn-auth__aside h1, .cn-auth__aside h2, .cn-auth__aside h3, .cn-auth__aside p, .cn-auth__aside a { color: inherit; }
+.cn-auth__aside svg { display: block; max-width: 100%; margin-inline: auto; }
 .cn-auth__aside .btn { color: #fff !important; background: transparent !important; border-color: #717a80 !important; }
 .cn-auth__aside .btn:hover { background: #fff !important; color: var(--cn-ink) !important; border-color: #fff !important; }
 .cn-auth__index { margin-bottom: auto; color: #9ca5aa; font-size: .65rem; font-weight: 800; letter-spacing: .12em; }
