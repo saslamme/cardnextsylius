@@ -53,7 +53,7 @@
                 {% set taxon = cardnext_taxon_by_code(category.code) %}
                 {% if taxon %}<a
                     class="cn-home-category"
-                    href="{{ path('sylius_shop_product_index', {'slug': taxon.slug, '_locale': app.request.locale}) }}"
+                    href="{{ path('sylius_shop_product_index', {'slug': taxon.slug}) }}"
                 >
                     <span class="cn-home-category__media">
                         <img
@@ -146,7 +146,7 @@
             </a>
 
             {% set ribbonsTaxon = cardnext_taxon_by_code('ribbons') %}
-            <a class="cn-home-service__item" href="{{ ribbonsTaxon ? path('sylius_shop_product_index', {'slug': ribbonsTaxon.slug, '_locale': app.request.locale}) : path('sylius_shop_homepage') }}">
+            <a class="cn-home-service__item" href="{{ ribbonsTaxon ? path('sylius_shop_product_index', {'slug': ribbonsTaxon.slug}) : path('sylius_shop_homepage') }}">
                 <span class="cn-home-service__icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <path d="m12 3 7 4v10l-7 4-7-4V7z"/>

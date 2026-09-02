@@ -17,8 +17,8 @@
     <section class="cn-section cn-section--compact" aria-label="{{ 'cardnext.storefront.catalog.overview_aria'|trans }}">
         <div class="cn-container cn-catalog">
             <aside class="cn-sidebar" aria-label="{{ 'cardnext.storefront.catalog.filter_aria'|trans }}">
-                <div class="cn-sidebar__head"><h2>{{ 'cardnext.storefront.catalog.filters'|trans }}</h2>{% if app.request.query.has('criteria') %}<a href="{{ path('sylius_shop_product_index', {'_locale': app.request.locale, 'slug': app.request.attributes.get('slug')}) }}">{{ 'cardnext.storefront.catalog.reset'|trans }}</a>{% endif %}</div>
-                <form class="cn-filter-form" method="get" action="{{ path('sylius_shop_product_index', {'_locale': app.request.locale, 'slug': app.request.attributes.get('slug')}) }}">
+                <div class="cn-sidebar__head"><h2>{{ 'cardnext.storefront.catalog.filters'|trans }}</h2>{% if app.request.query.has('criteria') %}<a href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">{{ 'cardnext.storefront.catalog.reset'|trans }}</a>{% endif %}</div>
+                <form class="cn-filter-form" method="get" action="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">
                     {% for key, value in current_sorting %}<input type="hidden" name="sorting[{{ key }}]" value="{{ value }}">{% endfor %}
                     <input type="hidden" name="limit" value="{{ current_limit }}"><input type="hidden" name="page" value="1">
                     {% for filter in products.definition.enabledFilters %}{% if filter.name != 'search' %}<div class="cn-filter">{{ sylius_grid_render_filter(products, filter) }}</div>{% endif %}{% endfor %}
@@ -30,7 +30,7 @@
                     <aside class="cn-panel mb-4" aria-label="{{ 'cardnext.storefront.catalog.advisor.aria'|trans }}">
                         <h2>{{ 'cardnext.storefront.catalog.advisor.title'|trans }}</h2>
                         <p>{{ 'cardnext.storefront.catalog.advisor.text'|trans }}</p>
-                        <a class="cn-btn cn-btn--primary" href="{{ path('cardnext_shop_printer_advisor', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.catalog.advisor.start'|trans }}</a>
+                        <a class="cn-btn cn-btn--primary" href="{{ path('cardnext_shop_printer_advisor', {}) }}">{{ 'cardnext.storefront.catalog.advisor.start'|trans }}</a>
                     </aside>
                 {% endif %}
                 <div class="cn-toolbar">

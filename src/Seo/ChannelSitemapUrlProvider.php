@@ -27,14 +27,14 @@ final readonly class ChannelSitemapUrlProvider
             return [];
         }
         $origin = 'https://' . $channel->getHostname();
-        $urls = [$origin . $this->router->generate('sylius_shop_homepage', ['_locale' => $locale], UrlGeneratorInterface::ABSOLUTE_PATH)];
+        $urls = [$origin . $this->router->generate('sylius_shop_homepage', [], UrlGeneratorInterface::ABSOLUTE_PATH)];
 
         $root = $channel->getMenuTaxon();
         if ($root instanceof TaxonInterface) {
             foreach ($this->descendants($root) as $taxon) {
                 $slug = $this->slug($taxon, $locale);
                 if ($slug !== null) {
-                    $urls[] = $origin . $this->router->generate('sylius_shop_product_index', ['_locale' => $locale, 'slug' => $slug], UrlGeneratorInterface::ABSOLUTE_PATH);
+                    $urls[] = $origin . $this->router->generate('sylius_shop_product_index', ['slug' => $slug], UrlGeneratorInterface::ABSOLUTE_PATH);
                 }
             }
         }
@@ -45,7 +45,7 @@ final readonly class ChannelSitemapUrlProvider
             }
             $slug = $this->slug($product, $locale);
             if ($slug !== null) {
-                $urls[] = $origin . $this->router->generate('sylius_shop_product_show', ['_locale' => $locale, 'slug' => $slug], UrlGeneratorInterface::ABSOLUTE_PATH);
+                $urls[] = $origin . $this->router->generate('sylius_shop_product_show', ['slug' => $slug], UrlGeneratorInterface::ABSOLUTE_PATH);
             }
         }
 

@@ -16,7 +16,7 @@ final class ProductComparisonArchitectureTest extends TestCase
         self::assertIsString($service);
 
         self::assertStringContainsString('cardnext_shop_product_compare:', $route);
-        self::assertStringContainsString('/{_locale}/produktvergleich', $route);
+        self::assertStringContainsString('/produktvergleich', $route);
         self::assertStringContainsString('p.enabled = true', $service);
         self::assertStringContainsString('v.enabled = true', $service);
         self::assertStringContainsString('cp.channelCode = :channelCode', $service);

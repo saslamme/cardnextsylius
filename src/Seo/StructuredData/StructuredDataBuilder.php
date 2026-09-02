@@ -136,7 +136,7 @@ final readonly class StructuredDataBuilder
             }
         }
         foreach ($chain as $node) {
-            $path = $this->urlGenerator->generate('sylius_shop_product_index', ['_locale' => $request->getLocale(), 'slug' => $node->getSlug()]);
+            $path = $this->urlGenerator->generate('sylius_shop_product_index', ['slug' => $node->getSlug()]);
             $items[] = ['@type' => 'ListItem', 'position' => count($items) + 1, 'name' => (string) $node->getName(), 'item' => $this->canonicalUrlResolver->absoluteAsset($request, $path)];
         }
         if ($items[count($items) - 1]['item'] !== $pageUrl) {
@@ -148,7 +148,7 @@ final readonly class StructuredDataBuilder
 
     private function homepageUrl(Request $request): string
     {
-        $path = $this->urlGenerator->generate('sylius_shop_homepage', ['_locale' => $request->getLocale()]);
+        $path = $this->urlGenerator->generate('sylius_shop_homepage');
 
         return $this->canonicalUrlResolver->absoluteAsset($request, $path) ?? '';
     }

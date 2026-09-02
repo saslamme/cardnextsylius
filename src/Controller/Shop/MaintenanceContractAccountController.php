@@ -13,7 +13,7 @@ use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/{_locale}/account/wartungsvertraege', priority: 200)]
+#[Route('/account/wartungsvertraege', priority: 200)]
 final class MaintenanceContractAccountController extends AbstractController
 {
     #[Route('', name: 'cardnext_shop_account_maintenance_contract_index', methods: ['GET'])]

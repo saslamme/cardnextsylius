@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class BrandController extends AbstractController
 {
-    #[Route('/{_locale}/marken', name: 'cardnext_shop_brands', methods: ['GET'], priority: 120)]
+    #[Route('/marken', name: 'cardnext_shop_brands', methods: ['GET'], priority: 120)]
     public function index(BrandCatalog $catalog): Response
     {
         $manufacturers = $catalog->manufacturers();
@@ -30,8 +30,8 @@ final class BrandController extends AbstractController
         return $this->render('shop/brand/index.html.twig', ['groups' => $groups, 'featured' => array_slice($featured, 0, 8)]);
     }
 
-    #[Route('/{_locale}/marken/{slug}', name: 'cardnext_shop_brand_show', methods: ['GET'], priority: 120)]
-    public function show(string $_locale, string $slug, Request $request, BrandCatalog $catalog): Response
+    #[Route('/marken/{slug}', name: 'cardnext_shop_brand_show', methods: ['GET'], priority: 120)]
+    public function show(string $slug, Request $request, BrandCatalog $catalog): Response
     {
         $manufacturer = $catalog->manufacturer($slug);
         if ($manufacturer === null) {
@@ -45,7 +45,7 @@ final class BrandController extends AbstractController
         }
 
         return $this->render('shop/brand/show.html.twig', [
-            'manufacturer' => $manufacturer, 'areas' => $catalog->areas($manufacturer, $_locale),
+            'manufacturer' => $manufacturer, 'areas' => $catalog->areas($manufacturer, $request->getLocale()),
             'products' => $catalog->products($manufacturer, $perPage, ($page - 1) * $perPage), 'page' => $page, 'pageCount' => $pageCount,
         ]);
     }

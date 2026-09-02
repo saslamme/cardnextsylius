@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-#[Route('/{_locale}/account/angebote', priority: 200)]
+#[Route('/account/angebote', priority: 200)]
 final class QuoteAccountController extends AbstractController
 {
     private const STATUSES = [QuoteStatus::Sent, QuoteStatus::Accepted, QuoteStatus::Rejected, QuoteStatus::Superseded];

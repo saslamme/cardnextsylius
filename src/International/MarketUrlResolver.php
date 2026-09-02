@@ -80,12 +80,12 @@ final readonly class MarketUrlResolver
             if ($product instanceof ProductInterface && $channel instanceof ChannelInterface && $this->productIsAvailableInChannel($product, $channel)) {
                 $slug = $this->translatedSlugs($request, $product)[$market->localeCode] ?? null;
                 if ($slug !== null) {
-                    $url = $this->absolute($market, 'sylius_shop_product_show', ['_locale' => $market->localeCode, 'slug' => $slug]);
+                    $url = $this->absolute($market, 'sylius_shop_product_show', ['slug' => $slug]);
                 }
             } elseif ($taxon instanceof TaxonInterface && $channel instanceof ChannelInterface && $this->taxonIsAvailableInChannel($taxon, $channel)) {
                 $slug = $this->translatedSlugs($request, $taxon)[$market->localeCode] ?? null;
                 if ($slug !== null) {
-                    $url = $this->absolute($market, 'sylius_shop_product_index', ['_locale' => $market->localeCode, 'slug' => $slug]);
+                    $url = $this->absolute($market, 'sylius_shop_product_index', ['slug' => $slug]);
                 }
             } elseif (!$product instanceof ProductInterface && !$taxon instanceof TaxonInterface) {
                 $url = $this->localeOnlySeoUrl($request, $market);
@@ -104,7 +104,7 @@ final readonly class MarketUrlResolver
         $routeAttribute = $request->attributes->get('_route');
         $route = is_string($routeAttribute) ? $routeAttribute : '';
         $resource = $this->currentProduct($request) ?? $this->currentTaxon($request);
-        $parameters = ['_locale' => $target->localeCode];
+        $parameters = [];
 
         $targetChannel = $this->enabledChannels($request)[$target->channelCode] ?? null;
         if ($resource instanceof ProductInterface && $targetChannel instanceof ChannelInterface && $this->productIsAvailableInChannel($resource, $targetChannel)) {
@@ -121,10 +121,10 @@ final readonly class MarketUrlResolver
             }
         }
 
-        // Only preserve routes whose parameters are locale-only. Unknown and
+        // Only preserve parameter-free routes. Unknown and
         // channel-dependent resources deliberately fall back to the homepage.
         $routeParameters = $request->attributes->get('_route_params', []);
-        if ($route !== '' && is_array($routeParameters) && array_diff_key($routeParameters, ['_locale' => true]) === []) {
+        if ($route !== '' && is_array($routeParameters) && $routeParameters === []) {
             try {
                 return $this->absolute($target, $route, $parameters);
             } catch (\Throwable) {
@@ -146,7 +146,7 @@ final readonly class MarketUrlResolver
         if ($product instanceof ProductInterface) {
             $slug = $this->translatedSlugs($request, $product)[$market->localeCode] ?? null;
             if ($slug !== null) {
-                return $this->absolute($market, 'sylius_shop_product_show', ['_locale' => $market->localeCode, 'slug' => $slug]);
+                return $this->absolute($market, 'sylius_shop_product_show', ['slug' => $slug]);
             }
         }
 
@@ -154,7 +154,7 @@ final readonly class MarketUrlResolver
         if ($taxon instanceof TaxonInterface) {
             $slug = $this->translatedSlugs($request, $taxon)[$market->localeCode] ?? null;
             if ($slug !== null) {
-                return $this->absolute($market, 'sylius_shop_product_index', ['_locale' => $market->localeCode, 'slug' => $slug]);
+                return $this->absolute($market, 'sylius_shop_product_index', ['slug' => $slug]);
             }
         }
 
@@ -223,9 +223,9 @@ final readonly class MarketUrlResolver
             return null;
         }
 
-        $locale = $this->routeString($request, '_locale');
+        $locale = $request->getLocale();
         $slug = $this->routeString($request, 'slug');
-        if ($locale === null || $slug === null) {
+        if ($slug === null) {
             return null;
         }
 
@@ -260,9 +260,9 @@ final readonly class MarketUrlResolver
             return null;
         }
 
-        $locale = $this->routeString($request, '_locale');
+        $locale = $request->getLocale();
         $slug = $this->routeString($request, 'slug');
-        if ($locale === null || $slug === null) {
+        if ($slug === null) {
             return null;
         }
 
@@ -292,12 +292,12 @@ final readonly class MarketUrlResolver
     {
         $route = $request->attributes->get('_route');
         $routeParameters = $request->attributes->get('_route_params', []);
-        if (!is_string($route) || !in_array($route, self::SEO_LOCALE_ONLY_ROUTES, true) || !is_array($routeParameters) || array_diff_key($routeParameters, ['_locale' => true]) !== []) {
+        if (!is_string($route) || !in_array($route, self::SEO_LOCALE_ONLY_ROUTES, true) || !is_array($routeParameters) || $routeParameters !== []) {
             return null;
         }
 
         try {
-            return $this->absolute($market, $route, ['_locale' => $market->localeCode]);
+            return $this->absolute($market, $route, []);
         } catch (\Throwable) {
             return null;
         }

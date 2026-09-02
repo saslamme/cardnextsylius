@@ -50,13 +50,13 @@ final class MarketFoundationTest extends TestCase
     public function testSwitchingUsesTargetSchemeHostAndLocale(): void
     {
         $resolver = $this->resolver('CARDNEXT_DE');
-        $request = Request::create('https://www.cardnext.de/de_DE/');
+        $request = Request::create('https://www.cardnext.de/');
         $request->attributes->set('_route', 'sylius_shop_homepage');
-        $request->attributes->set('_route_params', ['_locale' => 'de_DE']);
+        $request->attributes->set('_route_params', []);
 
         $spain = (new CardnextMarketRegistry())->get('CARDNEXT_ES');
         self::assertNotNull($spain);
-        self::assertSame('https://es.cardnext.de/es_ES/', $resolver->switchUrl($request, $spain));
+        self::assertSame('https://es.cardnext.de/', $resolver->switchUrl($request, $spain));
     }
 
     public function testUnavailableProductFallsBackToTargetHomepage(): void
@@ -64,21 +64,21 @@ final class MarketFoundationTest extends TestCase
         $resolver = $this->resolver('CARDNEXT_DE');
         $product = $this->createMock(ProductInterface::class);
         $product->method('isEnabled')->willReturn(false);
-        $request = Request::create('https://www.cardnext.de/de_DE/a-product');
+        $request = Request::create('https://www.cardnext.de/a-product');
         $request->attributes->set('_route', 'sylius_shop_product_show');
-        $request->attributes->set('_route_params', ['_locale' => 'de_DE', 'slug' => 'a-product']);
+        $request->attributes->set('_route_params', ['slug' => 'a-product']);
         $request->attributes->set('cardnext_product', $product);
 
         $denmark = (new CardnextMarketRegistry())->get('CARDNEXT_DK');
         self::assertNotNull($denmark);
-        self::assertSame('https://dk.cardnext.de/da_DK/', $resolver->switchUrl($request, $denmark));
+        self::assertSame('https://dk.cardnext.de/', $resolver->switchUrl($request, $denmark));
     }
 
     public function testCanonicalUsesCurrentChannelHostNotRequestHost(): void
     {
-        $request = Request::create('https://attacker.invalid/es_ES/example?channel=CARDNEXT_DE');
+        $request = Request::create('https://attacker.invalid/example?channel=CARDNEXT_DE');
 
-        self::assertSame('https://es.cardnext.de/es_ES/example', $this->resolver('CARDNEXT_ES')->canonical($request));
+        self::assertSame('https://es.cardnext.de/example', $this->resolver('CARDNEXT_ES')->canonical($request));
     }
 
     public function testProductAlternatesUseEveryExactLocalizedSlug(): void
@@ -88,20 +88,20 @@ final class MarketFoundationTest extends TestCase
             'es_ES' => 'es-producto', 'it_IT' => 'it-prodotto', 'nl_NL' => 'nl-product', 'sv_SE' => 'se-produkt',
         ];
         [$product, $channels] = $this->productAndChannels($slugs);
-        $request = Request::create('https://es.cardnext.de/es_ES/wrong-incoming-slug?tracking=1');
+        $request = Request::create('https://es.cardnext.de/wrong-incoming-slug?tracking=1');
         $request->attributes->set('cardnext_product', $product);
         $resolver = $this->resolver('CARDNEXT_ES', $channels);
 
         self::assertSame([
-            'de-DE' => 'https://www.cardnext.de/de_DE/de-produkt',
-            'de-AT' => 'https://at.cardnext.de/de_AT/at-produkt',
-            'da-DK' => 'https://dk.cardnext.de/da_DK/dk-produkt',
-            'es-ES' => 'https://es.cardnext.de/es_ES/es-producto',
-            'it-IT' => 'https://it.cardnext.de/it_IT/it-prodotto',
-            'nl-NL' => 'https://nl.cardnext.de/nl_NL/nl-product',
-            'sv-SE' => 'https://se.cardnext.de/sv_SE/se-produkt',
+            'de-DE' => 'https://www.cardnext.de/de-produkt',
+            'de-AT' => 'https://at.cardnext.de/at-produkt',
+            'da-DK' => 'https://dk.cardnext.de/dk-produkt',
+            'es-ES' => 'https://es.cardnext.de/es-producto',
+            'it-IT' => 'https://it.cardnext.de/it-prodotto',
+            'nl-NL' => 'https://nl.cardnext.de/nl-product',
+            'sv-SE' => 'https://se.cardnext.de/se-produkt',
         ], $this->alternateMap($resolver, $request));
-        self::assertSame('https://es.cardnext.de/es_ES/es-producto', $resolver->canonical($request));
+        self::assertSame('https://es.cardnext.de/es-producto', $resolver->canonical($request));
     }
 
     public function testRealProductRouteResolvesLocaleAndChannelAwareProductAndKeepsItWhenSwitchingMarkets(): void
@@ -119,23 +119,23 @@ final class MarketFoundationTest extends TestCase
             'de_DE',
             $slugs['de_DE'],
         )->willReturn($product);
-        $request = Request::create('https://www.cardnext.de/de_DE/' . $slugs['de_DE']);
+        $request = Request::create('https://www.cardnext.de/' . $slugs['de_DE']);
         $request->attributes->add([
             '_route' => 'sylius_shop_product_show',
-            '_locale' => 'de_DE',
             'slug' => $slugs['de_DE'],
-            '_route_params' => ['_locale' => 'de_DE', 'slug' => $slugs['de_DE']],
+            '_route_params' => ['slug' => $slugs['de_DE']],
         ]);
+        $request->setLocale('de_DE');
         $resolver = $this->resolver('CARDNEXT_DE', $channels, $productRepository);
 
-        self::assertSame('https://www.cardnext.de/de_DE/' . $slugs['de_DE'], $resolver->canonical($request));
+        self::assertSame('https://www.cardnext.de/' . $slugs['de_DE'], $resolver->canonical($request));
         $alternates = $this->alternateMap($resolver, $request);
         self::assertCount(7, $alternates);
-        self::assertSame('https://dk.cardnext.de/da_DK/' . $slugs['da_DK'], $alternates['da-DK']);
-        self::assertNotContains('https://dk.cardnext.de/da_DK/', $alternates);
+        self::assertSame('https://dk.cardnext.de/' . $slugs['da_DK'], $alternates['da-DK']);
+        self::assertNotContains('https://dk.cardnext.de/', $alternates);
         $denmark = (new CardnextMarketRegistry())->get('CARDNEXT_DK');
         self::assertNotNull($denmark);
-        self::assertSame('https://dk.cardnext.de/da_DK/' . $slugs['da_DK'], $resolver->switchUrl($request, $denmark));
+        self::assertSame('https://dk.cardnext.de/' . $slugs['da_DK'], $resolver->switchUrl($request, $denmark));
     }
 
     public function testSharedPublicRouteUsesExplicitTranslationQueryWhenProductCollectionIsPartial(): void
@@ -159,26 +159,26 @@ final class MarketFoundationTest extends TestCase
             'translatable' => $product,
             'locale' => array_keys($slugs),
         ])->willReturn($translations);
-        $request = Request::create('https://www.cardnext.de/de_DE/' . $slugs['de_DE']);
+        $request = Request::create('https://www.cardnext.de/' . $slugs['de_DE']);
         $request->attributes->add([
             '_route' => 'sylius_shop_product_index',
-            '_route_params' => ['_locale' => 'de_DE', 'slug' => $slugs['de_DE']],
+            '_route_params' => ['slug' => $slugs['de_DE']],
             'cardnext_product' => $product,
         ]);
         $resolver = $this->resolver('CARDNEXT_DE', $channels, productTranslationRepository: $translationRepository);
 
         $alternates = $this->alternateMap($resolver, $request);
         self::assertCount(7, $alternates);
-        self::assertSame('https://dk.cardnext.de/da_DK/' . $slugs['da_DK'], $alternates['da-DK']);
-        self::assertSame('https://es.cardnext.de/es_ES/' . $slugs['es_ES'], $alternates['es-ES']);
-        self::assertSame('https://it.cardnext.de/it_IT/' . $slugs['it_IT'], $alternates['it-IT']);
-        self::assertSame('https://nl.cardnext.de/nl_NL/' . $slugs['nl_NL'], $alternates['nl-NL']);
-        self::assertSame('https://se.cardnext.de/sv_SE/' . $slugs['sv_SE'], $alternates['sv-SE']);
-        self::assertNotContains('https://dk.cardnext.de/da_DK/', $alternates);
+        self::assertSame('https://dk.cardnext.de/' . $slugs['da_DK'], $alternates['da-DK']);
+        self::assertSame('https://es.cardnext.de/' . $slugs['es_ES'], $alternates['es-ES']);
+        self::assertSame('https://it.cardnext.de/' . $slugs['it_IT'], $alternates['it-IT']);
+        self::assertSame('https://nl.cardnext.de/' . $slugs['nl_NL'], $alternates['nl-NL']);
+        self::assertSame('https://se.cardnext.de/' . $slugs['sv_SE'], $alternates['sv-SE']);
+        self::assertNotContains('https://dk.cardnext.de/', $alternates);
         $denmark = (new CardnextMarketRegistry())->get('CARDNEXT_DK');
         self::assertNotNull($denmark);
-        self::assertSame('https://dk.cardnext.de/da_DK/' . $slugs['da_DK'], $resolver->switchUrl($request, $denmark));
-        self::assertSame('https://www.cardnext.de/de_DE/' . $slugs['de_DE'], $resolver->canonical($request));
+        self::assertSame('https://dk.cardnext.de/' . $slugs['da_DK'], $resolver->switchUrl($request, $denmark));
+        self::assertSame('https://www.cardnext.de/' . $slugs['de_DE'], $resolver->canonical($request));
     }
 
     public function testDanishProductRouteProducesReciprocalSevenMarketCluster(): void
@@ -190,11 +190,12 @@ final class MarketFoundationTest extends TestCase
         [$product, $channels] = $this->productAndChannels($slugs);
         $products = $this->createMock(ProductRepositoryInterface::class);
         $products->expects(self::once())->method('findOneByChannelAndSlug')->with(self::anything(), 'da_DK', 'dk-produkt')->willReturn($product);
-        $request = Request::create('https://dk.cardnext.de/da_DK/dk-produkt');
-        $request->attributes->add(['_route' => 'sylius_shop_product_show', '_locale' => 'da_DK', 'slug' => 'dk-produkt']);
+        $request = Request::create('https://dk.cardnext.de/dk-produkt');
+        $request->attributes->add(['_route' => 'sylius_shop_product_show', 'slug' => 'dk-produkt']);
+        $request->setLocale('da_DK');
         $resolver = $this->resolver('CARDNEXT_DK', $channels, $products);
 
-        self::assertSame('https://dk.cardnext.de/da_DK/dk-produkt', $resolver->canonical($request));
+        self::assertSame('https://dk.cardnext.de/dk-produkt', $resolver->canonical($request));
         self::assertSame(['de-DE', 'de-AT', 'da-DK', 'es-ES', 'it-IT', 'nl-NL', 'sv-SE'], array_keys($this->alternateMap($resolver, $request)));
     }
 
@@ -205,7 +206,7 @@ final class MarketFoundationTest extends TestCase
         self::assertInstanceOf(ChannelInterface::class, $sweden);
         $product->removeChannel($sweden);
         $channels[] = $sweden;
-        $request = Request::create('https://es.cardnext.de/es_ES/es-producto');
+        $request = Request::create('https://es.cardnext.de/es-producto');
         $request->attributes->set('cardnext_product', $product);
         $resolver = $this->resolver('CARDNEXT_ES', $channels);
         $markets = new CardnextMarketRegistry();
@@ -213,7 +214,7 @@ final class MarketFoundationTest extends TestCase
         self::assertNotNull($swedishMarket);
 
         self::assertSame(['de-DE', 'es-ES'], array_keys($this->alternateMap($resolver, $request)));
-        self::assertSame('https://se.cardnext.de/sv_SE/', $resolver->switchUrl($request, $swedishMarket));
+        self::assertSame('https://se.cardnext.de/', $resolver->switchUrl($request, $swedishMarket));
         self::assertArrayNotHasKey('da-DK', $this->alternateMap($resolver, $request));
     }
 
@@ -232,12 +233,12 @@ final class MarketFoundationTest extends TestCase
             $taxon->addTranslation($translation);
         }
         $channels = $this->channels($root);
-        $request = Request::create('https://es.cardnext.de/es_ES/impresoras');
+        $request = Request::create('https://es.cardnext.de/impresoras');
         $request->attributes->set('cardnext_taxon', $taxon);
 
         self::assertSame([
-            'de-DE' => 'https://www.cardnext.de/de_DE/drucker',
-            'es-ES' => 'https://es.cardnext.de/es_ES/impresoras',
+            'de-DE' => 'https://www.cardnext.de/drucker',
+            'es-ES' => 'https://es.cardnext.de/impresoras',
         ], $this->alternateMap($this->resolver('CARDNEXT_ES', $channels), $request));
     }
 
@@ -264,7 +265,7 @@ final class MarketFoundationTest extends TestCase
         )) ?: null);
         $router = $this->createMock(UrlGeneratorInterface::class);
         $router->method('generate')->willReturnCallback(static function (string $route, array $parameters): string {
-            return $route === 'sylius_shop_homepage' ? '/' . $parameters['_locale'] . '/' : '/' . $parameters['_locale'] . '/' . ($parameters['slug'] ?? '');
+            return $route === 'sylius_shop_homepage' ? '/' : '/' . ($parameters['slug'] ?? '');
         });
         $defaultTranslations = $this->createMock(RepositoryInterface::class);
         $defaultTranslations->method('findBy')->willReturnCallback(static function (array $criteria): array {

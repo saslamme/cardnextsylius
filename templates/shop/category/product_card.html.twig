@@ -49,7 +49,7 @@
             </a>
         </div>
         {% if show_quote_action and variant and channel_pricing and channel_pricing.price is not null %}
-            <form class="cn-quote-add" method="post" action="{{ path('cardnext_shop_quote_cart_add', {_locale: app.request.locale}) }}">
+            <form class="cn-quote-add" method="post" action="{{ path('cardnext_shop_quote_cart_add', {}) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('quote_add') }}">
                 <input type="hidden" name="variantCode" value="{{ variant.code }}">
                 <input type="hidden" name="quantity" value="1">
@@ -57,7 +57,7 @@
             </form>
         {% endif %}
         {% if show_compare_action %}
-            <button class="cn-compare-toggle" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_group }}" data-compare-url="{{ path('cardnext_shop_product_compare', {_locale: app.request.locale}) }}" aria-pressed="false" aria-label="{{ 'cardnext.storefront.product_card.compare_aria'|trans({'%product%': product.name}) }}">+ {{ 'cardnext.storefront.product_card.compare'|trans }}</button>
+            <button class="cn-compare-toggle" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_group }}" data-compare-url="{{ path('cardnext_shop_product_compare', {}) }}" aria-pressed="false" aria-label="{{ 'cardnext.storefront.product_card.compare_aria'|trans({'%product%': product.name}) }}">+ {{ 'cardnext.storefront.product_card.compare'|trans }}</button>
         {% endif %}
     </div>
 </article>

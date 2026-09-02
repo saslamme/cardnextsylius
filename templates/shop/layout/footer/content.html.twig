@@ -13,7 +13,7 @@
                 <p>{{ homepage.footerText }}</p>
             </div>
             <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.products'|trans }}</div><ul class="cn-footer__links">
-                {% for item in footerTaxons %}{% set taxon = cardnext_taxon_by_code(item.code) %}{% if taxon %}<li><a href="{{ path('sylius_shop_product_index', {slug: taxon.slug, _locale: app.request.locale}) }}">{{ taxon.name }}</a></li>{% endif %}{% endfor %}
+                {% for item in footerTaxons %}{% set taxon = cardnext_taxon_by_code(item.code) %}{% if taxon %}<li><a href="{{ path('sylius_shop_product_index', {slug: taxon.slug}) }}">{{ taxon.name }}</a></li>{% endif %}{% endfor %}
             </ul></div>
             <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.solutions'|trans }}</div><ul class="cn-footer__links">
                 <li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.id_creation'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.access_control'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.time_tracking'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#industries">{{ 'cardnext.storefront.footer.rfid_identification'|trans }}</a></li>
@@ -22,14 +22,14 @@
                 <li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.footer.advice'|trans }}</a></li><li><a href="{{ path('sylius_shop_homepage') }}#downloads">{{ 'cardnext.storefront.header.downloads'|trans }}</a></li><li><a href="{{ path('sylius_shop_cart_summary') }}">{{ 'cardnext.storefront.header.cart'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>
             </ul></div>
             <div><div class="cn-footer__title">{{ 'cardnext.storefront.footer.company'|trans({'%brand%': branding.brandName}) }}</div><ul class="cn-footer__links">
-                <li><a href="{{ path('sylius_shop_homepage') }}#company">{{ 'cardnext.storefront.footer.about'|trans }}</a></li><li><a href="{{ path('cardnext_shop_brands', {_locale: app.request.locale}) }}">{{ 'cardnext.storefront.header.brands'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">{{ 'cardnext.storefront.header.account'|trans }}</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">{{ 'cardnext.storefront.header.login'|trans }}</a></li>{% endif %}
+                <li><a href="{{ path('sylius_shop_homepage') }}#company">{{ 'cardnext.storefront.footer.about'|trans }}</a></li><li><a href="{{ path('cardnext_shop_brands', {}) }}">{{ 'cardnext.storefront.header.brands'|trans }}</a></li><li><a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a></li>{% if is_granted('ROLE_USER') %}<li><a href="{{ path('sylius_shop_account_dashboard') }}">{{ 'cardnext.storefront.header.account'|trans }}</a></li>{% else %}<li><a href="{{ path('sylius_shop_login') }}">{{ 'cardnext.storefront.header.login'|trans }}</a></li>{% endif %}
             </ul></div>
         </div>
         <div class="cn-footer__bottom"><span>© {{ 'now'|date('Y') }} {{ branding.brandName }}</span>
             <nav class="cn-footer__legal cardnext-footer__legal" aria-label="{{ 'cardnext.storefront.footer.legal'|trans }}">
-                <a href="{{ path('cardnext_shop_legal_imprint', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.imprint'|trans }}</a>
-                <a href="{{ path('cardnext_shop_legal_privacy', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.privacy'|trans }}</a>
-                <a href="{{ path('cardnext_shop_legal_terms', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.footer.terms'|trans }}</a>
+                <a href="{{ path('cardnext_shop_legal_imprint', {}) }}">{{ 'cardnext.storefront.footer.imprint'|trans }}</a>
+                <a href="{{ path('cardnext_shop_legal_privacy', {}) }}">{{ 'cardnext.storefront.footer.privacy'|trans }}</a>
+                <a href="{{ path('cardnext_shop_legal_terms', {}) }}">{{ 'cardnext.storefront.footer.terms'|trans }}</a>
             </nav><span>{% if currentMarket %}{{ currentMarket.countryDisplayName }} · {{ 'cardnext.storefront.footer.language'|trans }} &nbsp;&nbsp;{% endif %}<a href="#top">{{ 'cardnext.storefront.footer.back_to_top'|trans }} ↑</a></span></div>
     </div>
 </footer>

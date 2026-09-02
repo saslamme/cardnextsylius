@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ConsumableFinderController extends AbstractController
 {
-    #[Route('/{_locale}/verbrauchsmaterial-finder', name: 'cardnext_shop_consumable_finder', methods: ['GET'], priority: 200)]
+    #[Route('/verbrauchsmaterial-finder', name: 'cardnext_shop_consumable_finder', methods: ['GET'], priority: 200)]
     public function __invoke(Request $request, ChannelContextInterface $channelContext, ConsumableFinderRepository $repository): Response
     {
         $channel = $channelContext->getChannel();

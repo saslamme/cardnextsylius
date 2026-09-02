@@ -38,11 +38,11 @@
                 {% if pageCount > 1 %}
                     <nav class="cn-search-pagination" aria-label="Seitennavigation der Suchergebnisse">
                         {% if page > 1 %}
-                            <a class="cn-btn cn-btn--secondary cn-btn--small" href="{{ path('cardnext_shop_search', {_locale: app.request.locale, q: query, page: page - 1}) }}" rel="prev">← Zurück</a>
+                            <a class="cn-btn cn-btn--secondary cn-btn--small" href="{{ path('cardnext_shop_search', {q: query, page: page - 1}) }}" rel="prev">← Zurück</a>
                         {% endif %}
                         <span>Seite {{ page }} von {{ pageCount }}</span>
                         {% if page < pageCount %}
-                            <a class="cn-btn cn-btn--secondary cn-btn--small" href="{{ path('cardnext_shop_search', {_locale: app.request.locale, q: query, page: page + 1}) }}" rel="next">Weiter →</a>
+                            <a class="cn-btn cn-btn--secondary cn-btn--small" href="{{ path('cardnext_shop_search', {q: query, page: page + 1}) }}" rel="next">Weiter →</a>
                         {% endif %}
                     </nav>
                 {% endif %}
@@ -55,7 +55,7 @@
                         <li>nach Hersteller suchen</li>
                         <li>Artikelnummer verwenden</li>
                     </ul>
-                    <a class="cn-btn cn-btn--primary cn-btn--small" href="{{ path('cardnext_shop_search', {_locale: app.request.locale}) }}">Neue Suche</a>
+                    <a class="cn-btn cn-btn--primary cn-btn--small" href="{{ path('cardnext_shop_search', {}) }}">Neue Suche</a>
                 </div>
             {% endif %}
         </div>

@@ -9,10 +9,10 @@
             <form
                 class="cn-shop-header__search"
                 method="get"
-                action="{{ path('cardnext_shop_search', {'_locale': app.request.locale}) }}"
+                action="{{ path('cardnext_shop_search', {}) }}"
                 role="search"
                 data-cn-smart-search-form
-                data-cn-suggest-url="{{ path('cardnext_shop_search_suggest', {'_locale': app.request.locale}) }}"
+                data-cn-suggest-url="{{ path('cardnext_shop_search_suggest', {}) }}"
             >
                 <label class="visually-hidden" for="cn-header-search-input">{{ 'cardnext.storefront.header.search_label'|trans }}</label>
 
@@ -58,7 +58,7 @@
                         <span class="cn-shop-header__action-label">{{ 'cardnext.storefront.header.account'|trans }}</span>
                     </a>
 
-                <a class="cn-shop-header__action cn-quote-header" href="{{ path('cardnext_shop_quote_cart', {_locale: app.request.locale}) }}" aria-label="{{ 'cardnext.quote.cart'|trans }}">
+                <a class="cn-shop-header__action cn-quote-header" href="{{ path('cardnext_shop_quote_cart', {}) }}" aria-label="{{ 'cardnext.quote.cart'|trans }}">
                     <span class="cn-shop-header__action-icon">
                         <svg aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M6.5 3.5h8l3 3V20.5h-11z"/>
@@ -103,7 +103,7 @@
                 {% else %}
                     <a href="{{ path('sylius_shop_login') }}"><span>{{ 'cardnext.storefront.header.login'|trans }}</span><span>→</span></a>
                 {% endif %}
-                <a href="{{ path('cardnext_shop_quote_cart', {_locale: app.request.locale}) }}"><span>{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span><span>→</span></a>
+                <a href="{{ path('cardnext_shop_quote_cart', {}) }}"><span>{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span><span>→</span></a>
                 <a href="{{ path('sylius_shop_cart_summary') }}"><span>{{ 'cardnext.storefront.header.cart'|trans }}</span><span>→</span></a>
                 <a href="{{ path('sylius_shop_contact_request') }}"><span>{{ 'cardnext.storefront.header.contact_advice'|trans }}</span><span>→</span></a>
             </div>

@@ -21,6 +21,6 @@ final readonly class ProductPublicUrlGenerator
         $locale ??= $this->localeContext->getLocaleCode();
         $translation = $product->getTranslation($locale);
 
-        return $this->router->generate('sylius_shop_product_show', ['_locale' => $locale, 'slug' => $translation->getSlug()], $referenceType);
+        return $this->router->generate('sylius_shop_product_show', ['slug' => $translation->getSlug()], $referenceType);
     }
 }

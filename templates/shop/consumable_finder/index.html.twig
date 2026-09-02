@@ -5,17 +5,17 @@
 {% block metatags %}
     {{ parent() }}
     <meta name="description" content="Finden Sie passende Farbbänder, Reinigungsprodukte und Zubehör für Ihren Kartendrucker. Hersteller und Modell auswählen und kompatible Produkte anzeigen.">
-    <link rel="canonical" href="{{ url('cardnext_shop_consumable_finder', {_locale: app.request.locale}) }}">
+    <link rel="canonical" href="{{ url('cardnext_shop_consumable_finder', {}) }}">
 {% endblock %}
 
 {% block content %}
 {% set manufacturers = {} %}
 {% for item in devices %}{% set key = item.manufacturer.code %}{% set manufacturers = manufacturers|merge({(key): {name: item.manufacturer.name, devices: (manufacturers[key].devices|default([]))|merge([item])}}) %}{% endfor %}
 <main class="cn-page cn-finder" data-consumable-finder>
-    <nav class="cn-breadcrumbs" aria-label="Breadcrumb"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep">/</span><span>Verbrauchsmaterial-Finder</span></div></nav>
+    <nav class="cn-breadcrumbs" aria-label="Breadcrumb"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage', {}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep">/</span><span>Verbrauchsmaterial-Finder</span></div></nav>
     <section class="cn-section"><div class="cn-container">
         <header class="cn-finder__header"><span class="cn-kicker">Verbrauchsmaterial &amp; Zubehör</span><h1 class="cn-title cn-title--section">Das passende Material für Ihr Gerät</h1><p>Wählen Sie Hersteller und Modell aus. Wir zeigen Ihnen kompatible Farbbänder, Reinigungsprodukte und Zubehör.</p></header>
-        <form class="cn-finder__form" method="get" action="{{ path('cardnext_shop_consumable_finder', {_locale: app.request.locale}) }}">
+        <form class="cn-finder__form" method="get" action="{{ path('cardnext_shop_consumable_finder', {}) }}">
             <div class="cn-finder__field"><label for="finder-maker">Hersteller</label><select id="finder-maker" data-finder-maker><option value="">Bitte wählen</option>{% for code, maker in manufacturers %}<option value="{{ code }}" {{ device and device.manufacturer.code == code ? 'selected' }}>{{ maker.name }}</option>{% endfor %}</select></div>
             <div class="cn-finder__field"><label for="finder-device">Modell</label><select id="finder-device" name="device" data-finder-device><option value="">Bitte wählen</option>{% for code, maker in manufacturers %}{% for item in maker.devices %}<option value="{{ item.slug }}" data-maker="{{ code }}" {{ device and device.slug == item.slug ? 'selected' }}>{{ item.name }}{% if item.status != 'active' %} · Älteres Modell{% endif %}</option>{% endfor %}{% endfor %}</select></div>
             <div class="cn-finder__field"><label for="finder-type">Was benötigen Sie?</label><select id="finder-type" name="type"><option value="all" {{ typeKey == 'all' ? 'selected' }}>Alle</option><option value="consumable" {{ typeKey == 'consumable' ? 'selected' }}>Verbrauchsmaterial</option><option value="cleaning" {{ typeKey == 'cleaning' ? 'selected' }}>Reinigung</option><option value="accessory" {{ typeKey == 'accessory' ? 'selected' }}>Zubehör</option></select></div>
