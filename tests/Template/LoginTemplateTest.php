@@ -25,6 +25,20 @@ final class LoginTemplateTest extends TestCase
         self::assertStringNotContainsString('01 / ACCOUNT', $register);
     }
 
+    public function testRegistrationPanelContentIsCenteredBySharedAuthStyles(): void
+    {
+        $styles = $this->readProjectFile('assets/shop/styles/cardnext.css');
+
+        self::assertMatchesRegularExpression(
+            '/\.cn-auth__aside\s*\{[^}]*align-items:\s*center;[^}]*text-align:\s*center;/s',
+            $styles,
+        );
+        self::assertMatchesRegularExpression(
+            '/\.cn-auth__aside svg\s*\{[^}]*display:\s*block;[^}]*max-width:\s*100%;[^}]*margin-inline:\s*auto;/s',
+            $styles,
+        );
+    }
+
     private function readProjectFile(string $path): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $path);
