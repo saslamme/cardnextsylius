@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Configurator;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
@@ -41,6 +45,60 @@ final class ConfiguratorPageArchitectureTest extends KernelTestCase
             self::assertIsInt($specificPosition, sprintf('Route "%s" must be registered.', $specificRoute));
             self::assertGreaterThan($specificPosition, $catchAllPosition, sprintf('The catch-all must follow route "%s".', $specificRoute));
         }
+    }
+
+    public function testHomepageContentAdminRoutesWinOverTheConfiguratorCatchAll(): void
+    {
+        self::bootKernel();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get('router');
+
+        self::assertSame('cardnext_admin_homepage_content_index', $router->match('/admin/cardnext/homepage-content')['_route']);
+        self::assertSame('cardnext_admin_homepage_content_create', $router->match('/admin/cardnext/homepage-content/new')['_route']);
+        self::assertSame('cardnext_admin_homepage_content_edit', $router->match('/admin/cardnext/homepage-content/1/edit')['_route']);
+    }
+
+    public function testReservedApplicationPathsCannotMatchTheConfiguratorRoute(): void
+    {
+        self::bootKernel();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get('router');
+        $configuratorRoute = $router->getRouteCollection()->get('cardnext_shop_configurator_page');
+        self::assertNotNull($configuratorRoute);
+
+        $routes = new RouteCollection();
+        $routes->add('cardnext_shop_configurator_page', $configuratorRoute);
+        $matcher = new UrlMatcher($routes, new RequestContext());
+
+        foreach (['/admin', '/admin/anything', '/api', '/api/orders', '/_media/cache/image.jpg', '/_profiler', '/_wdt/token', '/_fragment'] as $path) {
+            try {
+                $match = $matcher->match($path);
+                self::fail(sprintf('Reserved path "%s" matched route "%s".', $path, $match['_route']));
+            } catch (ResourceNotFoundException) {
+                self::addToAssertionCount(1);
+            }
+        }
+    }
+
+    public function testLegitimateNestedConfiguratorPathStillMatchesTheConfiguratorRoute(): void
+    {
+        self::bootKernel();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get('router');
+        $configuratorRoute = $router->getRouteCollection()->get('cardnext_shop_configurator_page');
+        self::assertNotNull($configuratorRoute);
+
+        $routes = new RouteCollection();
+        $routes->add('cardnext_shop_configurator_page', $configuratorRoute);
+        $matcher = new UrlMatcher($routes, new RequestContext());
+
+        $match = $matcher->match('/plastikkarten/plastikkarten-bedrucken');
+
+        self::assertSame('cardnext_shop_configurator_page', $match['_route']);
+        self::assertSame('plastikkarten/plastikkarten-bedrucken', $match['configuratorPath']);
     }
 
     public function testPublicUrlFunctionAndConfiguratorTemplateLoadInRealTwigEnvironment(): void
