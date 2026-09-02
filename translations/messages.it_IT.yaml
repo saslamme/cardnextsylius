@@ -39,6 +39,8 @@ cardnext:
         kicker: Prodotti selezionati
         title: Hardware professionale.
         empty: Non sono ancora stati pubblicati prodotti per questo canale di vendita.
+        previous: 'Prodotti precedenti'
+        next: 'Prodotti successivi'
       industries:
         kicker: Ambiti di applicazione
         title: Tecnologia adatta a ogni applicazione.

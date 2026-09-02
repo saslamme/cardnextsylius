@@ -4,6 +4,7 @@ import '@vendor/sylius/adyen-plugin/assets/shop/entrypoint';
 import './bootstrap.js';
 import './styles/cardnext.css';
 import './cardnext.js';
+import './homepage-product-slider.js';
 import './product-tabs.js';
 import './configurator.js';
 import './printer-advisor.js';
