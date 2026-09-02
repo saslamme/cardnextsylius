@@ -16,6 +16,8 @@ cardnext:
         image_alt: Professionele kaartprinter met plastic kaarten op de werkplek
       categories:
         title: Populaire categorieën
+        previous: 'Vorige categorieën'
+        next: 'Volgende categorieën'
       service:
         kicker: Meer dan hardware
         title: Professionele technologie met persoonlijke service.

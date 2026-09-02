@@ -16,6 +16,8 @@ cardnext:
         image_alt: Impresora profesional de tarjetas con tarjetas de plástico en el puesto de trabajo
       categories:
         title: Categorías populares
+        previous: 'Categorías anteriores'
+        next: 'Categorías siguientes'
       service:
         kicker: Más que hardware
         title: Tecnología profesional con asesoramiento personalizado.

@@ -16,6 +16,8 @@ cardnext:
         image_alt: 'Professionel kortprinter med plastkort på arbejdspladsen'
       categories:
         title: 'Populære kategorier'
+        previous: 'Forrige kategorier'
+        next: 'Næste kategorier'
       service:
         kicker: 'Mere end hardware'
         title: 'Teknologiforsyning med personlig service.'

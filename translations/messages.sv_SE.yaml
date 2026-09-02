@@ -16,6 +16,8 @@ cardnext:
         image_alt: 'Professionell kortskrivare med plastkort på arbetsplatsen'
       categories:
         title: 'Populära kategorier'
+        previous: 'Föregående kategorier'
+        next: 'Nästa kategorier'
       service:
         kicker: 'Mer än hårdvara'
         title: 'Teknikförsörjning med personlig service.'

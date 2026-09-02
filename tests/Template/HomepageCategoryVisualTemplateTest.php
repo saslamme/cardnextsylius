@@ -39,6 +39,6 @@ final class HomepageCategoryVisualTemplateTest extends TestCase
         self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media--icon[^}]*object-fit: cover;/s', $stylesheet);
         self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media img \{[^}]*object-fit: cover;/s', $stylesheet);
         self::assertMatchesRegularExpression('/\.cn-home-category__media--icon \{[^}]*display: flex;[^}]*align-items: center;[^}]*justify-content: center;[^}]*overflow: visible;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\.cn-home-category__icon \{[^}]*max-width: 58%;[^}]*max-height: 58%;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__icon \{[^}]*max-width: 75%;[^}]*max-height: 75%;/s', $stylesheet);
     }
 }
