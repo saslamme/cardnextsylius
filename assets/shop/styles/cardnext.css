@@ -2444,23 +2444,23 @@ body.cn-nav-open { overflow: hidden; }
     }
 }
 
-/* Header cart icon and badge */
+/* Shared header action count badge */
 
-.cn-shop-header__cart .cn-shop-header__action {
+.cardnext-header .cn-shop-header__action {
     overflow: visible;
 }
 
-.cn-shop-header__cart .cn-shop-header__action-icon {
+.cardnext-header .cn-shop-header__action-icon {
     position: relative;
     overflow: visible;
 }
 
-.cn-shop-header__cart .cn-shop-header__action-icon > svg {
+.cardnext-header .cn-shop-header__action-icon > svg {
     position: relative;
     z-index: 1;
 }
 
-.cn-shop-header__cart .cardnext-cart-badge {
+.cardnext-header .cn-shop-header__count-badge {
     position: absolute;
     top: -8px;
     right: -10px;
@@ -2484,12 +2484,12 @@ body.cn-nav-open { overflow: hidden; }
     z-index: 3;
 }
 
-.cn-shop-header__cart .cardnext-cart-badge:empty {
+.cardnext-header .cn-shop-header__count-badge:empty {
     display: none;
 }
 
 @media (max-width: 767.98px) {
-    .cn-shop-header__cart .cardnext-cart-badge {
+    .cardnext-header .cn-shop-header__count-badge {
         top: -7px;
         right: -9px;
         min-width: 18px;

@@ -406,7 +406,6 @@ cardnext:
       kicker: Informazioni sul prodotto
   quote:
     cart: Cestino dell'offerta
-    header: Offerta (%count%)
     request: Richiesta di preventivo
     intro: Metti insieme i prodotti desiderati. Controlliamo prezzi, disponibilità e requisiti del progetto e poi creiamo un'offerta individuale per te.
     add: Aggiungi all'offerta

@@ -33,6 +33,28 @@ final class QuoteCartTemplateTest extends TestCase
         self::assertStringContainsString('stroke-width="1.8"', $quoteLink);
     }
 
+    public function testQuoteHeaderUsesSharedConditionalBadgeAndCountlessLabel(): void
+    {
+        $template = file_get_contents(dirname(__DIR__, 2) . '/templates/shop/layout/header/content.html.twig');
+        self::assertIsString($template);
+
+        self::assertSame(1, substr_count($template, 'cardnext_quote_cart_count()'));
+        self::assertStringContainsString('{% if quoteCartCount > 0 %}', $template);
+        self::assertStringContainsString('class="cn-shop-header__count-badge" aria-hidden="true"', $template);
+        self::assertStringContainsString("cn-shop-header__action-label\">{{ 'cardnext.quote.cart'|trans }}", $template);
+        self::assertStringNotContainsString("'cardnext.quote.header'|trans", $template);
+    }
+
+    public function testHeaderCounterCssIsSharedByBothCarts(): void
+    {
+        $css = file_get_contents(dirname(__DIR__, 2) . '/assets/shop/styles/cardnext.css');
+        self::assertIsString($css);
+
+        self::assertStringContainsString('.cardnext-header .cn-shop-header__count-badge {', $css);
+        self::assertStringContainsString('.cardnext-header .cn-shop-header__count-badge:empty {', $css);
+        self::assertStringNotContainsString('.cn-shop-header__cart .cardnext-cart-badge {', $css);
+    }
+
     public function testGermanAndAustrianChannelsHaveCountryDefaults(): void
     {
         $markets = new CardnextMarketRegistry();

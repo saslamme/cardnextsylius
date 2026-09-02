@@ -406,7 +406,6 @@ cardnext:
       kicker: Productinformatie
   quote:
     cart: Offerte mand
-    header: Offerte (%count%)
     request: Offerteaanvraag
     intro: Stel uw gewenste producten samen. Wij controleren prijzen, beschikbaarheid en projectvereisten en maken vervolgens een individuele offerte voor u op.
     add: Toevoegen aan offerte

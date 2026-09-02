@@ -406,7 +406,6 @@ cardnext:
       kicker: Produktinformation
   quote:
     cart: Offertkorg
-    header: Offert (%count%)
     request: Begäran om offert
     intro: Sätt ihop dina önskade produkter. Vi kontrollerar priser, tillgänglighet och projektkrav och skapar sedan ett individuellt offert åt dig.
     add: Lägg till i offert

@@ -406,7 +406,6 @@ cardnext:
       kicker: Produktinformation
   quote:
     cart: Tilbudskurv
-    header: Tilbud (%count%)
     request: Anmodning om tilbud
     intro: Sammensæt dine ønskede produkter. Vi tjekker priser, tilgængelighed og projektkrav og laver derefter et individuelt tilbud til dig.
     add: Tilføj til tilbud
