@@ -1,7 +1,6 @@
 {% set product = hookable_metadata.context.product %}{% set first_image = product.images.first %}
 <div class="cn-gallery" data-cn-product-gallery>
 <div class="cn-gallery__stage">
-{% if product.mainTaxon %}<span class="cn-gallery__badge">{{ product.mainTaxon.name }}</span>{% endif %}
 {% if first_image %}{% set main_path = first_image.path|imagine_filter('sylius_shop_product_large_thumbnail') %}<img class="cn-gallery__image" src="{{ main_path }}" alt="{{ product.name }}" data-cn-product-main-image>
 {% else %}<div class="cn-gallery__placeholder" aria-label="{{ 'cardnext.storefront.product_detail.gallery.image_pending_aria'|trans }}"><svg viewBox="0 0 320 220" aria-hidden="true"><rect x="48" y="55" width="224" height="120" rx="8" fill="#e7eaec" stroke="#cbd0d4"/><rect x="72" y="82" width="176" height="54" rx="5" fill="#20272d"/><path d="M107 136h106v45H107z" fill="#fff" stroke="#d7dcdf"/><path d="M120 149h80v5h-80zm0 12h52v5h-52z" fill="#e95126"/></svg><span>{{ 'cardnext.storefront.product_card.image_pending'|trans }}</span></div>{% endif %}
 </div>
