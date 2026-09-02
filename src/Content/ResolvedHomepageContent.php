@@ -25,6 +25,8 @@ final readonly class ResolvedHomepageContent
         public string $heroImagePath,
         public string $introImagePath,
         public string $ctaImagePath,
+        public ResolvedHomepagePromo $printerGuidePromo,
+        public ResolvedHomepagePromo $configuratorPromo,
     ) {
     }
 }

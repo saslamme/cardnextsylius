@@ -95,6 +95,70 @@ class ChannelHomepageContent
 
     private bool $removeCtaImage = false;
 
+    #[ORM\Column(name: 'printer_guide_enabled', options: ['default' => false])]
+    private bool $printerGuideEnabled = false;
+
+    #[ORM\Column(name: 'printer_guide_eyebrow', length: 255, nullable: true)]
+    private ?string $printerGuideEyebrow = null;
+
+    #[ORM\Column(name: 'printer_guide_headline', length: 255, nullable: true)]
+    private ?string $printerGuideHeadline = null;
+
+    #[ORM\Column(name: 'printer_guide_text', type: Types::TEXT, nullable: true)]
+    private ?string $printerGuideText = null;
+
+    #[ORM\Column(name: 'printer_guide_button_label', length: 255, nullable: true)]
+    private ?string $printerGuideButtonLabel = null;
+
+    #[ORM\Column(name: 'printer_guide_url', length: 2048, nullable: true)]
+    #[Assert\Regex(pattern: '#^(?:/|https?://)#i', message: 'Bitte geben Sie eine relative URL oder eine HTTP(S)-URL ein.')]
+    private ?string $printerGuideUrl = '/kartendrucker-berater';
+
+    #[ORM\Column(name: 'printer_guide_image_path', length: 255, nullable: true)]
+    private ?string $printerGuideImagePath = null;
+
+    private ?UploadedFile $printerGuideImageFile = null;
+
+    private bool $removePrinterGuideImage = false;
+
+    #[ORM\Column(name: 'printer_guide_image_alt', length: 255, nullable: true)]
+    private ?string $printerGuideImageAlt = null;
+
+    #[ORM\Column(name: 'printer_guide_badge', length: 255, nullable: true)]
+    private ?string $printerGuideBadge = null;
+
+    #[ORM\Column(name: 'configurator_enabled', options: ['default' => false])]
+    private bool $configuratorEnabled = false;
+
+    #[ORM\Column(name: 'configurator_eyebrow', length: 255, nullable: true)]
+    private ?string $configuratorEyebrow = null;
+
+    #[ORM\Column(name: 'configurator_headline', length: 255, nullable: true)]
+    private ?string $configuratorHeadline = null;
+
+    #[ORM\Column(name: 'configurator_text', type: Types::TEXT, nullable: true)]
+    private ?string $configuratorText = null;
+
+    #[ORM\Column(name: 'configurator_button_label', length: 255, nullable: true)]
+    private ?string $configuratorButtonLabel = null;
+
+    #[ORM\Column(name: 'configurator_url', length: 2048, nullable: true)]
+    #[Assert\Regex(pattern: '#^(?:/|https?://)#i', message: 'Bitte geben Sie eine relative URL oder eine HTTP(S)-URL ein.')]
+    private ?string $configuratorUrl = '/kartenkonfigurator';
+
+    #[ORM\Column(name: 'configurator_image_path', length: 255, nullable: true)]
+    private ?string $configuratorImagePath = null;
+
+    private ?UploadedFile $configuratorImageFile = null;
+
+    private bool $removeConfiguratorImage = false;
+
+    #[ORM\Column(name: 'configurator_image_alt', length: 255, nullable: true)]
+    private ?string $configuratorImageAlt = null;
+
+    #[ORM\Column(name: 'configurator_badge', length: 255, nullable: true)]
+    private ?string $configuratorBadge = null;
+
     #[ORM\Column(name: 'footer_text', type: Types::TEXT, nullable: true)]
     private ?string $footerText = null;
 
@@ -395,5 +459,225 @@ class ChannelHomepageContent
     public function setFooterText(?string $v): void
     {
         $this->footerText = self::optional($v);
+    }
+
+    public function isPrinterGuideEnabled(): bool
+    {
+        return $this->printerGuideEnabled;
+    }
+
+    public function setPrinterGuideEnabled(bool $value): void
+    {
+        $this->printerGuideEnabled = $value;
+    }
+
+    public function getPrinterGuideEyebrow(): ?string
+    {
+        return $this->printerGuideEyebrow;
+    }
+
+    public function setPrinterGuideEyebrow(?string $value): void
+    {
+        $this->printerGuideEyebrow = self::optional($value);
+    }
+
+    public function getPrinterGuideHeadline(): ?string
+    {
+        return $this->printerGuideHeadline;
+    }
+
+    public function setPrinterGuideHeadline(?string $value): void
+    {
+        $this->printerGuideHeadline = self::optional($value);
+    }
+
+    public function getPrinterGuideText(): ?string
+    {
+        return $this->printerGuideText;
+    }
+
+    public function setPrinterGuideText(?string $value): void
+    {
+        $this->printerGuideText = self::optional($value);
+    }
+
+    public function getPrinterGuideButtonLabel(): ?string
+    {
+        return $this->printerGuideButtonLabel;
+    }
+
+    public function setPrinterGuideButtonLabel(?string $value): void
+    {
+        $this->printerGuideButtonLabel = self::optional($value);
+    }
+
+    public function getPrinterGuideUrl(): ?string
+    {
+        return $this->printerGuideUrl;
+    }
+
+    public function setPrinterGuideUrl(?string $value): void
+    {
+        $this->printerGuideUrl = self::optional($value);
+    }
+
+    public function getPrinterGuideImagePath(): ?string
+    {
+        return $this->printerGuideImagePath;
+    }
+
+    public function setPrinterGuideImagePath(?string $value): void
+    {
+        $this->printerGuideImagePath = self::optional($value);
+    }
+
+    public function getPrinterGuideImageFile(): ?UploadedFile
+    {
+        return $this->printerGuideImageFile;
+    }
+
+    public function setPrinterGuideImageFile(?UploadedFile $value): void
+    {
+        $this->printerGuideImageFile = $value;
+    }
+
+    public function isRemovePrinterGuideImage(): bool
+    {
+        return $this->removePrinterGuideImage;
+    }
+
+    public function setRemovePrinterGuideImage(bool $value): void
+    {
+        $this->removePrinterGuideImage = $value;
+    }
+
+    public function getPrinterGuideImageAlt(): ?string
+    {
+        return $this->printerGuideImageAlt;
+    }
+
+    public function setPrinterGuideImageAlt(?string $value): void
+    {
+        $this->printerGuideImageAlt = self::optional($value);
+    }
+
+    public function getPrinterGuideBadge(): ?string
+    {
+        return $this->printerGuideBadge;
+    }
+
+    public function setPrinterGuideBadge(?string $value): void
+    {
+        $this->printerGuideBadge = self::optional($value);
+    }
+
+    public function isConfiguratorEnabled(): bool
+    {
+        return $this->configuratorEnabled;
+    }
+
+    public function setConfiguratorEnabled(bool $value): void
+    {
+        $this->configuratorEnabled = $value;
+    }
+
+    public function getConfiguratorEyebrow(): ?string
+    {
+        return $this->configuratorEyebrow;
+    }
+
+    public function setConfiguratorEyebrow(?string $value): void
+    {
+        $this->configuratorEyebrow = self::optional($value);
+    }
+
+    public function getConfiguratorHeadline(): ?string
+    {
+        return $this->configuratorHeadline;
+    }
+
+    public function setConfiguratorHeadline(?string $value): void
+    {
+        $this->configuratorHeadline = self::optional($value);
+    }
+
+    public function getConfiguratorText(): ?string
+    {
+        return $this->configuratorText;
+    }
+
+    public function setConfiguratorText(?string $value): void
+    {
+        $this->configuratorText = self::optional($value);
+    }
+
+    public function getConfiguratorButtonLabel(): ?string
+    {
+        return $this->configuratorButtonLabel;
+    }
+
+    public function setConfiguratorButtonLabel(?string $value): void
+    {
+        $this->configuratorButtonLabel = self::optional($value);
+    }
+
+    public function getConfiguratorUrl(): ?string
+    {
+        return $this->configuratorUrl;
+    }
+
+    public function setConfiguratorUrl(?string $value): void
+    {
+        $this->configuratorUrl = self::optional($value);
+    }
+
+    public function getConfiguratorImagePath(): ?string
+    {
+        return $this->configuratorImagePath;
+    }
+
+    public function setConfiguratorImagePath(?string $value): void
+    {
+        $this->configuratorImagePath = self::optional($value);
+    }
+
+    public function getConfiguratorImageFile(): ?UploadedFile
+    {
+        return $this->configuratorImageFile;
+    }
+
+    public function setConfiguratorImageFile(?UploadedFile $value): void
+    {
+        $this->configuratorImageFile = $value;
+    }
+
+    public function isRemoveConfiguratorImage(): bool
+    {
+        return $this->removeConfiguratorImage;
+    }
+
+    public function setRemoveConfiguratorImage(bool $value): void
+    {
+        $this->removeConfiguratorImage = $value;
+    }
+
+    public function getConfiguratorImageAlt(): ?string
+    {
+        return $this->configuratorImageAlt;
+    }
+
+    public function setConfiguratorImageAlt(?string $value): void
+    {
+        $this->configuratorImageAlt = self::optional($value);
+    }
+
+    public function getConfiguratorBadge(): ?string
+    {
+        return $this->configuratorBadge;
+    }
+
+    public function setConfiguratorBadge(?string $value): void
+    {
+        $this->configuratorBadge = self::optional($value);
     }
 }

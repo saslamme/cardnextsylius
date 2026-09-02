@@ -46,6 +46,16 @@ final class ChannelHomepageImageUploaderTest extends TestCase
         yield 'WebP' => ['image/webp', 'webp', self::decode('UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEAAUAmJaQAA3AA/v89WAAAAA==')];
     }
 
+    public function testPromoImageUsesTheSharedManagedUploader(): void
+    {
+        $content = new ChannelHomepageContent();
+        $content->setConfiguratorImageFile($this->file((string) base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', true), 'configurator.png', 'image/png'));
+
+        (new ChannelHomepageImageUploader($this->projectDir))->upload($content);
+
+        self::assertMatchesRegularExpression('#^uploads/channel-homepage/[a-f0-9]{40}\.png$#', (string) $content->getConfiguratorImagePath());
+    }
+
     /** @dataProvider invalidImages */
     public function testInvalidAndUnsupportedImagesAreRejected(string $bytes, string $mime): void
     {

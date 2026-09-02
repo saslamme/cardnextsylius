@@ -53,6 +53,25 @@ final class ChannelHomepageContentResolver
             $value($content?->getHeroImagePath(), 'cardnext/homepage/hero-card-printer.webp'),
             $value($content?->getIntroImagePath(), 'cardnext/homepage/service-consultation.webp'),
             $value($content?->getCtaImagePath(), 'cardnext/homepage/support-advisor.webp'),
+            $this->promo($content, 'PrinterGuide'),
+            $this->promo($content, 'Configurator'),
+        );
+    }
+
+    private function promo(?\App\Entity\Content\ChannelHomepageContent $content, string $slot): ResolvedHomepagePromo
+    {
+        $get = static fn (string $field): mixed => $content?->{'get' . $slot . $field}();
+
+        return new ResolvedHomepagePromo(
+            $content?->{'is' . $slot . 'Enabled'}() ?? false,
+            $get('Eyebrow') ?? '',
+            $get('Headline') ?? '',
+            $get('Text') ?? '',
+            $get('ButtonLabel') ?? '',
+            $get('Url') ?? '',
+            $get('ImagePath'),
+            $get('ImageAlt') ?? '',
+            $get('Badge') ?? '',
         );
     }
 }

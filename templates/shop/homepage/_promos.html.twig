@@ -1,0 +1,19 @@
+{% set promos = [homepage.printerGuidePromo, homepage.configuratorPromo] %}
+{% if promos|filter(promo => promo.enabled)|length %}
+<section class="cn-section cn-home-promos" aria-label="{{ 'cardnext.storefront.homepage.promos.label'|trans }}">
+    <div class="cn-container cn-home-promos__grid">
+        {% for promo in promos %}{% if promo.enabled %}
+            <article class="cn-home-promo{{ promo.imagePath ? '' : ' cn-home-promo--text-only' }}">
+                <div class="cn-home-promo__copy">
+                    {% if promo.eyebrow %}<span class="cn-kicker">{{ promo.eyebrow }}</span>{% endif %}
+                    {% if promo.badge %}<span class="cn-home-promo__badge">{{ promo.badge }}</span>{% endif %}
+                    {% if promo.headline %}<h2>{{ promo.headline }}</h2>{% endif %}
+                    {% if promo.text %}<p>{{ promo.text }}</p>{% endif %}
+                    {% if promo.url and promo.buttonLabel %}<a class="cn-btn cn-btn--primary" href="{{ promo.url }}">{{ promo.buttonLabel }} <span aria-hidden="true">&#8594;</span></a>{% endif %}
+                </div>
+                {% if promo.imagePath %}<div class="cn-home-promo__media"><img src="{{ asset(promo.imagePath) }}" alt="{{ promo.imageAlt }}" width="720" height="540" loading="lazy"></div>{% endif %}
+            </article>
+        {% endif %}{% endfor %}
+    </div>
+</section>
+{% endif %}
