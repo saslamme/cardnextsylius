@@ -1334,9 +1334,31 @@ body.cn-nav-open { overflow: hidden; }
     transition: transform 220ms ease;
 }
 
+.cn-home-category__media--icon {
+    display: grid;
+    place-items: center;
+    padding: clamp(18px, 2vw, 28px);
+    background: var(--cn-surface-softer);
+}
+
+.cn-home-category__media--icon img,
+.cn-home-category__icon {
+    width: auto;
+    height: auto;
+    max-width: 82%;
+    max-height: 82%;
+    object-fit: contain;
+    object-position: center;
+}
+
 .cn-home-category:hover .cn-home-category__media img,
 .cn-home-category:focus-visible .cn-home-category__media img {
     transform: scale(1.012);
+}
+
+.cn-home-category:hover .cn-home-category__icon,
+.cn-home-category:focus-visible .cn-home-category__icon {
+    transform: scale(1.03);
 }
 
 .cn-home-category__label {

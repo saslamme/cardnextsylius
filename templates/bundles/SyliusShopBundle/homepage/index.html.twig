@@ -39,25 +39,27 @@
         </div>
 
         {% set homeCategories = [
-            {'code': 'card_printers', 'image': 'kartendrucker.webp'},
-            {'code': 'rfid_readers', 'image': 'rfid-leser.webp'},
-            {'code': 'plastic_cards', 'image': 'plastikkarten.webp'},
-            {'code': 'id_accessories', 'image': 'kartenzubehoer.webp'},
-            {'code': 'ribbons', 'image': 'farbbaender.webp'},
-            {'code': 'barcode_scanners', 'image': 'barcode-scanner.webp'},
-            {'code': 'access_control', 'image': 'zutrittskontrolle.webp'}
+            {'code': 'card_printers', 'image': 'cardnext-icon-card-printer.svg', 'type': 'icon'},
+            {'code': 'rfid_readers', 'image': 'rfid-leser.webp', 'type': 'photo'},
+            {'code': 'plastic_cards', 'image': 'cardnext-icon-cards.svg', 'type': 'icon'},
+            {'code': 'id_accessories', 'image': 'cardnext-icon-card-holders.svg', 'type': 'icon'},
+            {'code': 'ribbons', 'image': 'cardnext-icon-ribbon.svg', 'type': 'icon'},
+            {'code': 'barcode_scanners', 'image': 'cardnext-icon-handheld-scanners.svg', 'type': 'icon'},
+            {'code': 'access_control', 'image': 'zutrittskontrolle.webp', 'type': 'photo'}
         ] %}
 
         <div class="cn-home-categories__grid">
             {% for category in homeCategories %}
                 {% set taxon = cardnext_taxon_by_code(category.code) %}
+                {% set categoryImagePath = category.type == 'icon' ? 'cardnext/homepage/categories/icons/' : 'cardnext/homepage/categories/' %}
                 {% if taxon %}<a
                     class="cn-home-category"
                     href="{{ path('sylius_shop_product_index', {'slug': taxon.slug}) }}"
                 >
-                    <span class="cn-home-category__media">
+                    <span class="cn-home-category__media{{ category.type == 'icon' ? ' cn-home-category__media--icon' : '' }}">
                         <img
-                            src="{{ asset('cardnext/homepage/categories/' ~ category.image) }}"
+                            class="{{ category.type == 'icon' ? 'cn-home-category__icon' : '' }}"
+                            src="{{ asset(categoryImagePath ~ category.image) }}"
                             alt=""
                             width="1200"
                             height="580"
