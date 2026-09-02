@@ -1350,8 +1350,8 @@ body.cn-nav-open { overflow: hidden; }
     display: block;
     width: auto;
     height: auto;
-    max-width: 58%;
-    max-height: 58%;
+    max-width: 75%;
+    max-height: 75%;
     object-fit: contain;
     object-position: center;
     flex-shrink: 1;
