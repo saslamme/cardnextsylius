@@ -25,16 +25,20 @@ final class HomepageCategoryVisualTemplateTest extends TestCase
         self::assertStringContainsString("{'code': 'rfid_readers', 'image': 'rfid-leser.webp', 'type': 'photo'}", $homepage);
         self::assertStringContainsString("{'code': 'access_control', 'image': 'zutrittskontrolle.webp', 'type': 'photo'}", $homepage);
         self::assertStringContainsString("'cardnext/homepage/categories/icons/'", $homepage);
-        self::assertStringContainsString('cn-home-category__media--icon', $homepage);
+        self::assertStringContainsString('cn-home-category__media--{{ category.type }}', $homepage);
         self::assertStringContainsString('cn-home-category__icon', $homepage);
+        self::assertStringContainsString('cn-home-category__photo', $homepage);
     }
 
     public function testIconsContainWhilePhotosContinueToCover(): void
     {
         $stylesheet = (string) file_get_contents(__DIR__ . '/../../assets/shop/styles/cardnext.css');
 
-        self::assertMatchesRegularExpression('/\.cn-home-category__media img \{[^}]*object-fit: cover;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\.cn-home-category__media--icon img,\s*\.cn-home-category__icon \{[^}]*object-fit: contain;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__photo \{[^}]*object-fit: cover;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__icon \{[^}]*object-fit: contain;/s', $stylesheet);
         self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media--icon[^}]*object-fit: cover;/s', $stylesheet);
+        self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media img \{[^}]*object-fit: cover;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__media--icon \{[^}]*display: flex;[^}]*align-items: center;[^}]*justify-content: center;[^}]*overflow: visible;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__icon \{[^}]*max-width: 58%;[^}]*max-height: 58%;/s', $stylesheet);
     }
 }
