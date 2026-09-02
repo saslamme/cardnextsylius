@@ -16,6 +16,8 @@ cardnext:
         image_alt: 'Professioneller Kartendrucker mit Plastikkarten am Arbeitsplatz'
       categories:
         title: 'Beliebte Kategorien'
+        previous: 'Vorherige Kategorien'
+        next: 'Nächste Kategorien'
       service:
         kicker: 'Mehr als Hardware'
         title: 'Technologieversorgung mit persönlichem Service.'

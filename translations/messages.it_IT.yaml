@@ -16,6 +16,8 @@ cardnext:
         image_alt: Stampante professionale per tessere con tessere in plastica sulla postazione di lavoro
       categories:
         title: Categorie più richieste
+        previous: 'Categorie precedenti'
+        next: 'Categorie successive'
       service:
         kicker: Più che semplice hardware
         title: Tecnologia professionale con un servizio personalizzato.
