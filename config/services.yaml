@@ -152,6 +152,8 @@ services:
 
     App\Integration\Erp\Maintenance\ErpMaintenanceContractProviderInterface: '@App\Integration\Erp\Maintenance\HttpErpMaintenanceContractProvider'
 
+    App\Payment\AdyenExpressCheckoutAvailabilityInterface: '@App\Payment\AdyenExpressCheckoutAvailability'
+
     App\Integration\Erp\Maintenance\HttpErpMaintenanceContractProvider:
         arguments:
             $baseUri: '%env(CARDNEXT_ERP_BASE_URI)%'
