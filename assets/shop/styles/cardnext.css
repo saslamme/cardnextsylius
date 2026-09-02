@@ -741,6 +741,8 @@ body.cn-nav-open { overflow: hidden; }
 .cn-summary { min-width: 0; }
 .cn-summary__inner { display: flex; flex-direction: column; }
 .cn-summary__header { order: 10; padding-bottom: 18px; border-bottom: 1px solid var(--cn-border); }
+.cn-summary__header .cn-title { font-size: clamp(2rem,2.5vw,2.75rem); line-height: 1.05; }
+.cn-summary__header .cn-meta { margin-top: 16px; font-size: .68rem; line-height: 1.45; }
 .cn-brand { min-height: 28px; display: flex; align-items: center; gap: 11px; margin-bottom: 10px; color: var(--cn-primary-hover); font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .cn-brand img { width: auto; max-width: 126px; height: 30px; object-fit: contain; }
 .cn-summary__description { order: 20; padding: 18px 0 20px; color: var(--cn-muted); border-bottom: 1px solid var(--cn-border); font-size: .9rem; line-height: 1.7; }
