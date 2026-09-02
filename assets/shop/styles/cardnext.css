@@ -5042,20 +5042,22 @@ tbody td:nth-child(2) {
 .cn-advisor__result { min-width: 0; display: flex; flex-direction: column; gap: .5rem; }
 .cn-advisor__result .cn-btn { margin-top: auto; }
 .cn-advisor__badge { margin: 0; color: var(--cn-primary-hover); }
-.cn-advisor__image {
+.cn-advisor__media {
     width: 100%;
-    height: 190px;
-    min-height: 190px;
+    height: 220px;
+    min-height: 220px;
     overflow: hidden;
-    display: grid;
-    place-items: center;
-    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
     margin-bottom: .25rem;
     background: #fff;
     border: 1px solid var(--cn-border);
     border-radius: var(--cn-radius);
 }
 .cn-advisor__product-image {
+    position: static !important;
     display: block !important;
     width: 100% !important;
     height: 100% !important;
