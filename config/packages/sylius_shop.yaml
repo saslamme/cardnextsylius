@@ -1,3 +1,5 @@
 sylius_shop:
+    checkout_resolver:
+        pattern: '^/checkout/.+'
     product_grid:
         include_all_descendants: true
