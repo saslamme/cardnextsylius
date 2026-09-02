@@ -1,4 +1,10 @@
 liip_imagine:
+    loaders:
+        default:
+            filesystem:
+                data_root:
+                    - '%kernel.project_dir%/public/media/image'
+                    - '%kernel.project_dir%/public'
     filter_sets:
         cardnext_product_card:
             format: webp
