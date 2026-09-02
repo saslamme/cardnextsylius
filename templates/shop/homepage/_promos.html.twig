@@ -1,12 +1,18 @@
 {% set promos = [homepage.printerGuidePromo, homepage.configuratorPromo] %}
 {% if promos|filter(promo => promo.enabled)|length %}
-<section class="cn-section cn-home-promos" aria-label="{{ 'cardnext.storefront.homepage.promos.label'|trans }}">
-    <div class="cn-container cn-home-promos__grid">
+<section class="cn-section cn-home-promos" aria-labelledby="cn-home-promos-title">
+    <div class="cn-container">
+        <header class="cn-home-promos__intro">
+            <span class="cn-kicker">{{ 'cardnext.storefront.homepage.promos.kicker'|trans }}</span>
+            <h2 class="cn-title cn-title--section" id="cn-home-promos-title">{{ 'cardnext.storefront.homepage.promos.title'|trans }}</h2>
+            <p>{{ 'cardnext.storefront.homepage.promos.text'|trans }}</p>
+        </header>
+        <div class="cn-home-promos__grid">
         {% for promo in promos %}{% if promo.enabled %}
             <article class="cn-home-promo {{ loop.first ? 'cn-home-promo--printer' : 'cn-home-promo--configurator' }}{{ promo.imagePath ? '' : ' cn-home-promo--text-only' }}">
                 <div class="cn-home-promo__copy">
                     {% if promo.eyebrow %}<span class="cn-kicker">{{ promo.eyebrow }}</span>{% endif %}
-                    {% if promo.headline %}<h2>{{ promo.headline }}</h2>{% endif %}
+                    {% if promo.headline %}<h3>{{ promo.headline }}</h3>{% endif %}
                     {% if promo.text %}<p>{{ promo.text }}</p>{% endif %}
                     {% if (promo.url and promo.buttonLabel) or promo.badge %}
                         <div class="cn-home-promo__actions">
@@ -15,9 +21,14 @@
                         </div>
                     {% endif %}
                 </div>
-                {% if promo.imagePath %}<div class="cn-home-promo__media"><img class="cn-home-promo__image" src="{{ asset(promo.imagePath) }}" alt="{{ promo.imageAlt }}" width="720" height="540" loading="lazy"></div>{% endif %}
+                {% if promo.imagePath %}
+                    {% if promo.url %}<a class="cn-home-promo__media" href="{{ promo.url }}" aria-label="{{ promo.headline ?: promo.buttonLabel }}">{% else %}<div class="cn-home-promo__media">{% endif %}
+                        <img class="cn-home-promo__image" src="{{ asset(promo.imagePath) }}" alt="{{ promo.imageAlt }}" width="720" height="540" loading="lazy">
+                    {% if promo.url %}</a>{% else %}</div>{% endif %}
+                {% endif %}
             </article>
         {% endif %}{% endfor %}
+        </div>
     </div>
 </section>
 {% endif %}
