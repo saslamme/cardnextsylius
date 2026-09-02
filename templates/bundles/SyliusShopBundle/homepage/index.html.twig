@@ -56,9 +56,9 @@
                     class="cn-home-category"
                     href="{{ path('sylius_shop_product_index', {'slug': taxon.slug}) }}"
                 >
-                    <span class="cn-home-category__media{{ category.type == 'icon' ? ' cn-home-category__media--icon' : '' }}">
+                    <span class="cn-home-category__media cn-home-category__media--{{ category.type }}">
                         <img
-                            class="{{ category.type == 'icon' ? 'cn-home-category__icon' : '' }}"
+                            class="{{ category.type == 'icon' ? 'cn-home-category__icon' : 'cn-home-category__photo' }}"
                             src="{{ asset(categoryImagePath ~ category.image) }}"
                             alt=""
                             width="1200"
