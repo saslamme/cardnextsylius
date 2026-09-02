@@ -1,4 +1,5 @@
 {% set branding = cardnext_channel_branding() %}
+{% set quoteCartCount = cardnext_quote_cart_count() %}
 <header class="cardnext-header cn-shop-header" data-cardnext-header data-cn-brand="{{ branding.themeKey }}">
     <div class="cardnext-container cn-shop-header__inner">
         <div class="cn-shop-header__top">
@@ -64,8 +65,13 @@
                             <path d="M6.5 3.5h8l3 3V20.5h-11z"/>
                             <path d="M14.5 3.5v3h3M9 11h6M9 14.5h6"/>
                         </svg>
+                        {% if quoteCartCount > 0 %}
+                            <span class="cn-shop-header__count-badge" aria-hidden="true">
+                                {{ quoteCartCount }}
+                            </span>
+                        {% endif %}
                     </span>
-                    <span class="cn-shop-header__action-label">{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span>
+                    <span class="cn-shop-header__action-label">{{ 'cardnext.quote.cart'|trans }}</span>
                 </a>
 
                 {{ component('sylius_shop:cart:widget', { template: 'shop/layout/header/cart.html.twig' }) }}
@@ -103,7 +109,7 @@
                 {% else %}
                     <a href="{{ path('sylius_shop_login') }}"><span>{{ 'cardnext.storefront.header.login'|trans }}</span><span>→</span></a>
                 {% endif %}
-                <a href="{{ path('cardnext_shop_quote_cart', {}) }}"><span>{{ 'cardnext.quote.header'|trans({'%count%': cardnext_quote_cart_count()}) }}</span><span>→</span></a>
+                <a href="{{ path('cardnext_shop_quote_cart', {}) }}"><span>{{ 'cardnext.quote.cart'|trans }}</span><span>→</span></a>
                 <a href="{{ path('sylius_shop_cart_summary') }}"><span>{{ 'cardnext.storefront.header.cart'|trans }}</span><span>→</span></a>
                 <a href="{{ path('sylius_shop_contact_request') }}"><span>{{ 'cardnext.storefront.header.contact_advice'|trans }}</span><span>→</span></a>
             </div>

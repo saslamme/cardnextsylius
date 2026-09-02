@@ -417,7 +417,6 @@ cardnext:
       kicker: Produktinformationen
   quote:
     cart: Angebotskorb
-    header: Angebot (%count%)
     request: Angebotsanfrage
     intro: Stellen Sie Ihre gewünschten Produkte zusammen. Wir prüfen Preise, Verfügbarkeit und Projektanforderungen und erstellen Ihnen anschließend ein individuelles Angebot.
     add: Zum Angebot hinzufügen

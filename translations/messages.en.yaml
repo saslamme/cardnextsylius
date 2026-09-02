@@ -142,7 +142,6 @@ cardnext:
     content: { kicker: Product information }
   quote:
         cart: Quote cart
-        header: 'Quote (%count%)'
         request: Quote request
         intro: Collect the products you need. We will review prices, availability and your project requirements and prepare an individual quote.
         add: Add to quote

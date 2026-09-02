@@ -17,7 +17,7 @@
                 <circle cx="17" cy="19" r="1"/>
             </svg>
             {% if cartPositionCount > 0 %}
-                <span class="cardnext-cart-badge" {{ sylius_test_html_attribute('cart-quantity', cartPositionCount) }}>
+                <span class="cardnext-cart-badge cn-shop-header__count-badge" aria-hidden="true" {{ sylius_test_html_attribute('cart-quantity', cartPositionCount) }}>
                     {{ cartPositionCount }}
                 </span>
             {% endif %}

@@ -406,7 +406,6 @@ cardnext:
       kicker: Información del producto
   quote:
     cart: Cesta de oferta
-    header: Oferta (%count%)
     request: Solicitud de cotización
     intro: Arma tus productos deseados. Comprobamos precios, disponibilidad y requisitos del proyecto y luego creamos una oferta individual para usted.
     add: Añadir a la oferta
