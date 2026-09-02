@@ -25,7 +25,7 @@ final class PrinterAdvisorRecommendationService
             $volume = $answers->representativeVolume();
             if ($volume >= $profile->getMinAnnualVolume() && ($profile->getMaxAnnualVolume() === null || $volume <= $profile->getMaxAnnualVolume())) {
                 $score += 500;
-                $reasons[] = 'für Ihr jährliches Druckvolumen ausgelegt ist';
+                $reasons[] = 'volume';
             } else {
                 $distance = $volume < $profile->getMinAnnualVolume() ? $profile->getMinAnnualVolume() - $volume : $volume - (int) $profile->getMaxAnnualVolume();
                 $score -= min(450, (int) round(450 * $distance / max(1, $volume)));
@@ -33,22 +33,22 @@ final class PrinterAdvisorRecommendationService
 
             if ($answers->sides === 'duplex') {
                 $score += 160;
-                $reasons[] = 'automatischen Duplexdruck unterstützt';
+                $reasons[] = 'duplex';
             }
             if ($answers->sides === 'single') {
-                $reasons[] = 'einseitige Karten zuverlässig druckt';
+                $reasons[] = 'single';
             }
             $encodingReason = match ($answers->encoding) {
-                'magnetic' => 'Magnetstreifen kodieren kann', 'contact_chip' => 'Kontaktchip-Kodierung unterstützt', 'rfid_nfc' => 'RFID-/NFC-Kodierung unterstützt', default => null
+                'magnetic' => 'magnetic', 'contact_chip' => 'contact_chip', 'rfid_nfc' => 'rfid_nfc', default => null
             };
             if ($encodingReason !== null) {
                 $score += 180;
                 $reasons[] = $encodingReason;
             }
             $requirementReason = match ($answers->requirement) {
-                'durability' => 'für besonders haltbare Karten geeignet ist', 'lamination' => 'eine Laminierung ermöglicht',
-                'retransfer' => 'hochwertigen randlosen Retransferdruck bietet', 'speed' => 'eine hohe Druckleistung bietet',
-                default => 'für den Standard-Kartendruck geeignet ist',
+                'durability' => 'durability', 'lamination' => 'lamination',
+                'retransfer' => 'retransfer', 'speed' => 'speed',
+                default => 'standard',
             };
             $score += $answers->requirement === 'speed' ? $profile->getPerformanceClass() * 35 : 100;
             $reasons[] = $requirementReason;
@@ -57,12 +57,12 @@ final class PrinterAdvisorRecommendationService
             if ($budget !== null) {
                 if ($candidate->price >= $budget[0] && $candidate->price <= $budget[1]) {
                     $score += 250;
-                    $reasons[] = 'in Ihrem Investitionsrahmen liegt';
+                    $reasons[] = 'budget_match';
                 } elseif ($candidate->price > $budget[1]) {
                     $score -= min(300, (int) (($candidate->price - $budget[1]) / 1000));
                 } else {
                     $score += 100;
-                    $reasons[] = 'Ihr Budget schont';
+                    $reasons[] = 'budget_value';
                 }
             }
 
@@ -70,7 +70,7 @@ final class PrinterAdvisorRecommendationService
         }
 
         usort($ranked, static fn (PrinterAdvisorRecommendation $a, PrinterAdvisorRecommendation $b): int => [$b->score, $a->price, $a->product->getCode()] <=> [$a->score, $b->price, $b->product->getCode()]);
-        $labels = ['Beste Empfehlung', 'Preis-Leistungs-Alternative', 'Profi-Alternative'];
+        $labels = ['best', 'value', 'pro'];
 
         return array_map(static fn (PrinterAdvisorRecommendation $item, int $index): PrinterAdvisorRecommendation => new PrinterAdvisorRecommendation($item->product, $item->price, $item->score, $item->reasons, $labels[$index]), array_slice($ranked, 0, 3), array_keys(array_slice($ranked, 0, 3)));
     }

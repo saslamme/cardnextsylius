@@ -1,80 +1,38 @@
+{% set guide = 'cardnext.storefront.printer_advisor.guide.' %}
 <section class="cn-advisor-guide" aria-labelledby="kartendrucker-guide-title">
     <div class="cn-container">
         <header class="cn-advisor-guide__intro">
-            <p class="cn-advisor-guide__eyebrow">Orientierung vor dem Kauf</p>
-            <h2 id="kartendrucker-guide-title">Kartendrucker-Guide: Worauf Sie beim Kauf achten sollten</h2>
-            <p class="cn-advisor-guide__lead">Der Kauf eines Kartendruckers hängt von mehr Faktoren ab als nur vom Preis. Entscheidend sind vor allem Druckvolumen, gewünschte Kartenfunktionen, Sicherheitsanforderungen und die Frage, ob die Karten nur bedruckt oder zusätzlich kodiert werden sollen. Mit dem richtigen System sparen Sie langfristig Zeit, Material und unnötige Investitionen.</p>
-            <p>Wenn Sie noch unsicher sind, welcher Kartendrucker zu Ihrem Einsatzbereich passt, hilft Ihnen unser interaktiver <strong>Kartendrucker-Berater</strong> mit wenigen gezielten Fragen schnell weiter.</p>
-            <a class="cn-btn cn-btn--secondary" href="#kartendrucker-berater">Zum Kartendrucker-Berater</a>
+            <p class="cn-advisor-guide__eyebrow">{{ (guide ~ 'eyebrow')|trans }}</p>
+            <h2 id="kartendrucker-guide-title">{{ (guide ~ 'title')|trans }}</h2>
+            <p class="cn-advisor-guide__lead">{{ (guide ~ 'lead')|trans }}</p>
+            <p>{{ (guide ~ 'intro')|trans }}</p>
+            <a class="cn-btn cn-btn--secondary" href="#kartendrucker-berater">{{ (guide ~ 'advisor_cta')|trans }}</a>
         </header>
-
         <div class="cn-advisor-guide__chapters">
-            <article class="cn-advisor-guide__chapter">
-                <div class="cn-advisor-guide__media" aria-hidden="true"><span class="cn-advisor-guide__number">01</span><span class="cn-advisor-guide__icon">▥</span><span class="cn-advisor-guide__media-label">Druckvolumen planen</span></div>
-                <div class="cn-advisor-guide__copy">
-                    <h3>1. Das geplante Druckvolumen ist einer der wichtigsten Faktoren</h3>
-                    <p>Wie viele Karten pro Jahr gedruckt werden sollen, ist eine der zentralen Fragen bei der Auswahl eines Kartendruckers. Für gelegentliche Ausweise, Besucherkarten oder Mitgliedskarten genügt oft ein kompaktes Desktop-System. Sobald jedoch regelmäßig größere Stückzahlen produziert werden, steigen die Anforderungen an Geschwindigkeit, Belastbarkeit und Bedienkomfort.</p>
-                    <p>Ein Drucker, der nur für kleine Volumen ausgelegt ist, kann im täglichen Einsatz schnell an seine Grenzen stoßen. Umgekehrt ist ein professionelles Hochleistungssystem für geringe Mengen häufig wirtschaftlich nicht sinnvoll.</p>
-                    <ul><li><strong>Kleine Druckmengen:</strong> kompakte Einstiegssysteme</li><li><strong>Mittlere Druckmengen:</strong> flexible Allrounder</li><li><strong>Hohe Druckmengen:</strong> leistungsstarke Profi-Systeme</li></ul>
-                    <p class="cn-advisor-guide__advisor-note">Genau diese Frage wird im Kartendrucker-Berater direkt zu Beginn abgefragt, weil sie die Produktauswahl stark beeinflusst.</p>
-                </div>
-            </article>
-
-            <article class="cn-advisor-guide__chapter">
-                <div class="cn-advisor-guide__media" aria-hidden="true"><span class="cn-advisor-guide__number">02</span><span class="cn-advisor-guide__icon">⇄</span><span class="cn-advisor-guide__media-label">Einseitig oder Duplex</span></div>
-                <div class="cn-advisor-guide__copy">
-                    <h3>2. Einseitiger oder beidseitiger Kartendruck?</h3>
-                    <p>Nicht jede Karte muss auf Vorder- und Rückseite bedruckt werden. Für einfache Kundenkarten oder Besucherausweise reicht häufig ein einseitiger Druck aus. Sobald auf der Rückseite jedoch zusätzliche Informationen, Nutzungsbedingungen, Barcodes oder weitere Personalisierungen benötigt werden, ist ein Duplexdrucker die bessere Wahl.</p>
-                    <p>Ein beidseitiger Kartendruck spart manuelle Arbeitsschritte und sorgt für einen effizienteren Ablauf. Gerade bei regelmäßiger Kartenproduktion kann das ein wichtiger Vorteil sein.</p>
-                    <p class="cn-advisor-guide__advisor-note">Im Kartendrucker-Berater können Sie direkt angeben, ob einseitiger oder beidseitiger Druck benötigt wird. So werden nur passende Systeme berücksichtigt.</p>
-                </div>
-            </article>
-
-            <article class="cn-advisor-guide__chapter">
-                <div class="cn-advisor-guide__media" aria-hidden="true"><span class="cn-advisor-guide__number">03</span><span class="cn-advisor-guide__icon">⌁</span><span class="cn-advisor-guide__media-label">Karten intelligent kodieren</span></div>
-                <div class="cn-advisor-guide__copy">
-                    <h3>3. Soll die Karte nur gedruckt oder auch kodiert werden?</h3>
-                    <p>In vielen Anwendungen reicht ein rein optisch bedruckter Ausweis nicht aus. Häufig sollen Karten zusätzlich mit Funktionen für Zutritt, Zeiterfassung, Identifikation oder Mitgliedschaft ausgestattet werden. In solchen Fällen spielt die Frage der Kodierung eine wichtige Rolle.</p>
-                    <p>Je nach Anwendungsfall kommen Magnetstreifen, Kontaktchip oder RFID-/NFC-Technologien infrage. Nicht jeder Kartendrucker unterstützt jede Option. Deshalb sollte vor dem Kauf klar sein, ob nur Kartendruck oder auch eine technische Personalisierung erforderlich ist.</p>
-                    <ul><li><strong>Magnetstreifen</strong> für einfache Anwendungen</li><li><strong>Kontaktchip</strong> für spezifische Identifikationslösungen</li><li><strong>RFID / NFC</strong> für moderne Zutritts- und Ausweissysteme</li></ul>
-                    <p class="cn-advisor-guide__advisor-note">Der Kartendrucker-Berater grenzt die Auswahl danach ein, welche Kodierung Sie benötigen.</p>
-                </div>
-            </article>
-
-            <article class="cn-advisor-guide__chapter">
-                <div class="cn-advisor-guide__media" aria-hidden="true"><span class="cn-advisor-guide__number">04</span><span class="cn-advisor-guide__icon">◇</span><span class="cn-advisor-guide__media-label">Druckbild &amp; Schutz</span></div>
-                <div class="cn-advisor-guide__copy">
-                    <h3>4. Direktkartendruck, Retransfer und Laminierung verständlich erklärt</h3>
-                    <p>Beim Kauf eines Kartendruckers ist nicht nur entscheidend, <strong>dass</strong> gedruckt wird, sondern auch <strong>wie</strong>. Viele klassische Systeme übertragen das Druckbild direkt auf die Karte. Dieser Direktkartendruck ist für zahlreiche Standardanwendungen eine wirtschaftliche und bewährte Lösung.</p>
-                    <p>Für besonders hochwertige, randlose Druckbilder oder schwierige Kartenoberflächen kann ein Retransfer-Drucker sinnvoll sein: Er bringt das Motiv zunächst auf einen Film und anschließend auf die Karte. Bei erhöhten Anforderungen an Schutz und Haltbarkeit hilft eine Laminierung gegen Abrieb, UV-Einflüsse und tägliche Beanspruchung.</p>
-                    <p class="cn-advisor-guide__advisor-note">Auch diese Anforderungen berücksichtigt der Kartendrucker-Berater, damit Einsteiger- und Profi-Systeme sinnvoll voneinander getrennt werden.</p>
-                </div>
-            </article>
-
-            <article class="cn-advisor-guide__chapter">
-                <div class="cn-advisor-guide__media" aria-hidden="true"><span class="cn-advisor-guide__number">05</span><span class="cn-advisor-guide__icon">€</span><span class="cn-advisor-guide__media-label">Langfristig wirtschaftlich</span></div>
-                <div class="cn-advisor-guide__copy">
-                    <h3>5. Welche Rolle spielt das Budget?</h3>
-                    <p>Natürlich spielt auch das Budget eine Rolle. Allerdings sollte ein Kartendrucker nicht allein nach dem Anschaffungspreis bewertet werden. Wichtig ist, ob das System dauerhaft zum Bedarf passt und spätere Anforderungen ebenfalls abdecken kann.</p>
-                    <p>Ein günstiger Drucker kann für kleine Mengen ideal sein. Werden regelmäßig größere Volumina, Duplexdruck, Kodierung oder höhere Sicherheitsanforderungen gefordert, lohnt sich oft ein leistungsfähigeres Modell. Wer einen Kartendrucker kaufen möchte, sollte deshalb auf das beste Verhältnis aus Funktionsumfang, Einsatzgebiet und langfristiger Wirtschaftlichkeit achten.</p>
-                    <p class="cn-advisor-guide__advisor-note">Der Kartendrucker-Berater berücksichtigt den gewünschten Investitionsrahmen und zeigt passende Empfehlungen sowie mögliche Alternativen.</p>
-                </div>
-            </article>
-
-            <article class="cn-advisor-guide__chapter">
-                <div class="cn-advisor-guide__media" aria-hidden="true"><span class="cn-advisor-guide__number">06</span><span class="cn-advisor-guide__icon">✓</span><span class="cn-advisor-guide__media-label">Sicher entscheiden</span></div>
-                <div class="cn-advisor-guide__copy">
-                    <h3>6. Gute Beratung spart Zeit und verhindert Fehlkäufe</h3>
-                    <p>Wer einen Kartendrucker auswählt, entscheidet sich nicht nur für ein Gerät, sondern für einen späteren Arbeitsprozess. Deshalb lohnt es sich, die Anforderungen im Vorfeld sauber zu klären. So lassen sich Fehlkäufe, unnötige Nachrüstungen und ungeeignete Systeme vermeiden.</p>
-                    <p>Unser Ziel ist es, die Auswahl für Sie einfacher zu machen. Der interaktive Kartendrucker-Berater hilft, typische Anforderungen strukturiert einzuordnen und passende Modelle schneller zu finden. Wenn Ihre Anforderungen spezieller sind, ist eine persönliche Beratung oft der beste nächste Schritt.</p>
-                </div>
-            </article>
+            {% set chapters = {
+                volume: {number: '01', icon: '▥', paragraphs: 2, list: ['small', 'medium', 'high']},
+                sides: {number: '02', icon: '⇄', paragraphs: 2},
+                encoding: {number: '03', icon: '⌁', paragraphs: 2, list: ['magnetic', 'contact_chip', 'rfid_nfc']},
+                quality: {number: '04', icon: '◇', paragraphs: 2},
+                budget: {number: '05', icon: '€', paragraphs: 2},
+                advice: {number: '06', icon: '✓', paragraphs: 2}
+            } %}
+            {% for chapter, config in chapters %}
+                <article class="cn-advisor-guide__chapter">
+                    <div class="cn-advisor-guide__media" aria-hidden="true"><span class="cn-advisor-guide__number">{{ config.number }}</span><span class="cn-advisor-guide__icon">{{ config.icon }}</span><span class="cn-advisor-guide__media-label">{{ (guide ~ 'chapters.' ~ chapter ~ '.media')|trans }}</span></div>
+                    <div class="cn-advisor-guide__copy">
+                        <h3>{{ (guide ~ 'chapters.' ~ chapter ~ '.title')|trans }}</h3>
+                        {% for paragraph in 1..config.paragraphs %}<p>{{ (guide ~ 'chapters.' ~ chapter ~ '.p' ~ paragraph)|trans }}</p>{% endfor %}
+                        {% if config.list is defined %}<ul>{% for item in config.list %}<li>{{ (guide ~ 'chapters.' ~ chapter ~ '.list.' ~ item)|trans }}</li>{% endfor %}</ul>{% endif %}
+                        {% if chapter != 'advice' %}<p class="cn-advisor-guide__advisor-note">{{ (guide ~ 'chapters.' ~ chapter ~ '.note')|trans }}</p>{% endif %}
+                    </div>
+                </article>
+            {% endfor %}
         </div>
-
         <aside class="cn-advisor-guide__cta" aria-labelledby="advisor-guide-cta-title">
-            <div><p class="cn-advisor-guide__eyebrow">Ihre nächsten Schritte</p><h2 id="advisor-guide-cta-title">Nutzen Sie jetzt den Kartendrucker-Berater</h2><p>Beantworten Sie wenige Fragen und erhalten Sie eine erste passende Orientierung für Ihre Kartendrucker-Auswahl.</p></div>
+            <div><p class="cn-advisor-guide__eyebrow">{{ (guide ~ 'closing.eyebrow')|trans }}</p><h2 id="advisor-guide-cta-title">{{ (guide ~ 'closing.title')|trans }}</h2><p>{{ (guide ~ 'closing.text')|trans }}</p></div>
             {% set contactEmail = sylius.channel.contactEmail|default('info@cardnext.de', true) %}
-            <div class="cn-advisor-guide__cta-actions"><a class="cn-btn cn-btn--primary" href="#kartendrucker-berater">Berater starten</a><a class="cn-btn cn-btn--secondary" href="mailto:{{ contactEmail }}?subject=Persönliche%20Kartendrucker-Beratung">Persönliche Beratung anfragen</a></div>
+            <div class="cn-advisor-guide__cta-actions"><a class="cn-btn cn-btn--primary" href="#kartendrucker-berater">{{ (guide ~ 'closing.start')|trans }}</a><a class="cn-btn cn-btn--secondary" href="mailto:{{ contactEmail }}?subject={{ 'cardnext.storefront.printer_advisor.contact.subject'|trans|url_encode }}">{{ 'cardnext.storefront.printer_advisor.contact.cta'|trans }}</a></div>
         </aside>
     </div>
 </section>
