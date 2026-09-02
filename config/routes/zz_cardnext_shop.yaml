@@ -20,11 +20,13 @@ sylius_shop_product_show:
     methods: [GET]
     requirements: *public_slug_requirements
 
-# Deliberately last, with reserved storefront prefixes excluded as a second line
-# of defence. Route import order must never make the catch-all swallow quotes.
+# Deliberately last, with reserved application namespaces excluded at the routing
+# boundary. Concrete routes should still precede this catch-all, but the
+# requirement keeps import/cache ordering from ever dispatching admin, API, or
+# Symfony technical URLs to the storefront controller.
 cardnext_shop_configurator_page:
     path: /{configuratorPath}
     controller: App\Controller\Shop\ConfiguratorPageController
     methods: [GET]
     requirements:
-        configuratorPath: '(?!angebot(?:/|$)).+'
+        configuratorPath: '(?!(?:admin|api|angebot)(?:/|$)|_).+'
