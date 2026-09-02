@@ -1,6 +1,6 @@
 liip_imagine:
     loaders:
-        default:
+        sylius_image:
             filesystem:
                 data_root:
                     - '%kernel.project_dir%/public/media/image'
