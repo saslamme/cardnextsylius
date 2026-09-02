@@ -27,6 +27,8 @@ final class PrinterAdvisorRecommendationServiceTest extends TestCase
         $answers = new PrinterAdvisorAnswers('500_2000', 'unsure', 'none', 'standard', 'secondary');
         self::assertSame(['MATCH', 'WRONG'], array_map(static fn ($r) => $r->product->getCode(), $this->service->recommend($answers, [$wrong, $matching])));
         self::assertEquals($this->service->recommend($answers, [$wrong, $matching]), $this->service->recommend($answers, [$wrong, $matching]));
+        self::assertSame('best', $this->service->recommend($answers, [$wrong, $matching])[0]->label);
+        self::assertContains('volume', $this->service->recommend($answers, [$wrong, $matching])[0]->reasons);
     }
 
     /** @dataProvider hardRequirementProvider */

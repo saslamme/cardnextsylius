@@ -55,7 +55,7 @@ final readonly class PrinterAdvisorAnswers
     private static function assertChoice(string $value, array $choices, string $field): void
     {
         if (!in_array($value, $choices, true)) {
-            throw new \InvalidArgumentException(sprintf('Ungültige Auswahl für „%s“.', $field));
+            throw new \InvalidArgumentException('cardnext.storefront.printer_advisor.errors.invalid_answers');
         }
     }
 }

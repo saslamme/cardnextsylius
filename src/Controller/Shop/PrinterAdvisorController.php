@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PrinterAdvisorController extends AbstractController
 {
@@ -25,6 +26,7 @@ final class PrinterAdvisorController extends AbstractController
         PrinterAdvisorCandidateProvider $provider,
         PrinterAdvisorRecommendationService $service,
         ProductPublicUrlGenerator $urlGenerator,
+        TranslatorInterface $translator,
     ): Response {
         $recommendations = null;
         $error = null;
@@ -33,20 +35,20 @@ final class PrinterAdvisorController extends AbstractController
             try {
                 $token = $request->request->get('_token');
                 if (!is_string($token) || !$this->isCsrfTokenValid('printer_advisor', $token)) {
-                    throw new \InvalidArgumentException('Die Anfrage ist abgelaufen. Bitte laden Sie die Seite neu.');
+                    throw new \InvalidArgumentException('cardnext.storefront.printer_advisor.errors.expired');
                 }
                 $answers = PrinterAdvisorAnswers::fromArray($request->request->all('advisor'));
                 $locale = $request->getLocale();
                 $channel = $channelContext->getChannel();
                 if (!$channel instanceof ChannelInterface) {
-                    throw new \InvalidArgumentException('Der Verkaufskanal konnte nicht aufgelöst werden.');
+                    throw new \InvalidArgumentException('cardnext.storefront.printer_advisor.errors.channel');
                 }
                 $recommendations = array_map(
                     static fn (PrinterAdvisorRecommendation $r): PrinterAdvisorRecommendation => new PrinterAdvisorRecommendation($r->product, $r->price, $r->score, $r->reasons, $r->label, $urlGenerator->generate($r->product, $locale)),
                     $service->recommend($answers, $provider->forChannel($channel)),
                 );
             } catch (\InvalidArgumentException $exception) {
-                $error = $exception->getMessage();
+                $error = $translator->trans($exception->getMessage(), locale: $request->getLocale());
             }
         }
 
