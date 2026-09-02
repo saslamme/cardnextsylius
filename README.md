@@ -53,7 +53,7 @@ Der Setup-Befehl erfindet keine Produktzuordnungen oder Preise. DKK- und SEK-Cha
 
 ### Account-Sicherheit
 
-Angebotsrouten liegen unter `/{_locale}/account/angebote`. Symfony Security verlangt dort `ROLE_USER`. Die Anwendung löst `ShopUser -> Customer` auf und sucht Angebote mit Customer, Channel, Status, Nummer und Version; fremde oder unzulässige Angebote ergeben 404. Entscheidungen sind POST-only und CSRF-geschützt. Account- und PDF-Antworten setzen `Cache-Control: private, no-store` und `X-Robots-Tag: noindex, nofollow, noarchive`.
+Angebotsrouten liegen unter `/account/angebote`. Symfony Security verlangt dort `ROLE_USER`. Die Anwendung löst `ShopUser -> Customer` auf und sucht Angebote mit Customer, Channel, Status, Nummer und Version; fremde oder unzulässige Angebote ergeben 404. Entscheidungen sind POST-only und CSRF-geschützt. Account- und PDF-Antworten setzen `Cache-Control: private, no-store` und `X-Robots-Tag: noindex, nofollow, noarchive`.
 
 ### Quote zu Order
 

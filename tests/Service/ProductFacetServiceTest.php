@@ -43,7 +43,7 @@ final class ProductFacetServiceTest extends TestCase
         $facets = $service->getFacets(
             $this->createTaxon(1, 10),
             $this->createChannel(),
-            new Request($query, [], ['_locale' => 'de_DE']),
+            self::request($query),
             'card_printers',
         );
 
@@ -58,7 +58,7 @@ final class ProductFacetServiceTest extends TestCase
         $facets = $this->createService($this->createDatabase())->getFacets(
             $this->createTaxon(20, 30),
             $this->createChannel(),
-            new Request([], [], ['_locale' => 'de_DE']),
+            self::request(),
             'card_printers',
         );
 
@@ -73,7 +73,7 @@ final class ProductFacetServiceTest extends TestCase
         $facets = $this->createService($connection)->getFacets(
             $this->createTaxon(1, 10),
             $this->createChannel(),
-            new Request([], [], ['_locale' => 'de_DE']),
+            self::request(),
             'taxon_without_profile',
         );
 
@@ -89,7 +89,7 @@ final class ProductFacetServiceTest extends TestCase
         $facets = $this->createService($connection)->getFacets(
             $this->createTaxon(1, 10),
             $this->createChannel(),
-            new Request(['criteria' => ['cn_accessory_type' => ['value' => ['invalid']]]], [], ['_locale' => 'de_DE']),
+            self::request(['criteria' => ['cn_accessory_type' => ['value' => ['invalid']]]]),
             'id_accessories',
         );
 
@@ -150,4 +150,14 @@ final class ProductFacetServiceTest extends TestCase
 
         return $channel;
     }
+
+    /** @param array<string, mixed> $query */
+    private static function request(array $query = []): Request
+    {
+        $request = new Request($query);
+        $request->setLocale('de_DE');
+
+        return $request;
+    }
+
 }

@@ -36,9 +36,9 @@
                 {% set comparison_taxon = product.mainTaxon %}
                 {% for i in 1..8 %}{% if comparison_taxon and comparison_taxon.parent and comparison_taxon.parent.code != 'products' %}{% set comparison_taxon = comparison_taxon.parent %}{% endif %}{% endfor %}
                 <div class="cn-purchase__actions">
-                    <button class="cn-link cn-link--small cn-compare-detail" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_taxon ? comparison_taxon.code : '' }}" data-compare-url="{{ path('cardnext_shop_product_compare', {_locale: app.request.locale}) }}" aria-pressed="false" aria-label="{{ 'cardnext.storefront.product_card.compare_aria'|trans({'%product%': product.name}) }}">{{ 'cardnext.storefront.product_detail.add_to_compare'|trans }}</button>
+                    <button class="cn-link cn-link--small cn-compare-detail" type="button" data-compare-toggle data-product-code="{{ product.code }}" data-product-name="{{ product.name }}" data-product-group="{{ comparison_taxon ? comparison_taxon.code : '' }}" data-compare-url="{{ path('cardnext_shop_product_compare', {}) }}" aria-pressed="false" aria-label="{{ 'cardnext.storefront.product_card.compare_aria'|trans({'%product%': product.name}) }}">{{ 'cardnext.storefront.product_detail.add_to_compare'|trans }}</button>
                     <span class="cn-purchase__action-separator" aria-hidden="true">·</span>
-                    <form class="cn-purchase__quote" method="post" action="{{ path('cardnext_shop_quote_cart_add', {_locale: app.request.locale}) }}">
+                    <form class="cn-purchase__quote" method="post" action="{{ path('cardnext_shop_quote_cart_add', {}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('quote_add') }}">
                         <input type="hidden" name="variantCode" value="{{ selected_variant.code }}">
                         <input type="hidden" name="quantity" value="1">

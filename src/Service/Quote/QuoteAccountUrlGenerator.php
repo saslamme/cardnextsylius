@@ -22,7 +22,7 @@ final class QuoteAccountUrlGenerator
             throw new \DomainException(sprintf('No quote account base URL is configured for channel "%s".', $quote->getChannelCode()));
         }
         $path = $this->router->generate('cardnext_shop_account_quote_show', [
-            '_locale' => $quote->getLocaleCode(), 'number' => $quote->getNumber(), 'version' => $quote->getVersion(),
+            'number' => $quote->getNumber(), 'version' => $quote->getVersion(),
         ], UrlGeneratorInterface::ABSOLUTE_PATH);
 
         return $market->baseUrl() . '/' . ltrim($path, '/');

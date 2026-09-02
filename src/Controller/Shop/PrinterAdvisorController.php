@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PrinterAdvisorController extends AbstractController
 {
-    #[Route('/{_locale}/kartendrucker-berater', name: 'cardnext_shop_printer_advisor', requirements: ['_locale' => '^[A-Za-z]{2,4}(?:_[A-Za-z]{2})?$'], methods: ['GET', 'POST'], priority: 100)]
+    #[Route('/kartendrucker-berater', name: 'cardnext_shop_printer_advisor', methods: ['GET', 'POST'], priority: 100)]
     public function __invoke(
         Request $request,
         ChannelContextInterface $channelContext,
@@ -36,10 +36,7 @@ final class PrinterAdvisorController extends AbstractController
                     throw new \InvalidArgumentException('Die Anfrage ist abgelaufen. Bitte laden Sie die Seite neu.');
                 }
                 $answers = PrinterAdvisorAnswers::fromArray($request->request->all('advisor'));
-                $locale = $request->attributes->get('_locale');
-                if (!is_string($locale)) {
-                    throw new \InvalidArgumentException('Die Sprache konnte nicht aufgelöst werden.');
-                }
+                $locale = $request->getLocale();
                 $channel = $channelContext->getChannel();
                 if (!$channel instanceof ChannelInterface) {
                     throw new \InvalidArgumentException('Der Verkaufskanal konnte nicht aufgelöst werden.');

@@ -31,7 +31,7 @@ final class QuoteCartController extends AbstractController
     ) {
     }
 
-    #[Route('/{_locale}/angebotskorb', name: 'cardnext_shop_quote_cart', methods: ['GET', 'POST'], priority: 200)]
+    #[Route('/angebotskorb', name: 'cardnext_shop_quote_cart', methods: ['GET', 'POST'], priority: 200)]
     public function index(Request $request, QuoteRequestSubmitter $submitter, QuoteRequestMailer $mailer): Response
     {
         $channel = $this->channel();
@@ -71,7 +71,6 @@ final class QuoteCartController extends AbstractController
                         $mailer->send($quote);
 
                         return $this->redirectToRoute('cardnext_shop_quote_confirmation', [
-                            '_locale' => $request->getLocale(),
                             'number' => $quote->getNumber(),
                         ]);
                     } catch (\DomainException $exception) {
@@ -101,7 +100,7 @@ final class QuoteCartController extends AbstractController
         ], $showValidationError ? new Response(status: Response::HTTP_UNPROCESSABLE_ENTITY) : null);
     }
 
-    #[Route('/{_locale}/angebotskorb/hinzufuegen', name: 'cardnext_shop_quote_cart_add', methods: ['POST'], priority: 200)]
+    #[Route('/angebotskorb/hinzufuegen', name: 'cardnext_shop_quote_cart_add', methods: ['POST'], priority: 200)]
     public function add(Request $request): Response
     {
         $this->csrf($request, 'quote_add');
@@ -112,37 +111,37 @@ final class QuoteCartController extends AbstractController
         );
         $this->addFlash($added ? 'success' : 'error', $added ? 'cardnext.quote.added' : 'cardnext.quote.invalid_item');
 
-        return $this->redirect($request->headers->get('referer') ?: $this->generateUrl('cardnext_shop_quote_cart', ['_locale' => $request->getLocale()]));
+        return $this->redirect($request->headers->get('referer') ?: $this->generateUrl('cardnext_shop_quote_cart'));
     }
 
-    #[Route('/{_locale}/angebotskorb/aktualisieren', name: 'cardnext_shop_quote_cart_update', methods: ['POST'], priority: 200)]
+    #[Route('/angebotskorb/aktualisieren', name: 'cardnext_shop_quote_cart_update', methods: ['POST'], priority: 200)]
     public function update(Request $request): Response
     {
         $this->csrf($request, 'quote_update');
         $this->cart->update($request->request->getString('variantCode'), $request->request->getInt('quantity'), $this->channel());
 
-        return $this->redirectToRoute('cardnext_shop_quote_cart', ['_locale' => $request->getLocale()]);
+        return $this->redirectToRoute('cardnext_shop_quote_cart');
     }
 
-    #[Route('/{_locale}/angebotskorb/entfernen', name: 'cardnext_shop_quote_cart_remove', methods: ['POST'], priority: 200)]
+    #[Route('/angebotskorb/entfernen', name: 'cardnext_shop_quote_cart_remove', methods: ['POST'], priority: 200)]
     public function remove(Request $request): Response
     {
         $this->csrf($request, 'quote_remove');
         $this->cart->remove($request->request->getString('variantCode'), $this->channel());
 
-        return $this->redirectToRoute('cardnext_shop_quote_cart', ['_locale' => $request->getLocale()]);
+        return $this->redirectToRoute('cardnext_shop_quote_cart');
     }
 
-    #[Route('/{_locale}/angebotskorb/leeren', name: 'cardnext_shop_quote_cart_clear', methods: ['POST'], priority: 200)]
+    #[Route('/angebotskorb/leeren', name: 'cardnext_shop_quote_cart_clear', methods: ['POST'], priority: 200)]
     public function clear(Request $request): Response
     {
         $this->csrf($request, 'quote_clear');
         $this->cart->clear();
 
-        return $this->redirectToRoute('cardnext_shop_quote_cart', ['_locale' => $request->getLocale()]);
+        return $this->redirectToRoute('cardnext_shop_quote_cart');
     }
 
-    #[Route('/{_locale}/angebotsanfrage/{number}/bestaetigung', name: 'cardnext_shop_quote_confirmation', requirements: ['number' => 'AN-\\d{4}-\\d{5,}'], methods: ['GET'], priority: 200)]
+    #[Route('/angebotsanfrage/{number}/bestaetigung', name: 'cardnext_shop_quote_confirmation', requirements: ['number' => 'AN-\\d{4}-\\d{5,}'], methods: ['GET'], priority: 200)]
     public function confirmation(string $number): Response
     {
         return $this->render('shop/quote/confirmation.html.twig', ['number' => $number]);

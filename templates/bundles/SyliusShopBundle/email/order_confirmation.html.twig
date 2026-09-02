@@ -8,7 +8,6 @@
             ? sylius_channel_url(
                 path('sylius_shop_order_show', {
                     'tokenValue': order.tokenValue,
-                    '_locale': localeCode
                 }),
                 channel
             )
@@ -25,7 +24,7 @@
 
                 <div style="padding:0 4px 22px;text-align:left;">
                     {% if sylius_bundle_loaded_checker('SyliusShopBundle') %}
-                        {% set homepage_url = sylius_channel_url(path('sylius_shop_homepage', {'_locale': localeCode}), channel) %}
+                        {% set homepage_url = sylius_channel_url(path('sylius_shop_homepage', {}), channel) %}
                         <a href="{{ homepage_url|e('html_attr') }}" style="display:inline-block;text-decoration:none;">
                             <img src="{{ emailBranding.logoUrl|e('html_attr') }}" alt="{{ emailBranding.brandName|e('html_attr') }}" width="190" style="display:block;width:190px;max-width:100%;height:auto;border:0;">
                         </a>

@@ -62,7 +62,6 @@
             <a
                 class="cn-search-suggest__manufacturer"
                 href="{{ path('cardnext_shop_search', {
-                    '_locale': app.request.locale,
                     'q': manufacturer.name
                 }) }}"
             >
@@ -88,7 +87,6 @@
     <a
         class="cn-search-suggest__all"
         href="{{ path('cardnext_shop_search', {
-            '_locale': app.request.locale,
             'q': query
         }) }}"
     >

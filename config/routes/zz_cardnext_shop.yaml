@@ -3,20 +3,19 @@
 # product before delegating to Sylius' unchanged resource controllers.
 
 cardnext_shop_product_compare:
-    path: /{_locale}/produktvergleich
+    path: /produktvergleich
     controller: App\Controller\Shop\ProductComparisonController
     methods: [GET]
 
 sylius_shop_product_index:
-    path: /{_locale}/{slug}
+    path: /{slug}
     controller: App\Controller\Shop\PublicSlugController
     methods: [GET]
     requirements: &public_slug_requirements
-        _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
         slug: '[^/]+'
 
 sylius_shop_product_show:
-    path: /{_locale}/{slug}
+    path: /{slug}
     controller: App\Controller\Shop\PublicSlugController
     methods: [GET]
     requirements: *public_slug_requirements
@@ -24,9 +23,8 @@ sylius_shop_product_show:
 # Deliberately last, with reserved storefront prefixes excluded as a second line
 # of defence. Route import order must never make the catch-all swallow quotes.
 cardnext_shop_configurator_page:
-    path: /{_locale}/{configuratorPath}
+    path: /{configuratorPath}
     controller: App\Controller\Shop\ConfiguratorPageController
     methods: [GET]
     requirements:
-        _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
         configuratorPath: '(?!angebot(?:/|$)).+'

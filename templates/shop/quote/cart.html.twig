@@ -51,7 +51,7 @@
                                             </div>
                                         </div>
                                         <div class="cn-quote-item__actions">
-                                            <form method="post" action="{{ path('cardnext_shop_quote_cart_update', {_locale: app.request.locale}) }}">
+                                            <form method="post" action="{{ path('cardnext_shop_quote_cart_update', {}) }}">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('quote_update') }}">
                                                 <input type="hidden" name="variantCode" value="{{ variant.code }}">
                                                 <label class="form-label" for="quote-quantity-{{ loop.index }}">{{ 'cardnext.quote.quantity'|trans }}</label>
@@ -64,7 +64,7 @@
                                                 <span>{{ 'cardnext.quote.total'|trans }}</span>
                                                 <strong>{{ row.lineTotal|sylius_format_money(currency, app.request.locale) }}</strong>
                                             </div>
-                                            <form method="post" action="{{ path('cardnext_shop_quote_cart_remove', {_locale: app.request.locale}) }}">
+                                            <form method="post" action="{{ path('cardnext_shop_quote_cart_remove', {}) }}">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('quote_remove') }}">
                                                 <input type="hidden" name="variantCode" value="{{ variant.code }}">
                                                 <button class="cn-link cn-link--small" type="submit">{{ 'cardnext.quote.remove'|trans }}</button>
@@ -91,7 +91,7 @@
                             <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.address'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.street) }}{{ form_row(form.houseNumber) }}{{ form_row(form.postalCode) }}{{ form_row(form.city) }}{{ form_row(form.countryCode) }}</div></fieldset>
                             <fieldset><legend class="cn-title cn-title--sm">{{ 'cardnext.quote.form.project'|trans }}</legend><div class="cn-quote__form-grid">{{ form_row(form.projectReference) }}{{ form_row(form.requestedDeliveryDate) }}{{ form_row(form.customerPurchaseOrderNumber) }}</div>{{ form_row(form.message) }}<h3 class="cn-quote__support-title">{{ 'cardnext.quote.form.support'|trans }}</h3><div class="cn-quote__support">{{ form_row(form.needsAdvice) }}{{ form_row(form.needsCompatibilityCheck) }}</div></fieldset>
                             <div class="cn-honeypot" aria-hidden="true">{{ form_row(form.website) }}</div>
-                            <div class="cn-quote__privacy form-check">{{ form_widget(form.privacyConsent, {'attr': {'class': 'form-check-input'}}) }} <label class="form-check-label required" for="{{ form.privacyConsent.vars.id }}">{{ 'cardnext.quote.form.privacy_before'|trans }} <a href="{{ path('cardnext_shop_legal_privacy', {_locale: app.request.locale}) }}">{{ 'cardnext.quote.form.privacy_link'|trans }}</a>{{ 'cardnext.quote.form.privacy_after'|trans }} <span aria-hidden="true">*</span></label>{{ form_errors(form.privacyConsent) }}</div>
+                            <div class="cn-quote__privacy form-check">{{ form_widget(form.privacyConsent, {'attr': {'class': 'form-check-input'}}) }} <label class="form-check-label required" for="{{ form.privacyConsent.vars.id }}">{{ 'cardnext.quote.form.privacy_before'|trans }} <a href="{{ path('cardnext_shop_legal_privacy', {}) }}">{{ 'cardnext.quote.form.privacy_link'|trans }}</a>{{ 'cardnext.quote.form.privacy_after'|trans }} <span aria-hidden="true">*</span></label>{{ form_errors(form.privacyConsent) }}</div>
                             {{ form_rest(form) }}
                         {{ form_end(form, {'render_rest': false}) }}
                     </section>

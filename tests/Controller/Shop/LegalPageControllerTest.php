@@ -16,9 +16,9 @@ final class LegalPageControllerTest extends TestCase
      */
     public static function legalPageRoutes(): iterable
     {
-        yield 'imprint' => ['imprint', '/{_locale}/impressum', 'cardnext_shop_legal_imprint'];
-        yield 'privacy' => ['privacy', '/{_locale}/datenschutz', 'cardnext_shop_legal_privacy'];
-        yield 'terms' => ['terms', '/{_locale}/agb', 'cardnext_shop_legal_terms'];
+        yield 'imprint' => ['imprint', '/impressum', 'cardnext_shop_legal_imprint'];
+        yield 'privacy' => ['privacy', '/datenschutz', 'cardnext_shop_legal_privacy'];
+        yield 'terms' => ['terms', '/agb', 'cardnext_shop_legal_terms'];
     }
 
     #[DataProvider('legalPageRoutes')]

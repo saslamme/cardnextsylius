@@ -6,13 +6,13 @@
 
 {% block content %}
 <main class="cn-compare-page" data-compare-page data-valid-codes="{{ codes|join(',') }}">
-    <nav class="cn-breadcrumbs" aria-label="Breadcrumb"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage', {'_locale': app.request.locale}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span><span aria-current="page">Produktvergleich</span></div></nav>
+    <nav class="cn-breadcrumbs" aria-label="Breadcrumb"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage', {}) }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep" aria-hidden="true">/</span><span aria-current="page">Produktvergleich</span></div></nav>
     <div class="cn-container">
         <header class="cn-compare-header"><span class="cn-kicker">Produktvergleich</span><h1 class="cn-title cn-title--section">Produkte direkt vergleichen</h1><p>Technische Merkmale, Ausstattung und Preise übersichtlich gegenübergestellt.</p></header>
         {% if requestedCount > 3 %}<div class="cn-compare-notice" role="status">Sie können maximal 3 Produkte vergleichen.</div>{% endif %}
         {% if not comparison.compatible %}<div class="cn-compare-notice cn-compare-notice--error" role="alert">Diese Produkte gehören zu unterschiedlichen Produktbereichen und können nicht sinnvoll miteinander verglichen werden.</div>
         {% elseif comparison.products|length < 2 %}
-            {% set cardPrintersTaxon = cardnext_taxon_by_code('card_printers') %}<section class="cn-compare-empty"><h2>Produkte vergleichen</h2><p>{% if comparison.products|length == 1 %}Wählen Sie noch ein zweites Produkt aus.{% else %}Wählen Sie mindestens zwei Produkte aus einer Kategorie aus, um technische Merkmale direkt gegenüberzustellen.{% endif %}</p><a class="cn-btn cn-btn--primary cn-btn--small" href="{{ path('sylius_shop_product_index', {_locale: app.request.locale, slug: cardPrintersTaxon.slug}) }}">Zu den Kartendruckern</a></section>
+            {% set cardPrintersTaxon = cardnext_taxon_by_code('card_printers') %}<section class="cn-compare-empty"><h2>Produkte vergleichen</h2><p>{% if comparison.products|length == 1 %}Wählen Sie noch ein zweites Produkt aus.{% else %}Wählen Sie mindestens zwei Produkte aus einer Kategorie aus, um technische Merkmale direkt gegenüberzustellen.{% endif %}</p><a class="cn-btn cn-btn--primary cn-btn--small" href="{{ path('sylius_shop_product_index', {slug: cardPrintersTaxon.slug}) }}">Zu den Kartendruckern</a></section>
         {% else %}
             <label class="cn-compare-differences"><input type="checkbox" data-compare-differences> Nur Unterschiede anzeigen</label>
             <div class="cn-compare-scroll" tabindex="0">

@@ -16,9 +16,8 @@ final class SearchController extends AbstractController
 {
     private const int RESULTS_PER_PAGE = 24;
 
-    #[Route('/{_locale}/suche', name: 'cardnext_shop_search', methods: ['GET'], priority: 120)]
+    #[Route('/suche', name: 'cardnext_shop_search', methods: ['GET'], priority: 120)]
     public function index(
-        string $_locale,
         Request $request,
         CardnextProductSearch $search,
         EntityManagerInterface $entityManager,
@@ -26,11 +25,10 @@ final class SearchController extends AbstractController
         $query = trim((string) $request->query->get('q', ''));
 
         if ($query !== '') {
-            $exactProduct = $search->findExactProductByIdentifier($query, $_locale);
+            $exactProduct = $search->findExactProductByIdentifier($query, $request->getLocale());
 
             if ($exactProduct !== null) {
                 return $this->redirectToRoute('sylius_shop_product_show', [
-                    '_locale' => $_locale,
                     'slug' => $exactProduct['slug'],
                 ]);
             }
@@ -39,7 +37,7 @@ final class SearchController extends AbstractController
         $page = max(1, $request->query->getInt('page', 1));
         $result = $search->search(
             $query,
-            $_locale,
+            $request->getLocale(),
             self::RESULTS_PER_PAGE,
             ($page - 1) * self::RESULTS_PER_PAGE,
         );
@@ -49,7 +47,7 @@ final class SearchController extends AbstractController
             $page = $pageCount;
             $result = $search->search(
                 $query,
-                $_locale,
+                $request->getLocale(),
                 self::RESULTS_PER_PAGE,
                 ($page - 1) * self::RESULTS_PER_PAGE,
             );
@@ -69,9 +67,8 @@ final class SearchController extends AbstractController
         ]);
     }
 
-    #[Route('/{_locale}/search/suggest', name: 'cardnext_shop_search_suggest', methods: ['GET'], priority: 120)]
+    #[Route('/search/suggest', name: 'cardnext_shop_search_suggest', methods: ['GET'], priority: 120)]
     public function suggest(
-        string $_locale,
         Request $request,
         CardnextProductSearch $search,
         EntityManagerInterface $entityManager,
@@ -82,7 +79,7 @@ final class SearchController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $result = $search->search($query, $_locale, 7);
+        $result = $search->search($query, $request->getLocale(), 7);
         $manufacturerQuery = $result['correctedQuery'] ?? $query;
 
         return $this->render('shop/search/suggest.html.twig', [

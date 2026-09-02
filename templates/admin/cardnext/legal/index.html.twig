@@ -51,7 +51,7 @@
 
                         {% if route_map[page.code] is defined %}
                             <a class="btn btn-outline-secondary"
-                               href="{{ path(route_map[page.code], {'_locale': page.localeCode}) }}"
+                               href="{{ path(route_map[page.code], {}) }}"
                                target="_blank"
                                rel="noopener">
                                 Vorschau

@@ -16,7 +16,7 @@
             <div class="cn-advisor__progress"><div data-advisor-progress></div></div>
             <p class="cn-advisor__step-count" data-advisor-count>Schritt 1 von 5</p>
             {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endif %}
-            <form method="post" action="{{ path('cardnext_shop_printer_advisor', {'_locale': app.request.locale}) }}" data-advisor-form>
+            <form method="post" action="{{ path('cardnext_shop_printer_advisor', {}) }}" data-advisor-form>
                 <input type="hidden" name="_token" value="{{ csrf_token('printer_advisor') }}">
                 {% set steps = [
                     ['volume', 'Wie viele Karten möchten Sie ungefähr drucken?', {'under_500': 'Weniger als 500 Karten pro Jahr', '500_2000': '500–2.000 Karten pro Jahr', '2000_10000': '2.000–10.000 Karten pro Jahr', 'over_10000': 'Mehr als 10.000 Karten pro Jahr'}],

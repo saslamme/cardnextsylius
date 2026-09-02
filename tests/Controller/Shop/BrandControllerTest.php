@@ -15,8 +15,8 @@ final class BrandControllerTest extends TestCase
         self::assertIsString($controller);
         self::assertIsString($detail);
 
-        self::assertStringContainsString("/{_locale}/marken'", $controller);
-        self::assertStringContainsString("/{_locale}/marken/{slug}'", $controller);
+        self::assertStringContainsString("/marken'", $controller);
+        self::assertStringContainsString("/marken/{slug}'", $controller);
         self::assertStringContainsString("component('cardnext:product:card'", $detail);
         self::assertStringNotContainsString('@SyliusShop/product/common/card.html.twig', $detail);
     }
