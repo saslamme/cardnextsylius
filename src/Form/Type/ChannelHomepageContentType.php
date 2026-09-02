@@ -55,6 +55,20 @@ final class ChannelHomepageContentType extends AbstractType
             ->add('removeCtaImage', CheckboxType::class, ['label' => 'CTA-Bild entfernen', 'required' => false, 'help' => 'Ein neuer Upload hat Vorrang vor dieser Auswahl.'])
         ;
         $builder->add('footerText', TextareaType::class, ['label' => 'Beschreibung', 'required' => false, 'attr' => ['rows' => 5]]);
+        foreach (['printerGuide' => 'Kartendrucker-Berater', 'configurator' => 'Kartenkonfigurator'] as $prefix => $label) {
+            $builder
+                ->add($prefix . 'Enabled', CheckboxType::class, ['label' => 'Promo anzeigen', 'required' => false])
+                ->add($prefix . 'Eyebrow', TextType::class, ['label' => 'Preheadline', 'required' => false])
+                ->add($prefix . 'Headline', TextType::class, ['label' => 'Überschrift', 'required' => false])
+                ->add($prefix . 'Text', TextareaType::class, ['label' => 'Text', 'required' => false, 'attr' => ['rows' => 4]])
+                ->add($prefix . 'Badge', TextType::class, ['label' => 'Badge / Vorteil', 'required' => false])
+                ->add($prefix . 'ButtonLabel', TextType::class, ['label' => 'Button-Text', 'required' => false])
+                ->add($prefix . 'Url', TextType::class, ['label' => 'Ziel-URL', 'required' => false, 'help' => 'Relative URL (beginnend mit /) oder vollständige HTTP(S)-URL.'])
+                ->add($prefix . 'ImageAlt', TextType::class, ['label' => 'Alternativtext des Bildes', 'required' => false])
+                ->add($prefix . 'ImageFile', FileType::class, $this->imageOptions('Bild für ' . $label, 'Optionales Promo-Bild. Die Karte funktioniert auch ohne Bild. JPEG, PNG oder WebP, max. 5 MB.'))
+                ->add('remove' . ucfirst($prefix) . 'Image', CheckboxType::class, ['label' => 'Bild entfernen', 'required' => false, 'help' => 'Ein neuer Upload hat Vorrang vor dieser Auswahl.'])
+            ;
+        }
     }
 
     /** @return array<string, mixed> */

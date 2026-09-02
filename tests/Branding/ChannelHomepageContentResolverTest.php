@@ -8,8 +8,8 @@ use App\Content\ChannelHomepageContentResolver;
 use App\Entity\Channel\Channel;
 use App\Entity\Content\ChannelHomepageContent;
 use App\Repository\Content\ChannelHomepageContentRepository;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
@@ -59,6 +59,23 @@ final class ChannelHomepageContentResolverTest extends TestCase
         self::assertSame('cardnext/homepage/hero-card-printer.webp', $resolved->heroImagePath);
         self::assertSame('cardnext/homepage/service-consultation.webp', $resolved->introImagePath);
         self::assertSame('cardnext/homepage/support-advisor.webp', $resolved->ctaImagePath);
+    }
+
+    public function testPromoContentIsResolvedFromCurrentChannelAndLocale(): void
+    {
+        $channel = new Channel();
+        $content = $this->content($channel, 'de_DE', 'Hero');
+        $content->setPrinterGuideEnabled(true);
+        $content->setPrinterGuideHeadline('Passenden Drucker finden');
+        $content->setPrinterGuideImagePath('uploads/channel-homepage/advisor.webp');
+
+        $resolved = $this->resolver($channel, 'de_DE', [$content])->resolve();
+
+        self::assertTrue($resolved->printerGuidePromo->enabled);
+        self::assertSame('Passenden Drucker finden', $resolved->printerGuidePromo->headline);
+        self::assertSame('uploads/channel-homepage/advisor.webp', $resolved->printerGuidePromo->imagePath);
+        self::assertFalse($resolved->configuratorPromo->enabled);
+        self::assertNull($resolved->configuratorPromo->imagePath);
     }
 
     public function testSameLocaleDoesNotLeakBetweenChannels(): void

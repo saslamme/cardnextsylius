@@ -13,6 +13,8 @@ final readonly class ChannelHomepageImageUploader
         'heroImageFile' => ['getHeroImagePath', 'setHeroImagePath', 'isRemoveHeroImage'],
         'introImageFile' => ['getIntroImagePath', 'setIntroImagePath', 'isRemoveIntroImage'],
         'ctaImageFile' => ['getCtaImagePath', 'setCtaImagePath', 'isRemoveCtaImage'],
+        'printerGuideImageFile' => ['getPrinterGuideImagePath', 'setPrinterGuideImagePath', 'isRemovePrinterGuideImage'],
+        'configuratorImageFile' => ['getConfiguratorImagePath', 'setConfiguratorImagePath', 'isRemoveConfiguratorImage'],
     ];
 
     private const MAX_SIZE = 5 * 1024 * 1024;
