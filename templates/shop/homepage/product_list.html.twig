@@ -1,5 +1,7 @@
 {% if products|length > 0 %}
-<div class="cn-product-grid cn-product-grid--4 cn-product-grid--lined">
-{% for product in products %}{{ component('cardnext:product:card', {product: product}) }}{% endfor %}
+<div class="cn-product-slider__viewport" data-cn-product-slider-viewport tabindex="0">
+    <div class="cn-product-slider__track">
+        {% for product in products %}<div class="cn-product-slider__slide">{{ component('cardnext:product:card', {product: product}) }}</div>{% endfor %}
+    </div>
 </div>
 {% else %}<div class="cn-panel">{{ 'cardnext.storefront.homepage.products.empty'|trans }}</div>{% endif %}

@@ -163,8 +163,8 @@
         </div>
     </div>
 </section>
-<section class="cn-section" id="products"><div class="cn-container"><div class="cn-section-head"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.products.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.products.title'|trans }}</h2></div></div>{% set homepage_products = cardnext_homepage_products(4) %}
-            {% include 'shop/homepage/product_list.html.twig' with { products: homepage_products } only %}</div></section>
+<section class="cn-section" id="products"><div class="cn-container">{% set homepage_products = cardnext_homepage_products(10) %}<div class="cn-product-slider" data-cn-product-slider><div class="cn-section-head"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.products.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.products.title'|trans }}</h2></div>{% if homepage_products|length > 0 %}<div class="cn-product-slider__controls"><button class="cn-product-slider__button" type="button" data-cn-product-slider-previous aria-label="{{ 'cardnext.storefront.homepage.products.previous'|trans }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button class="cn-product-slider__button" type="button" data-cn-product-slider-next aria-label="{{ 'cardnext.storefront.homepage.products.next'|trans }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>{% endif %}</div>
+            {% include 'shop/homepage/product_list.html.twig' with { products: homepage_products } only %}</div></div></section>
 <section class="cn-section cn-section--soft" id="industries"><div class="cn-container">
     <div class="cn-stack cn-stack--sm mb-4"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.industries.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.industries.title'|trans }}</h2><p class="cn-lead">{{ 'cardnext.storefront.homepage.industries.text'|trans }}</p></div>
     <div class="cn-grid cn-grid--3">

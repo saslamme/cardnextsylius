@@ -39,6 +39,8 @@ cardnext:
         kicker: 'Utvalda produkter'
         title: 'Professionell hårdvara.'
         empty: 'Inga produkter har ännu publicerats för denna försäljningskanal.'
+        previous: 'Föregående produkter'
+        next: 'Nästa produkter'
       industries:
         kicker: 'Användningsområden'
         title: 'Teknik anpassad till er verksamhet.'

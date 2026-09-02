@@ -39,6 +39,8 @@ cardnext:
         kicker: Geselecteerde producten
         title: Professionele hardware.
         empty: Er zijn nog geen producten voor dit verkoopkanaal gepubliceerd.
+        previous: 'Vorige producten'
+        next: 'Volgende producten'
       industries:
         kicker: Toepassingen
         title: Technologie die bij uw toepassing past.

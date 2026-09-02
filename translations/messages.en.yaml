@@ -354,3 +354,6 @@ quote_mail:
 "cardnext.storefront.homepage.promos.kicker": "TOOLS & ADVICE"
 "cardnext.storefront.homepage.promos.title": "Find the right product faster."
 "cardnext.storefront.homepage.promos.text": "Two practical tools for selection, configuration and ordering."
+
+cardnext.storefront.homepage.products.previous: 'Previous products'
+cardnext.storefront.homepage.products.next: 'Next products'
