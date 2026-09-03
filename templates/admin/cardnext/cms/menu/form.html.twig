@@ -1,0 +1,2 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% block cardnext_content %}<h2 class="page-title mb-4">Menüpunkt – {{ menu.name }}</h2><div class="card"><div class="card-body"><p class="text-secondary">Je nach Zieltyp nur CMS-Seite, Route oder URL ausfüllen.</p>{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-primary">Speichern</button><a class="btn" href="{{ path('cardnext_admin_cms_menu_items',{id:menu.id}) }}">Abbrechen</a>{{ form_end(form) }}</div></div>{% endblock %}

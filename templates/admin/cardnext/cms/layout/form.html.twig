@@ -1,0 +1,2 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% block cardnext_content %}<h2 class="page-title mb-4">{{ new ? 'Layout anlegen' : 'Layout bearbeiten' }}</h2><div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-primary">Speichern</button><a class="btn" href="{{ path('cardnext_admin_cms_layouts') }}">Abbrechen</a>{{ form_end(form) }}</div></div>{% endblock %}
