@@ -15,10 +15,7 @@ final class CategoryProductCardPriceTemplateTest extends TestCase
         $template = file_get_contents(dirname(__DIR__, 2) . '/templates/shop/category/product_card.html.twig');
 
         self::assertIsString($template);
-        self::assertStringContainsString('cardnext_b2b_variant_from_price(variant)', $template);
-        self::assertStringContainsString('from_price.is_from_price', $template);
-        self::assertStringContainsString('from_price.formatted_price', $template);
-        self::assertStringContainsString("component('sylius_shop:product:card:price'", $template);
+        self::assertStringContainsString("include 'shop/product/_card_price.html.twig' with {variant: variant} only", $template);
         self::assertStringNotContainsString('product.variants', $template);
     }
 

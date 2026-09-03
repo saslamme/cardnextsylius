@@ -59,6 +59,41 @@ final class B2BPriceResolverTest extends TestCase
         self::assertNull($resolver->findLowestQuantityPrice($this->variant(3600), $this->channel(), 2500));
     }
 
+    public function testAnonymousVisitorGetsTheLowestPublicFromPrice(): void
+    {
+        $resolver = $this->resolver([], [$this->tier(5, 3300), $this->tier(10, 3000)]);
+
+        self::assertSame(
+            ['min_quantity' => 10, 'price' => 3000, 'source' => ResolvedVariantPrice::PUBLIC_TIER],
+            $resolver->findLowestQuantityPrice($this->variant(3600), $this->channel(), 3600),
+        );
+    }
+
+    public function testLoggedInCustomerGetsTheirLowestCustomerFromPrice(): void
+    {
+        $customer = $this->customer();
+        $resolver = $this->resolver([
+            [$this->customerRule($customer, 1, 2800), $this->customerRule($customer, 10, 2500)],
+        ], [$this->tier(10, 3000)]);
+
+        self::assertSame(
+            ['min_quantity' => 10, 'price' => 2500, 'source' => ResolvedVariantPrice::CUSTOMER],
+            $resolver->findLowestQuantityPrice($this->variant(3600), $this->channel(), 2800, $customer),
+        );
+    }
+
+    public function testCustomerQuantityOnePricePreventsMisleadingPublicFromPrice(): void
+    {
+        $customer = $this->customer();
+        $resolver = $this->resolver([
+            [$this->customerRule($customer, 1, 2800)],
+        ], [$this->tier(10, 3000)]);
+
+        self::assertNull(
+            $resolver->findLowestQuantityPrice($this->variant(3600), $this->channel(), 2800, $customer),
+        );
+    }
+
     public function testCustomerSourceWinsEvenWhenPublicIsCheaper(): void
     {
         $customer = $this->customer();

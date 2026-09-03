@@ -1,0 +1,10 @@
+{% set from_price = cardnext_b2b_variant_from_price(variant) %}
+{% if from_price.is_from_price %}
+    <span class="cn-product-card__from">{{ 'cardnext.storefront.product_card.from_price'|trans }}</span>
+    <span>{{ from_price.formatted_price }}</span>
+{% else %}
+    {{ component('sylius_shop:product:card:price', {
+        variant: variant,
+        template: '@SyliusShop/product/common/price.html.twig'
+    }) }}
+{% endif %}
