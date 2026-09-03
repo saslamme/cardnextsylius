@@ -28,3 +28,7 @@ php bin/console cache:warmup --env=prod
 ```
 
 Signed draft preview and a full revision workflow are intentionally deferred; drafts are never publicly rendered.
+
+## Download center
+
+Add a block with type `downloads` to each desired locale of the existing `downloads` CMS page. The optional configuration supports `headline`, `types`, `manufacturer`, `limit`, and `showFilters`. Download binaries are stored outside the web root in `var/storage/cms-downloads/`; the directory is created automatically on the first valid upload.

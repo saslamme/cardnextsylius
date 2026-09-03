@@ -63,6 +63,7 @@ final class CmsBlockType extends AbstractType
             'image_text' => ['headline' => $line('Überschrift'), 'text' => $text('Text', true)] + $image + ['imagePosition' => [ChoiceType::class, ['label' => 'Bildposition', 'choices' => ['Links' => 'left', 'Rechts' => 'right']]]] + $button,
             'faq' => ['headline' => $line('Überschrift'), 'items' => [CollectionType::class, ['label' => 'FAQ-Einträge', 'entry_type' => FaqItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]]],
             'cta' => ['headline' => $line('Überschrift', true), 'text' => $text('Text')] + $button,
+            'downloads' => ['headline' => $line('Überschrift'), 'types' => [ChoiceType::class, ['label' => 'Downloadtypen', 'choices' => array_combine(\App\Entity\Cms\CmsDownload::TYPES, \App\Entity\Cms\CmsDownload::TYPES), 'multiple' => true, 'required' => false]], 'manufacturer' => $line('Hersteller'), 'limit' => [IntegerType::class, ['label' => 'Maximale Anzahl', 'required' => false]], 'showFilters' => [CheckboxType::class, ['label' => 'Filter anzeigen', 'required' => false]]],
             default => [],
         };
     }

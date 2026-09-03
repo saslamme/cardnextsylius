@@ -115,6 +115,10 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
+    App\Cms\CmsDownloadStorage:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
     App\ProductImage\ProductImageImporter:
         arguments:
             $projectDir: '%kernel.project_dir%'
