@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Calculator;
 
 use App\Service\B2BPriceResolver;
+use App\Pricing\ResolvedVariantPrice;
 use Sylius\Component\Core\Calculator\ProductVariantPricesCalculatorInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
@@ -28,15 +29,17 @@ final readonly class B2BCatalogPriceCalculator implements ProductVariantPricesCa
         $channel = $context['channel'] ?? null;
 
         if ($channel instanceof ChannelInterface) {
-            $resolvedPrice = $this->priceResolver->resolve(
+            $resolvedPrice = $this->priceResolver->resolvePrice(
                 $productVariant,
                 $channel,
                 1,
                 $this->customerContext->getCustomer(),
             );
 
-            if ($resolvedPrice !== null) {
-                return $resolvedPrice;
+            // Keep Sylius' complete standard/catalog-promotion calculation as
+            // the fallback; only permanent higher-priority sources replace it.
+            if ($resolvedPrice !== null && $resolvedPrice->source !== ResolvedVariantPrice::CHANNEL_PRICING) {
+                return $resolvedPrice->price;
             }
         }
 

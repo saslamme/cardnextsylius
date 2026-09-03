@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Channel\Channel;
 use App\Entity\Customer\Customer;
 use App\Entity\Customer\CustomerGroup;
+use App\Entity\Pricing\VariantTierPrice;
 use App\Entity\Product\CustomerVariantPriceRule;
 use App\Entity\Product\Product;
 use App\Entity\Product\ProductVariant;
@@ -30,6 +31,7 @@ final class ProductPriceRuleAdminController extends AbstractController
             'product' => $product,
             'rules' => $this->findProductRules($product, $entityManager),
             'customer_rules' => $this->findCustomerRules($product, $entityManager),
+            'tier_prices' => $this->findTierPrices($product, $entityManager),
             'customer_groups' => $entityManager->getRepository(CustomerGroup::class)->findBy([], ['name' => 'ASC']),
         ]);
     }
@@ -50,6 +52,9 @@ final class ProductPriceRuleAdminController extends AbstractController
         $variant = $this->resolveVariant($product, (string) $request->request->get('variant_code'), $entityManager);
         $channel = $this->resolveChannel($product, (string) $request->request->get('channel_code'), $entityManager);
         $customerGroupCode = trim((string) $request->request->get('customer_group_code'));
+        if ($customerGroupCode === '') {
+            throw new \InvalidArgumentException('Bitte eine Kundengruppe auswählen. Öffentliche Staffelpreise werden separat gepflegt.');
+        }
         $this->assertCustomerGroupExists($customerGroupCode, $entityManager);
 
         $minQuantity = max(1, (int) $request->request->get('min_quantity', 1));
@@ -286,6 +291,56 @@ final class ProductPriceRuleAdminController extends AbstractController
         return $this->redirectToRoute('cardnext_admin_product_price_rule_index', ['id' => $product->getId()]);
     }
 
+    #[Route('/admin/cardnext/products/{id}/tier-prices', name: 'cardnext_admin_tier_price_create', methods: ['POST'])]
+    public function createTierPrice(Product $product, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isCsrfTokenValid('create-tier-price-' . $product->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Ungültiger CSRF-Token.');
+        }
+        $variant = $this->resolveVariant($product, (string) $request->request->get('variant_code'), $entityManager);
+        $channel = $this->resolveChannel($product, (string) $request->request->get('channel_code'), $entityManager);
+        $quantity = (int) $request->request->get('min_quantity', 1);
+        $existing = $entityManager->getRepository(VariantTierPrice::class)->findOneBy(['variant' => $variant, 'channelCode' => $channel->getCode(), 'minQuantity' => $quantity]);
+        if ($existing instanceof VariantTierPrice) {
+            $this->addFlash('error', 'Für Variante, Kanal und Mindestmenge existiert bereits ein öffentlicher Staffelpreis.');
+            return $this->redirectToRoute('cardnext_admin_product_price_rule_index', ['id' => $product->getId()]);
+        }
+        $tier = new VariantTierPrice(); $tier->setVariant($variant); $tier->setChannelCode((string) $channel->getCode());
+        $tier->setMinQuantity($quantity); $tier->setPrice($this->priceToMinor((string) $request->request->get('price')));
+        $entityManager->persist($tier); $entityManager->flush(); $this->addFlash('success', 'Öffentlicher Staffelpreis wurde angelegt.');
+        return $this->redirectToRoute('cardnext_admin_product_price_rule_index', ['id' => $product->getId()]);
+    }
+
+    #[Route('/admin/cardnext/tier-prices/{id}/update', name: 'cardnext_admin_tier_price_update', methods: ['POST'])]
+    public function updateTierPrice(VariantTierPrice $tier, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $product = $tier->getVariant()->getProduct(); if (!$product instanceof Product) throw $this->createNotFoundException();
+        if (!$this->isCsrfTokenValid('update-tier-price-' . $tier->getId(), (string) $request->request->get('_token'))) throw $this->createAccessDeniedException();
+        $quantity = (int) $request->request->get('min_quantity', $tier->getMinQuantity());
+        $duplicate = $entityManager->getRepository(VariantTierPrice::class)->findOneBy(['variant' => $tier->getVariant(), 'channelCode' => $tier->getChannelCode(), 'minQuantity' => $quantity]);
+        if ($duplicate instanceof VariantTierPrice && $duplicate !== $tier) { $this->addFlash('error', 'Diese Mindestmenge existiert bereits.'); return $this->redirectToRoute('cardnext_admin_product_price_rule_index', ['id' => $product->getId()]); }
+        $tier->setMinQuantity($quantity); $tier->setPrice($this->priceToMinor((string) $request->request->get('price'))); $entityManager->flush();
+        return $this->redirectToRoute('cardnext_admin_product_price_rule_index', ['id' => $product->getId()]);
+    }
+
+    #[Route('/admin/cardnext/tier-prices/{id}/delete', name: 'cardnext_admin_tier_price_delete', methods: ['POST'])]
+    public function deleteTierPrice(VariantTierPrice $tier, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $product = $tier->getVariant()->getProduct(); if (!$product instanceof Product) throw $this->createNotFoundException();
+        if (!$this->isCsrfTokenValid('delete-tier-price-' . $tier->getId(), (string) $request->request->get('_token'))) throw $this->createAccessDeniedException();
+        $entityManager->remove($tier); $entityManager->flush();
+        return $this->redirectToRoute('cardnext_admin_product_price_rule_index', ['id' => $product->getId()]);
+    }
+
+    /** @return list<VariantTierPrice> */
+    private function findTierPrices(Product $product, EntityManagerInterface $entityManager): array
+    {
+        $tiers = $entityManager->createQueryBuilder()->select('tier')->from(VariantTierPrice::class, 'tier')->join('tier.variant', 'variant')
+            ->andWhere('variant.product = :product')->setParameter('product', $product)->orderBy('variant.code', 'ASC')
+            ->addOrderBy('tier.channelCode', 'ASC')->addOrderBy('tier.minQuantity', 'ASC')->getQuery()->getResult();
+        return is_array($tiers) ? array_values(array_filter($tiers, static fn (mixed $tier): bool => $tier instanceof VariantTierPrice)) : [];
+    }
+
     /**
      * @return list<VariantPriceRule>
      */
@@ -298,6 +353,7 @@ final class ProductPriceRuleAdminController extends AbstractController
             ->from(VariantPriceRule::class, 'rule')
             ->join('rule.variant', 'variant')
             ->andWhere('variant.product = :product')
+            ->andWhere("rule.customerGroupCode <> ''")
             ->setParameter('product', $product)
             ->orderBy('variant.code', 'ASC')
             ->addOrderBy('rule.channelCode', 'ASC')

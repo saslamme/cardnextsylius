@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Service\Quote;
 
 use App\Entity\Product\ProductVariant;
+use App\Service\B2BPriceResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Customer\Context\CustomerContextInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class QuoteCartService
@@ -15,7 +17,12 @@ final class QuoteCartService
 
     public const MAX_QUANTITY = 100000;
 
-    public function __construct(private RequestStack $requests, private EntityManagerInterface $em)
+    public function __construct(
+        private RequestStack $requests,
+        private EntityManagerInterface $em,
+        private B2BPriceResolver $priceResolver,
+        private CustomerContextInterface $customerContext,
+    )
     {
     }
 
@@ -94,7 +101,7 @@ final class QuoteCartService
                 $changed = true;
 
                 continue;
-            }$price = $variant->getChannelPricingForChannel($channel)?->getPrice();
+            }$price = $this->priceResolver->resolve($variant, $channel, $quantity, $this->customerContext->getCustomer());
             if ($price === null) {
                 unset($cart['items'][$code]);
                 $changed = true;

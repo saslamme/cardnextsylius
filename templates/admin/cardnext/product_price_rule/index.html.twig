@@ -28,8 +28,8 @@
             <div class="card h-100">
                 <div class="card-header">
                     <div>
-                        <h3 class="card-title">Staffel- / Kundengruppenpreis hinzufügen</h3>
-                        <div class="text-secondary small">Für alle Kunden oder für eine Sylius-Kundengruppe.</div>
+                        <h3 class="card-title">Kundengruppenpreis hinzufügen</h3>
+                        <div class="text-secondary small">Für eine bestehende Sylius-Kundengruppe.</div>
                     </div>
                 </div>
 
@@ -61,7 +61,7 @@
                             <div class="col-12">
                                 <label class="form-label">Kundengruppe</label>
                                 <select class="form-select" name="customer_group_code">
-                                    <option value="">Alle Kunden</option>
+                                    <option value="" disabled selected>Gruppe auswählen</option>
                                     {% for group in customer_groups %}
                                         <option value="{{ group.code }}">{{ group.name }} · {{ group.code }}</option>
                                     {% endfor %}
@@ -380,5 +380,22 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header"><div><h3 class="card-title">Öffentliche Staffelpreise</h3><div class="text-secondary small">Channel-spezifische Mengenpreise, getrennt von individuellen und Gruppenpreisen.</div></div></div>
+        <form class="card-body" method="post" action="{{ path('cardnext_admin_tier_price_create', {'id': product.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('create-tier-price-' ~ product.id) }}">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3"><label class="form-label">Variante</label><select class="form-select" name="variant_code" required>{% for variant in product.variants %}<option value="{{ variant.code }}">{{ variant.name|default(variant.code) }} · {{ variant.code }}</option>{% endfor %}</select></div>
+                <div class="col-md-3"><label class="form-label">Kanal / Währung</label><select class="form-select" name="channel_code" required>{% for channel in product.channels %}<option value="{{ channel.code }}">{{ channel.name }} · {{ channel.baseCurrency.code }}</option>{% endfor %}</select></div>
+                <div class="col-md-2"><label class="form-label">Menge ab</label><input class="form-control" type="number" min="1" name="min_quantity" value="1" required></div>
+                <div class="col-md-2"><label class="form-label">Stückpreis</label><input class="form-control" name="price" inputmode="decimal" placeholder="29,90" required></div>
+                <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">+ Staffel hinzufügen</button></div>
+            </div>
+        </form>
+        <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Variante</th><th>Kanal</th><th>Menge ab</th><th>Stückpreis</th><th></th></tr></thead><tbody>
+        {% for tier in tier_prices %}<tr><td>{{ tier.variant.name|default(tier.variant.code) }}<div class="text-secondary small">{{ tier.variant.code }}</div></td><td>{{ tier.channelCode }}</td><td colspan="2"><form class="d-flex gap-2" method="post" action="{{ path('cardnext_admin_tier_price_update', {'id': tier.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('update-tier-price-' ~ tier.id) }}"><input class="form-control" style="width:90px" type="number" min="1" name="min_quantity" value="{{ tier.minQuantity }}" required><input class="form-control" style="width:130px" name="price" value="{{ (tier.price / 100)|number_format(2, ',', '.') }}" required><button class="btn btn-sm btn-outline-primary">Speichern</button></form></td><td><form method="post" action="{{ path('cardnext_admin_tier_price_delete', {'id': tier.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete-tier-price-' ~ tier.id) }}"><button class="btn btn-sm btn-outline-danger">Löschen</button></form></td></tr>{% else %}<tr><td colspan="5" class="text-center text-secondary py-4">Noch keine öffentlichen Staffelpreise.</td></tr>{% endfor %}
+        </tbody></table></div>
     </div>
 {% endblock %}
