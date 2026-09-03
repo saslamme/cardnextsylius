@@ -54,6 +54,11 @@ final class ProductTypeExtension extends AbstractTypeExtension
         ]);
 
         $builder
+            ->add('addonOnly', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Nur als Zusatzleistung',
+                'help' => 'Dieses Produkt kann nur zusammen mit einem zugeordneten Hauptprodukt gekauft werden und wird nicht im normalen Produktsortiment angezeigt.',
+            ])
             ->add('homepageFeatured', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Auf Startseite anzeigen',
