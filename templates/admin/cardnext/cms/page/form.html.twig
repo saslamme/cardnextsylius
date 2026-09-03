@@ -1,10 +1,145 @@
 {% extends 'admin/cardnext/layout.html.twig' %}
+{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+
 {% block cardnext_content %}
-<div class="d-flex justify-content-between mb-4"><h2 class="page-title">{{ new ? 'CMS-Seite anlegen' : 'CMS-Seite bearbeiten' }}</h2><a class="btn" href="{{ path('cardnext_admin_cms_pages') }}">Zurück</a></div>
-{{ form_start(form) }}{{ form_errors(form) }}
-<div class="card mb-3"><div class="card-header"><h3 class="card-title">1. Allgemein</h3></div><div class="card-body"><div class="row"><div class="col-md-6">{{ form_row(form.code) }}{{ form_row(form.layout) }}{{ form_row(form.status) }}</div><div class="col-md-6">{{ form_row(form.channels) }}{{ form_row(form.publishAt) }}{{ form_row(form.unpublishAt) }}{{ form_row(form.includeInSitemap) }}</div></div></div></div>
-<div class="card mb-3"><div class="card-header"><h3 class="card-title">2. Inhalte &amp; 3. SEO nach Sprache</h3></div><div class="card-body"><div class="accordion" id="translations">{% for translation in form.translations %}<div class="accordion-item"><h3 class="accordion-header"><button type="button" class="accordion-button {{ not loop.first ? 'collapsed' }}" data-bs-toggle="collapse" data-bs-target="#translation-{{ loop.index }}">{{ translation.vars.data.locale }}</button></h3><div id="translation-{{ loop.index }}" class="accordion-collapse collapse {{ loop.first ? 'show' }}"><div class="accordion-body">{{ form_widget(translation) }}</div></div></div>{% endfor %}</div></div></div>
-<button class="btn btn-primary">Speichern</button>{{ form_end(form) }}
-{% if not new %}<div class="card mt-4"><div class="card-header d-flex justify-content-between"><h3 class="card-title">Blöcke</h3><a class="btn btn-primary btn-sm" href="{{ path('cardnext_admin_cms_block_new',{page:page.id}) }}">+ Block hinzufügen</a></div><table class="table"><thead><tr><th>Position</th><th>Sprache</th><th>Typ</th><th>Aktiv</th><th>Aktionen</th></tr></thead><tbody>{% for block in page.blocks %}<tr><td>{{ block.position }}</td><td>{{ block.locale }}</td><td>{{ block.type }}</td><td>{{ block.enabled ? 'Ja' : 'Nein' }}</td><td><a class="btn btn-sm" href="{{ path('cardnext_admin_cms_block_edit',{page:page.id,id:block.id}) }}">Bearbeiten</a><form class="d-inline" method="post" action="{{ path('cardnext_admin_cms_block_delete',{page:page.id,id:block.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('delete-cms-block-' ~ block.id) }}"><button class="btn btn-sm btn-danger">Löschen</button></form></td></tr>{% else %}<tr><td colspan="5">Noch keine Blöcke.</td></tr>{% endfor %}</tbody></table></div>
-<div class="card mt-4"><div class="card-header"><h3 class="card-title">Vorschau</h3></div><div class="card-body">{% for channel in page.channels %}{% for translation in page.translations %}{% if translation.title %}<a class="btn btn-sm mb-1" target="_blank" href="{{ path('cardnext_admin_cms_page_preview',{id:page.id,channel:channel.id,locale:translation.locale}) }}">{{ channel.code }} / {{ translation.locale }}</a>{% endif %}{% endfor %}{% endfor %}</div></div>{% endif %}
+{% set status_labels = {draft: 'Entwurf', published: 'Veröffentlicht', disabled: 'Deaktiviert'} %}
+{% set status_colors = {draft: 'warning', published: 'success', disabled: 'secondary'} %}
+{% set block_labels = {hero: 'Hero', rich_text: 'Text', image_text: 'Bild & Text', faq: 'FAQ', cta: 'Call-to-Action'} %}
+<style>
+    .cms-locale-tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
+    .cms-locale-tabs .nav-link { white-space: nowrap; }
+    .cms-locale-dot { width: .5rem; height: .5rem; display: inline-block; border-radius: 50%; background: var(--tblr-border-color); }
+    .cms-locale-dot.is-populated { background: var(--tblr-success); }
+    .cms-channel-list { max-height: 22rem; overflow-y: auto; }
+    .cms-channel-option { border-bottom: 1px solid var(--tblr-border-color); padding: .75rem 0; }
+    .cms-channel-option:last-child { border-bottom: 0; }
+    .cms-form-actions { position: sticky; bottom: 0; z-index: 10; margin-top: 1.5rem; box-shadow: 0 -.25rem 1rem rgba(0,0,0,.06); }
+    .cms-editor .form-control, .cms-editor .form-select { width: 100%; }
+</style>
+
+<div class="page-header mb-4">
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="page-pretitle">Inhalte / CMS-Seiten</div>
+            <h2 class="page-title">{{ new ? 'CMS-Seite anlegen' : 'CMS-Seite bearbeiten' }}</h2>
+            <div class="text-secondary mt-1">{{ new ? 'Erstellen und verwalten Sie eine kanal- und sprachabhängige Inhaltsseite.' : page.code }}</div>
+            {% if not new %}<span class="badge bg-{{ status_colors[page.status]|default('secondary') }}-lt mt-2">{{ status_labels[page.status]|default(page.status) }}</span>{% endif %}
+        </div>
+        <div class="col-auto ms-auto d-flex gap-2">
+            <a class="btn" href="{{ path('cardnext_admin_cms_pages') }}">Zurück</a>
+            {% if not new %}
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Vorschau</button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        {% set preview_count = 0 %}
+                        {% for channel in page.channels %}{% for translation in page.translations %}
+                            {% if translation.title and channel.locales|filter(locale => locale.code == translation.locale)|length %}
+                                {% set preview_count = preview_count + 1 %}
+                                <a class="dropdown-item" target="_blank" rel="noopener" href="{{ path('cardnext_admin_cms_page_preview',{id:page.id,channel:channel.id,locale:translation.locale}) }}">
+                                    <span class="d-block">{{ channel.name|default(channel.code) }}</span><small class="text-secondary">{{ locale_names[translation.locale]|default(translation.locale) }}</small>
+                                </a>
+                            {% endif %}
+                        {% endfor %}{% endfor %}
+                        {% if preview_count == 0 %}<span class="dropdown-item-text text-secondary">Keine Vorschau verfügbar</span>{% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            <button class="btn btn-primary" type="submit" form="cms-page-form">Speichern</button>
+        </div>
+    </div>
+</div>
+
+{{ form_start(form, {attr: {id: 'cms-page-form', class: 'cms-editor'}}) }}
+{% if form.vars.submitted and not form.vars.valid %}
+    <div class="alert alert-danger" role="alert"><strong>Die CMS-Seite konnte nicht gespeichert werden.</strong><div>Bitte prüfen Sie die markierten Felder.</div>{{ form_errors(form) }}</div>
+{% else %}{{ form_errors(form) }}{% endif %}
+
+<div class="row g-4">
+    <div class="col-lg-8 col-xl-9">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Inhalt &amp; Sprachversionen</h3></div>
+            <div class="card-header p-0">
+                <ul class="nav nav-tabs card-header-tabs cms-locale-tabs px-3 pt-2" role="tablist">
+                    {% for translation in form.translations %}
+                        {% set populated = translation.title.vars.value|default('')|trim or translation.slug.vars.value|default('')|trim %}
+                        {% set has_errors = not translation.vars.valid %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {{ loop.first ? 'active' }} {{ has_errors ? 'text-danger' }}" id="locale-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#locale-panel-{{ loop.index }}" type="button" role="tab" aria-controls="locale-panel-{{ loop.index }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">
+                                {{ locale_names[translation.vars.data.locale]|default(translation.vars.data.locale) }}
+                                <span class="cms-locale-dot {{ populated ? 'is-populated' }} ms-1" title="{{ populated ? 'Inhalt vorhanden' : 'Noch leer' }}"></span>
+                                {% if has_errors %}<span class="badge bg-danger ms-1">!</span>{% endif %}
+                            </button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    {% for translation in form.translations %}
+                        <div class="tab-pane fade {{ loop.first ? 'show active' }}" id="locale-panel-{{ loop.index }}" role="tabpanel" aria-labelledby="locale-tab-{{ loop.index }}" tabindex="0">
+                            {{ form_widget(translation.locale) }}
+                            <section aria-labelledby="content-heading-{{ loop.index }}">
+                                <h3 class="h3 mb-3" id="content-heading-{{ loop.index }}">Inhalt</h3>
+                                <div class="mb-3">{{ form_row(translation.title, {attr: {class: 'form-control'}}) }}</div>
+                                <div class="mb-3">{{ form_row(translation.slug, {attr: {class: 'form-control'}}) }}</div>
+                                <div class="mb-0">{{ form_row(translation.lead, {attr: {class: 'form-control'}}) }}</div>
+                            </section>
+                            <hr class="my-4">
+                            <section aria-labelledby="seo-heading-{{ loop.index }}">
+                                <div class="d-flex justify-content-between align-items-center mb-3"><h3 class="h3 mb-0" id="seo-heading-{{ loop.index }}">SEO &amp; Social Media</h3><span class="badge bg-secondary-lt">Optional</span></div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">{{ form_row(translation.metaTitle, {attr: {class: 'form-control', 'data-character-counter': '60'}}) }}<div class="text-secondary text-end small" data-counter-for="{{ translation.metaTitle.vars.id }}"></div></div>
+                                    <div class="col-md-6">{{ form_row(translation.canonicalUrl, {attr: {class: 'form-control'}}) }}</div>
+                                    <div class="col-12">{{ form_row(translation.metaDescription, {attr: {class: 'form-control', 'data-character-counter': '160'}}) }}<div class="text-secondary text-end small" data-counter-for="{{ translation.metaDescription.vars.id }}"></div></div>
+                                    <div class="col-12"><div class="fw-semibold mb-2">Suchmaschinen</div><div class="d-flex flex-wrap gap-4">{{ form_row(translation.robotsIndex) }}{{ form_row(translation.robotsFollow) }}</div></div>
+                                </div>
+                                <details class="mt-3"><summary class="btn btn-sm px-0">Social Media</summary><div class="row g-3 pt-3"><div class="col-md-6">{{ form_row(translation.ogTitle, {attr: {class: 'form-control'}}) }}</div><div class="col-md-6">{{ form_row(translation.ogDescription, {attr: {class: 'form-control'}}) }}</div></div></details>
+                            </section>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% if new %}<div class="alert alert-info mt-3" role="status">Inhaltsblöcke können nach dem ersten Speichern hinzugefügt werden.</div>{% endif %}
+    </div>
+
+    <aside class="col-lg-4 col-xl-3">
+        <div class="card mb-3"><div class="card-header"><h3 class="card-title">Allgemein</h3></div><div class="card-body">{{ form_row(form.code, {attr: {class: 'form-control'}}) }}{{ form_row(form.layout, {attr: {class: 'form-select'}}) }}{{ form_row(form.status, {attr: {class: 'form-select'}}) }}</div></div>
+        <div class="card mb-3"><div class="card-header"><h3 class="card-title">Veröffentlichung</h3></div><div class="card-body">{{ form_row(form.publishAt, {attr: {class: 'form-control'}}) }}{{ form_row(form.unpublishAt, {attr: {class: 'form-control'}}) }}{{ form_row(form.includeInSitemap) }}</div></div>
+        <div class="card"><div class="card-header"><h3 class="card-title">Verkaufskanäle</h3></div><div class="card-body py-0 cms-channel-list">
+            {% for channel in form.channels %}<div class="cms-channel-option"><div class="form-check">{{ form_widget(channel, {attr: {class: 'form-check-input'}}) }}<label class="form-check-label w-100" for="{{ channel.vars.id }}"><span class="d-block fw-medium">{{ channel.vars.data.name|default(channel.vars.label) }}</span><small class="text-secondary">{{ channel.vars.data.code|default(channel.vars.value) }}</small></label></div>{{ form_errors(channel) }}</div>{% endfor %}
+        </div>{{ form_errors(form.channels) }}</div>
+    </aside>
+</div>
+
+<div class="card cms-form-actions"><div class="card-body py-3 d-flex align-items-center justify-content-between"><span class="text-secondary">Änderungen an CMS-Seite</span><div class="d-flex gap-2"><a class="btn" href="{{ path('cardnext_admin_cms_pages') }}">Abbrechen</a><button class="btn btn-primary" type="submit">Speichern</button></div></div></div>
+{{ form_end(form) }}
+
+{% if not new %}
+<div class="card mt-4">
+    <div class="card-header"><h3 class="card-title">Inhaltsblöcke</h3><div class="card-actions"><a class="btn btn-primary btn-sm" href="{{ path('cardnext_admin_cms_block_new',{page:page.id}) }}">+ Block hinzufügen</a></div></div>
+    <div class="card-body p-0">
+        {% set rendered_blocks = 0 %}
+        {% for translation in page.translations %}
+            {% set locale_blocks = page.blocks|filter(block => block.locale == translation.locale) %}
+            {% if locale_blocks|length %}
+                {% set rendered_blocks = rendered_blocks + locale_blocks|length %}
+                <div class="px-3 py-2 bg-light fw-semibold">{{ locale_names[translation.locale]|default(translation.locale) }}</div>
+                <div class="list-group list-group-flush">
+                    {% for block in locale_blocks %}<div class="list-group-item"><div class="row align-items-center"><div class="col-auto text-secondary" aria-hidden="true">≡</div><div class="col"><div class="fw-semibold">{{ block_labels[block.type]|default(block.type) }}</div><small class="text-secondary">{{ translation.locale }} · Position {{ block.position }}</small></div><div class="col-auto"><span class="badge bg-{{ block.enabled ? 'success' : 'secondary' }}-lt me-2">{{ block.enabled ? 'Aktiv' : 'Deaktiviert' }}</span><a class="btn btn-sm" href="{{ path('cardnext_admin_cms_block_edit',{page:page.id,id:block.id}) }}">Bearbeiten</a><form class="d-inline" method="post" action="{{ path('cardnext_admin_cms_block_delete',{page:page.id,id:block.id}) }}" onsubmit="return confirm('Block wirklich löschen?')"><input type="hidden" name="_token" value="{{ csrf_token('delete-cms-block-' ~ block.id) }}"><button class="btn btn-sm btn-ghost-danger">Löschen</button></form></div></div></div>{% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if rendered_blocks == 0 %}<div class="empty py-5"><p class="empty-title">Noch keine Inhaltsblöcke</p><p class="empty-subtitle text-secondary">Fügen Sie den ersten Block für diese CMS-Seite hinzu.</p></div>{% endif %}
+    </div>
+</div>
+{% endif %}
+
+<script>
+document.querySelectorAll('[data-character-counter]').forEach(function (field) {
+    var output = document.querySelector('[data-counter-for="' + field.id + '"]');
+    var update = function () { output.textContent = field.value.length + ' / ' + field.dataset.characterCounter; };
+    field.addEventListener('input', update); update();
+});
+</script>
 {% endblock %}
