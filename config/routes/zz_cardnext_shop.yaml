@@ -21,9 +21,10 @@ sylius_shop_product_show:
     requirements: *public_slug_requirements
 
 # Deliberately last, with reserved application namespaces excluded at the routing
-# boundary. Concrete routes should still precede this catch-all, but the
-# requirement keeps import/cache ordering from ever dispatching admin, API, or
-# Symfony technical URLs to the storefront controller.
+# boundary. This is the deterministic multi-segment fallback: its controller
+# tries a configurator first and then the CMS resolver. Single-segment requests
+# use PublicSlugController, whose fixed ownership order is taxon, product, CMS
+# page, CMS redirect. Thus CMS content can never shadow a catalog resource.
 cardnext_shop_configurator_page:
     path: /{configuratorPath}
     controller: App\Controller\Shop\ConfiguratorPageController

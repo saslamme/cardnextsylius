@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Shop;
 
+use App\Cms\CmsStorefrontResolver;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Repository\ProductRepositoryInterface;
@@ -29,6 +30,7 @@ final readonly class PublicSlugController
         private LocaleContextInterface $localeContext,
         #[Autowire(service: 'sylius.controller.product')]
         private ResourceController $productController,
+        private CmsStorefrontResolver $cmsStorefrontResolver,
     ) {
     }
 
@@ -69,6 +71,11 @@ final readonly class PublicSlugController
             return $this->productController->showAction($request);
         }
 
-        throw new NotFoundHttpException(sprintf('No public taxon or product has slug "%s".', $slug));
+        $cmsResponse = $this->cmsStorefrontResolver->resolve($slug);
+        if ($cmsResponse !== null) {
+            return $cmsResponse;
+        }
+
+        throw new NotFoundHttpException(sprintf('No public taxon, product, or CMS page has slug "%s".', $slug));
     }
 }
