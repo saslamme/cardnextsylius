@@ -1,0 +1,17 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+{% block title %}{{ new ? 'Download erstellen' : 'Download bearbeiten' }}{% endblock %}
+{% block body %}{% hook 'sylius_admin.common.index.content' %}{% endblock %}
+{% block cardnext_content %}
+<div class="page-header mb-4"><div class="row align-items-center"><div class="col"><div class="page-pretitle">Downloads</div><h2 class="page-title">{{ new ? 'Neuer Download' : download.code }}</h2></div><div class="col-auto"><a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_cms_downloads') }}">Zurück</a></div></div></div>
+{{ form_start(form) }}{{ form_errors(form) }}
+<div class="row g-4"><div class="col-lg-8"><div class="card"><div class="card-header"><h3 class="card-title">Sprachversionen</h3></div><div class="card-body">
+  <ul class="nav nav-tabs mb-3" role="tablist">{% for translation in form.translations %}{% set locale = translation.locale.vars.value %}<li class="nav-item"><button type="button" class="nav-link {{ loop.first ? 'active' }}" data-bs-toggle="tab" data-bs-target="#download-locale-{{ loop.index }}">{{ locale_names[locale]|default(locale) }} {% if translation.title.vars.value|trim %}<span class="badge bg-success-lt">●</span>{% endif %}</button></li>{% endfor %}</ul>
+  <div class="tab-content">{% for translation in form.translations %}<div class="tab-pane {{ loop.first ? 'active show' }}" id="download-locale-{{ loop.index }}">{{ form_row(translation.locale) }}{{ form_row(translation.title) }}{{ form_row(translation.description) }}</div>{% endfor %}</div>
+</div></div></div><div class="col-lg-4">
+  <div class="card mb-3"><div class="card-header"><h3 class="card-title">Allgemein</h3></div><div class="card-body">{{ form_row(form.code) }}{{ form_row(form.type) }}{{ form_row(form.manufacturer) }}{{ form_row(form.productFamily) }}{{ form_row(form.version) }}{{ form_row(form.operatingSystems) }}{{ form_row(form.position) }}</div></div>
+  <div class="card mb-3"><div class="card-header"><h3 class="card-title">Veröffentlichung</h3></div><div class="card-body">{{ form_row(form.enabled) }}{{ form_row(form.publishedAt) }}{{ form_row(form.channels) }}</div></div>
+  <div class="card mb-3"><div class="card-header"><h3 class="card-title">Produkte</h3></div><div class="card-body">{{ form_row(form.products) }}</div></div>
+  <div class="card mb-3"><div class="card-header"><h3 class="card-title">Datei</h3></div><div class="card-body">{% if download.filePath and download.filePath != '__pending_upload__' %}<div class="alert alert-info"><strong>{{ download.originalFilename }}</strong><br>{{ download.mimeType == 'application/pdf' ? 'PDF' : download.mimeType }} · {{ (download.fileSize / 1048576)|number_format(1, ',', '.') }} MB</div>{% elseif download.externalUrl %}<div class="alert alert-info"><strong>Externer Download</strong><br><a href="{{ download.externalUrl }}" target="_blank" rel="noopener noreferrer">{{ download.externalUrl }}</a></div>{% endif %}{{ form_row(form.uploadedFile) }}<div class="text-secondary small mb-3">PDF, ZIP, TXT, CSV oder XML, maximal 50 MB. Datei oder HTTPS-URL – genau eine Quelle.</div>{{ form_row(form.externalUrl) }}</div></div>
+  <button class="btn btn-primary w-100">{{ new ? 'Download erstellen' : 'Änderungen speichern' }}</button>
+</div></div>{{ form_end(form) }}
+{% endblock %}
