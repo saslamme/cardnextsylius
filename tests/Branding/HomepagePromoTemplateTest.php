@@ -29,11 +29,13 @@ final class HomepagePromoTemplateTest extends TestCase
         self::assertStringContainsString('cardnext.storefront.homepage.promos.text', $promo);
         self::assertStringNotContainsString('Kartendrucker', $promo);
 
-        self::assertMatchesRegularExpression('/\\.cn-home-promo__media \\{[^}]*display: grid;[^}]*place-items: center;[^}]*overflow: hidden;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\\.cn-home-promo__media \\{[^}]*display: grid;[^}]*place-items: center;[^}]*overflow: hidden;[^}]*background: var\\(--cn-surface-soft\\);/s', $stylesheet);
         self::assertMatchesRegularExpression('/\\.cn-home-promo__image \\{[^}]*object-fit: contain;[^}]*object-position: center;/s', $stylesheet);
         self::assertDoesNotMatchRegularExpression('/\\.cn-home-promo(?:__media(?: img)?|__image) \\{[^}]*object-fit: cover;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\\.cn-home-promo \\{[^}]*grid-template-columns: minmax\\(0,1\\.25fr\\) minmax\\(0,1fr\\);[^}]*min-height: 400px;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\\.cn-home-promo__image \\{[^}]*width: 90%;[^}]*height: 88%;[^}]*max-width: 90%;[^}]*max-height: 88%;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\\.cn-home-promo \\{[^}]*grid-template-columns: minmax\\(0,1\\.18fr\\) minmax\\(180px,\\.82fr\\);[^}]*min-height: 310px;[^}]*border-radius: var\\(--cn-radius\\);[^}]*background: var\\(--cn-surface\\);/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\\.cn-home-promo__image \\{[^}]*width: 100%;[^}]*height: 100%;[^}]*max-height: 274px;/s', $stylesheet);
+        self::assertDoesNotMatchRegularExpression('/\\.cn-home-promo__media \\{[^}]*(?:border|border-radius|margin):/s', $stylesheet);
+        self::assertStringNotContainsString('linear-gradient', substr($stylesheet, strpos($stylesheet, '/* Editorial homepage tool promos */'), strpos($stylesheet, '.cn-stack') - strpos($stylesheet, '/* Editorial homepage tool promos */')));
         self::assertStringContainsString('@media (max-width: 1050px) { .cn-home-promos__grid { grid-template-columns: minmax(0,1fr); }', $stylesheet);
         self::assertStringContainsString('.cn-home-promo--text-only { grid-template-columns: minmax(0,1fr); }', $stylesheet);
         self::assertStringContainsString('.cn-home-promo { grid-template-columns: minmax(0,1fr); min-height: 0; }', $stylesheet);
