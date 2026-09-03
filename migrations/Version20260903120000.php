@@ -17,7 +17,7 @@ final class Version20260903120000 extends AbstractMigration
         $this->addSql('ALTER TABLE sylius_order_item ADD parent_item_id INT DEFAULT NULL, ADD addon_type VARCHAR(32) DEFAULT NULL');
         $this->addSql('CREATE INDEX IDX_CN_ORDER_ITEM_PARENT ON sylius_order_item (parent_item_id)');
         $this->addSql('ALTER TABLE sylius_order_item ADD CONSTRAINT FK_CN_ORDER_ITEM_PARENT FOREIGN KEY (parent_item_id) REFERENCES sylius_order_item (id) ON DELETE SET NULL');
-        $this->addSql("INSERT INTO sylius_product_association_type (code) SELECT 'maintenance_contracts' WHERE NOT EXISTS (SELECT 1 FROM sylius_product_association_type WHERE code = 'maintenance_contracts')");
+        $this->addSql("INSERT INTO sylius_product_association_type (code, created_at, updated_at) SELECT 'maintenance_contracts', NOW(), NULL WHERE NOT EXISTS (SELECT 1 FROM sylius_product_association_type WHERE code = 'maintenance_contracts')");
     }
 
     public function down(Schema $schema): void

@@ -71,8 +71,10 @@ services:
         exclude:
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Twig/Component/Product/AddToCartFormComponent.php'
 
     sylius_shop.twig.component.product.add_to_cart_form:
+        autoconfigure: false
         class: App\Twig\Component\Product\AddToCartFormComponent
         arguments:
             - '@form.factory'
