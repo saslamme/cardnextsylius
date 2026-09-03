@@ -183,6 +183,8 @@ cardnext:
         tier_prices: 'Staffelprijzen'
         order_more_save: 'Bestel meer en bespaar'
         from_quantity: 'vanaf %quantity% stuks'
+        unit_price: '%price% / stuk'
+        saving_per_unit: 'U bespaart %saving% per stuk'
         saving_title: 'U bespaart %saving% per stuk (staffelprijs %price%)'
       stock:
         variant_availability: 'Beschikbaarheid van deze variant'

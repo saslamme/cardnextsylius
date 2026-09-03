@@ -183,6 +183,8 @@ cardnext:
         tier_prices: 'Volympriser'
         order_more_save: 'Beställ mer och spara'
         from_quantity: 'från %quantity% stycken'
+        unit_price: '%price% / styck'
+        saving_per_unit: 'Du sparar %saving% per styck'
         saving_title: 'Du sparar %saving% per styck (volympris %price%)'
       stock:
         variant_availability: 'Tillgänglighet för denna variant'

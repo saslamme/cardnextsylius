@@ -183,6 +183,8 @@ cardnext:
         tier_prices: 'Mængderabatter'
         order_more_save: 'Bestil mere og spar'
         from_quantity: 'fra %quantity% stk.'
+        unit_price: '%price% / stk.'
+        saving_per_unit: 'Du sparer %saving% pr. stk.'
         saving_title: 'Du sparer %saving% pr. stk. (mængdepris %price%)'
       stock:
         variant_availability: 'Tilgængelighed for denne variant'

@@ -65,6 +65,19 @@ final class ProductDetailPriceTemplateTest extends TestCase
         self::assertStringContainsString('cardnext.storefront.product_card.available', $html);
     }
 
+    public function testTierPricesUseAQuietSemanticListInsteadOfPercentageBadges(): void
+    {
+        $template = file_get_contents(dirname(__DIR__, 2) . '/templates/' . self::TEMPLATE);
+
+        self::assertIsString($template);
+        self::assertStringContainsString('<section class="cn-tier-prices"', $template);
+        self::assertStringContainsString('class="cn-tier-prices__list" role="list"', $template);
+        self::assertStringContainsString('class="cn-tier-prices__item" role="listitem"', $template);
+        self::assertStringContainsString('pricing.saving_per_unit', $template);
+        self::assertStringNotContainsString('cn-tier-table', $template);
+        self::assertStringNotContainsString('saving_percent }}%', $template);
+    }
+
     /** @return iterable<string, array{string}> */
     public static function localeProvider(): iterable
     {

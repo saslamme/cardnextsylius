@@ -183,6 +183,8 @@ cardnext:
         tier_prices: 'Precios por volumen'
         order_more_save: 'Pida más y ahorre'
         from_quantity: 'desde %quantity% unidades'
+        unit_price: '%price% / unidad'
+        saving_per_unit: 'Ahorras %saving% por unidad'
         saving_title: 'Ahorra %saving% por unidad (precio por volumen %price%)'
       stock:
         variant_availability: 'Disponibilidad de esta variante'
