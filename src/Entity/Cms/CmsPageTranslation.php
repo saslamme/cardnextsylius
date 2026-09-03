@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name:'cardnext_cms_page_translation', uniqueConstraints:[new ORM\UniqueConstraint(name:'uniq_cms_page_locale', columns:['page_id','locale'])])]
 class CmsPageTranslation {
  #[ORM\Id,ORM\GeneratedValue,ORM\Column] private ?int $id=null;
- #[ORM\ManyToOne(inversedBy:'translations')] #[ORM\JoinColumn(nullable:false,onDelete:'CASCADE')] private ?CmsPage $page=null;
+ #[ORM\ManyToOne(inversedBy:'translations')] #[ORM\JoinColumn(name:'page_id',referencedColumnName:'id',nullable:false,onDelete:'CASCADE')] private ?CmsPage $page=null;
  #[ORM\Column(length:12)] private string $locale=''; #[ORM\Column(length:255)] #[Assert\NotBlank] private string $title='';
  #[ORM\Column(length:255)] #[Assert\NotBlank] private string $slug=''; #[ORM\Column(type:Types::TEXT,nullable:true)] private ?string $lead=null;
  #[ORM\Column(name:'meta_title',length:255,nullable:true)] private ?string $metaTitle=null; #[ORM\Column(name:'meta_description',length:500,nullable:true)] private ?string $metaDescription=null;
