@@ -34,6 +34,31 @@ final class B2BPriceResolverTest extends TestCase
         self::assertSame(ResolvedVariantPrice::CHANNEL_PRICING, $resolver->resolvePrice($variant, $channel, 1)?->source);
     }
 
+    public function testLowestQuantityPriceOnlyReturnsAGenuineImprovement(): void
+    {
+        $variant = $this->variant(3600);
+        $channel = $this->channel();
+
+        $lower = $this->resolver([], [$this->tier(5, 3300), $this->tier(10, 3000)]);
+        self::assertSame(
+            ['min_quantity' => 10, 'price' => 3000, 'source' => ResolvedVariantPrice::PUBLIC_TIER],
+            $lower->findLowestQuantityPrice($variant, $channel, 3600),
+        );
+
+        $same = $this->resolver([], [$this->tier(10, 3600)]);
+        self::assertNull($same->findLowestQuantityPrice($variant, $channel, 3600));
+
+        $higher = $this->resolver([], [$this->tier(10, 3900)]);
+        self::assertNull($higher->findLowestQuantityPrice($variant, $channel, 3600));
+    }
+
+    public function testPromotedCatalogPriceIsNeverReplacedByAHigherTierPrice(): void
+    {
+        $resolver = $this->resolver([], [$this->tier(10, 3000)]);
+
+        self::assertNull($resolver->findLowestQuantityPrice($this->variant(3600), $this->channel(), 2500));
+    }
+
     public function testCustomerSourceWinsEvenWhenPublicIsCheaper(): void
     {
         $customer = $this->customer();

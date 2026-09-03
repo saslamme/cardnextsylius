@@ -86,6 +86,37 @@ final class B2BPriceResolver implements ResetInterface
         return $set['customerRules'] !== [] || $set['groupRules'] !== [] || $set['publicTiers'] !== [];
     }
 
+    /**
+     * Finds the cheapest effective price which starts at a real quantity break
+     * and improves on the already calculated (and possibly promoted) unit price.
+     *
+     * @return array{min_quantity:int,price:int,source:string}|null
+     */
+    public function findLowestQuantityPrice(
+        ProductVariantInterface $variant,
+        ChannelInterface $channel,
+        int $currentUnitPrice,
+        ?CustomerInterface $customer = null,
+    ): ?array {
+        $lowest = null;
+
+        foreach ($this->getEffectiveTiers($variant, $channel, $customer) as $tier) {
+            if ($tier['min_quantity'] <= 1 || $tier['price'] >= $currentUnitPrice) {
+                continue;
+            }
+
+            if ($lowest === null || $tier['price'] < $lowest['price']) {
+                $lowest = [
+                    'min_quantity' => $tier['min_quantity'],
+                    'price' => $tier['price'],
+                    'source' => $tier['source'],
+                ];
+            }
+        }
+
+        return $lowest;
+    }
+
     /** @return list<VariantPriceRule> */
     public function findRulesForVariant(ProductVariantInterface $variant): array
     {

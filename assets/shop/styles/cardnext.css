@@ -597,6 +597,7 @@ body.cn-nav-open { overflow: hidden; }
 .cn-product-card__note { margin: 0 0 14px; color: #788188; font-size: .73rem; line-height: 1.5; }
 .cn-product-card__meta { min-height: 42px; display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-top: auto; padding-top: 11px; border-top: 1px solid #edf0f1; }
 .cn-product-card__price { color: var(--cn-ink); font-size: 1rem; font-weight: 800; line-height: 1.1; }
+.cn-product-card__from { margin-right: 2px; color: var(--cn-muted); font-size: .72rem; font-weight: 500; }
 .cn-product-card__price del { display: block; margin-bottom: 2px; color: #929ba1; font-size: .72rem; font-weight: 500; }
 .cn-compare-toggle { align-self: flex-start; margin-top: 10px; padding: 4px 0; color: var(--cn-muted); background: transparent; border: 0; font-size: .72rem; font-weight: 650; cursor: pointer; }
 .cn-compare-toggle:hover, .cn-compare-toggle.is-selected { color: var(--cn-primary); }

@@ -363,3 +363,4 @@ cardnext.storefront.homepage.products.next: 'Next products'
 "cardnext.maintenance.none": "No maintenance contract"
 "cardnext.maintenance.details": "Show details"
 "cardnext.maintenance.addon_label": "Maintenance & service"
+"cardnext.storefront.product_card.from_price": "from"

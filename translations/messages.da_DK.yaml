@@ -659,3 +659,4 @@ quote_mail:
 "cardnext.maintenance.none": "Ingen vedligeholdelsesaftale"
 "cardnext.maintenance.details": "Vis detaljer"
 "cardnext.maintenance.addon_label": "Vedligeholdelse og service"
+"cardnext.storefront.product_card.from_price": "fra"

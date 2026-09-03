@@ -670,3 +670,4 @@ quote_mail:
 "cardnext.maintenance.none": "Ohne Wartungsvertrag"
 "cardnext.maintenance.details": "Details anzeigen"
 "cardnext.maintenance.addon_label": "Wartung & Service"
+"cardnext.storefront.product_card.from_price": "ab"

@@ -659,3 +659,4 @@ quote_mail:
 "cardnext.maintenance.none": "Sin contrato de mantenimiento"
 "cardnext.maintenance.details": "Mostrar detalles"
 "cardnext.maintenance.addon_label": "Mantenimiento y servicio"
+"cardnext.storefront.product_card.from_price": "desde"
