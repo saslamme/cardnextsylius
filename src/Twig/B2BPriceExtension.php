@@ -7,6 +7,8 @@ namespace App\Twig;
 use App\Service\B2BPriceResolver;
 use Sylius\Bundle\MoneyBundle\Formatter\MoneyFormatterInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Calculator\ProductVariantPricesCalculatorInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
@@ -26,6 +28,7 @@ final class B2BPriceExtension extends AbstractExtension
         private readonly CurrencyConverterInterface $currencyConverter,
         private readonly LocaleContextInterface $localeContext,
         private readonly MoneyFormatterInterface $moneyFormatter,
+        private readonly ProductVariantPricesCalculatorInterface $pricesCalculator,
     ) {
     }
 
@@ -34,6 +37,40 @@ final class B2BPriceExtension extends AbstractExtension
         return [
             new TwigFunction('cardnext_b2b_tier_groups', [$this, 'getProductTierGroups']),
             new TwigFunction('cardnext_b2b_variant_tiers', [$this, 'getVariantTiers']),
+            new TwigFunction('cardnext_b2b_variant_from_price', [$this, 'getVariantFromPrice']),
+        ];
+    }
+
+    /** @return array{price:int,formatted_price:string,min_quantity:int,is_from_price:bool} */
+    public function getVariantFromPrice(ProductVariantInterface $variant): array
+    {
+        $channel = $this->channelContext->getChannel();
+        if (!$channel instanceof ChannelInterface) {
+            throw new \LogicException('The storefront channel must be a Sylius core channel.');
+        }
+
+        $currentPrice = $this->pricesCalculator->calculate($variant, ['channel' => $channel]);
+        $lowestTier = $this->priceResolver->findLowestQuantityPrice(
+            $variant,
+            $channel,
+            $currentPrice,
+            $this->customerContext->getCustomer(),
+        );
+
+        if ($lowestTier === null) {
+            return [
+                'price' => $currentPrice,
+                'formatted_price' => $this->formatPrice($currentPrice),
+                'min_quantity' => 1,
+                'is_from_price' => false,
+            ];
+        }
+
+        return [
+            'price' => $lowestTier['price'],
+            'formatted_price' => $this->formatPrice($lowestTier['price']),
+            'min_quantity' => $lowestTier['min_quantity'],
+            'is_from_price' => true,
         ];
     }
 
