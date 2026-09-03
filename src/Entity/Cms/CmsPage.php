@@ -25,7 +25,7 @@ class CmsPage
     public const STATUS_DRAFT = 'draft'; public const STATUS_PUBLISHED = 'published'; public const STATUS_DISABLED = 'disabled';
     #[ORM\Id, ORM\GeneratedValue, ORM\Column] private ?int $id = null;
     #[ORM\Column(length: 64, unique: true)] #[Assert\Regex('/^[a-z0-9_]+$/')] private string $code = '';
-    #[ORM\ManyToOne] #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')] private ?CmsLayout $layout = null;
+    #[ORM\ManyToOne] #[ORM\JoinColumn(name: 'layout_id', referencedColumnName: 'id', nullable: false, onDelete: 'RESTRICT')] private ?CmsLayout $layout = null;
     #[ORM\Column(length: 16)] #[Assert\Choice([self::STATUS_DRAFT, self::STATUS_PUBLISHED, self::STATUS_DISABLED])] private string $status = self::STATUS_DRAFT;
     #[ORM\Column(name: 'publish_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $publishAt = null;
     #[ORM\Column(name: 'unpublish_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $unpublishAt = null;
@@ -33,7 +33,10 @@ class CmsPage
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $createdAt;
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $updatedAt;
     /** @var Collection<int, Channel> */
-    #[ORM\ManyToMany(targetEntity: Channel::class)] #[ORM\JoinTable(name: 'cardnext_cms_page_channel')]
+    #[ORM\ManyToMany(targetEntity: Channel::class)]
+    #[ORM\JoinTable(name: 'cardnext_cms_page_channel')]
+    #[ORM\JoinColumn(name: 'cms_page_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'channel_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[Assert\Count(min: 1, minMessage: 'Bitte mindestens einen Verkaufskanal auswählen.')]
     private Collection $channels;
     /** @var Collection<int, CmsPageTranslation> */
