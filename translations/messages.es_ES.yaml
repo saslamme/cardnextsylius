@@ -651,3 +651,9 @@ quote_mail:
 "cardnext.storefront.homepage.promos.kicker": "HERRAMIENTAS Y ASESORAMIENTO"
 "cardnext.storefront.homepage.promos.title": "Encuentre antes el producto adecuado."
 "cardnext.storefront.homepage.promos.text": "Dos herramientas prácticas para elegir, configurar y realizar pedidos."
+
+"cardnext.maintenance.heading": "Mantenimiento y servicio"
+"cardnext.maintenance.add": "Añadir contrato de mantenimiento"
+"cardnext.maintenance.none": "Sin contrato de mantenimiento"
+"cardnext.maintenance.details": "Mostrar detalles"
+"cardnext.maintenance.addon_label": "Mantenimiento y servicio"

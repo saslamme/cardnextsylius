@@ -651,3 +651,9 @@ quote_mail:
 "cardnext.storefront.homepage.promos.kicker": "STRUMENTI E CONSULENZA"
 "cardnext.storefront.homepage.promos.title": "Trova più velocemente il prodotto giusto."
 "cardnext.storefront.homepage.promos.text": "Due strumenti pratici per scegliere, configurare e ordinare."
+
+"cardnext.maintenance.heading": "Manutenzione e assistenza"
+"cardnext.maintenance.add": "Aggiungi contratto di manutenzione"
+"cardnext.maintenance.none": "Nessun contratto di manutenzione"
+"cardnext.maintenance.details": "Mostra dettagli"
+"cardnext.maintenance.addon_label": "Manutenzione e assistenza"

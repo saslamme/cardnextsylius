@@ -651,3 +651,9 @@ quote_mail:
 "cardnext.storefront.homepage.promos.kicker": "TOOLS & ADVIES"
 "cardnext.storefront.homepage.promos.title": "Sneller naar het juiste product."
 "cardnext.storefront.homepage.promos.text": "Twee praktische tools voor selectie, configuratie en bestelling."
+
+"cardnext.maintenance.heading": "Onderhoud & service"
+"cardnext.maintenance.add": "Onderhoudscontract toevoegen"
+"cardnext.maintenance.none": "Geen onderhoudscontract"
+"cardnext.maintenance.details": "Details tonen"
+"cardnext.maintenance.addon_label": "Onderhoud & service"

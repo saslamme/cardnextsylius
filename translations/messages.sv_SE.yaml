@@ -651,3 +651,9 @@ quote_mail:
 "cardnext.storefront.homepage.promos.kicker": "VERKTYG & RÅDGIVNING"
 "cardnext.storefront.homepage.promos.title": "Hitta rätt produkt snabbare."
 "cardnext.storefront.homepage.promos.text": "Två praktiska verktyg för val, konfigurering och beställning."
+
+"cardnext.maintenance.heading": "Underhåll och service"
+"cardnext.maintenance.add": "Lägg till underhållsavtal"
+"cardnext.maintenance.none": "Inget underhållsavtal"
+"cardnext.maintenance.details": "Visa detaljer"
+"cardnext.maintenance.addon_label": "Underhåll och service"

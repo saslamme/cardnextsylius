@@ -56,7 +56,7 @@ final readonly class PublicSlugController
 
         // @phpstan-ignore argument.type
         $product = $this->productRepository->findOneByChannelAndSlug($channel, $locale, $slug);
-        if ($product !== null) {
+        if ($product !== null && (!$product instanceof \App\Entity\Product\Product || !$product->isAddonOnly())) {
             $request->attributes->set('cardnext_product', $product);
             $request->attributes->set('_sylius', [
                 'template' => '@SyliusShop/product/show.html.twig',

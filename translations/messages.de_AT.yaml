@@ -662,3 +662,9 @@ quote_mail:
 "cardnext.storefront.homepage.promos.kicker": "TOOLS & BERATUNG"
 "cardnext.storefront.homepage.promos.title": "Schneller zum passenden Produkt."
 "cardnext.storefront.homepage.promos.text": "Zwei praktische Tools für Auswahl, Konfiguration und Bestellung."
+
+"cardnext.maintenance.heading": "Wartung & Service"
+"cardnext.maintenance.add": "Wartungsvertrag hinzufügen"
+"cardnext.maintenance.none": "Ohne Wartungsvertrag"
+"cardnext.maintenance.details": "Details anzeigen"
+"cardnext.maintenance.addon_label": "Wartung & Service"

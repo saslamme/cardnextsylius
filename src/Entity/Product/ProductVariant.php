@@ -120,6 +120,13 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
         return ($quantity - $this->minimumOrderQuantity) % $this->orderIncrement === 0;
     }
 
+    public function isShippingRequired(): bool
+    {
+        $product = $this->getProduct();
+
+        return !$product instanceof Product || !$product->isAddonOnly() ? parent::isShippingRequired() : false;
+    }
+
     private static function normalizeIdentifier(string $value): string
     {
         $value = mb_strtolower(trim($value));

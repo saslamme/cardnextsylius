@@ -34,6 +34,9 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\Column(name: 'homepage_position', options: ['default' => 100])]
     private int $homepagePosition = 100;
 
+    #[ORM\Column(name: 'addon_only', options: ['default' => false])]
+    private bool $addonOnly = false;
+
     #[ORM\OneToOne(mappedBy: 'product', targetEntity: PrinterAdvisorProfile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private ?PrinterAdvisorProfile $printerAdvisorProfile = null;
 
@@ -119,6 +122,19 @@ class Product extends BaseProduct implements ProductInterface
     public function setHomepagePosition(int $homepagePosition): void
     {
         $this->homepagePosition = max(0, $homepagePosition);
+    }
+
+    public function isAddonOnly(): bool
+    {
+        return $this->addonOnly;
+    }
+
+    public function setAddonOnly(bool $addonOnly): void
+    {
+        $this->addonOnly = $addonOnly;
+        if ($addonOnly) {
+            $this->homepageFeatured = false;
+        }
     }
 
     public function getPrinterAdvisorProfile(): ?PrinterAdvisorProfile

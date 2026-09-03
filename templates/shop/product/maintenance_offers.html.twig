@@ -1,0 +1,22 @@
+<section class="cn-maintenance" aria-labelledby="cn-maintenance-heading">
+    <h2 id="cn-maintenance-heading" class="cn-maintenance__heading">{{ 'cardnext.maintenance.heading'|trans }}</h2>
+    <label class="cn-maintenance__none">
+        <input type="radio" name="{{ field.vars.full_name }}" value="" checked>
+        <span>{{ 'cardnext.maintenance.none'|trans }}</span>
+    </label>
+    <div class="cn-maintenance__offers">
+        {% for offer in offers %}
+            <label class="cn-maintenance__card">
+                <svg class="cn-maintenance__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 5 6v5c0 4.8 2.8 8.1 7 10 4.2-1.9 7-5.2 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-5"/></svg>
+                <span class="cn-maintenance__content">
+                    <strong>{{ offer.product.name }}</strong>
+                    <span>{{ 'cardnext.maintenance.add'|trans }} · {{ offer.price|sylius_format_money(offer.currencyCode) }}</span>
+                    {% if offer.product.shortDescription or offer.product.description %}
+                        <details><summary>{{ 'cardnext.maintenance.details'|trans }}</summary><div>{{ (offer.product.shortDescription ?: offer.product.description)|striptags|nl2br }}</div></details>
+                    {% endif %}
+                </span>
+                <input type="radio" name="{{ field.vars.full_name }}" value="{{ offer.variant.id }}">
+            </label>
+        {% endfor %}
+    </div>
+</section>

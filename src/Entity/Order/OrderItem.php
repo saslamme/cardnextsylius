@@ -14,6 +14,40 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Table(name: 'sylius_order_item')]
 class OrderItem extends BaseOrderItem
 {
+    public const ADDON_TYPE_MAINTENANCE = 'maintenance';
+
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(name: 'parent_item_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?self $parentItem = null;
+
+    #[ORM\Column(name: 'addon_type', length: 32, nullable: true)]
+    private ?string $addonType = null;
+
+    public function getParentItem(): ?self
+    {
+        return $this->parentItem;
+    }
+
+    public function setParentItem(?self $parentItem): void
+    {
+        $this->parentItem = $parentItem;
+    }
+
+    public function getAddonType(): ?string
+    {
+        return $this->addonType;
+    }
+
+    public function setAddonType(?string $addonType): void
+    {
+        $this->addonType = $addonType;
+    }
+
+    public function isMaintenanceAddon(): bool
+    {
+        return self::ADDON_TYPE_MAINTENANCE === $this->addonType;
+    }
+
     #[Assert\Callback]
     public function validateCardnextOrderQuantity(ExecutionContextInterface $context): void
     {

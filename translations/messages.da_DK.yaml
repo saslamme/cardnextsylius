@@ -651,3 +651,9 @@ quote_mail:
 "cardnext.storefront.homepage.promos.kicker": "VÆRKTØJER & RÅDGIVNING"
 "cardnext.storefront.homepage.promos.title": "Find det rigtige produkt hurtigere."
 "cardnext.storefront.homepage.promos.text": "To praktiske værktøjer til valg, konfiguration og bestilling."
+
+"cardnext.maintenance.heading": "Vedligeholdelse og service"
+"cardnext.maintenance.add": "Tilføj vedligeholdelsesaftale"
+"cardnext.maintenance.none": "Ingen vedligeholdelsesaftale"
+"cardnext.maintenance.details": "Vis detaljer"
+"cardnext.maintenance.addon_label": "Vedligeholdelse og service"

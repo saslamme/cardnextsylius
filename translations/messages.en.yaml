@@ -357,3 +357,9 @@ quote_mail:
 
 cardnext.storefront.homepage.products.previous: 'Previous products'
 cardnext.storefront.homepage.products.next: 'Next products'
+
+"cardnext.maintenance.heading": "Maintenance & service"
+"cardnext.maintenance.add": "Add maintenance contract"
+"cardnext.maintenance.none": "No maintenance contract"
+"cardnext.maintenance.details": "Show details"
+"cardnext.maintenance.addon_label": "Maintenance & service"
