@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);
+namespace App\Tests\Cms; use App\Entity\Cms\CmsMenuItem; use PHPUnit\Framework\TestCase; use Symfony\Component\Validator\Validation;
+final class CmsMenuItemValidationTest extends TestCase { public function testTargetMustMatchType():void{$item=new CmsMenuItem();$item->setTargetType(CmsMenuItem::URL);$item->setExternalUrl('javascript:alert(1)');self::assertGreaterThan(0,Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator()->validate($item)->count());} public function testSafeExplicitUrlIsAccepted():void{$item=new CmsMenuItem();$item->setTargetType(CmsMenuItem::URL);$item->setExternalUrl('/support');self::assertCount(0,Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator()->validate($item));} }

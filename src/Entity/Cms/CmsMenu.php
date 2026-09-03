@@ -1,0 +1,6 @@
+<?php
+declare(strict_types=1);
+namespace App\Entity\Cms;
+use App\Repository\Cms\CmsMenuRepository; use Doctrine\Common\Collections\{ArrayCollection,Collection}; use Doctrine\ORM\Mapping as ORM;
+#[ORM\Entity(repositoryClass:CmsMenuRepository::class)] #[ORM\Table(name:'cardnext_cms_menu')]
+class CmsMenu { #[ORM\Id,ORM\GeneratedValue,ORM\Column] private ?int $id=null; #[ORM\Column(length:64,unique:true)] private string $code=''; #[ORM\Column(length:255)] private string $name=''; #[ORM\Column] private bool $enabled=true; /** @var Collection<int,CmsMenuItem> */ #[ORM\OneToMany(mappedBy:'menu',targetEntity:CmsMenuItem::class,cascade:['persist','remove'],orphanRemoval:true)] private Collection $items; public function __construct(){ $this->items=new ArrayCollection();} public function getId():?int{return $this->id;} public function getCode():string{return $this->code;} public function setCode(string $v):void{$this->code=strtolower(trim($v));} public function getName():string{return $this->name;} public function setName(string $v):void{$this->name=$v;} public function isEnabled():bool{return $this->enabled;} public function setEnabled(bool $v):void{$this->enabled=$v;} /** @return Collection<int,CmsMenuItem> */ public function getItems():Collection{return $this->items;} public function __toString():string{return $this->name;} }

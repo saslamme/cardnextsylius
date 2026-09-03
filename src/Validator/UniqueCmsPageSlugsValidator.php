@@ -1,0 +1,5 @@
+<?php
+declare(strict_types=1);
+namespace App\Validator;
+use App\Cms\CmsSlug; use App\Entity\Cms\CmsPage; use App\Repository\Cms\CmsPageRepository; use Symfony\Component\Validator\{Constraint,ConstraintValidator};
+final class UniqueCmsPageSlugsValidator extends ConstraintValidator { public function __construct(private readonly CmsPageRepository $pages){} public function validate(mixed $value,Constraint $constraint):void { if(!$value instanceof CmsPage||!$constraint instanceof UniqueCmsPageSlugs)return; foreach($value->getTranslations() as $translation){if(!CmsSlug::isSafe($translation->getSlug())){$this->context->buildViolation('The slug is empty, unsafe, or uses a reserved application path.')->atPath('translations')->addViolation();continue;} if($value->getStatus()!==CmsPage::STATUS_PUBLISHED)continue;foreach($value->getChannels() as $channel){$other=$this->pages->findBySlug($translation->getSlug(),$channel,$translation->getLocale());if($other!==null&&$other!==$value&&$other->getStatus()===CmsPage::STATUS_PUBLISHED){$this->context->buildViolation($constraint->message)->atPath('translations')->addViolation();break;}}} } }
