@@ -1,0 +1,2 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% block cardnext_content %}<h2 class="page-title mb-4">CMS-Block bearbeiten</h2><div class="alert alert-info">Nach einem Wechsel des Blocktyps bitte speichern; anschließend erscheinen die passenden Inhaltsfelder.</div><div class="card"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-primary">Block speichern</button><a class="btn" href="{{ path('cardnext_admin_cms_page_edit',{id:page.id}) }}">Abbrechen</a>{{ form_end(form) }}</div></div>{% endblock %}

@@ -2,7 +2,7 @@
 {% block title %}{{ translation.metaTitle ?: translation.title }}{% endblock %}
 {% block metatags %}{{ parent() }}
     {% if translation.metaDescription %}<meta name="description" content="{{ translation.metaDescription }}">{% endif %}
-    <meta name="robots" content="{{ translation.robotsIndex ? 'index' : 'noindex' }},{{ translation.robotsFollow ? 'follow' : 'nofollow' }}">
+    <meta name="robots" content="{{ preview|default(false) ? 'noindex,nofollow' : (translation.robotsIndex ? 'index' : 'noindex') ~ ',' ~ (translation.robotsFollow ? 'follow' : 'nofollow') }}">
     <meta property="og:title" content="{{ translation.ogTitle ?: translation.metaTitle ?: translation.title }}">
     {% if translation.ogDescription ?: translation.metaDescription %}<meta property="og:description" content="{{ translation.ogDescription ?: translation.metaDescription }}">{% endif %}
     <link rel="canonical" href="{{ translation.canonicalUrl ?: absolute_url('/' ~ translation.slug) }}">

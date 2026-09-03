@@ -8,10 +8,12 @@ use App\Repository\Cms\CmsLayoutRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CmsLayoutRepository::class)]
 #[ORM\Table(name: 'cardnext_cms_layout')]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['code'], message: 'Dieser Layout-Code wird bereits verwendet.')]
 class CmsLayout
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
