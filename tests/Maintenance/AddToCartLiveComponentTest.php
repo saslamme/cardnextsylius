@@ -60,6 +60,42 @@ final class AddToCartLiveComponentTest extends TestCase
         self::assertStringNotContainsString('<form', $maintenance);
     }
 
+    public function testMaintenanceBlockIsOnlyRenderedWhenOffersExist(): void
+    {
+        $template = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/product/show/content/info/summary/add_to_cart.html.twig');
+
+        self::assertStringContainsString('{% if maintenance_offers is not empty and form.maintenanceVariant is defined %}', $template);
+    }
+
+    public function testSingleOfferUsesAnUnselectedCheckboxWithoutANoneRow(): void
+    {
+        $maintenance = (string) file_get_contents(__DIR__ . '/../../templates/shop/product/maintenance_offers.html.twig');
+
+        self::assertStringContainsString("type=\"{{ offers|length == 1 ? 'checkbox' : 'radio' }}\"", $maintenance);
+        self::assertStringContainsString('{% if offers|length > 1 %}', $maintenance);
+        self::assertStringNotContainsString('type="checkbox" checked', $maintenance);
+        self::assertStringContainsString('value="{{ offer.variant.id }}"', $maintenance);
+    }
+
+    public function testMultipleOffersKeepRadioSemanticsAndAnExplicitEmptyChoice(): void
+    {
+        $maintenance = (string) file_get_contents(__DIR__ . '/../../templates/shop/product/maintenance_offers.html.twig');
+
+        self::assertStringContainsString('type="radio" name="{{ field.vars.full_name }}" value="" checked', $maintenance);
+        self::assertStringContainsString("type=\"{{ offers|length == 1 ? 'checkbox' : 'radio' }}\"", $maintenance);
+        self::assertSame(1, substr_count($maintenance, 'name="{{ field.vars.full_name }}" value=""'));
+    }
+
+    public function testMaintenancePriceUsesTheRequestLocaleWithSyliusMoneyFormatting(): void
+    {
+        $maintenance = (string) file_get_contents(__DIR__ . '/../../templates/shop/product/maintenance_offers.html.twig');
+
+        self::assertStringContainsString(
+            'offer.price|sylius_format_money(offer.currencyCode, app.request.locale)',
+            $maintenance,
+        );
+    }
+
     private function componentFor(RequestStack $stack): AddToCartFormComponent
     {
         $component = (new \ReflectionClass(AddToCartFormComponent::class))->newInstanceWithoutConstructor();
