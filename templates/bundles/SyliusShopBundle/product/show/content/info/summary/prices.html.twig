@@ -3,10 +3,22 @@
 {% if variant is not null %}
 {% set has_discount = variant|sylius_has_discount({'channel': sylius.channel}) %}{% set days = sylius.channel.channelPriceHistoryConfig.lowestPriceForDiscountedProductsCheckingPeriod %}{% set has_lowest_price = variant|sylius_has_lowest_price({'channel': sylius.channel}) %}
 <div class="cn-price-panel__top">
-<div><small class="cn-price-label">{{ 'cardnext.storefront.product_detail.pricing.your_price'|trans }}</small>{% hook 'prices' with { variant, has_discount, has_lowest_price, days } %}<div class="cn-price-tax">{{ 'cardnext.storefront.product_detail.pricing.tax_notice'|trans }}</div>
-{% set quantity_tiers = cardnext_b2b_variant_tiers(variant) %}{% if quantity_tiers|length > 0 %}<div class="cn-tier-table" aria-label="{{ 'cardnext.storefront.product_detail.pricing.tier_prices'|trans }}"><div class="cn-tier-table__head"><strong>{{ 'cardnext.storefront.product_detail.pricing.order_more_save'|trans }}</strong><span>{{ 'cardnext.storefront.product_detail.pricing.tier_prices'|trans }}</span><span></span></div>{% for tier in quantity_tiers %}<div class="cn-tier-table__row"><span>{{ 'cardnext.storefront.product_detail.pricing.from_quantity'|trans({'%quantity%': tier.min_quantity}) }}</span><strong>{{ tier.formatted_price }}</strong>{% if tier.saving_percent > 0 %}<span class="cn-tier-table__saving" title="{{ 'cardnext.storefront.product_detail.pricing.saving_title'|trans({'%saving%': tier.formatted_saving, '%price%': tier.formatted_price}) }}">−{{ tier.saving_percent }}%</span>{% else %}<span></span>{% endif %}</div>{% endfor %}</div>{% endif %}
-</div>
+<div><small class="cn-price-label">{{ 'cardnext.storefront.product_detail.pricing.your_price'|trans }}</small>{% hook 'prices' with { variant, has_discount, has_lowest_price, days } %}<div class="cn-price-tax">{{ 'cardnext.storefront.product_detail.pricing.tax_notice'|trans }}</div></div>
 <div class="cn-stock">{% if sylius_inventory_is_available(variant) %}<span class="cn-status">{{ 'cardnext.storefront.product_card.available'|trans }}</span><small>{{ 'cardnext.storefront.product_detail.stock.variant_availability'|trans }}</small>{% else %}<span class="cn-status cn-status--warning">{{ 'cardnext.storefront.product_detail.stock.out_of_stock'|trans }}</span><small>{{ 'cardnext.storefront.product_detail.stock.ask_availability'|trans }}</small>{% endif %}</div>
 </div>
+{% set quantity_tiers = cardnext_b2b_variant_tiers(variant) %}
+{% if quantity_tiers|length > 0 %}
+<section class="cn-tier-prices" aria-labelledby="cn-tier-prices-title">
+<h2 class="cn-tier-prices__title" id="cn-tier-prices-title">{{ 'cardnext.storefront.product_detail.pricing.order_more_save'|trans }}</h2>
+<div class="cn-tier-prices__list" role="list">
+{% for tier in quantity_tiers %}
+<div class="cn-tier-prices__item" role="listitem">
+<span class="cn-tier-prices__quantity">{{ 'cardnext.storefront.product_detail.pricing.from_quantity'|trans({'%quantity%': tier.min_quantity}) }}</span>
+<div class="cn-tier-prices__price"><strong>{{ 'cardnext.storefront.product_detail.pricing.unit_price'|trans({'%price%': tier.formatted_price}) }}</strong>{% if tier.saving_percent > 0 %}<small>{{ 'cardnext.storefront.product_detail.pricing.saving_per_unit'|trans({'%saving%': tier.formatted_saving}) }}</small>{% endif %}</div>
+</div>
+{% endfor %}
+</div>
+</section>
+{% endif %}
 {% else %}<div class="cn-panel" {{ sylius_test_html_attribute('product-price', 'sylius.ui.unavailable'|trans) }}>{{ 'sylius.ui.unavailable'|trans }}</div>{% endif %}
 </div>

@@ -183,6 +183,8 @@ cardnext:
         tier_prices: 'Prezzi a scaglioni'
         order_more_save: 'Ordina di più e risparmia'
         from_quantity: 'da %quantity% pezzi'
+        unit_price: '%price% / pezzo'
+        saving_per_unit: 'Risparmi %saving% per pezzo'
         saving_title: 'Risparmi %saving% per pezzo (prezzo a scaglioni %price%)'
       stock:
         variant_availability: 'Disponibilità per questa variante'

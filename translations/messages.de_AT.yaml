@@ -183,6 +183,8 @@ cardnext:
         tier_prices: 'Staffelpreise'
         order_more_save: 'Mehr bestellen & sparen'
         from_quantity: 'ab %quantity% Stück'
+        unit_price: '%price% / Stück'
+        saving_per_unit: 'Sie sparen %saving% pro Stück'
         saving_title: 'Sie sparen %saving% pro Stück (Staffelpreis %price%)'
       stock:
         variant_availability: 'Verfügbarkeit für diese Variante'
