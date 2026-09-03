@@ -1,0 +1,1 @@
+<section class="mb-5">{% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}<div>{{ config.content|striptags('<p><br><strong><em><ul><ol><li><a><h2><h3><blockquote>')|raw }}</div></section>

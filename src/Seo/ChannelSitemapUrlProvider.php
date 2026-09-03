@@ -8,11 +8,13 @@ use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use App\Cms\CmsPagePublicationChecker;
+use App\Repository\Cms\CmsPageRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class ChannelSitemapUrlProvider
 {
-    public function __construct(private RepositoryInterface $productRepository, private UrlGeneratorInterface $router)
+    public function __construct(private RepositoryInterface $productRepository, private UrlGeneratorInterface $router, private CmsPageRepository $cmsPages, private CmsPagePublicationChecker $cmsPublication)
     {
     }
 
@@ -28,6 +30,11 @@ final readonly class ChannelSitemapUrlProvider
         }
         $origin = 'https://' . $channel->getHostname();
         $urls = [$origin . $this->router->generate('sylius_shop_homepage', [], UrlGeneratorInterface::ABSOLUTE_PATH)];
+        foreach ($this->cmsPages->sitemapPages($channel, $locale) as $page) {
+            if ($this->cmsPublication->isVisible($page, $channel, $locale)) {
+                $urls[] = $origin . '/' . $page->getTranslation($locale)?->getSlug();
+            }
+        }
 
         $root = $channel->getMenuTaxon();
         if ($root instanceof TaxonInterface) {

@@ -1,0 +1,1 @@
+<section class="mb-5">{% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}{% for item in config.items|default([]) %}<details class="mb-3"><summary class="fw-bold">{{ item.question }}</summary><p>{{ item.answer }}</p></details>{% endfor %}</section>

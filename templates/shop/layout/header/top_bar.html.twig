@@ -1,7 +1,9 @@
 <div class="cn-utility">
     <div class="cn-container cn-utility__inner">
+        {% set cmsUtility = cardnext_cms_menu('utility') %}
+        {% if cmsUtility %}{% for item in cmsUtility %}<a href="{{ item.url }}"{% if item.newTab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ item.label }}</a>{% endfor %}{% else %}
         <a href="{{ path('sylius_shop_homepage') }}#services">{{ 'cardnext.storefront.header.support'|trans }}</a>
-        <a href="{{ path('sylius_shop_homepage') }}#downloads">{{ 'cardnext.storefront.header.downloads'|trans }}</a>
+        <a href="{{ path('sylius_shop_homepage') }}#downloads">{{ 'cardnext.storefront.header.downloads'|trans }}</a>{% endif %}
         <a href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.header.contact'|trans }}</a>
         {% include 'shop/layout/header/_market_selector.html.twig' %}
     </div>
