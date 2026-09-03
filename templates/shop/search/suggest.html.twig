@@ -40,10 +40,7 @@
 
                     {% if variant %}
                         <span class="cn-search-suggest__price">
-                            {{ component('sylius_shop:product:card:price', {
-                                variant: variant,
-                                template: '@SyliusShop/product/common/price.html.twig'
-                            }) }}
+                            {% include 'shop/product/_card_price.html.twig' with {variant: variant} only %}
                         </span>
                     {% endif %}
                 </span>
