@@ -26,7 +26,7 @@ final class CmsPageType extends AbstractType
         $builder
             ->add('code', TextType::class, ['label' => 'Interner Code'])
             ->add('layout', EntityType::class, ['class' => CmsLayout::class, 'label' => 'Layout', 'choice_label' => 'name'])
-            ->add('channels', ChannelChoiceType::class, ['label' => 'Verkaufskanäle', 'multiple' => true, 'expanded' => true])
+            ->add('channels', ChannelChoiceType::class, ['label' => 'Verkaufskanäle', 'multiple' => true, 'expanded' => true, 'choice_label' => 'name'])
             ->add('status', ChoiceType::class, ['label' => 'Status', 'choices' => ['Entwurf' => CmsPage::STATUS_DRAFT, 'Veröffentlicht' => CmsPage::STATUS_PUBLISHED, 'Deaktiviert' => CmsPage::STATUS_DISABLED]])
             ->add('publishAt', DateTimeType::class, ['label' => 'Veröffentlichen ab', 'required' => false, 'widget' => 'single_text'])
             ->add('unpublishAt', DateTimeType::class, ['label' => 'Veröffentlichen bis', 'required' => false, 'widget' => 'single_text'])

@@ -157,7 +157,12 @@ final class CmsPageAdminController extends AbstractController
             return $this->redirectToRoute('cardnext_admin_cms_page_edit', ['id' => $page->getId()]);
         }
 
-        return $this->render('admin/cardnext/cms/page/form.html.twig', ['form' => $form, 'page' => $page, 'new' => $new]);
+        return $this->render('admin/cardnext/cms/page/form.html.twig', [
+            'form' => $form,
+            'page' => $page,
+            'new' => $new,
+            'locale_names' => $this->localeNames(),
+        ]);
     }
 
     private function blockForm(CmsPage $page, CmsBlock $block, Request $request, bool $new): Response
@@ -225,6 +230,19 @@ final class CmsPageAdminController extends AbstractController
         }
 
         return $choices;
+    }
+
+    /** @return array<string, string> */
+    private function localeNames(): array
+    {
+        $names = [];
+        foreach ($this->entityManager->getRepository(Locale::class)->findBy([], ['code' => 'ASC']) as $locale) {
+            if ($locale->getCode() !== null) {
+                $names[$locale->getCode()] = $locale->getName() ?? $locale->getCode();
+            }
+        }
+
+        return $names;
     }
 
     /** @param array<string, mixed> $configuration */
