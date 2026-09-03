@@ -99,6 +99,22 @@ class AddToCartFormComponent
     #[PostMount(priority: 100)]
     public function postMount(): void
     {
+        $request = $this->requestStack->getCurrentRequest();
+        $requestRoute = $request?->attributes->get('_route');
+
+        // Keep the storefront destination in LiveProps. Reading app.request from the
+        // template is unsafe: during a variant update the current request is the
+        // /_components/* request, so the rerendered submit action would redirect to
+        // the component endpoint instead of back to the product.
+        if (is_string($requestRoute) && !str_starts_with($requestRoute, 'ux_live_component')) {
+            $requestRouteParameters = $request->attributes->get('_route_params', []);
+            $this->routeName = $requestRoute;
+            $this->routeParameters = array_merge(
+                is_array($requestRouteParameters) ? $requestRouteParameters : [],
+                ['cnCart' => 'open'],
+            );
+        }
+
         $this->isValidated = true;
     }
 
