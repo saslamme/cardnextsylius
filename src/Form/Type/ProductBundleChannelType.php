@@ -30,6 +30,8 @@ final class ProductBundleChannelType extends AbstractType
             ->add('enabled', CheckboxType::class, ['required' => false, 'label' => 'Aktiv'])
             ->add('discountType', ChoiceType::class, [
                 'choices' => ['Kein Rabatt' => ProductBundleChannel::DISCOUNT_NONE, 'Fester Betrag' => ProductBundleChannel::DISCOUNT_FIXED, 'Prozent' => ProductBundleChannel::DISCOUNT_PERCENT],
+                'required' => true,
+                'empty_data' => ProductBundleChannel::DISCOUNT_NONE,
                 'label' => 'Rabattart',
                 'attr' => ['data-action' => 'change->cardnext-bundle-collection#discountChanged'],
             ])
