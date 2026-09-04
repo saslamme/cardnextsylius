@@ -48,4 +48,20 @@ final class CmsDownloadRegressionTest extends TestCase
         self::assertSame(['GET', 'POST'], $routes['cardnext_admin_cms_download_edit']);
         self::assertSame(['POST'], $routes['cardnext_admin_cms_download_delete']);
     }
+
+    public function testAdminTemplatesUseTheSharedCardnextLayout(): void
+    {
+        $templateDirectory = dirname(__DIR__, 2) . '/templates/admin/cardnext/cms/download';
+
+        foreach (['index.html.twig', 'form.html.twig'] as $template) {
+            $source = file_get_contents($templateDirectory . '/' . $template);
+            self::assertIsString($source);
+            self::assertStringContainsString("{% extends 'admin/cardnext/layout.html.twig' %}", $source);
+            self::assertStringNotContainsString('sylius_admin.common.index.content', $source);
+        }
+
+        $formSource = file_get_contents($templateDirectory . '/form.html.twig');
+        self::assertIsString($formSource);
+        self::assertStringContainsString("{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}", $formSource);
+    }
 }
