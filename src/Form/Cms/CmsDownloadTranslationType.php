@@ -18,7 +18,7 @@ final class CmsDownloadTranslationType extends AbstractType
     {
         $builder
             ->add('locale', HiddenType::class)
-            ->add('title', TextType::class, ['label' => 'Titel', 'required' => false])
+            ->add('title', TextType::class, ['label' => 'Titel', 'required' => false, 'empty_data' => ''])
             ->add('description', TextareaType::class, ['label' => 'Beschreibung', 'required' => false, 'attr' => ['rows' => 5]]);
     }
 
