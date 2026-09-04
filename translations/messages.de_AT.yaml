@@ -217,6 +217,23 @@ cardnext:
           certificate: 'Zertifikat'
           brochure: 'Broschüre'
           other: 'Dokument'
+      cms_downloads:
+        version: 'Version'
+        types:
+          manual: 'Handbuch'
+          datasheet: 'Datenblatt'
+          driver: 'Treiber'
+          software: 'Software'
+          firmware: 'Firmware'
+          certificate: 'Zertifikat'
+          other: 'Download'
+        operating_systems:
+          windows_11: 'Windows 11'
+          windows_10: 'Windows 10'
+          windows_server: 'Windows Server'
+          macos: 'macOS'
+          linux: 'Linux'
+          other: 'Sonstiges'
       compatibility:
         compatible_with: 'Kompatibel mit'
         consumables: 'Passendes Verbrauchsmaterial'

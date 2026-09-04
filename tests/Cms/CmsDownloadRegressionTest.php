@@ -10,6 +10,7 @@ use App\Entity\Cms\CmsDownload;
 use App\Entity\Cms\CmsDownloadTranslation;
 use App\Form\Cms\CmsDownloadType;
 use App\Repository\Cms\CmsDownloadRepository;
+use App\Twig\CmsExtension;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -90,6 +91,56 @@ final class CmsDownloadRegressionTest extends KernelTestCase
         self::assertStringContainsString("'d.manufacturer = :manufacturer'", $source);
         self::assertStringContainsString("'d.operatingSystems LIKE :os'", $source);
         self::assertStringContainsString("'d.type = :type'", $source);
+    }
+
+    public function testProductDownloadsReuseVisibilityRulesAndRestrictTheProduct(): void
+    {
+        $source = file_get_contents((new \ReflectionClass(CmsDownloadRepository::class))->getFileName());
+        self::assertIsString($source);
+
+        self::assertStringContainsString('function findVisibleForProduct(', $source);
+        self::assertStringContainsString('visibleQueryBuilder($channel, $locale)', $source);
+        self::assertStringContainsString("innerJoin('d.products', 'p')", $source);
+        self::assertStringContainsString("'p = :product'", $source);
+        self::assertStringContainsString('->addSelect(\'t\')', $source);
+        self::assertStringContainsString('->distinct()', $source);
+        self::assertStringContainsString("orderBy('d.position', 'ASC')", $source);
+        self::assertStringContainsString("'TRIM(t.title) <> :emptyTitle'", $source);
+    }
+
+    public function testProductProviderResolvesChannelAndLocaleContexts(): void
+    {
+        $source = file_get_contents((new \ReflectionClass(CmsDownloadProvider::class))->getFileName());
+        self::assertIsString($source);
+
+        self::assertStringContainsString('function forProduct(Product $product): array', $source);
+        self::assertStringContainsString('$this->channels->getChannel()', $source);
+        self::assertStringContainsString('$this->locales->getLocaleCode()', $source);
+        self::assertStringContainsString('findVisibleForProduct(', $source);
+    }
+
+    public function testTwigExposesProductDownloadsThroughTheProvider(): void
+    {
+        $source = file_get_contents((new \ReflectionClass(CmsExtension::class))->getFileName());
+        self::assertIsString($source);
+
+        self::assertStringContainsString("new TwigFunction('cardnext_cms_product_downloads', [\$this->downloads, 'forProduct'])", $source);
+    }
+
+    public function testProductTemplateCombinesCmsAndLegacyDownloadsInOnePanel(): void
+    {
+        $source = file_get_contents(dirname(__DIR__, 2).'/templates/bundles/SyliusShopBundle/product/show/content/product_listing.html.twig');
+        self::assertIsString($source);
+
+        self::assertStringContainsString('product.getPublicDocuments(sylius.localeCode)', $source);
+        self::assertStringContainsString('cardnext_cms_product_downloads(product)', $source);
+        self::assertStringContainsString('documents|length > 0 or cmsDownloads|length > 0', $source);
+        self::assertSame(2, substr_count($source, '{% if hasDownloads %}'));
+        self::assertSame(1, substr_count($source, 'id="tab-downloads"'));
+        self::assertSame(1, substr_count($source, 'id="downloads"'));
+        self::assertLessThan(strpos($source, '{% for document in documents %}'), strpos($source, '{% for download in cmsDownloads %}'));
+        self::assertStringContainsString("path('cardnext_cms_download_file', {id: download.id})", $source);
+        self::assertStringNotContainsString('download.filePath', $source);
     }
 
     public function testConfiguredDownloadTypesUseAnInRestrictionThatVisitorFiltersCannotReplace(): void
