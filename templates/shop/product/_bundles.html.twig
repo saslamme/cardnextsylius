@@ -13,7 +13,7 @@
                         <div class="cn-bundle__products">
                             <article class="cn-bundle-product cn-bundle-product--main">
                                 <a class="cn-bundle-product__media" href="{{ cardnext_product_url(product) }}" tabindex="-1" aria-hidden="true">
-                                    {{ component('sylius_shop:main_image', {product: product, class: 'cn-bundle-product__image'}) }}
+                                    {{ component('sylius_shop:main_image', {product: product, class: 'cn-bundle-product__image', filter: 'cardnext_product_card'}) }}
                                 </a>
                                 <div class="cn-bundle-product__body">
                                     <div class="cn-bundle-product__code">{{ view.main.variant.code }}</div>
@@ -29,7 +29,7 @@
                                 <span class="cn-bundle__plus" aria-hidden="true">+</span>
                                 <article class="cn-bundle-product">
                                     <a class="cn-bundle-product__media" href="{{ cardnext_product_url(componentProduct) }}" tabindex="-1" aria-hidden="true">
-                                        {{ component('sylius_shop:main_image', {product: componentProduct, class: 'cn-bundle-product__image'}) }}
+                                        {{ component('sylius_shop:main_image', {product: componentProduct, class: 'cn-bundle-product__image', filter: 'cardnext_product_card'}) }}
                                     </a>
                                     <div class="cn-bundle-product__body">
                                         <div class="cn-bundle-product__code">{{ componentItem.variant.code }}</div>
