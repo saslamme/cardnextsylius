@@ -364,3 +364,18 @@ cardnext.storefront.homepage.products.next: 'Next products'
 "cardnext.maintenance.details": "Show details"
 "cardnext.maintenance.addon_label": "Maintenance & service"
 "cardnext.storefront.product_card.from_price": "from"
+
+"cardnext.storefront.product_detail.cms_downloads.version": 'Version'
+"cardnext.storefront.product_detail.cms_downloads.types.manual": 'Manual'
+"cardnext.storefront.product_detail.cms_downloads.types.datasheet": 'Datasheet'
+"cardnext.storefront.product_detail.cms_downloads.types.driver": 'Driver'
+"cardnext.storefront.product_detail.cms_downloads.types.software": 'Software'
+"cardnext.storefront.product_detail.cms_downloads.types.firmware": 'Firmware'
+"cardnext.storefront.product_detail.cms_downloads.types.certificate": 'Certificate'
+"cardnext.storefront.product_detail.cms_downloads.types.other": 'Download'
+"cardnext.storefront.product_detail.cms_downloads.operating_systems.windows_11": 'Windows 11'
+"cardnext.storefront.product_detail.cms_downloads.operating_systems.windows_10": 'Windows 10'
+"cardnext.storefront.product_detail.cms_downloads.operating_systems.windows_server": 'Windows Server'
+"cardnext.storefront.product_detail.cms_downloads.operating_systems.macos": 'macOS'
+"cardnext.storefront.product_detail.cms_downloads.operating_systems.linux": 'Linux'
+"cardnext.storefront.product_detail.cms_downloads.operating_systems.other": 'Other'

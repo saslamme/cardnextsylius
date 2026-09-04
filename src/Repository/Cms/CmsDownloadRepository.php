@@ -6,6 +6,7 @@ namespace App\Repository\Cms;
 
 use App\Entity\Channel\Channel;
 use App\Entity\Cms\CmsDownload;
+use App\Entity\Product\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -50,6 +51,22 @@ final class CmsDownloadRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+    /** @return list<CmsDownload> */
+    public function findVisibleForProduct(Product $product, Channel $channel, string $locale): array
+    {
+        return $this->visibleQueryBuilder($channel, $locale)
+            ->addSelect('t')
+            ->innerJoin('d.products', 'p')
+            ->andWhere('p = :product')
+            ->setParameter('product', $product)
+            ->distinct()
+            ->orderBy('d.position', 'ASC')
+            ->addOrderBy('d.type', 'ASC')
+            ->addOrderBy('t.title', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     /** @param list<string> $types @return list<string> */
     public function findVisibleManufacturers(Channel $channel, string $locale, array $types = [], string $manufacturer = ''): array
     {
@@ -74,7 +91,7 @@ final class CmsDownloadRepository extends ServiceEntityRepository
             ->innerJoin('d.translations', 't')
             ->andWhere('c = :channel')
             ->andWhere('t.locale = :locale')
-            ->andWhere('t.title <> :emptyTitle')
+            ->andWhere('TRIM(t.title) <> :emptyTitle')
             ->andWhere('d.enabled = true')
             ->andWhere('d.publishedAt IS NULL OR d.publishedAt <= :now')
             ->setParameter('channel', $channel)

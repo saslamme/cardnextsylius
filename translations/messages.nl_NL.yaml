@@ -211,6 +211,23 @@ cardnext:
         accessories: 'Accessoires en aanbevelingen'
       documents:
         types: { datasheet: 'Gegevensblad', manual: 'Handleiding', driver: 'Stuurprogramma / software', certificate: 'Certificaat', brochure: 'Brochure', other: 'Document' }
+      cms_downloads:
+        version: 'Versie'
+        types:
+          manual: 'Handleiding'
+          datasheet: 'Gegevensblad'
+          driver: 'Stuurprogramma'
+          software: 'Software'
+          firmware: 'Firmware'
+          certificate: 'Certificaat'
+          other: 'Download'
+        operating_systems:
+          windows_11: 'Windows 11'
+          windows_10: 'Windows 10'
+          windows_server: 'Windows Server'
+          macos: 'macOS'
+          linux: 'Linux'
+          other: 'Overig'
       compatibility:
         compatible_with: 'Compatibel met'
         consumables: 'Geschikte verbruiksartikelen'

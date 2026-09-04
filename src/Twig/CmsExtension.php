@@ -25,6 +25,7 @@ final class CmsExtension extends AbstractExtension
             new TwigFunction('cardnext_cms_menu', [$this->menus, 'resolve']),
             new TwigFunction('cardnext_cms_block_template', [$this->blocks, 'template']),
             new TwigFunction('cardnext_cms_download_center', [$this->downloads, 'downloadCenter']),
+            new TwigFunction('cardnext_cms_product_downloads', [$this->downloads, 'forProduct']),
         ];
     }
 }

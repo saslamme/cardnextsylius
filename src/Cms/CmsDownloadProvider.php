@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Cms;
 
 use App\Entity\Cms\CmsDownload;
+use App\Entity\Product\Product;
 use App\Repository\Cms\CmsDownloadRepository;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
@@ -18,6 +19,16 @@ final class CmsDownloadProvider
         private readonly LocaleContextInterface $locales,
         private readonly RequestStack $requests,
     ) {
+    }
+
+    /** @return list<CmsDownload> */
+    public function forProduct(Product $product): array
+    {
+        return $this->repository->findVisibleForProduct(
+            $product,
+            $this->channels->getChannel(),
+            $this->locales->getLocaleCode(),
+        );
     }
 
     /**

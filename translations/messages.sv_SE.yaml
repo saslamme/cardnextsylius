@@ -211,6 +211,23 @@ cardnext:
         accessories: 'Tillbehör och rekommendationer'
       documents:
         types: { datasheet: 'Datablad', manual: 'Handbok', driver: 'Drivrutin / programvara', certificate: 'Certifikat', brochure: 'Broschyr', other: 'Dokument' }
+      cms_downloads:
+        version: 'Version'
+        types:
+          manual: 'Handbok'
+          datasheet: 'Datablad'
+          driver: 'Drivrutin'
+          software: 'Programvara'
+          firmware: 'Firmware'
+          certificate: 'Certifikat'
+          other: 'Nedladdning'
+        operating_systems:
+          windows_11: 'Windows 11'
+          windows_10: 'Windows 10'
+          windows_server: 'Windows Server'
+          macos: 'macOS'
+          linux: 'Linux'
+          other: 'Annat'
       compatibility:
         compatible_with: 'Kompatibel med'
         consumables: 'Passande förbrukningsmaterial'
