@@ -8,16 +8,49 @@ use App\Controller\Admin\CmsDownloadAdminController;
 use App\Cms\CmsDownloadProvider;
 use App\Entity\Cms\CmsDownload;
 use App\Entity\Cms\CmsDownloadTranslation;
+use App\Entity\Product\Product;
 use App\Form\Cms\CmsDownloadType;
 use App\Repository\Cms\CmsDownloadRepository;
 use App\Twig\CmsExtension;
+use Sylius\Bundle\AdminBundle\Form\Type\ProductAutocompleteType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class CmsDownloadRegressionTest extends KernelTestCase
 {
+    public function testProductFieldUsesTheOptionalMultipleAdminAutocomplete(): void
+    {
+        $fields = [];
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->method('add')->willReturnCallback(
+            static function (string $name, ?string $type, array $options) use (&$fields, $builder): FormBuilderInterface {
+                $fields[$name] = ['type' => $type, 'options' => $options];
+
+                return $builder;
+            },
+        );
+
+        (new CmsDownloadType())->buildForm($builder, []);
+
+        self::assertSame(ProductAutocompleteType::class, $fields['products']['type']);
+        self::assertTrue($fields['products']['options']['multiple']);
+        self::assertFalse($fields['products']['options']['required']);
+
+        $firstProduct = new Product();
+        $secondProduct = new Product();
+        $download = new CmsDownload();
+        $download->addProduct($firstProduct);
+        $download->addProduct($secondProduct);
+
+        self::assertSame([$firstProduct, $secondProduct], $download->getProducts()->toArray());
+
+        $download->removeProduct($firstProduct);
+        self::assertSame([$secondProduct], array_values($download->getProducts()->toArray()));
+    }
+
     public function testEmptyTranslationTitlesAreRemovedWhenSubmittingAnUpload(): void
     {
         self::bootKernel();
