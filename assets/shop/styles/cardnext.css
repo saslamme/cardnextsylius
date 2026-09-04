@@ -5350,6 +5350,19 @@ html { scroll-behavior: smooth; }
 }
 .cn-cart-addon{background:var(--cn-surface-subtle,#f7f9fb)}.cn-cart-addon td:nth-child(2){padding-left:2rem}.cn-cart-addon td:nth-child(2)::before{content:"↳";margin-right:.4rem;color:var(--cn-muted,#59636e)}
 
+/* Responsive CMS video embeds. */
+.cn-cms-video { color: var(--cn-text); }
+.cn-cms-video__header { max-width: 760px; margin-bottom: 20px; }
+.cn-cms-video__header h2 { margin-bottom: 8px; color: var(--cn-ink); }
+.cn-cms-video__figure { max-width: var(--cn-container); margin: 0; }
+.cn-cms-video__media { position: relative; width: 100%; overflow: hidden; border: 1px solid var(--cn-border); background: var(--cn-surface-soft); }
+.cn-cms-video__media--16-9 { aspect-ratio: 16 / 9; }
+.cn-cms-video__media--4-3 { aspect-ratio: 4 / 3; }
+.cn-cms-video__media--1-1 { aspect-ratio: 1 / 1; }
+.cn-cms-video__media--9-16 { width: min(100%, 480px); aspect-ratio: 9 / 16; }
+.cn-cms-video__media iframe { display: block; width: 100%; height: 100%; border: 0; }
+.cn-cms-video__caption { margin-top: 9px; color: var(--cn-muted); font-size: .82rem; line-height: 1.5; }
+
 /* Frequently bought together: compact product row and purchase summary. */
 .cn-product-bundles { padding-block: 34px 38px; border-top: 1px solid var(--cn-border); }
 .cn-product-bundles__title { margin: 0 0 16px; color: var(--cn-ink); font-size: clamp(1.25rem, 1.8vw, 1.55rem); font-weight: 800; line-height: 1.2; letter-spacing: -.02em; }

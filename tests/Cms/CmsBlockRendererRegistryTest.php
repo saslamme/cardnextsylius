@@ -46,6 +46,27 @@ final class CmsBlockRendererRegistryTest extends TestCase
         ]));
     }
 
+    public function testVideoIsRegisteredWithItsLabelAndValidConfiguration(): void
+    {
+        $registry = new CmsBlockRendererRegistry();
+
+        self::assertContains('video', CmsBlockRendererRegistry::TYPES);
+        self::assertSame('Video', CmsBlockRendererRegistry::TYPE_LABELS['video']);
+        self::assertSame([], $registry->validate('video', ['provider' => 'youtube', 'videoUrl' => 'https://youtu.be/abcdefghijk', 'aspectRatio' => '16:9']));
+        self::assertSame([], $registry->validate('video', ['provider' => 'vimeo', 'videoUrl' => 'https://vimeo.com/123456789']));
+    }
+
+    public function testVideoConfigurationRejectsMissingOrUnsafeValues(): void
+    {
+        $registry = new CmsBlockRendererRegistry();
+
+        self::assertContains('provider is required.', $registry->validate('video', ['videoUrl' => 'https://youtu.be/abcdefghijk']));
+        self::assertContains('videoUrl is required.', $registry->validate('video', ['provider' => 'youtube']));
+        self::assertContains('provider is invalid.', $registry->validate('video', ['provider' => 'other', 'videoUrl' => 'https://youtu.be/abcdefghijk']));
+        self::assertContains('aspectRatio is invalid.', $registry->validate('video', ['provider' => 'youtube', 'videoUrl' => 'https://youtu.be/abcdefghijk', 'aspectRatio' => '2:1']));
+        self::assertContains('videoUrl is not a valid URL for the selected provider.', $registry->validate('video', ['provider' => 'youtube', 'videoUrl' => 'https://evil.example/video']));
+    }
+
     public function testLinkCardsRequireItemsAndRejectUnsafeNestedUrls(): void
     {
         $registry = new CmsBlockRendererRegistry();
