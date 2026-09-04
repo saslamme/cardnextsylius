@@ -15,7 +15,7 @@
 <section class="cn-downloads my-5" aria-labelledby="downloads-heading">
     <div class="mb-4">
         <h2 id="downloads-heading" class="mb-2">{{ config.headline|default('Downloads & technische Unterlagen') }}</h2>
-        <p class="text-secondary mb-0">Handbücher, Treiber und technische Dokumente für Ihre Cardnext Produkte.</p>
+        <p class="text-secondary mb-0">{{ config.text|default('Handbücher, Treiber und technische Dokumente für Ihre Produkte.') }}</p>
     </div>
 
     {% if config.showFilters|default(true) %}
