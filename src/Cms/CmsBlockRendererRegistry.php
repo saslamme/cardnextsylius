@@ -8,7 +8,9 @@ use App\Entity\Cms\CmsDownload;
 
 final class CmsBlockRendererRegistry
 {
-    public const TYPES = ['rich_text', 'hero', 'image_text', 'faq', 'cta', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery'];
+    public const TYPES = ['rich_text', 'hero', 'image_text', 'faq', 'cta', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery', 'features', 'stats', 'testimonials'];
+
+    public const FEATURE_ICONS = ['consulting', 'shipping', 'support', 'quality', 'business', 'security', 'stock', 'technology', 'service', 'warranty', 'international', 'sustainability'];
 
     public const TYPE_LABELS = [
         'rich_text' => 'Text',
@@ -22,6 +24,9 @@ final class CmsBlockRendererRegistry
         'video' => 'Video',
         'manufacturer_slider' => 'Hersteller-Slider',
         'gallery' => 'Galerie',
+        'features' => 'Vorteile / USP',
+        'stats' => 'Zahlen & Fakten',
+        'testimonials' => 'Kundenstimmen',
     ];
 
     private readonly VideoEmbedResolver $videoEmbedResolver;
@@ -52,7 +57,7 @@ final class CmsBlockRendererRegistry
             'rich_text' => ['content'],
             'hero' => ['headline'],
             'image_text' => ['text'],
-            'faq', 'link_cards' => ['items'],
+            'faq', 'link_cards', 'features', 'stats', 'testimonials' => ['items'],
             'cta' => ['headline', 'buttonLabel', 'buttonUrl'],
             'downloads' => [],
             'product_slider' => ['productCodes'],
@@ -184,6 +189,49 @@ final class CmsBlockRendererRegistry
             }
         }
 
+        if (in_array($type, ['features', 'stats', 'testimonials'], true)) {
+            $items = $configuration['items'] ?? null;
+            if ($items !== null && (!is_array($items) || !array_is_list($items))) {
+                $errors[] = 'items must be a list.';
+            } elseif (is_array($items)) {
+                foreach ($items as $index => $item) {
+                    if (!is_array($item)) {
+                        $errors[] = sprintf('items[%d] is invalid.', $index);
+
+                        continue;
+                    }
+
+                    if ($type === 'features') {
+                        self::validateRequiredString($errors, $item, $index, 'title');
+                        self::validateOptionalString($errors, $item, $index, 'text');
+                        if (isset($item['icon']) && (!is_string($item['icon']) || !in_array($item['icon'], self::FEATURE_ICONS, true))) {
+                            $errors[] = sprintf('items[%d].icon is invalid.', $index);
+                        }
+                    } elseif ($type === 'stats') {
+                        self::validateRequiredString($errors, $item, $index, 'value');
+                        self::validateRequiredString($errors, $item, $index, 'label');
+                        self::validateOptionalString($errors, $item, $index, 'description');
+                    } else {
+                        self::validateRequiredString($errors, $item, $index, 'quote');
+                        foreach (['name', 'role', 'company'] as $field) {
+                            self::validateOptionalString($errors, $item, $index, $field);
+                        }
+                        $name = $item['name'] ?? null;
+                        $company = $item['company'] ?? null;
+                        if ((!is_string($name) || trim($name) === '') && (!is_string($company) || trim($company) === '')) {
+                            $errors[] = sprintf('items[%d] requires a name or company.', $index);
+                        }
+                    }
+                }
+            }
+
+            $allowedColumns = $type === 'testimonials' ? [1, 2, 3] : [2, 3, 4];
+            $defaultColumns = $type === 'testimonials' ? 3 : 4;
+            if (!in_array($configuration['columns'] ?? $defaultColumns, $allowedColumns, true)) {
+                $errors[] = $type === 'testimonials' ? 'columns must be 1, 2 or 3.' : 'columns must be 2, 3 or 4.';
+            }
+        }
+
         return $errors;
     }
 
@@ -191,6 +239,28 @@ final class CmsBlockRendererRegistry
     {
         return (str_starts_with($url, '/') && !str_starts_with($url, '//')) ||
             (filter_var($url, \FILTER_VALIDATE_URL) !== false && in_array(parse_url($url, \PHP_URL_SCHEME), ['http', 'https'], true));
+    }
+
+    /**
+     * @param list<string> $errors
+     * @param array<mixed> $item
+     */
+    private static function validateRequiredString(array &$errors, array $item, int $index, string $field): void
+    {
+        if (!isset($item[$field]) || !is_string($item[$field]) || trim($item[$field]) === '') {
+            $errors[] = sprintf('items[%d].%s is required.', $index, $field);
+        }
+    }
+
+    /**
+     * @param list<string> $errors
+     * @param array<mixed> $item
+     */
+    private static function validateOptionalString(array &$errors, array $item, int $index, string $field): void
+    {
+        if (isset($item[$field]) && !is_string($item[$field])) {
+            $errors[] = sprintf('items[%d].%s must be a string.', $index, $field);
+        }
     }
 
     private static function managedImagePath(string $path): bool

@@ -110,4 +110,63 @@ final class CmsBlockRendererRegistryTest extends TestCase
             self::assertSame([], $registry->validate('gallery', ['items' => [['image' => 'uploads/cms/a.webp', 'alt' => '', 'caption' => 'Test']], 'columns' => $columns]));
         }
     }
+
+    public function testFeaturesAreRegisteredAndValidated(): void
+    {
+        $registry = new CmsBlockRendererRegistry();
+        self::assertContains('features', CmsBlockRendererRegistry::TYPES);
+        self::assertSame('Vorteile / USP', CmsBlockRendererRegistry::TYPE_LABELS['features']);
+        self::assertSame('shop/cms/block/_features.html.twig', $registry->template('features'));
+
+        $valid = ['items' => [['icon' => 'consulting', 'title' => 'Beratung', 'text' => 'Persönlich.']]];
+        foreach ([2, 3, 4] as $columns) {
+            self::assertSame([], $registry->validate('features', $valid + ['columns' => $columns]));
+        }
+        self::assertContains('items is required.', $registry->validate('features', []));
+        self::assertContains('items must be a list.', $registry->validate('features', ['items' => 'invalid']));
+        self::assertContains('items[0] is invalid.', $registry->validate('features', ['items' => ['invalid']]));
+        self::assertContains('items[0].title is required.', $registry->validate('features', ['items' => [['text' => 'Text']]]));
+        self::assertContains('items[0].icon is invalid.', $registry->validate('features', ['items' => [['title' => 'Titel', 'icon' => 'fa-user']]]));
+        foreach ([1, 5] as $columns) {
+            self::assertContains('columns must be 2, 3 or 4.', $registry->validate('features', $valid + ['columns' => $columns]));
+        }
+    }
+
+    public function testStatsAreRegisteredAndKeepValuesAsStrings(): void
+    {
+        $registry = new CmsBlockRendererRegistry();
+        self::assertContains('stats', CmsBlockRendererRegistry::TYPES);
+        self::assertSame('Zahlen & Fakten', CmsBlockRendererRegistry::TYPE_LABELS['stats']);
+        self::assertSame('shop/cms/block/_stats.html.twig', $registry->template('stats'));
+
+        foreach (['20+', '2.000+', '24/7', '< 24 h', '99,9 %'] as $value) {
+            self::assertSame([], $registry->validate('stats', ['items' => [['value' => $value, 'label' => 'Kennzahl']], 'columns' => 4]));
+        }
+        self::assertContains('items is required.', $registry->validate('stats', []));
+        self::assertContains('items[0].value is required.', $registry->validate('stats', ['items' => [['label' => 'Produkte']]]));
+        self::assertContains('items[0].label is required.', $registry->validate('stats', ['items' => [['value' => '20+']]]));
+        self::assertContains('columns must be 2, 3 or 4.', $registry->validate('stats', ['items' => [['value' => '20+', 'label' => 'Hersteller']], 'columns' => 1]));
+    }
+
+    public function testTestimonialsAreRegisteredAndRequireAnAuthor(): void
+    {
+        $registry = new CmsBlockRendererRegistry();
+        self::assertContains('testimonials', CmsBlockRendererRegistry::TYPES);
+        self::assertSame('Kundenstimmen', CmsBlockRendererRegistry::TYPE_LABELS['testimonials']);
+        self::assertSame('shop/cms/block/_testimonials.html.twig', $registry->template('testimonials'));
+
+        foreach ([
+            ['quote' => 'Sehr gut.', 'company' => 'Beispiel GmbH'],
+            ['quote' => 'Sehr gut.', 'name' => 'Max'],
+            ['quote' => 'Sehr gut.', 'name' => 'Max', 'role' => 'IT', 'company' => 'Beispiel GmbH'],
+        ] as $item) {
+            foreach ([1, 2, 3] as $columns) {
+                self::assertSame([], $registry->validate('testimonials', ['items' => [$item], 'columns' => $columns]));
+            }
+        }
+        self::assertContains('items is required.', $registry->validate('testimonials', []));
+        self::assertContains('items[0].quote is required.', $registry->validate('testimonials', ['items' => [['name' => 'Max']]]));
+        self::assertContains('items[0] requires a name or company.', $registry->validate('testimonials', ['items' => [['quote' => 'Anonym']]]));
+        self::assertContains('columns must be 1, 2 or 3.', $registry->validate('testimonials', ['items' => [['quote' => 'Gut', 'name' => 'Max']], 'columns' => 4]));
+    }
 }

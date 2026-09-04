@@ -1,0 +1,24 @@
+{% set validItems = [] %}
+{% for item in config.items|default([]) %}
+    {% if item is iterable and item.value|default is not empty and item.label|default is not empty %}{% set validItems = validItems|merge([item]) %}{% endif %}
+{% endfor %}
+{% if validItems is not empty %}
+    {% set columns = config.columns|default(4) in [2, 3, 4] ? config.columns|default(4) : 4 %}
+    <section class="cn-cms-stats mb-5">
+        {% if config.headline|default or config.text|default %}
+            <header class="cn-cms-stats__header">
+                {% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}
+                {% if config.text|default %}<p class="cn-lead">{{ config.text }}</p>{% endif %}
+            </header>
+        {% endif %}
+        <div class="cn-stats cn-stats--{{ columns }}">
+            {% for item in validItems %}
+                <div class="cn-stat">
+                    <div class="cn-stat__value">{{ item.value }}</div>
+                    <div class="cn-stat__label">{{ item.label }}</div>
+                    {% if item.description|default %}<p class="cn-stat__description">{{ item.description }}</p>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
