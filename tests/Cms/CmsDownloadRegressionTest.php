@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Cms;
 
 use App\Controller\Admin\CmsDownloadAdminController;
+use App\Cms\CmsDownloadProvider;
 use App\Entity\Cms\CmsDownload;
 use App\Entity\Cms\CmsDownloadTranslation;
 use App\Form\Cms\CmsDownloadType;
@@ -74,6 +75,45 @@ final class CmsDownloadRegressionTest extends KernelTestCase
         self::assertIsString($source);
         self::assertStringNotContainsString('setParameters(', $source);
         self::assertStringContainsString("setParameter('channel'", $source);
+    }
+
+    public function testStorefrontRepositoryAppliesEveryVisibilityAndVisitorFilter(): void
+    {
+        $source = file_get_contents((new \ReflectionClass(CmsDownloadRepository::class))->getFileName());
+        self::assertIsString($source);
+
+        self::assertStringContainsString("'c = :channel'", $source);
+        self::assertStringContainsString("'t.locale = :locale'", $source);
+        self::assertStringContainsString("'d.enabled = true'", $source);
+        self::assertStringContainsString("'d.publishedAt IS NULL OR d.publishedAt <= :now'", $source);
+        self::assertStringContainsString('LOWER(t.title) LIKE :q', $source);
+        self::assertStringContainsString("'d.manufacturer = :manufacturer'", $source);
+        self::assertStringContainsString("'d.operatingSystems LIKE :os'", $source);
+        self::assertStringContainsString("'d.type = :type'", $source);
+    }
+
+    public function testConfiguredDownloadTypesUseAnInRestrictionThatVisitorFiltersCannotReplace(): void
+    {
+        $repositorySource = file_get_contents((new \ReflectionClass(CmsDownloadRepository::class))->getFileName());
+        $providerSource = file_get_contents((new \ReflectionClass(CmsDownloadProvider::class))->getFileName());
+        self::assertIsString($repositorySource);
+        self::assertIsString($providerSource);
+
+        self::assertStringContainsString("'d.type IN (:types)'", $repositorySource);
+        self::assertStringContainsString("'types' => \$configuredTypes", $providerSource);
+        self::assertStringContainsString('!in_array($requestedType, $configuredTypes, true)', $providerSource);
+        self::assertStringNotContainsString("\$config['types'][0]", $providerSource);
+    }
+
+    public function testManufacturerOptionsHaveTheirOwnChannelAndLocaleAwareQuery(): void
+    {
+        $source = file_get_contents((new \ReflectionClass(CmsDownloadRepository::class))->getFileName());
+        self::assertIsString($source);
+
+        self::assertStringContainsString('function findVisibleManufacturers(', $source);
+        self::assertStringContainsString("'DISTINCT d.manufacturer AS manufacturer'", $source);
+        self::assertStringContainsString('visibleQueryBuilder($channel, $locale)', $source);
+        self::assertStringContainsString("orderBy('d.manufacturer', 'ASC')", $source);
     }
 
     public function testEntityValidatesHttpsAndExactlyOneSource(): void
