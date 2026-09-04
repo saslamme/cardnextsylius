@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['manufacturer'], name: 'idx_cms_download_manufacturer')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['code'])]
-final class CmsDownload
+class CmsDownload
 {
     public const TYPES = ['manual', 'datasheet', 'driver', 'software', 'firmware', 'certificate', 'other'];
     public const OPERATING_SYSTEMS = ['windows_11', 'windows_10', 'windows_server', 'macos', 'linux', 'other'];

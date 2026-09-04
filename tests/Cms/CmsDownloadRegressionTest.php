@@ -6,12 +6,19 @@ namespace App\Tests\Cms;
 
 use App\Controller\Admin\CmsDownloadAdminController;
 use App\Entity\Cms\CmsDownload;
+use App\Entity\Cms\CmsDownloadTranslation;
 use App\Repository\Cms\CmsDownloadRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class CmsDownloadRegressionTest extends TestCase
 {
+    public function testDoctrineEntitiesRequiredForLazyLoadingAreNotFinal(): void
+    {
+        self::assertFalse((new \ReflectionClass(CmsDownload::class))->isFinal());
+        self::assertFalse((new \ReflectionClass(CmsDownloadTranslation::class))->isFinal());
+    }
+
     public function testRepositoryUsesDoctrineCompatibleIndividualParameters(): void
     {
         $source = file_get_contents((new \ReflectionClass(CmsDownloadRepository::class))->getFileName());
