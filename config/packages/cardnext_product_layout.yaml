@@ -10,3 +10,7 @@ sylius_twig_hooks:
                     product: '@=_context.product'
                     template: '@SyliusShop/product/show/content/info/summary.html.twig'
                 priority: 100
+        'sylius_shop.product.show.content':
+            bundles:
+                template: 'shop/product/_bundles.html.twig'
+                priority: 50
