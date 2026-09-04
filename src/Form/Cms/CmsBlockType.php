@@ -7,8 +7,11 @@ namespace App\Form\Cms;
 use App\Cms\CmsBlockRendererRegistry;
 use App\Entity\Cms\CmsBlock;
 use App\Form\Cms\Block\FaqItemType;
+use App\Form\Cms\Block\FeatureItemType;
 use App\Form\Cms\Block\GalleryItemType;
 use App\Form\Cms\Block\LinkCardItemType;
+use App\Form\Cms\Block\StatItemType;
+use App\Form\Cms\Block\TestimonialItemType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -48,11 +51,14 @@ final class CmsBlockType extends AbstractType
                     'columns' => 3,
                     'showCaptions' => true,
                     default => null,
+                } : ($useDefaults && in_array($type, ['features', 'stats', 'testimonials'], true) ? match ($name) {
+                    'columns' => $type === 'testimonials' ? 3 : 4,
+                    default => null,
                 } : ($useDefaults && $type === 'video' ? match ($name) {
                     'aspectRatio' => '16:9',
                     'showControls', 'privacyMode' => true,
                     default => null,
-                } : null)));
+                } : null))));
                 $value = array_key_exists($name, $configuration) ? $configuration[$name] : $default;
                 if ($type === 'gallery' && $name === 'items' && is_array($value)) {
                     $value = array_map(static function (mixed $item): mixed {
@@ -143,6 +149,24 @@ final class CmsBlockType extends AbstractType
                 'columns' => [ChoiceType::class, ['label' => 'Spalten', 'choices' => ['2 Spalten' => 2, '3 Spalten' => 3, '4 Spalten' => 4]]],
                 'showCaptions' => [CheckboxType::class, ['label' => 'Bildunterschriften anzeigen', 'required' => false]],
                 'items' => [CollectionType::class, ['label' => 'Galeriebilder', 'entry_type' => GalleryItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]],
+            ],
+            'features' => [
+                'headline' => $line('Überschrift'),
+                'text' => $text('Einleitung'),
+                'columns' => [ChoiceType::class, ['label' => 'Spalten', 'choices' => ['2 Spalten' => 2, '3 Spalten' => 3, '4 Spalten' => 4], 'constraints' => [new Assert\Choice([2, 3, 4])]]],
+                'items' => [CollectionType::class, ['label' => 'Vorteile', 'entry_type' => FeatureItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false, 'constraints' => [new Assert\Count(min: 1)]]],
+            ],
+            'stats' => [
+                'headline' => $line('Überschrift'),
+                'text' => $text('Einleitung'),
+                'columns' => [ChoiceType::class, ['label' => 'Spalten', 'choices' => ['2 Spalten' => 2, '3 Spalten' => 3, '4 Spalten' => 4], 'constraints' => [new Assert\Choice([2, 3, 4])]]],
+                'items' => [CollectionType::class, ['label' => 'Zahlen & Fakten', 'entry_type' => StatItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false, 'constraints' => [new Assert\Count(min: 1)]]],
+            ],
+            'testimonials' => [
+                'headline' => $line('Überschrift'),
+                'text' => $text('Einleitung'),
+                'columns' => [ChoiceType::class, ['label' => 'Spalten', 'choices' => ['1 Spalte' => 1, '2 Spalten' => 2, '3 Spalten' => 3], 'constraints' => [new Assert\Choice([1, 2, 3])]]],
+                'items' => [CollectionType::class, ['label' => 'Kundenstimmen', 'entry_type' => TestimonialItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false, 'constraints' => [new Assert\Count(min: 1)]]],
             ],
             default => [],
         };

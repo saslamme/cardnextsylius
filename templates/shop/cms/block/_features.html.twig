@@ -1,0 +1,30 @@
+{% set icon_classes = {
+    consulting: 'fa-comments', shipping: 'fa-truck-fast', support: 'fa-headset', quality: 'fa-award',
+    business: 'fa-building', security: 'fa-shield-halved', stock: 'fa-boxes-stacked', technology: 'fa-microchip',
+    service: 'fa-screwdriver-wrench', warranty: 'fa-circle-check', international: 'fa-globe', sustainability: 'fa-leaf'
+} %}
+{% set validItems = [] %}
+{% for item in config.items|default([]) %}
+    {% if item is iterable and item.title|default is not empty %}{% set validItems = validItems|merge([item]) %}{% endif %}
+{% endfor %}
+{% if validItems is not empty %}
+    {% set columns = config.columns|default(4) in [2, 3, 4] ? config.columns|default(4) : 4 %}
+    <section class="cn-cms-features mb-5">
+        {% if config.headline|default or config.text|default %}
+            <header class="cn-cms-features__header">
+                {% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}
+                {% if config.text|default %}<p class="cn-lead">{{ config.text }}</p>{% endif %}
+            </header>
+        {% endif %}
+        <div class="cn-features cn-features--{{ columns }}">
+            {% for item in validItems %}
+                {% set iconClass = item.icon|default and icon_classes[item.icon]|default ? icon_classes[item.icon] : null %}
+                <article class="cn-feature">
+                    {% if iconClass %}<span class="cn-feature__icon" aria-hidden="true"><i class="fa-solid {{ iconClass }}"></i></span>{% endif %}
+                    <h3 class="cn-feature__title">{{ item.title }}</h3>
+                    {% if item.text|default %}<p class="cn-feature__text">{{ item.text }}</p>{% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}

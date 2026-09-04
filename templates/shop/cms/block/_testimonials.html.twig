@@ -1,0 +1,36 @@
+{% set validItems = [] %}
+{% for item in config.items|default([]) %}
+    {% if item is iterable and item.quote|default is not empty and (item.name|default is not empty or item.company|default is not empty) %}{% set validItems = validItems|merge([item]) %}{% endif %}
+{% endfor %}
+{% if validItems is not empty %}
+    {% set columns = config.columns|default(3) in [1, 2, 3] ? config.columns|default(3) : 3 %}
+    <section class="cn-cms-testimonials mb-5">
+        {% if config.headline|default or config.text|default %}
+            <header class="cn-cms-testimonials__header">
+                {% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}
+                {% if config.text|default %}<p class="cn-lead">{{ config.text }}</p>{% endif %}
+            </header>
+        {% endif %}
+        <div class="cn-testimonials cn-testimonials--{{ columns }}">
+            {% for item in validItems %}
+                <article class="cn-testimonial">
+                    <span class="cn-testimonial__quote-mark" aria-hidden="true">“</span>
+                    <blockquote class="cn-testimonial__quote">
+                        <p>{{ item.quote }}</p>
+                        <footer class="cn-testimonial__author">
+                            <cite>
+                                {% if item.name|default %}
+                                    <span class="cn-testimonial__name">{{ item.name }}</span>
+                                    {% if item.role|default or item.company|default %}<span class="cn-testimonial__meta">{% if item.role|default %}{{ item.role }}{% endif %}{% if item.role|default and item.company|default %} · {% endif %}{% if item.company|default %}{{ item.company }}{% endif %}</span>{% endif %}
+                                {% else %}
+                                    <span class="cn-testimonial__name">{{ item.company }}</span>
+                                    {% if item.role|default %}<span class="cn-testimonial__meta">{{ item.role }}</span>{% endif %}
+                                {% endif %}
+                            </cite>
+                        </footer>
+                    </blockquote>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
