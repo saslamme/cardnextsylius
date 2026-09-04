@@ -95,6 +95,7 @@ final class ProductTypeExtension extends AbstractTypeExtension
             'allow_add' => true,
             'allow_delete' => true,
             'by_reference' => false,
+            'prototype_name' => '__bundle__',
             'label' => 'Bundles / Häufig zusammen gekauft',
         ]);
     }

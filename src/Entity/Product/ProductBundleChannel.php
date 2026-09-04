@@ -38,6 +38,7 @@ class ProductBundleChannel
     public function getBundle(): ProductBundle { return $this->bundle; }
     public function setBundle(ProductBundle $bundle): void { $this->bundle = $bundle; }
     public function getChannel(): Channel { return $this->channel; }
+    public function hasChannel(): bool { return isset($this->channel); }
     public function setChannel(Channel $channel): void { $this->channel = $channel; }
     public function isEnabled(): bool { return $this->enabled; }
     public function setEnabled(bool $enabled): void { $this->enabled = $enabled; }

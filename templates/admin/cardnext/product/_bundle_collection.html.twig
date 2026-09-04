@@ -1,0 +1,65 @@
+{% macro item(form) %}
+    <div class="row g-2 align-items-start border-bottom pb-3 mb-3" data-collection-entry>
+        <div class="col-12 col-lg-6">{{ form_row(form.variant) }}</div>
+        <div class="col-6 col-lg-2">{{ form_row(form.quantity) }}</div>
+        <div class="col-6 col-lg-2">{{ form_row(form.position) }}</div>
+        <div class="col-6 col-lg-1 pt-lg-4">{{ form_row(form.enabled) }}</div>
+        <div class="col-6 col-lg-1 pt-lg-4 text-end"><button class="btn btn-outline-danger btn-sm" type="button" data-action="cardnext-bundle-collection#remove" aria-label="Bestandteil entfernen">×</button></div>
+    </div>
+{% endmacro %}
+
+{% macro channel(form) %}
+    <div class="border rounded p-3 mb-3" data-collection-entry data-discount-type="{{ form.discountType.vars.value }}">
+        <div class="row g-3 align-items-start">
+            <div class="col-12 col-lg-5">{{ form_row(form.channel) }}</div>
+            <div class="col-6 col-lg-3">{{ form_row(form.discountType) }}</div>
+            <div class="col-6 col-lg-2 pt-lg-4">{{ form_row(form.enabled) }}</div>
+            <div class="col-12 col-lg-2 pt-lg-4 text-end"><button class="btn btn-outline-danger btn-sm" type="button" data-action="cardnext-bundle-collection#remove">Channel entfernen</button></div>
+            <div class="col-12 col-md-6" data-discount-field="FIXED">{{ form_row(form.fixedDiscount) }}</div>
+            <div class="col-12 col-md-6" data-discount-field="PERCENT">{{ form_row(form.percentageDiscount) }}</div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro bundle(form, number) %}
+    <div class="card mb-3 shadow-sm" data-collection-entry>
+        <div class="card-header d-flex justify-content-between align-items-center gap-3">
+            <h3 class="card-title mb-0">Bundle {{ number }}</h3>
+            <button class="btn btn-outline-danger btn-sm" type="button" data-action="cardnext-bundle-collection#remove">Bundle entfernen</button>
+        </div>
+        <div class="card-body">
+            {{ form_errors(form) }}
+            <div class="row g-3">
+                <div class="col-12 col-md-6">{{ form_row(form.code) }}</div>
+                <div class="col-12 col-md-6">{{ form_row(form.name) }}</div>
+                <div class="col-6 col-md-3">{{ form_row(form.enabled) }}</div>
+                <div class="col-6 col-md-3">{{ form_row(form.position) }}</div>
+            </div>
+
+            <h4 class="h5 mt-4 border-bottom pb-2">Bestandteile</h4>
+            {{ form_errors(form.items) }}
+            <div data-collection-holder data-placeholder="__item__" data-index="{{ form.items|length }}" data-prototype="{{ _self.item(form.items.vars.prototype)|e('html_attr') }}">
+                {% for item in form.items %}{{ _self.item(item) }}{% endfor %}
+            </div>
+            <button class="btn btn-outline-primary btn-sm" type="button" data-action="cardnext-bundle-collection#add">+ Bestandteil hinzufügen</button>
+
+            <h4 class="h5 mt-4 border-bottom pb-2">Verkaufskanäle / Rabatt</h4>
+            {{ form_errors(form.channelConfigurations) }}
+            <div data-collection-holder data-placeholder="__channel__" data-index="{{ form.channelConfigurations|length }}" data-prototype="{{ _self.channel(form.channelConfigurations.vars.prototype)|e('html_attr') }}">
+                {% for channel in form.channelConfigurations %}{{ _self.channel(channel) }}{% endfor %}
+            </div>
+            <button class="btn btn-outline-primary btn-sm" type="button" data-action="cardnext-bundle-collection#add">+ Channel hinzufügen</button>
+        </div>
+    </div>
+{% endmacro %}
+
+{% set bundles = form.bundles %}
+{{ form_errors(bundles) }}
+<div data-controller="cardnext-bundle-collection">
+    <div data-collection-holder data-placeholder="__bundle__" data-index="{{ bundles|length }}" data-prototype="{{ _self.bundle(bundles.vars.prototype, '__bundle__')|e('html_attr') }}">
+        {% for bundle in bundles %}{{ _self.bundle(bundle, loop.index) }}{% endfor %}
+    </div>
+    <div class="alert alert-light border mb-3{{ bundles|length ? ' d-none' : '' }}" data-cardnext-bundle-collection-target="empty">Für dieses Produkt sind noch keine Bundles eingerichtet.</div>
+    <button class="btn btn-primary" type="button" data-action="cardnext-bundle-collection#add">Bundle hinzufügen</button>
+</div>
+{% do bundles.setRendered %}

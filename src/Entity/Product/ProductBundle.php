@@ -7,11 +7,13 @@ namespace App\Entity\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_product_bundle')]
 #[ORM\UniqueConstraint(name: 'UNIQ_CN_BUNDLE_CODE', columns: ['code'])]
+#[UniqueEntity(fields: ['code'], message: 'Dieser Bundle-Code wird bereits verwendet.', errorPath: 'code')]
 class ProductBundle
 {
     #[ORM\Id]
@@ -38,7 +40,7 @@ class ProductBundle
 
     #[ORM\Column(options: ['default' => 0])]
     #[Assert\PositiveOrZero]
-    private int $position = 0;
+    private int $position = 10;
 
     #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
@@ -87,4 +89,26 @@ class ProductBundle
     public function removeChannelConfiguration(ProductBundleChannel $configuration): void { $this->channelConfigurations->removeElement($configuration); $this->touch(); }
     public function configurationFor(string $channelCode): ?ProductBundleChannel { foreach ($this->channelConfigurations as $configuration) { if ($configuration->getChannel()->getCode() === $channelCode) return $configuration; } return null; }
     private function touch(): void { $this->updatedAt = new \DateTimeImmutable(); }
+
+    #[Assert\Callback]
+    public function validateBundle(\Symfony\Component\Validator\Context\ExecutionContextInterface $context): void
+    {
+        $channels = [];
+        foreach ($this->channelConfigurations as $index => $configuration) {
+            if (!$configuration->hasChannel()) {
+                continue;
+            }
+            $code = $configuration->getChannel()->getCode();
+            if (isset($channels[$code])) {
+                $context->buildViolation('Dieser Verkaufskanal ist im Bundle bereits konfiguriert.')->atPath(sprintf('channelConfigurations[%d].channel', $index))->addViolation();
+            }
+            $channels[$code] = true;
+        }
+
+        foreach ($this->items as $index => $item) {
+            if ($item->hasVariant() && $item->getVariant()->getProduct() === $this->mainProduct) {
+                $context->buildViolation('Das Hauptprodukt darf nicht Bestandteil seines eigenen Bundles sein.')->atPath(sprintf('items[%d].variant', $index))->addViolation();
+            }
+        }
+    }
 }
