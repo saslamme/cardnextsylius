@@ -1,3 +1,4 @@
+{% set product = hookable_metadata.context.product|default(null) %}
 {% set bundles = cardnext_product_bundles(product) %}
 {% if bundles is not empty %}
 <section class="cn-product-bundles my-5" aria-labelledby="frequently-bought-heading">

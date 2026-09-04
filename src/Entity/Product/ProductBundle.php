@@ -25,7 +25,7 @@ class ProductBundle
     private string $code = '';
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'bundles')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'main_product_id', nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull]
     private Product $mainProduct;
 
@@ -40,10 +40,10 @@ class ProductBundle
     #[Assert\PositiveOrZero]
     private int $position = 0;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
     /** @var Collection<int, ProductBundleItem> */
