@@ -1,0 +1,6 @@
+{% set validItems = config.items|default([])|filter(item => item is iterable and item.image|default('') matches '#^uploads/cms/[^/]+\\.(?:jpe?g|png|webp)$#i') %}
+{% set columns = config.columns|default(3) in [2, 3, 4] ? config.columns|default(3) : 3 %}
+{% if validItems is not empty %}<section class="cn-cms-gallery mb-5">
+ {% if config.headline|default or config.text|default %}<header class="cn-cms-gallery__header">{% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}{% if config.text|default %}<p class="cn-lead">{{ config.text }}</p>{% endif %}</header>{% endif %}
+ <div class="cn-gallery cn-gallery--{{ columns }}">{% for item in validItems %}<figure class="cn-gallery__item"><img class="cn-gallery__image" src="{{ asset(item.image) }}" alt="{{ item.alt|default('') }}" loading="lazy" decoding="async">{% if config.showCaptions|default(true) and item.caption|default %}<figcaption class="cn-gallery__caption">{{ item.caption }}</figcaption>{% endif %}</figure>{% endfor %}</div>
+</section>{% endif %}

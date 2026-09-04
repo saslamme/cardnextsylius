@@ -87,7 +87,9 @@ final class CmsPageAdminController extends AbstractController
             $this->addFlash('error', sprintf('Diese Seite wird noch von %d Navigationseinträgen und %d Weiterleitungen verwendet.', $menus, $redirects));
         } else {
             foreach ($page->getBlocks() as $block) {
-                $this->imageUploader->delete($this->configurationImage($block->getConfiguration()));
+                foreach ($this->configurationImages($block->getConfiguration()) as $image) {
+                    $this->imageUploader->delete($image);
+                }
             }
             $this->entityManager->remove($page);
             $this->entityManager->flush();
@@ -136,7 +138,9 @@ final class CmsPageAdminController extends AbstractController
         if ($block->getPage() !== $page || !$this->isCsrfTokenValid('delete-cms-block-' . $block->getId(), $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException();
         }
-        $this->imageUploader->delete($this->configurationImage($block->getConfiguration()));
+        foreach ($this->configurationImages($block->getConfiguration()) as $image) {
+            $this->imageUploader->delete($image);
+        }
         $this->entityManager->remove($block);
         $this->entityManager->flush();
         $this->addFlash('success', 'Block wurde gelöscht.');
@@ -170,6 +174,8 @@ final class CmsPageAdminController extends AbstractController
         $form = $this->createForm(CmsBlockType::class, $block, ['locale_choices' => $this->localeChoices()])->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $oldConfiguration = $block->getConfiguration();
+            $oldImages = $this->configurationImages($oldConfiguration);
+            $uploadedImages = [];
             $configuration = [];
             foreach ($form as $name => $field) {
                 if (in_array($name, ['locale', 'type', 'position', 'enabled', 'image'], true)) {
@@ -183,11 +189,32 @@ final class CmsPageAdminController extends AbstractController
             }
             if ($upload instanceof UploadedFile) {
                 try {
-                    $old = $this->configurationImage($configuration);
                     $configuration['image'] = $this->imageUploader->upload($upload);
-                    $this->imageUploader->delete($old);
+                    $uploadedImages[] = $configuration['image'];
                 } catch (\InvalidArgumentException|\RuntimeException $exception) {
                     $form->get('image')->addError(new FormError($exception->getMessage()));
+                }
+            }
+            if ($form->has('items') && $block->getType() === 'gallery') {
+                $configuration['items'] = [];
+                foreach ($form->get('items') as $index => $itemForm) {
+                    $itemData = is_array($itemForm->getData()) ? $itemForm->getData() : [];
+                    $existing = $itemData['existingImage'] ?? null;
+                    $image = is_string($existing) && in_array($existing, $oldImages, true) ? $existing : null;
+                    $itemUpload = $itemForm->get('image')->getData();
+                    if ($itemUpload instanceof UploadedFile) {
+                        try {
+                            $image = $this->imageUploader->upload($itemUpload);
+                            $uploadedImages[] = $image;
+                        } catch (\InvalidArgumentException|\RuntimeException $exception) {
+                            $itemForm->get('image')->addError(new FormError($exception->getMessage()));
+                        }
+                    }
+                    $configuration['items'][] = [
+                        'image' => $image,
+                        'alt' => is_string($itemData['alt'] ?? null) ? trim($itemData['alt']) : '',
+                        'caption' => is_string($itemData['caption'] ?? null) ? trim($itemData['caption']) : '',
+                    ];
                 }
             }
             foreach ($this->blockRegistry->validate($block->getType(), $configuration) as $error) {
@@ -195,13 +222,29 @@ final class CmsPageAdminController extends AbstractController
             }
             if ($form->isValid()) {
                 $block->setConfiguration($configuration);
-                if ($new) {
-                    $this->entityManager->persist($block);
+
+                try {
+                    if ($new) {
+                        $this->entityManager->persist($block);
+                    }
+                    $this->entityManager->flush();
+                } catch (\Throwable $exception) {
+                    foreach ($uploadedImages as $image) {
+                        $this->imageUploader->delete($image);
+                    }
+
+                    throw $exception;
                 }
-                $this->entityManager->flush();
+                $usedImages = $this->configurationImages($configuration);
+                foreach (array_diff($oldImages, $usedImages) as $image) {
+                    $this->imageUploader->delete($image);
+                }
                 $this->addFlash('success', 'Block wurde gespeichert.');
 
                 return $this->redirectToRoute('cardnext_admin_cms_page_edit', ['id' => $page->getId()]);
+            }
+            foreach ($uploadedImages as $image) {
+                $this->imageUploader->delete($image);
             }
         }
 
@@ -249,5 +292,28 @@ final class CmsPageAdminController extends AbstractController
     private function configurationImage(array $configuration): ?string
     {
         return isset($configuration['image']) && is_string($configuration['image']) ? $configuration['image'] : null;
+    }
+
+    /**
+     * @param array<string, mixed> $configuration
+     *
+     * @return list<string>
+     */
+    private function configurationImages(array $configuration): array
+    {
+        $images = [];
+        if (($image = $this->configurationImage($configuration)) !== null) {
+            $images[] = $image;
+        }
+        $items = $configuration['items'] ?? null;
+        if (is_array($items)) {
+            foreach ($items as $item) {
+                if (is_array($item) && isset($item['image']) && is_string($item['image'])) {
+                    $images[] = $item['image'];
+                }
+            }
+        }
+
+        return array_values(array_unique($images));
     }
 }

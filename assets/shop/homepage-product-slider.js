@@ -15,6 +15,13 @@ const sliderTypes = [
         next: '[data-cn-category-slider-next]',
         slide: '.cn-category-slider__slide',
     },
+    {
+        root: '[data-cn-manufacturer-slider]',
+        viewport: '[data-cn-manufacturer-slider-viewport]',
+        previous: '[data-cn-manufacturer-slider-previous]',
+        next: '[data-cn-manufacturer-slider-next]',
+        slide: '.cn-manufacturer-slider__slide',
+    },
 ];
 
 sliderTypes.forEach((type) => document.querySelectorAll(type.root).forEach((slider) => {
@@ -22,14 +29,14 @@ sliderTypes.forEach((type) => document.querySelectorAll(type.root).forEach((slid
     const previous = slider.querySelector(type.previous);
     const next = slider.querySelector(type.next);
 
-    if (!viewport || !previous || !next) return;
+    if (!viewport) return;
 
     let frame;
     const update = () => {
         frame = undefined;
         const end = viewport.scrollWidth - viewport.clientWidth;
-        previous.disabled = viewport.scrollLeft <= 1;
-        next.disabled = end <= 1 || viewport.scrollLeft >= end - 1;
+        if (previous) previous.disabled = viewport.scrollLeft <= 1;
+        if (next) next.disabled = end <= 1 || viewport.scrollLeft >= end - 1;
     };
     const scheduleUpdate = () => {
         if (frame === undefined) frame = window.requestAnimationFrame(update);
@@ -46,8 +53,8 @@ sliderTypes.forEach((type) => document.querySelectorAll(type.root).forEach((slid
         });
     };
 
-    previous.addEventListener('click', () => scroll(-1));
-    next.addEventListener('click', () => scroll(1));
+    if (previous) previous.addEventListener('click', () => scroll(-1));
+    if (next) next.addEventListener('click', () => scroll(1));
     viewport.addEventListener('scroll', scheduleUpdate, { passive: true });
     window.addEventListener('resize', scheduleUpdate, { passive: true });
     update();
