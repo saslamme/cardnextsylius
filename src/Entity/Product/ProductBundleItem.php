@@ -13,10 +13,10 @@ class ProductBundleItem
 {
     #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column(type: 'integer')] private ?int $id = null;
     #[ORM\ManyToOne(targetEntity: ProductBundle::class, inversedBy: 'items')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'bundle_id', nullable: false, onDelete: 'CASCADE')]
     private ProductBundle $bundle;
     #[ORM\ManyToOne(targetEntity: ProductVariant::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
+    #[ORM\JoinColumn(name: 'variant_id', nullable: false, onDelete: 'RESTRICT')]
     #[Assert\NotNull]
     private ProductVariant $variant;
     #[ORM\Column(type: 'integer')] #[Assert\Positive] private int $quantity = 1;

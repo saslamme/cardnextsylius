@@ -20,19 +20,19 @@ class ProductBundleChannel
 
     #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column(type: 'integer')] private ?int $id = null;
     #[ORM\ManyToOne(targetEntity: ProductBundle::class, inversedBy: 'channelConfigurations')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'bundle_id', nullable: false, onDelete: 'CASCADE')]
     private ProductBundle $bundle;
     #[ORM\ManyToOne(targetEntity: Channel::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'channel_id', nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull]
     private Channel $channel;
     #[ORM\Column(options: ['default' => true])] private bool $enabled = true;
-    #[ORM\Column(length: 16, options: ['default' => self::DISCOUNT_NONE])]
+    #[ORM\Column(name: 'discount_type', length: 16, options: ['default' => self::DISCOUNT_NONE])]
     #[Assert\Choice(choices: [self::DISCOUNT_NONE, self::DISCOUNT_FIXED, self::DISCOUNT_PERCENT])]
     private string $discountType = self::DISCOUNT_NONE;
-    #[ORM\Column(type: 'integer', nullable: true)] #[Assert\PositiveOrZero] private ?int $fixedDiscount = null;
+    #[ORM\Column(name: 'fixed_discount', type: 'integer', nullable: true)] #[Assert\PositiveOrZero] private ?int $fixedDiscount = null;
     /** Percentage in basis points: 500 means 5.00%. */
-    #[ORM\Column(type: 'integer', nullable: true)] #[Assert\Range(min: 0, max: 10000)] private ?int $percentageDiscount = null;
+    #[ORM\Column(name: 'percentage_discount', type: 'integer', nullable: true)] #[Assert\Range(min: 0, max: 10000)] private ?int $percentageDiscount = null;
 
     public function getId(): ?int { return $this->id; }
     public function getBundle(): ProductBundle { return $this->bundle; }

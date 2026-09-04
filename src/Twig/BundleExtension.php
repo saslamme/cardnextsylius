@@ -14,5 +14,12 @@ final class BundleExtension extends AbstractExtension
     public function __construct(private readonly BundleViewResolver $resolver) {}
     public function getFunctions(): array { return [new TwigFunction('cardnext_product_bundles', $this->bundles(...))]; }
     /** @return list<array<string, mixed>> */
-    public function bundles(Product $product): array { return $this->resolver->forProduct($product); }
+    public function bundles(?Product $product): array
+    {
+        if (!$product instanceof Product) {
+            return [];
+        }
+
+        return $this->resolver->forProduct($product);
+    }
 }
