@@ -17,7 +17,7 @@ final class CmsLayoutType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $types = array_combine(CmsBlockRendererRegistry::TYPES, CmsBlockRendererRegistry::TYPES);
+        $types = array_flip(CmsBlockRendererRegistry::TYPE_LABELS);
         $renderers = ['Standard' => 'standard', 'Breit' => 'wide', 'Landingpage' => 'landing', 'Service' => 'service'];
         $builder->add('code', TextType::class, ['label' => 'Code'])
             ->add('name', TextType::class, ['label' => 'Name'])
