@@ -14,6 +14,7 @@ use Sylius\Component\Inventory\Checker\AvailabilityCheckerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,16 @@ use Symfony\Component\Routing\Attribute\Route;
 final class AddBundleToCartController extends AbstractController
 {
     /** @param CartItemFactoryInterface<OrderItem> $cartItemFactory */
-    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly CartContextInterface $cartContext, private readonly ChannelContextInterface $channelContext, private readonly CartItemFactoryInterface $cartItemFactory, private readonly OrderItemQuantityModifierInterface $quantityModifier, private readonly AvailabilityCheckerInterface $availabilityChecker) {}
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly CartContextInterface $cartContext,
+        private readonly ChannelContextInterface $channelContext,
+        private readonly CartItemFactoryInterface $cartItemFactory,
+        private readonly OrderItemQuantityModifierInterface $quantityModifier,
+        private readonly AvailabilityCheckerInterface $availabilityChecker,
+        private readonly OrderProcessorInterface $orderProcessor,
+    ) {
+    }
 
     #[Route('/bundle/{code}/add', name: 'cardnext_shop_bundle_add', methods: ['POST'])]
     public function __invoke(string $code, Request $request): RedirectResponse
@@ -40,16 +50,32 @@ final class AddBundleToCartController extends AbstractController
         foreach ($request->request->all('components') as $value) {
             if (is_int($value) || is_string($value)) $selected[(int) $value] = true;
         }
-        $cart = $this->cartContext->getCart();
-        $groupKey = self::uuid();
-        $this->addItem($cart, $mainVariant, $bundleQuantity, $bundle, $groupKey, OrderItem::BUNDLE_ROLE_MAIN);
+        /** @var list<array{variant: ProductVariant, quantity: int, role: string}> $items */
+        $items = [['variant' => $mainVariant, 'quantity' => $bundleQuantity, 'role' => OrderItem::BUNDLE_ROLE_MAIN]];
         foreach ($bundle->getItems() as $definition) {
             $variant = $definition->getVariant();
             if (!$definition->isEnabled() || !isset($selected[(int) $variant->getId()])) continue;
             $componentProduct = $variant->getProduct();
             if (!$componentProduct instanceof \App\Entity\Product\Product || !$componentProduct->getChannels()->contains($channel)) throw $this->createNotFoundException();
-            $this->addItem($cart, $variant, $definition->getQuantity() * $bundleQuantity, $bundle, $groupKey, OrderItem::BUNDLE_ROLE_COMPONENT);
+            $items[] = ['variant' => $variant, 'quantity' => $definition->getQuantity() * $bundleQuantity, 'role' => OrderItem::BUNDLE_ROLE_COMPONENT];
         }
+
+        // Validate the complete request before changing the managed cart. Bundle items are
+        // deliberately added directly: Sylius' OrderModifier merges equal variants and
+        // would merge a bundle component into an unrelated, regular cart line.
+        foreach ($items as $item) {
+            $this->assertAvailable($item['variant'], $item['quantity']);
+        }
+
+        $cart = $this->cartContext->getCart();
+        $groupKey = self::uuid();
+        foreach ($items as $item) {
+            $this->addItem($cart, $item['variant'], $item['quantity'], $bundle, $groupKey, $item['role']);
+        }
+
+        // This is the same composite processor used by Sylius' OrderModifier. It resolves
+        // channel/B2B/tier prices first, then bundle discounts, promotions, taxes and totals.
+        $this->orderProcessor->process($cart);
         $this->entityManager->persist($cart);
         $this->entityManager->flush();
         $this->addFlash('success', 'sylius.cart.add_item');
@@ -58,10 +84,16 @@ final class AddBundleToCartController extends AbstractController
 
     private function addItem(OrderInterface $cart, ProductVariant $variant, int $quantity, ProductBundle $bundle, string $key, string $role): void
     {
-        if (!$variant->isEnabled() || !$variant->isValidOrderQuantity($quantity) || !$this->availabilityChecker->isStockSufficient($variant, $quantity)) throw new \DomainException('A bundle item is unavailable for the requested quantity.');
         $item = $this->cartItemFactory->createNew();
         $item->setVariant($variant); $item->setBundle($bundle); $item->setBundleGroupKey($key); $item->setBundleRole($role); $this->quantityModifier->modify($item, $quantity);
         $cart->addItem($item);
+    }
+
+    private function assertAvailable(ProductVariant $variant, int $quantity): void
+    {
+        if (!$variant->isEnabled() || !$variant->isValidOrderQuantity($quantity) || !$this->availabilityChecker->isStockSufficient($variant, $quantity)) {
+            throw new \DomainException('A bundle item is unavailable for the requested quantity.');
+        }
     }
 
     private static function uuid(): string { $hex = bin2hex(random_bytes(16)); return substr($hex, 0, 8).'-'.substr($hex, 8, 4).'-4'.substr($hex, 13, 3).'-a'.substr($hex, 17, 3).'-'.substr($hex, 20); }

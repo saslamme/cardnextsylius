@@ -24,6 +24,22 @@ final class BundleArchitectureTest extends TestCase
         self::assertStringContainsString('removeAdjustments(self::ADJUSTMENT_TYPE)', $bundle);
     }
 
+    public function testBundleControllerRunsTheCompositeProcessorBeforePersistence(): void
+    {
+        $controller = file_get_contents(__DIR__.'/../../src/Controller/Shop/AddBundleToCartController.php');
+        self::assertIsString($controller);
+
+        $process = strpos($controller, '$this->orderProcessor->process($cart)');
+        $persist = strpos($controller, '$this->entityManager->persist($cart)');
+        self::assertIsInt($process);
+        self::assertIsInt($persist);
+        self::assertLessThan($persist, $process);
+        self::assertStringContainsString('OrderProcessorInterface $orderProcessor', $controller);
+        self::assertStringContainsString('$cart->addItem($item)', $controller);
+        self::assertStringNotContainsString('CART_ITEM_ADD', $controller);
+        self::assertStringNotContainsString('setUnitPrice(', $controller);
+    }
+
     public function testBundleCartMetadataIsIndependentFromMaintenanceMetadata(): void
     {
         $source = file_get_contents(__DIR__.'/../../src/Entity/Order/OrderItem.php');
