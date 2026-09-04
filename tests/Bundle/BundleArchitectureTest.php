@@ -48,6 +48,7 @@ final class BundleArchitectureTest extends TestCase
 
         self::assertStringContainsString('class="cn-container"', $template);
         self::assertStringContainsString("component('sylius_shop:main_image'", $template);
+        self::assertSame(2, substr_count($template, "filter: 'cardnext_product_card'"));
         self::assertGreaterThanOrEqual(2, substr_count($template, 'cardnext_product_url('));
         self::assertStringContainsString('cn-bundle__products', $template);
         self::assertStringContainsString('cn-bundle__plus', $template);
