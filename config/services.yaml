@@ -145,6 +145,10 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    App\Controller\Shop\AddBundleToCartController:
+        arguments:
+            $cartItemFactory: '@sylius.custom_factory.order_item'
+
     App\Service\Quote\QuoteRequestMailer:
         arguments:
             $recipient: '%cardnext.quote_recipient%'
