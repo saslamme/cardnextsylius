@@ -8,7 +8,7 @@ use App\Entity\Cms\CmsDownload;
 
 final class CmsBlockRendererRegistry
 {
-    public const TYPES = ['rich_text', 'hero', 'image_text', 'faq', 'cta', 'downloads', 'link_cards', 'product_slider', 'video'];
+    public const TYPES = ['rich_text', 'hero', 'image_text', 'faq', 'cta', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery'];
 
     public const TYPE_LABELS = [
         'rich_text' => 'Text',
@@ -20,6 +20,8 @@ final class CmsBlockRendererRegistry
         'link_cards' => 'Link-Karten',
         'product_slider' => 'Produktslider',
         'video' => 'Video',
+        'manufacturer_slider' => 'Hersteller-Slider',
+        'gallery' => 'Galerie',
     ];
 
     private readonly VideoEmbedResolver $videoEmbedResolver;
@@ -55,6 +57,8 @@ final class CmsBlockRendererRegistry
             'downloads' => [],
             'product_slider' => ['productCodes'],
             'video' => ['provider', 'videoUrl'],
+            'manufacturer_slider' => ['manufacturerCodes'],
+            'gallery' => ['items'],
             default => ['__unsupported'],
         };
 
@@ -129,6 +133,57 @@ final class CmsBlockRendererRegistry
             }
         }
 
+        if ($type === 'manufacturer_slider') {
+            $codes = $configuration['manufacturerCodes'] ?? null;
+            if ($codes !== null && (!is_array($codes) || !array_is_list($codes))) {
+                $errors[] = 'manufacturerCodes must be a list.';
+            } elseif (is_array($codes)) {
+                foreach ($codes as $index => $code) {
+                    if (!is_string($code) || trim($code) === '') {
+                        $errors[] = sprintf('manufacturerCodes[%d] must be a non-empty string.', $index);
+                    }
+                }
+            }
+            $limit = $configuration['limit'] ?? 12;
+            if (!is_int($limit) || $limit < 1 || $limit > 24) {
+                $errors[] = 'limit must be between 1 and 24.';
+            }
+            foreach (['showNavigation', 'linkToManufacturer'] as $option) {
+                if (isset($configuration[$option]) && !is_bool($configuration[$option])) {
+                    $errors[] = $option . ' must be boolean.';
+                }
+            }
+        }
+
+        if ($type === 'gallery') {
+            $items = $configuration['items'] ?? null;
+            if ($items !== null && (!is_array($items) || !array_is_list($items))) {
+                $errors[] = 'items must be a list.';
+            } elseif (is_array($items)) {
+                foreach ($items as $index => $item) {
+                    if (!is_array($item)) {
+                        $errors[] = sprintf('items[%d] is invalid.', $index);
+
+                        continue;
+                    }
+                    if (!isset($item['image']) || !is_string($item['image']) || !self::managedImagePath($item['image'])) {
+                        $errors[] = sprintf('items[%d].image is required.', $index);
+                    }
+                    foreach (['alt', 'caption'] as $field) {
+                        if (isset($item[$field]) && !is_string($item[$field])) {
+                            $errors[] = sprintf('items[%d].%s must be a string.', $index, $field);
+                        }
+                    }
+                }
+            }
+            if (!in_array($configuration['columns'] ?? 3, [2, 3, 4], true)) {
+                $errors[] = 'columns must be 2, 3 or 4.';
+            }
+            if (isset($configuration['showCaptions']) && !is_bool($configuration['showCaptions'])) {
+                $errors[] = 'showCaptions must be boolean.';
+            }
+        }
+
         return $errors;
     }
 
@@ -136,5 +191,10 @@ final class CmsBlockRendererRegistry
     {
         return (str_starts_with($url, '/') && !str_starts_with($url, '//')) ||
             (filter_var($url, \FILTER_VALIDATE_URL) !== false && in_array(parse_url($url, \PHP_URL_SCHEME), ['http', 'https'], true));
+    }
+
+    private static function managedImagePath(string $path): bool
+    {
+        return preg_match('#^uploads/cms/[^/]+\.(?:jpe?g|png|webp)$#i', $path) === 1;
     }
 }

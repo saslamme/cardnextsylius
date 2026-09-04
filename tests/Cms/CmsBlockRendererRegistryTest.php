@@ -82,4 +82,32 @@ final class CmsBlockRendererRegistryTest extends TestCase
             'items' => [['title' => 'Downloads', 'linkUrl' => '/downloads']],
         ]));
     }
+
+    public function testManufacturerSliderIsRegisteredAndValidated(): void
+    {
+        $registry = new CmsBlockRendererRegistry();
+        self::assertContains('manufacturer_slider', CmsBlockRendererRegistry::TYPES);
+        self::assertSame('Hersteller-Slider', CmsBlockRendererRegistry::TYPE_LABELS['manufacturer_slider']);
+        self::assertContains('manufacturerCodes is required.', $registry->validate('manufacturer_slider', []));
+        self::assertContains('manufacturerCodes must be a list.', $registry->validate('manufacturer_slider', ['manufacturerCodes' => 'ZEBRA']));
+        self::assertContains('manufacturerCodes[1] must be a non-empty string.', $registry->validate('manufacturer_slider', ['manufacturerCodes' => ['ZEBRA', '']]));
+        self::assertContains('limit must be between 1 and 24.', $registry->validate('manufacturer_slider', ['manufacturerCodes' => ['ZEBRA'], 'limit' => 25]));
+        self::assertSame([], $registry->validate('manufacturer_slider', ['manufacturerCodes' => ['ZEBRA'], 'limit' => 12, 'showNavigation' => true, 'linkToManufacturer' => true]));
+    }
+
+    public function testGalleryIsRegisteredAndValidated(): void
+    {
+        $registry = new CmsBlockRendererRegistry();
+        self::assertContains('gallery', CmsBlockRendererRegistry::TYPES);
+        self::assertSame('Galerie', CmsBlockRendererRegistry::TYPE_LABELS['gallery']);
+        self::assertContains('items is required.', $registry->validate('gallery', []));
+        self::assertContains('items must be a list.', $registry->validate('gallery', ['items' => 'invalid']));
+        self::assertContains('items[0].image is required.', $registry->validate('gallery', ['items' => [[]]]));
+        foreach ([1, 5] as $columns) {
+            self::assertContains('columns must be 2, 3 or 4.', $registry->validate('gallery', ['items' => [['image' => 'uploads/cms/a.jpg']], 'columns' => $columns]));
+        }
+        foreach ([2, 3, 4] as $columns) {
+            self::assertSame([], $registry->validate('gallery', ['items' => [['image' => 'uploads/cms/a.webp', 'alt' => '', 'caption' => 'Test']], 'columns' => $columns]));
+        }
+    }
 }

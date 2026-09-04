@@ -7,6 +7,7 @@ namespace App\Form\Cms;
 use App\Cms\CmsBlockRendererRegistry;
 use App\Entity\Cms\CmsBlock;
 use App\Form\Cms\Block\FaqItemType;
+use App\Form\Cms\Block\GalleryItemType;
 use App\Form\Cms\Block\LinkCardItemType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -39,14 +40,33 @@ final class CmsBlockType extends AbstractType
                     'limit' => 8,
                     'showNavigation' => true,
                     default => null,
+                } : ($useDefaults && $type === 'manufacturer_slider' ? match ($name) {
+                    'limit' => 12,
+                    'showNavigation', 'linkToManufacturer' => true,
+                    default => null,
+                } : ($useDefaults && $type === 'gallery' ? match ($name) {
+                    'columns' => 3,
+                    'showCaptions' => true,
+                    default => null,
                 } : ($useDefaults && $type === 'video' ? match ($name) {
                     'aspectRatio' => '16:9',
                     'showControls', 'privacyMode' => true,
                     default => null,
-                } : null);
+                } : null)));
+                $value = array_key_exists($name, $configuration) ? $configuration[$name] : $default;
+                if ($type === 'gallery' && $name === 'items' && is_array($value)) {
+                    $value = array_map(static function (mixed $item): mixed {
+                        if (is_array($item) && isset($item['image']) && is_string($item['image'])) {
+                            $item['existingImage'] = $item['image'];
+                            unset($item['image']);
+                        }
+
+                        return $item;
+                    }, $value);
+                }
                 $form->add($name, $fieldType, $fieldOptions + [
                     'mapped' => false,
-                    'data' => array_key_exists($name, $configuration) ? $configuration[$name] : $default,
+                    'data' => $value,
                 ]);
             }
         };
@@ -108,6 +128,21 @@ final class CmsBlockType extends AbstractType
                 'aspectRatio' => [ChoiceType::class, ['label' => 'Seitenverhältnis', 'choices' => ['16:9' => '16:9', '4:3' => '4:3', '1:1' => '1:1', '9:16' => '9:16'], 'constraints' => [new Assert\Choice(['16:9', '4:3', '1:1', '9:16'])]]],
                 'showControls' => [CheckboxType::class, ['label' => 'Steuerung anzeigen', 'required' => false]],
                 'privacyMode' => [CheckboxType::class, ['label' => 'Datenschutzmodus', 'required' => false]],
+            ],
+            'manufacturer_slider' => [
+                'headline' => $line('Überschrift'),
+                'text' => $text('Einleitung'),
+                'manufacturerCodes' => [CmsManufacturerSelectionType::class, ['label' => 'Hersteller', 'help' => 'Nach Herstellername, Code oder Slug suchen.']],
+                'limit' => [IntegerType::class, ['label' => 'Maximale Anzahl', 'required' => false, 'attr' => ['min' => 1, 'max' => 24]]],
+                'showNavigation' => [CheckboxType::class, ['label' => 'Slider-Navigation anzeigen', 'required' => false]],
+                'linkToManufacturer' => [CheckboxType::class, ['label' => 'Auf Herstellerseite verlinken', 'required' => false]],
+            ],
+            'gallery' => [
+                'headline' => $line('Überschrift'),
+                'text' => $text('Einleitung'),
+                'columns' => [ChoiceType::class, ['label' => 'Spalten', 'choices' => ['2 Spalten' => 2, '3 Spalten' => 3, '4 Spalten' => 4]]],
+                'showCaptions' => [CheckboxType::class, ['label' => 'Bildunterschriften anzeigen', 'required' => false]],
+                'items' => [CollectionType::class, ['label' => 'Galeriebilder', 'entry_type' => GalleryItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]],
             ],
             default => [],
         };
