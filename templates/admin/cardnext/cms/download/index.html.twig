@@ -1,6 +1,5 @@
-{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
-{% block title %}Downloads{% endblock %}
-{% block body %}{% hook 'sylius_admin.common.index.content' %}{% endblock %}
+{% extends 'admin/cardnext/layout.html.twig' %}
+
 {% block cardnext_content %}
 <div class="page-header mb-4"><div class="row align-items-center"><div class="col"><div class="page-pretitle">Inhalte</div><h2 class="page-title">Downloads</h2></div><div class="col-auto"><a class="btn btn-primary" href="{{ path('cardnext_admin_cms_download_new') }}">+ Neuer Download</a></div></div></div>
 <form class="card card-body mb-3" method="get"><div class="row g-2">

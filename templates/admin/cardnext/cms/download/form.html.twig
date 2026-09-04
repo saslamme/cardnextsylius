@@ -1,8 +1,8 @@
-{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
-{% block title %}{{ new ? 'Download erstellen' : 'Download bearbeiten' }}{% endblock %}
-{% block body %}{% hook 'sylius_admin.common.index.content' %}{% endblock %}
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+
 {% block cardnext_content %}
-<div class="page-header mb-4"><div class="row align-items-center"><div class="col"><div class="page-pretitle">Downloads</div><h2 class="page-title">{{ new ? 'Neuer Download' : download.code }}</h2></div><div class="col-auto"><a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_cms_downloads') }}">Zurück</a></div></div></div>
+<div class="page-header mb-4"><div class="row align-items-center"><div class="col"><div class="page-pretitle">Downloads</div><h2 class="page-title">{{ new ? 'Neuer Download' : 'Download bearbeiten' }}</h2></div><div class="col-auto"><a class="btn btn-outline-secondary" href="{{ path('cardnext_admin_cms_downloads') }}">Zurück</a></div></div></div>
 {{ form_start(form) }}{{ form_errors(form) }}
 <div class="row g-4"><div class="col-lg-8"><div class="card"><div class="card-header"><h3 class="card-title">Sprachversionen</h3></div><div class="card-body">
   <ul class="nav nav-tabs mb-3" role="tablist">{% for translation in form.translations %}{% set locale = translation.locale.vars.value %}<li class="nav-item"><button type="button" class="nav-link {{ loop.first ? 'active' }}" data-bs-toggle="tab" data-bs-target="#download-locale-{{ loop.index }}">{{ locale_names[locale]|default(locale) }} {% if translation.title.vars.value|trim %}<span class="badge bg-success-lt">●</span>{% endif %}</button></li>{% endfor %}</ul>
