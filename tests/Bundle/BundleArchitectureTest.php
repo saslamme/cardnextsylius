@@ -41,6 +41,28 @@ final class BundleArchitectureTest extends TestCase
         self::assertStringContainsString("csrf_token('bundle_add_'", $template);
     }
 
+    public function testBundleStorefrontUsesTheCardnextPresentationContract(): void
+    {
+        $template = file_get_contents(__DIR__.'/../../templates/shop/product/_bundles.html.twig');
+        self::assertIsString($template);
+
+        self::assertStringContainsString('class="cn-container"', $template);
+        self::assertStringContainsString("component('sylius_shop:main_image'", $template);
+        self::assertGreaterThanOrEqual(2, substr_count($template, 'cardnext_product_url('));
+        self::assertStringContainsString('cn-bundle__products', $template);
+        self::assertStringContainsString('cn-bundle__plus', $template);
+        self::assertStringContainsString('cn-bundle-summary', $template);
+        self::assertStringContainsString('cn-bundle-product--main', $template);
+        self::assertSame(1, substr_count($template, 'name="components[]"'));
+        self::assertStringContainsString("csrf_token('bundle_add_'", $template);
+        self::assertStringNotContainsString('style="width:', $template);
+        $mainProductStart = strpos($template, 'cn-bundle-product--main');
+        self::assertIsInt($mainProductStart);
+        $mainProductEnd = strpos($template, '</article>', $mainProductStart);
+        self::assertIsInt($mainProductEnd);
+        self::assertStringNotContainsString('type="checkbox"', substr($template, $mainProductStart, $mainProductEnd - $mainProductStart));
+    }
+
     public function testBundleEntitiesMapSnakeCaseColumnsCreatedByTheMigration(): void
     {
         self::assertSame('main_product_id', $this->mappingName(ProductBundle::class, 'mainProduct', 'JoinColumn'));

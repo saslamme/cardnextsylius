@@ -15,10 +15,10 @@ export default class extends Controller {
         if (complete && this.discountTypeValue === 'FIXED') saving = this.discountValueValue * multiplier;
         if (complete && this.discountTypeValue === 'PERCENT') saving = Math.round(subtotal * this.discountValueValue / 10000);
         saving = Math.min(subtotal, saving);
-        this.subtotalTarget.textContent = this.money(subtotal);
+        if (this.hasSubtotalTarget) this.subtotalTarget.textContent = this.money(subtotal);
         this.totalTarget.textContent = this.money(subtotal - saving);
-        this.savingTarget.textContent = this.money(saving);
-        this.noticeTarget.classList.toggle('d-none', complete || this.discountTypeValue === 'NONE');
+        if (this.hasSavingTarget) this.savingTarget.textContent = this.money(saving);
+        if (this.hasNoticeTarget) this.noticeTarget.classList.toggle('d-none', complete || this.discountTypeValue === 'NONE');
     }
 
     money(value) { return new Intl.NumberFormat(document.documentElement.lang || 'de-DE', { style: 'currency', currency: document.body.dataset.currency || 'EUR' }).format(value / 100); }
