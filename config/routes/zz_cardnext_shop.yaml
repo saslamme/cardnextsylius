@@ -30,4 +30,4 @@ cardnext_shop_configurator_page:
     controller: App\Controller\Shop\ConfiguratorPageController
     methods: [GET]
     requirements:
-        configuratorPath: '(?!(?:admin|api|angebot)(?:/|$)|_).+'
+        configuratorPath: '(?!(?:admin|api|angebot|downloads)(?:/|$)|_).+'
