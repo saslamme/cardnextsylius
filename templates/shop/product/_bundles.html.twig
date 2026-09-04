@@ -1,0 +1,43 @@
+{% set bundles = cardnext_product_bundles(product) %}
+{% if bundles is not empty %}
+<section class="cn-product-bundles my-5" aria-labelledby="frequently-bought-heading">
+    <h2 id="frequently-bought-heading" class="h3 mb-4">Häufig zusammen gekauft</h2>
+    {% for view in bundles %}
+        <form class="card mb-3 shadow-sm" method="post" action="{{ path('cardnext_shop_bundle_add', {code: view.bundle.code}) }}" data-controller="bundle-calculator" data-bundle-calculator-discount-type-value="{{ view.configuration.discountType }}" data-bundle-calculator-discount-value-value="{{ view.configuration.discountType == 'FIXED' ? view.configuration.fixedDiscount : view.configuration.percentageDiscount }}">
+            <div class="card-body">
+                <h3 class="h5">{{ view.bundle.name }}</h3>
+                <div class="d-flex gap-3 overflow-auto align-items-stretch py-3">
+                    <article class="cn-bundle-product flex-shrink-0" style="width: 11rem">
+                        <strong>{{ product.name }}</strong>
+                        <div>{{ view.main.unitPrice|sylius_format_money(sylius.currencyCode, sylius.localeCode) }}</div>
+                        <small>Dieses Produkt</small>
+                        <input type="hidden" name="mainVariant" value="{{ view.main.variant.id }}">
+                        <input type="hidden" data-bundle-calculator-target="item" data-price="{{ view.main.unitPrice }}" data-quantity="1" checked>
+                    </article>
+                    {% for component in view.components %}
+                        <span class="fs-3 align-self-center" aria-hidden="true">+</span>
+                        <article class="cn-bundle-product flex-shrink-0" style="width: 11rem">
+                            <strong>{{ component.variant.product.name }}</strong>
+                            <div>{{ component.unitPrice|sylius_format_money(sylius.currencyCode, sylius.localeCode) }}{% if component.quantity > 1 %} × {{ component.quantity }}{% endif %}</div>
+                            <label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="components[]" value="{{ component.variant.id }}" checked data-bundle-calculator-target="item" data-price="{{ component.unitPrice }}" data-quantity="{{ component.quantity }}" data-action="bundle-calculator#recalculate"> Einschließen</label>
+                        </article>
+                    {% endfor %}
+                </div>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md">
+                        <dl class="row mb-0">
+                            <dt class="col-7">Einzelpreis zusammen</dt><dd class="col-5 text-end" data-bundle-calculator-target="subtotal"></dd>
+                            <dt class="col-7">Bundle-Preis</dt><dd class="col-5 text-end fw-bold" data-bundle-calculator-target="total"></dd>
+                            <dt class="col-7">Sie sparen</dt><dd class="col-5 text-end text-success" data-bundle-calculator-target="saving"></dd>
+                        </dl>
+                        <p class="small text-muted d-none" data-bundle-calculator-target="notice">Bundle-Vorteil gilt beim Kauf aller Artikel.</p>
+                    </div>
+                    <div class="col-md-auto"><label class="form-label">Bundle-Menge <input class="form-control" type="number" name="quantity" min="1" max="100" value="1" data-bundle-calculator-target="bundleQuantity" data-action="bundle-calculator#recalculate"></label></div>
+                    <div class="col-md-auto"><button class="btn btn-primary" type="submit">Alle ausgewählten Artikel in den Warenkorb</button></div>
+                </div>
+                <input type="hidden" name="_token" value="{{ csrf_token('bundle_add_' ~ view.bundle.code) }}">
+            </div>
+        </form>
+    {% endfor %}
+</section>
+{% endif %}

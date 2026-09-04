@@ -60,6 +60,11 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\OrderBy(['position' => 'ASC', 'title' => 'ASC'])]
     private Collection $documents;
 
+    /** @var Collection<int, ProductBundle> */
+    #[ORM\OneToMany(mappedBy: 'mainProduct', targetEntity: ProductBundle::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    private Collection $bundles;
+
     public function __construct()
     {
         parent::__construct();
@@ -67,7 +72,21 @@ class Product extends BaseProduct implements ProductInterface
         $this->compatibilities = new ArrayCollection();
         $this->reverseCompatibilities = new ArrayCollection();
         $this->deviceCompatibilities = new ArrayCollection();
+        $this->bundles = new ArrayCollection();
     }
+
+    /** @return Collection<int, ProductBundle> */
+    public function getBundles(): Collection { return $this->bundles; }
+
+    public function addBundle(ProductBundle $bundle): void
+    {
+        if (!$this->bundles->contains($bundle)) {
+            $this->bundles->add($bundle);
+            $bundle->setMainProduct($this);
+        }
+    }
+
+    public function removeBundle(ProductBundle $bundle): void { $this->bundles->removeElement($bundle); }
 
     public function getManufacturer(): ?Manufacturer
     {
