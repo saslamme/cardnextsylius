@@ -1,0 +1,43 @@
+{% set icon_classes = {
+    support: 'fa-headset',
+    download: 'fa-download',
+    manual: 'fa-book-open',
+    service: 'fa-screwdriver-wrench',
+    contact: 'fa-envelope',
+    product: 'fa-box-open'
+} %}
+
+<section class="container-xl py-5">
+    {% if config.headline|default %}
+        <h2 class="h2 mb-3">{{ config.headline }}</h2>
+    {% endif %}
+    {% if config.text|default %}
+        <p class="lead text-secondary mb-4">{{ config.text }}</p>
+    {% endif %}
+
+    <div class="row g-4">
+        {% for item in config.items|default([]) %}
+            <div class="col-12 col-md-6 col-xl-3">
+                <article class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 d-flex flex-column">
+                        {% if item.icon|default and icon_classes[item.icon] is defined %}
+                            <div class="fs-3 mb-3" aria-hidden="true">
+                                <i class="fa-solid {{ icon_classes[item.icon] }}"></i>
+                            </div>
+                        {% endif %}
+                        <h3 class="h5">{{ item.title }}</h3>
+                        {% if item.text|default %}
+                            <p class="text-secondary mb-4">{{ item.text }}</p>
+                        {% endif %}
+                        {% if item.linkUrl|default %}
+                            <a class="fw-semibold text-decoration-none mt-auto" href="{{ item.linkUrl }}">
+                                {{ item.linkLabel|default('Mehr erfahren') }}
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+</section>
