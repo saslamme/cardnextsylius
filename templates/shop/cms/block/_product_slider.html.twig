@@ -1,0 +1,24 @@
+{% set products = cardnext_cms_product_slider_products(config.productCodes|default([]), config.limit|default(8)) %}
+{% if products is not empty %}
+<section class="cn-cms-product-slider cn-product-slider mb-5" data-cn-product-slider>
+    {% if config.headline|default or config.text|default or config.showNavigation|default(true) %}
+        <div class="cn-section-head">
+            <div>
+                {% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}
+                {% if config.text|default %}<p class="cn-lead">{{ config.text }}</p>{% endif %}
+            </div>
+            {% if config.showNavigation|default(true) %}
+                <div class="cn-product-slider__controls">
+                    <button class="cn-slider-button" type="button" data-cn-product-slider-previous aria-label="Vorherige Produkte" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                    <button class="cn-slider-button" type="button" data-cn-product-slider-next aria-label="Nächste Produkte"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    <div class="cn-product-slider__viewport" data-cn-product-slider-viewport tabindex="0">
+        <div class="cn-product-slider__track">
+            {% for product in products %}<div class="cn-product-slider__slide">{{ component('cardnext:product:card', {product: product}) }}</div>{% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

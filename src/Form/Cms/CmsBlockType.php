@@ -26,7 +26,7 @@ final class CmsBlockType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $choices = array_combine(CmsBlockRendererRegistry::TYPES, CmsBlockRendererRegistry::TYPES);
+        $choices = array_flip(CmsBlockRendererRegistry::TYPE_LABELS);
         $builder->add('locale', ChoiceType::class, ['label' => 'Sprache', 'choices' => $options['locale_choices']])
             ->add('type', ChoiceType::class, ['label' => 'Blocktyp', 'choices' => $choices])
             ->add('position', IntegerType::class, ['label' => 'Position'])
@@ -34,7 +34,15 @@ final class CmsBlockType extends AbstractType
 
         $configure = function ($form, string $type, array $configuration): void {
             foreach ($this->fields($type) as $name => [$fieldType, $fieldOptions]) {
-                $form->add($name, $fieldType, $fieldOptions + ['mapped' => false, 'data' => $configuration[$name] ?? null]);
+                $default = $type === 'product_slider' ? match ($name) {
+                    'limit' => 8,
+                    'showNavigation' => true,
+                    default => null,
+                } : null;
+                $form->add($name, $fieldType, $fieldOptions + [
+                    'mapped' => false,
+                    'data' => array_key_exists($name, $configuration) ? $configuration[$name] : $default,
+                ]);
             }
         };
         $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($configure): void {
@@ -75,6 +83,16 @@ final class CmsBlockType extends AbstractType
                     'allow_delete' => true,
                     'by_reference' => false,
                 ]],
+            ],
+            'product_slider' => [
+                'headline' => $line('Überschrift'),
+                'text' => $text('Einleitung'),
+                'productCodes' => [CmsProductSelectionType::class, [
+                    'label' => 'Produkte',
+                    'help' => 'Nach Produktname, Produktcode, Variantencode, Hersteller-Art.-Nr. oder GTIN suchen.',
+                ]],
+                'limit' => [IntegerType::class, ['label' => 'Maximale Anzahl', 'required' => false, 'attr' => ['min' => 1, 'max' => 24]]],
+                'showNavigation' => [CheckboxType::class, ['label' => 'Slider-Navigation anzeigen', 'required' => false]],
             ],
             default => [],
         };

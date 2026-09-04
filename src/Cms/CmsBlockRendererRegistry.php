@@ -8,7 +8,18 @@ use App\Entity\Cms\CmsDownload;
 
 final class CmsBlockRendererRegistry
 {
-    public const TYPES = ['rich_text', 'hero', 'image_text', 'faq', 'cta', 'downloads', 'link_cards'];
+    public const TYPES = ['rich_text', 'hero', 'image_text', 'faq', 'cta', 'downloads', 'link_cards', 'product_slider'];
+
+    public const TYPE_LABELS = [
+        'rich_text' => 'Text',
+        'hero' => 'Hero',
+        'image_text' => 'Bild & Text',
+        'faq' => 'FAQ',
+        'cta' => 'Call-to-Action',
+        'downloads' => 'Downloads',
+        'link_cards' => 'Link-Karten',
+        'product_slider' => 'Produktslider',
+    ];
 
     public function template(string $type): string
     {
@@ -34,6 +45,7 @@ final class CmsBlockRendererRegistry
             'faq', 'link_cards' => ['items'],
             'cta' => ['headline', 'buttonLabel', 'buttonUrl'],
             'downloads' => [],
+            'product_slider' => ['productCodes'],
             default => ['__unsupported'],
         };
 
@@ -43,7 +55,7 @@ final class CmsBlockRendererRegistry
             }
         }
 
-        if (isset($configuration['buttonUrl']) && !self::safeUrl((string) $configuration['buttonUrl'])) {
+        if (isset($configuration['buttonUrl']) && (!is_string($configuration['buttonUrl']) || !self::safeUrl($configuration['buttonUrl']))) {
             $errors[] = 'buttonUrl is unsafe.';
         }
 
@@ -51,7 +63,7 @@ final class CmsBlockRendererRegistry
             $errors[] = 'imagePosition is invalid.';
         }
 
-        if ($type === 'downloads' && isset($configuration['types']) && array_diff((array) $configuration['types'], CmsDownload::TYPES)) {
+        if ($type === 'downloads' && isset($configuration['types']) && (!is_array($configuration['types']) || array_filter($configuration['types'], static fn (mixed $value): bool => !is_string($value) || !in_array($value, CmsDownload::TYPES, true)))) {
             $errors[] = 'types contains an invalid type.';
         }
 
@@ -66,9 +78,27 @@ final class CmsBlockRendererRegistry
                     $errors[] = sprintf('items[%d].title is required.', $index);
                 }
 
-                if (!empty($item['linkUrl']) && !self::safeUrl((string) $item['linkUrl'])) {
+                if (!empty($item['linkUrl']) && (!is_string($item['linkUrl']) || !self::safeUrl($item['linkUrl']))) {
                     $errors[] = sprintf('items[%d].linkUrl is unsafe.', $index);
                 }
+            }
+        }
+
+        if ($type === 'product_slider') {
+            $productCodes = $configuration['productCodes'] ?? null;
+            if ($productCodes !== null && (!is_array($productCodes) || !array_is_list($productCodes))) {
+                $errors[] = 'productCodes must be a list.';
+            } elseif (is_array($productCodes)) {
+                foreach ($productCodes as $index => $code) {
+                    if (!is_string($code) || trim($code) === '') {
+                        $errors[] = sprintf('productCodes[%d] must be a non-empty string.', $index);
+                    }
+                }
+            }
+
+            $limit = $configuration['limit'] ?? 8;
+            if (!is_int($limit) || $limit < 1 || $limit > 24) {
+                $errors[] = 'limit must be between 1 and 24.';
             }
         }
 
