@@ -6,7 +6,7 @@ namespace App\Form\Cms;
 
 use App\Entity\Channel\Channel;
 use App\Entity\Cms\CmsDownload;
-use App\Entity\Product\Product;
+use Sylius\Bundle\AdminBundle\Form\Type\ProductAutocompleteType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -37,7 +37,7 @@ final class CmsDownloadType extends AbstractType
             ->add('enabled', CheckboxType::class, ['label' => 'Aktiv', 'required' => false])
             ->add('publishedAt', DateTimeType::class, ['label' => 'Veröffentlichen ab', 'required' => false, 'widget' => 'single_text'])
             ->add('channels', EntityType::class, ['class' => Channel::class, 'label' => 'Verkaufskanäle', 'multiple' => true, 'expanded' => true, 'choice_label' => static fn (Channel $channel): string => sprintf('%s (%s)', $channel->getName() ?? $channel->getCode(), $channel->getCode())])
-            ->add('products', EntityType::class, ['class' => Product::class, 'label' => 'Produkte', 'multiple' => true, 'required' => false, 'choice_label' => 'code'])
+            ->add('products', ProductAutocompleteType::class, ['label' => 'Produkte', 'multiple' => true, 'required' => false, 'help' => 'Nach Produktname oder Artikelnummer suchen.'])
             ->add('uploadedFile', FileType::class, ['label' => 'Neue Datei', 'mapped' => false, 'required' => false, 'constraints' => [new File(maxSize: '50M', extensions: ['pdf', 'zip', 'txt', 'csv', 'xml'])]])
             ->add('externalUrl', TextType::class, ['label' => 'Externe HTTPS-URL', 'required' => false])
             ->add('translations', CollectionType::class, ['entry_type' => CmsDownloadTranslationType::class, 'label' => false, 'by_reference' => false, 'allow_add' => false, 'allow_delete' => false]);
