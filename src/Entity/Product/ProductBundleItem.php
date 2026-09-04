@@ -20,13 +20,14 @@ class ProductBundleItem
     #[Assert\NotNull]
     private ProductVariant $variant;
     #[ORM\Column(type: 'integer')] #[Assert\Positive] private int $quantity = 1;
-    #[ORM\Column(type: 'integer', options: ['default' => 0])] #[Assert\PositiveOrZero] private int $position = 0;
+    #[ORM\Column(type: 'integer', options: ['default' => 0])] #[Assert\PositiveOrZero] private int $position = 10;
     #[ORM\Column(options: ['default' => true])] private bool $enabled = true;
 
     public function getId(): ?int { return $this->id; }
     public function getBundle(): ProductBundle { return $this->bundle; }
     public function setBundle(ProductBundle $bundle): void { $this->bundle = $bundle; }
     public function getVariant(): ProductVariant { return $this->variant; }
+    public function hasVariant(): bool { return isset($this->variant); }
     public function setVariant(ProductVariant $variant): void { $this->variant = $variant; }
     public function getQuantity(): int { return $this->quantity; }
     public function setQuantity(int $quantity): void { $this->quantity = $quantity; }

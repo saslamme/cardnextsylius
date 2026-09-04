@@ -17,6 +17,7 @@
         </div>
     </div>
 
+
     <div class="card mb-3">
         <div class="card-header">
             <div>
@@ -123,6 +124,19 @@
             </div>
         </div>
     </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title mb-1">Bundles / Häufig zusammen gekauft</h2>
+                <div class="text-secondary small">Zusatzartikel definieren, die gemeinsam mit diesem Produkt angeboten werden.</div>
+            </div>
+        </div>
+        <div class="card-body">
+            {% include 'admin/cardnext/product/_bundle_collection.html.twig' with {'form': hookable_metadata.context.form} only %}
+        </div>
+    </div>
+
 
     <div class="card mb-3">
         <div class="card-header">
