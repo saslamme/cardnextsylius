@@ -20,6 +20,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Image;
 
 final class CmsBlockType extends AbstractType
@@ -32,13 +33,17 @@ final class CmsBlockType extends AbstractType
             ->add('position', IntegerType::class, ['label' => 'Position'])
             ->add('enabled', CheckboxType::class, ['label' => 'Aktiv', 'required' => false]);
 
-        $configure = function ($form, string $type, array $configuration): void {
+        $configure = function ($form, string $type, array $configuration, bool $useDefaults): void {
             foreach ($this->fields($type) as $name => [$fieldType, $fieldOptions]) {
-                $default = $type === 'product_slider' ? match ($name) {
+                $default = $useDefaults && $type === 'product_slider' ? match ($name) {
                     'limit' => 8,
                     'showNavigation' => true,
                     default => null,
-                } : null;
+                } : ($useDefaults && $type === 'video' ? match ($name) {
+                    'aspectRatio' => '16:9',
+                    'showControls', 'privacyMode' => true,
+                    default => null,
+                } : null);
                 $form->add($name, $fieldType, $fieldOptions + [
                     'mapped' => false,
                     'data' => array_key_exists($name, $configuration) ? $configuration[$name] : $default,
@@ -48,13 +53,13 @@ final class CmsBlockType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($configure): void {
             $block = $event->getData();
             if ($block instanceof CmsBlock) {
-                $configure($event->getForm(), $block->getType(), $block->getConfiguration());
+                $configure($event->getForm(), $block->getType(), $block->getConfiguration(), true);
             }
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) use ($configure): void {
             $data = (array) $event->getData();
             $type = isset($data['type']) && is_string($data['type']) ? $data['type'] : 'rich_text';
-            $configure($event->getForm(), $type, []);
+            $configure($event->getForm(), $type, [], false);
         });
     }
 
@@ -93,6 +98,16 @@ final class CmsBlockType extends AbstractType
                 ]],
                 'limit' => [IntegerType::class, ['label' => 'Maximale Anzahl', 'required' => false, 'attr' => ['min' => 1, 'max' => 24]]],
                 'showNavigation' => [CheckboxType::class, ['label' => 'Slider-Navigation anzeigen', 'required' => false]],
+            ],
+            'video' => [
+                'headline' => $line('Überschrift'),
+                'text' => $text('Einleitung'),
+                'provider' => [ChoiceType::class, ['label' => 'Video-Anbieter', 'choices' => ['YouTube' => 'youtube', 'Vimeo' => 'vimeo'], 'constraints' => [new Assert\NotBlank(), new Assert\Choice(['youtube', 'vimeo'])]]],
+                'videoUrl' => [TextType::class, ['label' => 'Video-URL', 'constraints' => [new Assert\NotBlank(), new Assert\Url(protocols: ['https'])]]],
+                'caption' => $line('Bildunterschrift'),
+                'aspectRatio' => [ChoiceType::class, ['label' => 'Seitenverhältnis', 'choices' => ['16:9' => '16:9', '4:3' => '4:3', '1:1' => '1:1', '9:16' => '9:16'], 'constraints' => [new Assert\Choice(['16:9', '4:3', '1:1', '9:16'])]]],
+                'showControls' => [CheckboxType::class, ['label' => 'Steuerung anzeigen', 'required' => false]],
+                'privacyMode' => [CheckboxType::class, ['label' => 'Datenschutzmodus', 'required' => false]],
             ],
             default => [],
         };

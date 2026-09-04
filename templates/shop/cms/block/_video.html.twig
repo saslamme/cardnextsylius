@@ -1,0 +1,15 @@
+{% set embed = cardnext_cms_video_embed(config.provider|default(''), config.videoUrl|default(''), config.privacyMode|default(true), config.showControls|default(true)) %}
+{% if embed %}
+<section class="cn-cms-video mb-5">
+    <div class="cn-cms-video__header">
+        {% if config.headline|default %}<h2>{{ config.headline }}</h2>{% endif %}
+        {% if config.text|default %}<p class="cn-lead">{{ config.text }}</p>{% endif %}
+    </div>
+    <figure class="cn-cms-video__figure">
+        <div class="cn-cms-video__media cn-cms-video__media--{{ config.aspectRatio|default('16:9')|replace({':': '-'}) }}">
+            <iframe src="{{ embed.embedUrl }}" title="{{ config.caption|default(config.headline|default('Video')) }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" {% if embed.provider == 'youtube' %}allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"{% else %}allow="fullscreen; picture-in-picture"{% endif %} allowfullscreen></iframe>
+        </div>
+        {% if config.caption|default %}<figcaption class="cn-cms-video__caption">{{ config.caption }}</figcaption>{% endif %}
+    </figure>
+</section>
+{% endif %}
