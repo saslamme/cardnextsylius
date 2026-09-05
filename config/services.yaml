@@ -127,6 +127,10 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
+    App\Launch\LaunchCheckRunner:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
     App\International\MarketUrlResolver:
         arguments:
             $channelRepository: '@sylius.repository.channel'
