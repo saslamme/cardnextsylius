@@ -1,0 +1,24 @@
+{% macro item(item) %}
+    <div class="row g-3 align-items-start border-bottom pb-3 mb-3" data-collection-entry>
+        <div class="col-12 col-lg-6">{{ form_row(item.variant) }}</div>
+        <div class="col-6 col-md-3 col-lg-2">{{ form_row(item.quantity) }}</div>
+        <div class="col-6 col-md-3 col-lg-2">{{ form_row(item.position) }}</div>
+        <div class="col-6 col-md-3 col-lg-1 pt-lg-4">{{ form_row(item.enabled) }}</div>
+        <div class="col-6 col-md-3 col-lg-1 pt-lg-4 text-end">
+            <button class="btn btn-outline-danger btn-sm" type="button" data-action="cardnext-bundle-collection#remove" aria-label="Bestandteil entfernen">{{ ux_icon('tabler:trash') }}</button>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro channel(configuration) %}
+    <div class="border rounded p-3 mb-3" data-collection-entry data-discount-type="{{ configuration.discountType.vars.value }}">
+        <div class="row g-3 align-items-start">
+            <div class="col-12 col-lg-4">{{ form_row(configuration.channel) }}</div>
+            <div class="col-12 col-md-6 col-lg-3">{{ form_row(configuration.discountType) }}</div>
+            <div class="col-6 col-md-3 col-lg-2 pt-lg-4">{{ form_row(configuration.enabled) }}</div>
+            <div class="col-6 col-md-3 col-lg-3 pt-lg-4 text-end"><button class="btn btn-outline-danger btn-sm" type="button" data-action="cardnext-bundle-collection#remove">Verkaufskanal entfernen</button></div>
+            <div class="col-12 col-md-6" data-discount-field="FIXED">{{ form_row(configuration.fixedDiscount) }}</div>
+            <div class="col-12 col-md-6" data-discount-field="PERCENT">{{ form_row(configuration.percentageDiscount) }}</div>
+        </div>
+    </div>
+{% endmacro %}

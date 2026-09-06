@@ -1,0 +1,27 @@
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+{% import 'admin/cardnext/product_bundle/_fields.html.twig' as fields %}
+
+{% block cardnext_content %}
+    <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item">Katalog</li><li class="breadcrumb-item"><a href="{{ path('sylius_admin_product_index') }}">Produkte</a></li><li class="breadcrumb-item"><a href="{{ path('cardnext_admin_product_bundle_index', {id: product.id}) }}">{{ product.name }}</a></li><li class="breadcrumb-item active">{{ page_title }}</li></ol></nav>
+    <div class="page-header mb-4"><div class="row align-items-center"><div class="col"><div class="page-pretitle">{{ product.name }} · Code: {{ product.code }}</div><h2 class="page-title">{{ page_title }}</h2></div><div class="col-auto ms-auto"><a class="btn" href="{{ path('cardnext_admin_product_bundle_index', {id: product.id}) }}">Zurück</a></div></div></div>
+
+    {{ form_start(form, {attr: {novalidate: 'novalidate', 'data-controller': 'cardnext-bundle-collection'}}) }}
+        {{ form_errors(form) }}
+        <div class="card mb-4"><div class="card-header"><h3 class="card-title">Allgemein</h3></div><div class="card-body"><div class="row g-3"><div class="col-12 col-md-6">{{ form_row(form.name) }}</div><div class="col-12 col-md-6">{{ form_row(form.code) }}</div><div class="col-6 col-md-3">{{ form_row(form.enabled) }}</div><div class="col-6 col-md-3">{{ form_row(form.position) }}</div></div></div></div>
+
+        <div class="card mb-4"><div class="card-header"><h3 class="card-title">Bestandteile</h3></div><div class="card-body">
+            {{ form_errors(form.items) }}
+            <div data-collection-holder data-placeholder="__item__" data-index="{{ form.items|length }}" data-prototype="{{ fields.item(form.items.vars.prototype)|e('html_attr') }}">{% for item in form.items %}{{ fields.item(item) }}{% endfor %}</div>
+            <button class="btn btn-outline-primary" type="button" data-action="cardnext-bundle-collection#add">{{ ux_icon('tabler:plus') }} Bestandteil hinzufügen</button>
+        </div></div>
+
+        <div class="card mb-4"><div class="card-header"><h3 class="card-title">Verkaufskanäle &amp; Rabatt</h3></div><div class="card-body">
+            {{ form_errors(form.channelConfigurations) }}
+            <div data-collection-holder data-placeholder="__channel__" data-index="{{ form.channelConfigurations|length }}" data-prototype="{{ fields.channel(form.channelConfigurations.vars.prototype)|e('html_attr') }}">{% for configuration in form.channelConfigurations %}{{ fields.channel(configuration) }}{% endfor %}</div>
+            <button class="btn btn-outline-primary" type="button" data-action="cardnext-bundle-collection#add">{{ ux_icon('tabler:plus') }} Verkaufskanal hinzufügen</button>
+        </div></div>
+
+        <div class="d-flex justify-content-end gap-2"><a class="btn" href="{{ path('cardnext_admin_product_bundle_index', {id: product.id}) }}">Abbrechen</a><button class="btn btn-primary" type="submit">Speichern</button></div>
+    {{ form_end(form) }}
+{% endblock %}
