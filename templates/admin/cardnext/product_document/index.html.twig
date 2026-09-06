@@ -2,16 +2,17 @@
 {% set page_title = 'Produktdokumente' %}
 
 {% block cardnext_content %}
+    <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item">Katalog</li><li class="breadcrumb-item"><a href="{{ path('sylius_admin_product_index') }}">Produkte</a></li><li class="breadcrumb-item"><a href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">{{ product.name }}</a></li><li class="breadcrumb-item active">Dokumente</li></ol></nav>
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
-                <div class="page-pretitle">{{ product.name }}</div>
-                <h2 class="page-title">Produktdokumente</h2>
+                <div class="page-pretitle">{{ product.name }} · Code: {{ product.code }}</div>
+                <h2 class="page-title">Dokumente</h2>
             </div>
             <div class="col-auto ms-auto d-flex gap-2">
-                <a class="btn" href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">Zum Produkt</a>
+                <a class="btn" href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">Zurück zum Produkt</a>
                 <a class="btn btn-primary" href="{{ path('cardnext_admin_product_document_create', {'id': product.id}) }}">
-                    Dokument hochladen
+                    Dokument anlegen
                 </a>
             </div>
         </div>

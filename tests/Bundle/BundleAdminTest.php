@@ -20,18 +20,41 @@ final class BundleAdminTest extends TestCase
 {
     public function testAdminTemplateRendersAllNestedCollectionsAndControls(): void
     {
-        $section = (string) file_get_contents(__DIR__.'/../../templates/admin/cardnext/product/section.html.twig');
-        $collection = (string) file_get_contents(__DIR__.'/../../templates/admin/cardnext/product/_bundle_collection.html.twig');
-        $controller = (string) file_get_contents(__DIR__.'/../../assets/admin/controllers/cardnext_bundle_collection_controller.js');
+        $section = (string) file_get_contents(__DIR__ . '/../../templates/admin/cardnext/product/section.html.twig');
+        $form = (string) file_get_contents(__DIR__ . '/../../templates/admin/cardnext/product_bundle/form.html.twig');
+        $controller = (string) file_get_contents(__DIR__ . '/../../assets/admin/controllers/cardnext_bundle_collection_controller.js');
 
-        self::assertStringContainsString("form': hookable_metadata.context.form", $section);
-        self::assertStringContainsString('form.bundles', $collection);
-        self::assertStringContainsString('Bundle hinzufügen', $collection);
-        self::assertStringContainsString('Bestandteil hinzufügen', $collection);
-        self::assertStringContainsString('Channel hinzufügen', $collection);
-        self::assertStringContainsString('data-prototype', $collection);
+        self::assertStringNotContainsString('_bundle_collection', $section);
+        self::assertStringContainsString('Bundles verwalten', $section);
+        self::assertStringContainsString('Bestandteil hinzufügen', $form);
+        self::assertStringContainsString('Verkaufskanal hinzufügen', $form);
+        self::assertStringContainsString('data-prototype', $form);
         self::assertStringContainsString("insertAdjacentHTML('beforeend'", $controller);
         self::assertStringContainsString("closest('[data-collection-entry]')?.remove()", $controller);
+    }
+
+    public function testBundleAdminUsesDedicatedSecuredRoutesAndDomainMethods(): void
+    {
+        $controller = (string) file_get_contents(__DIR__ . '/../../src/Controller/Admin/ProductBundleAdminController.php');
+
+        self::assertStringContainsString('DEFAULT_ADMIN_ROLE', $controller);
+        self::assertStringContainsString("methods: ['POST']", $controller);
+        self::assertStringContainsString("isCsrfTokenValid('delete-product-bundle-'", $controller);
+        self::assertStringContainsString('$product->addBundle($bundle)', $controller);
+        self::assertStringContainsString('$product->removeBundle($bundle)', $controller);
+    }
+
+    public function testProductEditorKeepsItsManagementAndConditionalAdvisorCards(): void
+    {
+        $section = (string) file_get_contents(__DIR__ . '/../../templates/admin/cardnext/product/section.html.twig');
+        $navigation = (string) file_get_contents(__DIR__ . '/../../templates/admin/cardnext/product/side_navigation.html.twig');
+
+        self::assertStringContainsString('>Cardnext<', preg_replace('/\\s+/', '', $navigation) ?? '');
+        foreach (['Dokumente', 'Kompatibilität', 'B2B- & Staffelpreise', 'Bundles', 'Technische Daten'] as $label) {
+            self::assertStringContainsString($label, $section);
+        }
+        self::assertStringContainsString("profile_code == 'card_printers'", $section);
+        self::assertStringContainsString('Nach dem ersten Speichern verfügbar.', $section);
     }
 
     public function testAdminDiscountValuesAreConvertedWithoutFloats(): void

@@ -14,8 +14,6 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use App\Form\Type\ProductBundleType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
 
@@ -88,15 +86,6 @@ final class ProductTypeExtension extends AbstractTypeExtension
         $builder->add('printerAdvisorProfile', PrinterAdvisorProfileType::class, [
             'required' => false,
             'label' => 'Kartendrucker-Berater',
-        ]);
-
-        $builder->add('bundles', CollectionType::class, [
-            'entry_type' => ProductBundleType::class,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'by_reference' => false,
-            'prototype_name' => '__bundle__',
-            'label' => 'Bundles / Häufig zusammen gekauft',
         ]);
     }
 

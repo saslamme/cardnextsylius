@@ -35,10 +35,13 @@ final class ProductTypeExtensionTest extends TestCase
             'manufacturer' => EntityType::class,
             'model' => TextType::class,
             'dataQualityStatus' => ChoiceType::class,
+            'addonOnly' => CheckboxType::class,
             'homepageFeatured' => CheckboxType::class,
             'homepagePosition' => IntegerType::class,
             'printerAdvisorProfile' => PrinterAdvisorProfileType::class,
         ], $fieldTypes);
+
+        self::assertArrayNotHasKey('bundles', $fieldTypes);
     }
 
     public function testHomepagePositionFallsBackToAValidValueWhenSubmittedEmpty(): void

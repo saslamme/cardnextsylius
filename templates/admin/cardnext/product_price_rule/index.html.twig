@@ -1,17 +1,18 @@
 {% extends 'admin/cardnext/layout.html.twig' %}
 
 {% block cardnext_content %}
+    <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item">Katalog</li><li class="breadcrumb-item"><a href="{{ path('sylius_admin_product_index') }}">Produkte</a></li><li class="breadcrumb-item"><a href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">{{ product.name }}</a></li><li class="breadcrumb-item active">B2B- &amp; Staffelpreise</li></ol></nav>
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
-                <div class="page-pretitle">{{ product.code }}</div>
+                <div class="page-pretitle">{{ product.name }} · Code: {{ product.code }}</div>
                 <h2 class="page-title">B2B- &amp; Staffelpreise</h2>
                 <div class="text-secondary mt-1">{{ product.name }}</div>
             </div>
 
             <div class="col-auto ms-auto">
                 <a class="btn" href="{{ path('sylius_admin_product_update', {'id': product.id}) }}">
-                    Zum Produkt
+                    Zurück zum Produkt
                 </a>
             </div>
         </div>
