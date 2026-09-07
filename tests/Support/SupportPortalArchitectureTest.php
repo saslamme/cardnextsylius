@@ -53,7 +53,29 @@ final class SupportPortalArchitectureTest extends TestCase
         self::assertStringContainsString('cardnext.support.validation.subject_required', $formType);
         self::assertStringContainsString('cardnext.support.validation.description_short', $formType);
         self::assertStringContainsString('cardnext.support.validation.summary', $template);
-        self::assertStringContainsString('form_errors(field)', $template);
         self::assertStringContainsString('service_unavailable', $template);
+    }
+
+    public function testCreateFormUsesFieldPartialInsteadOfEmbedScopedMacro(): void
+    {
+        $template = (string) file_get_contents(__DIR__ . '/../../templates/shop/account/support/new.html.twig');
+        $fieldPartialPath = __DIR__ . '/../../templates/shop/account/support/_field.html.twig';
+
+        self::assertStringNotContainsString('{% macro field', $template);
+        self::assertStringNotContainsString('{% import _self', $template);
+        self::assertFileExists($fieldPartialPath);
+
+        $fieldPartial = (string) file_get_contents($fieldPartialPath);
+
+        self::assertStringContainsString('form_label(field', $fieldPartial);
+        self::assertStringContainsString('form_widget(field)', $fieldPartial);
+        self::assertStringContainsString('form_help(field', $fieldPartial);
+        self::assertStringContainsString('form_errors(field)', $fieldPartial);
+
+        foreach (['type', 'order', 'maintenanceContract', 'serialNumber', 'product', 'subject', 'description'] as $field) {
+            self::assertMatchesRegularExpression(sprintf('/with \\{\\s+field: form\\.%s\\s+\\} only/', $field), $template);
+        }
+
+        self::assertSame(7, substr_count($template, "include 'shop/account/support/_field.html.twig'"));
     }
 }

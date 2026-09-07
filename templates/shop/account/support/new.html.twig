@@ -1,18 +1,8 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 
-{% macro field(field) %}
-    <div class="cn-support-field{% if field.vars.errors|length %} cn-support-field--invalid{% endif %}">
-        {{ form_label(field, null, {label_attr: {class: 'form-label'}}) }}
-        {{ form_widget(field) }}
-        {% if field.vars.help %}{{ form_help(field, {help_attr: {class: 'form-text'}}) }}{% endif %}
-        {{ form_errors(field) }}
-    </div>
-{% endmacro %}
-
 {% block content %}
 {% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'cardnext.support.title'|trans, url: path('cardnext_shop_account_support_index') }, { label: 'cardnext.support.new'|trans }] } %}
 {% block account_content %}
-{% import _self as support_form %}
 <section class="cn-account-panel cn-support">
     <header class="cn-support__header">
         <div class="cn-support__header-copy">
@@ -40,22 +30,38 @@
         <fieldset class="cn-support__section">
             <legend class="cn-support__section-title">{{ 'cardnext.support.section.request'|trans }}</legend>
             <div class="cn-support__grid">
-                {{ support_form.field(form.type) }}
-                {{ support_form.field(form.order) }}
+                {% include 'shop/account/support/_field.html.twig' with {
+                    field: form.type
+                } only %}
+                {% include 'shop/account/support/_field.html.twig' with {
+                    field: form.order
+                } only %}
             </div>
         </fieldset>
         <fieldset class="cn-support__section">
             <legend class="cn-support__section-title">{{ 'cardnext.support.section.device'|trans }}</legend>
             <div class="cn-support__grid">
-                {{ support_form.field(form.maintenanceContract) }}
-                {{ support_form.field(form.serialNumber) }}
-                <div class="cn-support__grid-full">{{ support_form.field(form.product) }}</div>
+                {% include 'shop/account/support/_field.html.twig' with {
+                    field: form.maintenanceContract
+                } only %}
+                {% include 'shop/account/support/_field.html.twig' with {
+                    field: form.serialNumber
+                } only %}
+                <div class="cn-support__grid-full">
+                    {% include 'shop/account/support/_field.html.twig' with {
+                        field: form.product
+                    } only %}
+                </div>
             </div>
         </fieldset>
         <fieldset class="cn-support__section">
             <legend class="cn-support__section-title">{{ 'cardnext.support.section.message'|trans }}</legend>
-            {{ support_form.field(form.subject) }}
-            {{ support_form.field(form.description) }}
+            {% include 'shop/account/support/_field.html.twig' with {
+                field: form.subject
+            } only %}
+            {% include 'shop/account/support/_field.html.twig' with {
+                field: form.description
+            } only %}
         </fieldset>
         <div class="cn-support__actions">
             <button class="btn btn-primary" type="submit">{{ 'cardnext.support.form.submit'|trans }}</button>
