@@ -20,14 +20,21 @@ use Doctrine\ORM\Mapping as ORM;
 class SupportCase
 {
  #[ORM\Id, ORM\GeneratedValue, ORM\Column(type:'integer')] private ?int $id=null;
- #[ORM\ManyToOne(targetEntity:Customer::class), ORM\JoinColumn(nullable:false,onDelete:'RESTRICT')] private Customer $customer;
+ #[ORM\ManyToOne(targetEntity:Customer::class), ORM\JoinColumn(name:'customer_id',referencedColumnName:'id',nullable:false,onDelete:'RESTRICT')] private Customer $customer;
  #[ORM\Column(name:'freshdesk_ticket_id',type:'bigint')] private int $freshdeskTicketId;
  #[ORM\Column(name:'freshdesk_requester_id',type:'bigint')] private int $freshdeskRequesterId;
  #[ORM\Column(name:'channel_code',length:64)] private string $channelCode;
  #[ORM\Column(name:'service_type',length:64,enumType:SupportCaseType::class)] private SupportCaseType $serviceType;
- #[ORM\ManyToOne(targetEntity:Order::class), ORM\JoinColumn(nullable:true,onDelete:'SET NULL')] private ?Order $order=null;
- #[ORM\ManyToOne(targetEntity:Product::class), ORM\JoinColumn(nullable:true,onDelete:'SET NULL')] private ?Product $product=null;
- #[ORM\ManyToOne(targetEntity:MaintenanceContract::class), ORM\JoinColumn(nullable:true,onDelete:'SET NULL')] private ?MaintenanceContract $maintenanceContract=null;
+ #[ORM\ManyToOne(targetEntity:Order::class), ORM\JoinColumn(name:'order_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?Order $order=null;
+ #[ORM\ManyToOne(targetEntity:Product::class), ORM\JoinColumn(name:'product_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?Product $product=null;
+ #[ORM\ManyToOne(targetEntity: MaintenanceContract::class)]
+ #[ORM\JoinColumn(
+     name: 'maintenance_contract_id',
+     referencedColumnName: 'id',
+     nullable: true,
+     onDelete: 'SET NULL'
+ )]
+ private ?MaintenanceContract $maintenanceContract=null;
  #[ORM\Column(name:'serial_number',length:255,nullable:true)] private ?string $serialNumber=null;
  #[ORM\Column(name:'created_at',type:'datetime_immutable')] private \DateTimeImmutable $createdAt;
  #[ORM\Column(name:'updated_at',type:'datetime_immutable')] private \DateTimeImmutable $updatedAt;
