@@ -38,7 +38,15 @@ final class HomepageCategoryVisualTemplateTest extends TestCase
         self::assertMatchesRegularExpression('/\.cn-home-category__icon \{[^}]*object-fit: contain;/s', $stylesheet);
         self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media--icon[^}]*object-fit: cover;/s', $stylesheet);
         self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media img \{[^}]*object-fit: cover;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\.cn-home-category__media--icon \{[^}]*display: flex;[^}]*align-items: center;[^}]*justify-content: center;[^}]*overflow: visible;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\.cn-home-category__icon \{[^}]*max-width: 75%;[^}]*max-height: 75%;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__media--icon \{[^}]*display: flex;[^}]*align-items: center;[^}]*justify-content: center;[^}]*overflow: hidden;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__image,\s*\.cn-home-category__icon \{[^}]*max-width: min\(58%, 136px\);[^}]*max-height: 92px;/s', $stylesheet);
+    }
+
+    public function testCmsCategorySliderUsesConstrainedIconMarkup(): void
+    {
+        $categorySlider = (string) file_get_contents(__DIR__ . '/../../templates/shop/cms/block/_category_slider.html.twig');
+
+        self::assertStringContainsString('cn-home-category__media cn-home-category__media--icon', $categorySlider);
+        self::assertStringContainsString('class="cn-home-category__image"', $categorySlider);
     }
 }
