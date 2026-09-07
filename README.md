@@ -185,3 +185,20 @@ CARDNEXT_ERP_MAINTENANCE_FIELD_MAP='{"externalId":"contractId","erpCustomerNumbe
 Never commit production ERP credentials. ERP authentication must be configured according to the production ERP API. `CARDNEXT_ERP_MAINTENANCE_FIELD_MAP` maps the DTO names (`externalId`, `erpCustomerNumber`, `serialNumbers`, `startsAt`, `endsAt`, and optional snapshot fields) to ERP response keys. The production format represents one contract header with a `serialNumbers` array; missing contracts and empty successful responses are never deleted locally.
 
 The following production integration facts remain required: base URL, endpoint, authentication, response format, stable contract identifier, pagination, full-snapshot versus delta semantics, and field mapping. Until full-snapshot semantics are confirmed, missing records are never deleted or deactivated. Empty successful responses likewise perform no destructive operation.
+
+## Freshdesk support foundation
+
+Freshdesk API v2 is accessed server-side only. Configure deployment secrets outside Git:
+
+```dotenv
+FRESHDESK_BASE_URI='https://example.freshdesk.com'
+FRESHDESK_API_KEY=''
+```
+
+Never commit the API key. The integration creates and reads tickets and reads conversations, but does not alter Freshdesk configuration or structure, synchronize contacts/companies, or use custom fields. When the ticket endpoint receives an unknown email address, Freshdesk may natively create its requester; Cardnext itself never invokes the Contact API.
+
+Test the production connection using the read-only account endpoint:
+
+```bash
+APP_ENV=prod php bin/console cardnext:freshdesk:check
+```
