@@ -158,7 +158,7 @@ The ERP system is the source of truth for maintenance contracts. Cardnext stores
 
 Customer ownership is mapped exclusively as `ERP customer number → CustomerB2BProfile.erpCustomerNumber → Sylius Customer`. Email, names, addresses, and company names are never identity keys.
 
-ERP-managed, read-only fields are ERP Contract ID, ERP Customer Number, Serial Number, Printer Model, Contract Reference, Start Date, End Date, and Source Updated Date. `internalNote` and `lastSyncedAt` are local metadata; ERP updates never overwrite `internalNote`.
+ERP-managed, read-only fields are ERP Contract ID, ERP Customer Number, Serial Numbers, Printer Model, Contract Reference, Start Date, End Date, and Source Updated Date. `internalNote` and `lastSyncedAt` are local metadata; ERP updates never overwrite `internalNote`.
 
 Run the idempotent sync manually or from cron:
 
@@ -179,9 +179,9 @@ CARDNEXT_ERP_BASE_URI=
 CARDNEXT_ERP_MAINTENANCE_CONTRACTS_ENDPOINT=
 CARDNEXT_ERP_AUTH_HEADER=
 CARDNEXT_ERP_AUTH_VALUE=
-CARDNEXT_ERP_MAINTENANCE_FIELD_MAP='{}'
+CARDNEXT_ERP_MAINTENANCE_FIELD_MAP='{"externalId":"contractId","erpCustomerNumber":"customerNumber","startsAt":"contractStart","endsAt":"contractEnd","printerModel":"printerModel","contractReference":"referenceNumber","serialNumbers":"serialNumbers"}'
 ```
 
-Never commit production ERP credentials. ERP authentication must be configured according to the production ERP API. No production ERP specification was found in this repository, so production response mapping must be finalized once the schema is supplied. `CARDNEXT_ERP_MAINTENANCE_FIELD_MAP` deliberately has no invented defaults and must map the DTO names (`externalId`, `erpCustomerNumber`, `serialNumber`, `startsAt`, `endsAt`, and optional snapshot fields) to confirmed response keys.
+Never commit production ERP credentials. ERP authentication must be configured according to the production ERP API. `CARDNEXT_ERP_MAINTENANCE_FIELD_MAP` maps the DTO names (`externalId`, `erpCustomerNumber`, `serialNumbers`, `startsAt`, `endsAt`, and optional snapshot fields) to ERP response keys. The production format represents one contract header with a `serialNumbers` array; missing contracts and empty successful responses are never deleted locally.
 
 The following production integration facts remain required: base URL, endpoint, authentication, response format, stable contract identifier, pagination, full-snapshot versus delta semantics, and field mapping. Until full-snapshot semantics are confirmed, missing records are never deleted or deactivated. Empty successful responses likewise perform no destructive operation.
