@@ -1,0 +1,19 @@
+<div class="cn-support-field{% if field.vars.errors|length %} cn-support-field--invalid{% endif %}">
+    {{ form_label(field, null, {
+        label_attr: {
+            class: 'form-label'
+        }
+    }) }}
+
+    {{ form_widget(field) }}
+
+    {% if field.vars.help %}
+        {{ form_help(field, {
+            help_attr: {
+                class: 'form-text'
+            }
+        }) }}
+    {% endif %}
+
+    {{ form_errors(field) }}
+</div>
