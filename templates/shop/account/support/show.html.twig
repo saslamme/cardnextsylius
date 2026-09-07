@@ -1,0 +1,21 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% block content %}
+{% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'cardnext.support.title'|trans, url: path('cardnext_shop_account_support_index') }, { label: '#' ~ ticket.id }] } %}
+{% block account_content %}
+<section class="cn-account-panel">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4"><div><h1>{{ 'cardnext.support.case_title'|trans({'%id%': ticket.id}) }}</h1><p class="lead mb-0">{{ ticket.subject }}</p></div><span class="badge text-bg-primary">{{ status_key|trans }}</span></div>
+    <div class="card mb-4"><div class="card-body"><h2 class="h4">{{ 'cardnext.support.details'|trans }}</h2><dl class="row mb-0">
+        <dt class="col-sm-4">{{ 'cardnext.support.list.type'|trans }}</dt><dd class="col-sm-8">{{ ('cardnext.support.type.' ~ case.serviceType.value)|trans }}</dd>
+        <dt class="col-sm-4">{{ 'cardnext.support.list.order'|trans }}</dt><dd class="col-sm-8">{% if case.order %}<a href="{{ path('sylius_shop_account_order_show', {number: case.order.number}) }}">{{ case.order.number }}</a>{% else %}–{% endif %}</dd>
+        <dt class="col-sm-4">{{ 'cardnext.support.form.product'|trans }}</dt><dd class="col-sm-8">{{ case.product ? (case.product.name ?? case.product.code) : '–' }}</dd>
+        <dt class="col-sm-4">{{ 'cardnext.support.form.maintenance_contract'|trans }}</dt><dd class="col-sm-8">{{ case.maintenanceContract ? ((case.maintenanceContract.printerModel ?? 'Gerät') ~ ' – ' ~ (case.maintenanceContract.contractReference ?? case.maintenanceContract.erpContractId)) : '–' }}</dd>
+        <dt class="col-sm-4">{{ 'cardnext.support.list.serial'|trans }}</dt><dd class="col-sm-8">{{ case.serialNumber ?? '–' }}</dd>
+        <dt class="col-sm-4">{{ 'cardnext.support.list.created'|trans }}</dt><dd class="col-sm-8">{{ case.createdAt|format_datetime }}</dd>
+    </dl></div></div>
+    <h2 class="h3">{{ 'cardnext.support.history'|trans }}</h2>
+    <article class="card mb-3"><div class="card-body"><div class="small text-muted mb-2">{{ 'cardnext.support.you'|trans }} · {{ ticket.createdAt|format_datetime }}</div><div style="white-space: pre-wrap">{{ ticket.descriptionText }}</div></div></article>
+    {% for conversation in conversations %}<article class="card mb-3"><div class="card-body"><div class="small text-muted mb-2">{{ (conversation.incoming ? 'cardnext.support.you' : 'cardnext.support.team')|trans }} · {{ conversation.createdAt|format_datetime }}</div><div style="white-space: pre-wrap">{{ conversation.bodyText }}</div></div></article>{% endfor %}
+</section>
+{% endblock %}
+{% endembed %}
+{% endblock %}
