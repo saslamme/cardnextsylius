@@ -27,6 +27,7 @@ final class CmsPageType extends AbstractType
             ->add('code', TextType::class, ['label' => 'Interner Code'])
             ->add('layout', EntityType::class, ['class' => CmsLayout::class, 'label' => 'Layout', 'choice_label' => 'name'])
             ->add('channels', ChannelChoiceType::class, ['label' => 'Verkaufskanäle', 'multiple' => true, 'expanded' => true, 'choice_label' => 'name'])
+            ->add('homepageChannels', ChannelChoiceType::class, ['label' => 'Startseite für Verkaufskanäle', 'help' => 'Diese Seite wird für die gewählten Kanäle ausschließlich unter / ausgeliefert.', 'multiple' => true, 'expanded' => true, 'choice_label' => 'name', 'by_reference' => false, 'required' => false])
             ->add('status', ChoiceType::class, ['label' => 'Status', 'choices' => ['Entwurf' => CmsPage::STATUS_DRAFT, 'Veröffentlicht' => CmsPage::STATUS_PUBLISHED, 'Deaktiviert' => CmsPage::STATUS_DISABLED]])
             ->add('publishAt', DateTimeType::class, ['label' => 'Veröffentlichen ab', 'required' => false, 'widget' => 'single_text'])
             ->add('unpublishAt', DateTimeType::class, ['label' => 'Veröffentlichen bis', 'required' => false, 'widget' => 'single_text'])

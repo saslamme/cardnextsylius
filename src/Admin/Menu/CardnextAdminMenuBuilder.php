@@ -82,10 +82,6 @@ final class CardnextAdminMenuBuilder
             ;
         }
 
-        $this->addChildIfMissing($content, 'cardnext_homepage_content', 'Homepage', 'tabler:home-edit', 'cardnext_admin_homepage_content_index', [
-            'cardnext_admin_homepage_content_create',
-            'cardnext_admin_homepage_content_edit',
-        ]);
         $this->addChildIfMissing($content, 'cardnext_cms_pages', 'CMS-Seiten', 'tabler:file', 'cardnext_admin_cms_pages', [
             'cardnext_admin_cms_page_*',
             'cardnext_admin_cms_block_*',

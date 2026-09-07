@@ -10,7 +10,7 @@ final class HomepageProductSliderTemplateTest extends TestCase
 {
     public function testHomepageUsesDedicatedProgressiveSlider(): void
     {
-        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/index.html.twig');
+        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/_legacy.html.twig');
         $list = (string) file_get_contents(__DIR__ . '/../../templates/shop/homepage/product_list.html.twig');
 
         self::assertStringContainsString('cardnext_homepage_products(10)', $homepage);

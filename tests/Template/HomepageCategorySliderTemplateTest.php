@@ -10,7 +10,7 @@ final class HomepageCategorySliderTemplateTest extends TestCase
 {
     public function testCategoriesRemainInTheirExistingOrderAndLinksAreSlides(): void
     {
-        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/index.html.twig');
+        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/_legacy.html.twig');
         $offset = 0;
 
         foreach (['card_printers', 'rfid_readers', 'plastic_cards', 'id_accessories', 'ribbons', 'barcode_scanners', 'access_control'] as $code) {
@@ -29,7 +29,7 @@ final class HomepageCategorySliderTemplateTest extends TestCase
 
     public function testSliderHasAccessibleControlsAndNativeFourCardScrolling(): void
     {
-        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/index.html.twig');
+        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/_legacy.html.twig');
         $stylesheet = (string) file_get_contents(__DIR__ . '/../../assets/shop/styles/cardnext.css');
         $javascript = (string) file_get_contents(__DIR__ . '/../../assets/shop/homepage-product-slider.js');
 

@@ -10,7 +10,7 @@ final class HomepageCategoryVisualTemplateTest extends TestCase
 {
     public function testCategoriesUseTheirExplicitIconOrPhotoVisual(): void
     {
-        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/index.html.twig');
+        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/_legacy.html.twig');
 
         foreach ([
             'card_printers' => 'cardnext-icon-card-printer.svg',
@@ -22,8 +22,8 @@ final class HomepageCategoryVisualTemplateTest extends TestCase
             self::assertStringContainsString(sprintf("{'code': '%s', 'image': '%s', 'type': 'icon'}", $code, $icon), $homepage);
         }
 
-        self::assertStringContainsString("{'code': 'rfid_readers', 'image': 'rfid-leser.webp', 'type': 'photo'}", $homepage);
-        self::assertStringContainsString("{'code': 'access_control', 'image': 'zutrittskontrolle.webp', 'type': 'photo'}", $homepage);
+        self::assertStringContainsString("{'code': 'rfid_readers', 'image': 'cardnext-icon-rfid-leser.svg', 'type': 'icon'}", $homepage);
+        self::assertStringContainsString("{'code': 'access_control', 'image': 'cardnext-icon-zutrittskontrolle.svg', 'type': 'icon'}", $homepage);
         self::assertStringContainsString("'cardnext/homepage/categories/icons/'", $homepage);
         self::assertStringContainsString('cn-home-category__media--{{ category.type }}', $homepage);
         self::assertStringContainsString('cn-home-category__icon', $homepage);

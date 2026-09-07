@@ -151,6 +151,14 @@ final class CmsPageAdminController extends AbstractController
     private function pageForm(CmsPage $page, Request $request, bool $new): Response
     {
         $form = $this->createForm(CmsPageType::class, $page)->handleRequest($request);
+        if ($form->isSubmitted()) {
+            foreach ($page->getHomepageChannels() as $homepageChannel) {
+                $page->addChannel($homepageChannel);
+            }
+            if ($page->isHomepage()) {
+                $page->setIncludeInSitemap(false);
+            }
+        }
         if ($form->isSubmitted() && $form->isValid()) {
             if ($new) {
                 $this->entityManager->persist($page);

@@ -1,0 +1,267 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% set branding = cardnext_channel_branding() %}
+{% set homepage = cardnext_homepage_content() %}
+{% block title %}{{ homepage.metaTitle }}{% endblock %}
+{% block metatags %}
+    {{ parent() }}
+    <meta name="description" content="{{ homepage.metaDescription }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ homepage.metaTitle }}">
+    <meta property="og:description" content="{{ homepage.metaDescription }}">
+    <meta property="og:url" content="{{ cardnext_canonical_url() }}">
+    <meta property="og:site_name" content="{{ branding.brandName }}">
+    <meta property="og:image" content="{{ cardnext_channel_asset_url(homepage.heroImagePath) }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ homepage.metaTitle }}">
+    <meta name="twitter:description" content="{{ homepage.metaDescription }}">
+    <meta name="twitter:image" content="{{ cardnext_channel_asset_url(homepage.heroImagePath) }}">
+    {% set structured_data = cardnext_homepage_structured_data() %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}
+{% endblock %}
+{% block content %}
+<main id="main-content" class="cn-page">
+<section class="cn-hero" aria-labelledby="cn-hero-title">
+    <div class="cn-container cn-hero__grid">
+        <div class="cn-stack cn-hero__copy">
+            <span class="cn-kicker">{{ homepage.heroKicker }}</span>
+            <h1 class="cn-title cn-title--hero" id="cn-hero-title">{{ homepage.heroTitle }}</h1>
+            <p class="cn-lead">{{ homepage.heroText }}</p>
+            <div class="cn-cluster"><a class="cn-btn cn-btn--primary" href="#products">{{ 'cardnext.storefront.homepage.hero.products'|trans }} →</a><a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">{{ 'cardnext.storefront.homepage.hero.consulting'|trans }}</a></div>
+        </div>
+        <div class="cn-hero__visual cn-hero__visual--photo" aria-label="{{ 'cardnext.storefront.homepage.hero.visual_label'|trans }}">
+            <img class="cn-hero__photo" src="{{ asset(homepage.heroImagePath) }}" alt="{{ 'cardnext.storefront.homepage.hero.image_alt'|trans }}" width="1600" height="900" loading="eager" fetchpriority="high">
+</div>
+    </div>
+</section>
+<section class="cn-home-categories cn-category-slider" aria-labelledby="cn-popular-title" data-cn-category-slider>
+    <div class="cn-container">
+        <div class="cn-home-categories__head">
+            <h2 id="cn-popular-title">{{ 'cardnext.storefront.homepage.categories.title'|trans }}</h2>
+            <div class="cn-category-slider__controls">
+                <button class="cn-slider-button" type="button" data-cn-category-slider-previous aria-label="{{ 'cardnext.storefront.homepage.categories.previous'|trans }}" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                <button class="cn-slider-button" type="button" data-cn-category-slider-next aria-label="{{ 'cardnext.storefront.homepage.categories.next'|trans }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+            </div>
+        </div>
+
+        {% set homeCategories = [
+            {'code': 'card_printers', 'image': 'cardnext-icon-card-printer.svg', 'type': 'icon'},
+            {'code': 'rfid_readers', 'image': 'cardnext-icon-rfid-leser.svg', 'type': 'icon'},
+            {'code': 'plastic_cards', 'image': 'cardnext-icon-cards.svg', 'type': 'icon'},
+            {'code': 'id_accessories', 'image': 'cardnext-icon-card-holders.svg', 'type': 'icon'},
+            {'code': 'ribbons', 'image': 'cardnext-icon-ribbon.svg', 'type': 'icon'},
+            {'code': 'barcode_scanners', 'image': 'cardnext-icon-handheld-scanners.svg', 'type': 'icon'},
+            {'code': 'access_control', 'image': 'cardnext-icon-zutrittskontrolle.svg', 'type': 'icon'}
+        ] %}
+
+        <div class="cn-category-slider__viewport" data-cn-category-slider-viewport tabindex="0">
+            <div class="cn-category-slider__track">
+              {% for category in homeCategories %}
+                {% set taxon = cardnext_taxon_by_code(category.code) %}
+                {% set categoryImagePath = category.type == 'icon' ? 'cardnext/homepage/categories/icons/' : 'cardnext/homepage/categories/' %}
+                {% if taxon %}<div class="cn-category-slider__slide"><a
+                    class="cn-home-category"
+                    href="{{ path('sylius_shop_product_index', {'slug': taxon.slug}) }}"
+                >
+                    <span class="cn-home-category__media cn-home-category__media--{{ category.type }}">
+                        <img
+                            class="{{ category.type == 'icon' ? 'cn-home-category__icon' : 'cn-home-category__photo' }}"
+                            src="{{ asset(categoryImagePath ~ category.image) }}"
+                            alt=""
+                            width="1200"
+                            height="580"
+                            loading="lazy"
+                        >
+                    </span>
+                    <span class="cn-home-category__label">
+                        <strong>{{ taxon.name }}</strong>
+                        <span aria-hidden="true">&#8594;</span>
+                    </span>
+                </a></div>{% endif %}
+              {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+<section class="cn-home-service" id="services" aria-labelledby="cn-home-service-title">
+    <div class="cn-container cn-home-service__grid">
+        <div class="cn-home-service__feature">
+            <div class="cn-home-service__copy">
+                <span class="cn-kicker">{{ homepage.introKicker }}</span>
+                <h2 class="cn-title cn-title--section" id="cn-home-service-title">
+                    {{ homepage.introTitle }}
+                </h2>
+                <p class="cn-lead">
+                    {{ homepage.introText }}
+                </p>
+                <a class="cn-btn cn-btn--secondary" href="{{ path('sylius_shop_contact_request') }}">
+                    {{ 'cardnext.storefront.homepage.service.button'|trans }} &#8594;
+                </a>
+            </div>
+
+            <div class="cn-home-service__photo">
+                <img
+                    src="{{ asset(homepage.introImagePath) }}"
+                    alt="{{ 'cardnext.storefront.homepage.service.image_alt'|trans }}"
+                    width="1200"
+                    height="1060"
+                    loading="lazy"
+                >
+            </div>
+        </div>
+
+        <div class="cn-home-service__list">
+            <a class="cn-home-service__item" href="{{ path('sylius_shop_contact_request') }}">
+                <span class="cn-home-service__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <circle cx="9" cy="8" r="3"/>
+                        <circle cx="16.5" cy="9.5" r="2.5"/>
+                        <path d="M3.5 20c.5-4 2.6-6 5.5-6s5 2 5.5 6"/>
+                        <path d="M13 15.2c1-.8 2.2-1.2 3.5-1.2 2.4 0 4 1.7 4.3 5"/>
+                    </svg>
+                </span>
+                <span class="cn-home-service__item-copy">
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.advice.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.advice.text'|trans }}</span>
+                </span>
+                <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
+            </a>
+
+            <a class="cn-home-service__item" href="{{ path('sylius_shop_contact_request') }}">
+                <span class="cn-home-service__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <circle cx="12" cy="12" r="3.2"/>
+                        <path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4"/>
+                    </svg>
+                </span>
+                <span class="cn-home-service__item-copy">
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.configuration.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.configuration.text'|trans }}</span>
+                </span>
+                <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
+            </a>
+
+            <a class="cn-home-service__item" href="{{ path('sylius_shop_contact_request') }}">
+                <span class="cn-home-service__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <path d="M3.5 7.5h6l1.6 2H20.5v9.5H3.5z"/>
+                        <path d="M3.5 7.5V5h6l1.5 2"/>
+                    </svg>
+                </span>
+                <span class="cn-home-service__item-copy">
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.projects.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.projects.text'|trans }}</span>
+                </span>
+                <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
+            </a>
+
+            {% set ribbonsTaxon = cardnext_taxon_by_code('ribbons') %}
+            <a class="cn-home-service__item" href="{{ ribbonsTaxon ? path('sylius_shop_product_index', {'slug': ribbonsTaxon.slug}) : path('sylius_shop_homepage') }}">
+                <span class="cn-home-service__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <path d="m12 3 7 4v10l-7 4-7-4V7z"/>
+                        <path d="m5 7 7 4 7-4M12 11v10"/>
+                        <circle cx="12" cy="7.2" r="1.2"/>
+                    </svg>
+                </span>
+                <span class="cn-home-service__item-copy">
+                    <strong>{{ 'cardnext.storefront.homepage.service.items.consumables.title'|trans }}</strong>
+                    <span>{{ 'cardnext.storefront.homepage.service.items.consumables.text'|trans }}</span>
+                </span>
+                <span class="cn-home-service__arrow" aria-hidden="true">&#8594;</span>
+            </a>
+        </div>
+    </div>
+</section>
+<section class="cn-section" id="products"><div class="cn-container">{% set homepage_products = cardnext_homepage_products(10) %}<div class="cn-product-slider" data-cn-product-slider><div class="cn-section-head"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.products.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.products.title'|trans }}</h2></div>{% if homepage_products|length > 0 %}<div class="cn-product-slider__controls"><button class="cn-slider-button cn-product-slider__button" type="button" data-cn-product-slider-previous aria-label="{{ 'cardnext.storefront.homepage.products.previous'|trans }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button class="cn-slider-button cn-product-slider__button" type="button" data-cn-product-slider-next aria-label="{{ 'cardnext.storefront.homepage.products.next'|trans }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>{% endif %}</div>
+            {% include 'shop/homepage/product_list.html.twig' with { products: homepage_products } only %}</div></div></section>
+<section class="cn-section cn-section--soft" id="industries"><div class="cn-container">
+    <div class="cn-stack cn-stack--sm mb-4"><span class="cn-kicker">{{ 'cardnext.storefront.homepage.industries.kicker'|trans }}</span><h2 class="cn-title cn-title--section">{{ 'cardnext.storefront.homepage.industries.title'|trans }}</h2><p class="cn-lead">{{ 'cardnext.storefront.homepage.industries.text'|trans }}</p></div>
+    <div class="cn-grid cn-grid--3">
+        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-id-cards.webp') }}" alt="{{ 'cardnext.storefront.homepage.industries.cards.image_alt'|trans }}" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>{{ 'cardnext.storefront.homepage.industries.cards.title'|trans }}</h3><p>{{ 'cardnext.storefront.homepage.industries.cards.text'|trans }}</p><a class="cn-link cn-link--arrow" href="#products">{{ 'cardnext.storefront.homepage.industries.link'|trans }}</a></div></article>
+        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-rfid.webp') }}" alt="{{ 'cardnext.storefront.homepage.industries.identification.image_alt'|trans }}" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>{{ 'cardnext.storefront.homepage.industries.identification.title'|trans }}</h3><p>{{ 'cardnext.storefront.homepage.industries.identification.text'|trans }}</p><a class="cn-link cn-link--arrow" href="#products">{{ 'cardnext.storefront.homepage.industries.link'|trans }}</a></div></article>
+        <article class="cn-card"><div class="cn-card__media cn-card__media--photo"><img class="cn-card__photo" src="{{ asset('cardnext/homepage/industry-logistics.webp') }}" alt="{{ 'cardnext.storefront.homepage.industries.logistics.image_alt'|trans }}" width="1200" height="700" loading="lazy"></div><div class="cn-card__body"><h3>{{ 'cardnext.storefront.homepage.industries.logistics.title'|trans }}</h3><p>{{ 'cardnext.storefront.homepage.industries.logistics.text'|trans }}</p><a class="cn-link cn-link--arrow" href="#products">{{ 'cardnext.storefront.homepage.industries.link'|trans }}</a></div></article>
+    </div>
+</div></section>
+{% include 'shop/homepage/_promos.html.twig' with {homepage: homepage} only %}
+<section class="cn-section" id="why-cardnext"><div class="cn-container"><div class="cn-split mb-4"><div class="cn-stack cn-stack--sm"><span class="cn-kicker">{{ homepage.whyKicker }}</span><h2 class="cn-title cn-title--section">{{ homepage.whyTitle }}</h2></div><p class="cn-lead">{{ homepage.whyText }}</p></div><div class="cn-grid cn-grid--4 cn-grid--lined">{% set advantages = [['01','specialized'],['02','independent'],['03','compatibility'],['04','personal']] %}{% for item in advantages %}<div class="cn-feature"><span class="cn-feature__index">{{ item[0] }}</span><h3>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.title')|trans }}</h3><p>{{ ('cardnext.storefront.homepage.why.items.' ~ item[1] ~ '.text')|trans }}</p></div>{% endfor %}</div></div></section>
+<section class="cn-cta cn-cta--support">
+    <img class="cn-cta__background"
+        src="{{ asset(homepage.ctaImagePath) }}"
+        alt=""
+        width="1800"
+        height="360"
+        loading="lazy"
+        aria-hidden="true">
+    <div class="cn-container cn-cta__inner">
+        <div class="cn-cta__copy">
+            {% if homepage.ctaKicker %}<span class="cn-kicker">{{ homepage.ctaKicker }}</span>{% endif %}<h2>{{ homepage.ctaTitle }}</h2>
+            <p>{{ homepage.ctaText }}</p>
+        </div>
+
+        <a class="cn-btn cn-btn--primary cn-cta__button" href="{{ path('sylius_shop_contact_request') }}">
+            {{ 'cardnext.storefront.homepage.cta.button'|trans }} &#8594;
+        </a>
+    </div>
+</section>
+
+<div class="cn-promise-bar">
+    <div class="cn-container cn-promise-grid">
+        <div class="cn-promise">
+            <span class="cn-promise__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M3 6.5h11v10H3z"/>
+                    <path d="M14 10h3.3l3 3v3.5H14z"/>
+                    <circle cx="7" cy="18" r="1.8"/>
+                    <circle cx="17.5" cy="18" r="1.8"/>
+                </svg>
+            </span>
+            <span class="cn-promise__copy">
+                <strong>{{ 'cardnext.storefront.homepage.promises.shipping.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.shipping.text'|trans }}</span>
+            </span>
+        </div>
+
+        <div class="cn-promise">
+            <span class="cn-promise__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <circle cx="12" cy="8" r="3.2"/>
+                    <path d="M5.5 20c.7-4 3-6 6.5-6s5.8 2 6.5 6"/>
+                </svg>
+            </span>
+            <span class="cn-promise__copy">
+                <strong>{{ 'cardnext.storefront.homepage.promises.advice.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.advice.text'|trans }}</span>
+            </span>
+        </div>
+
+        <div class="cn-promise">
+            <span class="cn-promise__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <rect x="3.5" y="6" width="17" height="12" rx="1.8"/>
+                    <path d="M3.5 10h17"/>
+                    <path d="M7 15h3"/>
+                </svg>
+            </span>
+            <span class="cn-promise__copy">
+                <strong>{{ 'cardnext.storefront.homepage.promises.payment.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.payment.text'|trans }}</span>
+            </span>
+        </div>
+
+        <div class="cn-promise">
+            <span class="cn-promise__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M8 7V5.5C8 4.7 8.7 4 9.5 4h5c.8 0 1.5.7 1.5 1.5V7"/>
+                    <rect x="3.5" y="7" width="17" height="12.5" rx="1.8"/>
+                    <path d="M3.5 12h17"/>
+                    <path d="M10 12v2h4v-2"/>
+                </svg>
+            </span>
+            <span class="cn-promise__copy">
+                <strong>{{ 'cardnext.storefront.homepage.service.items.projects.title'|trans }}</strong>
+                <span>{{ 'cardnext.storefront.homepage.promises.projects.text'|trans }}</span>
+            </span>
+        </div>
+    </div>
+</div>
+</main>
+{% endblock %}
