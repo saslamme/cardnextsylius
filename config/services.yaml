@@ -9,6 +9,8 @@
 parameters:
     cardnext.quote_recipient: '%env(CARDNEXT_QUOTE_RECIPIENT)%'
     cardnext.erp.maintenance_field_map: '%env(json:CARDNEXT_ERP_MAINTENANCE_FIELD_MAP)%'
+    cardnext.freshdesk.base_uri: '%env(FRESHDESK_BASE_URI)%'
+    cardnext.freshdesk.api_key: '%env(FRESHDESK_API_KEY)%'
     # Structured source for all legal and contact details printed on quote PDFs.
     # Deliberately keep unknown details empty; never derive these from legal-page HTML.
     cardnext.quote_issuer_profiles:
@@ -156,6 +158,12 @@ services:
     App\Service\Quote\QuoteRequestMailer:
         arguments:
             $recipient: '%cardnext.quote_recipient%'
+
+    App\Integration\Freshdesk\FreshdeskClientInterface: '@App\Integration\Freshdesk\HttpFreshdeskClient'
+    App\Integration\Freshdesk\HttpFreshdeskClient:
+        arguments:
+            $baseUri: '%cardnext.freshdesk.base_uri%'
+            $apiKey: '%cardnext.freshdesk.api_key%'
 
     App\Email\ChannelEmailBrandingResolver:
         arguments:
