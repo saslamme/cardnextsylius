@@ -8,7 +8,7 @@ use App\Entity\Cms\CmsDownload;
 
 final class CmsBlockRendererRegistry
 {
-    public const TYPES = ['rich_text', 'hero', 'category_slider', 'homepage_service', 'image_text', 'faq', 'cta', 'homepage_promo', 'promise_bar', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery', 'features', 'stats', 'testimonials'];
+    public const TYPES = ['rich_text', 'hero', 'category_slider', 'homepage_service', 'homepage_industries', 'image_text', 'faq', 'cta', 'homepage_promo', 'promise_bar', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery', 'features', 'stats', 'testimonials'];
 
     public const FEATURE_ICONS = ['consulting', 'shipping', 'support', 'quality', 'business', 'security', 'stock', 'technology', 'service', 'warranty', 'international', 'sustainability'];
 
@@ -17,6 +17,7 @@ final class CmsBlockRendererRegistry
         'hero' => 'Hero',
         'category_slider' => 'Kategorien-Slider',
         'homepage_service' => 'Service / Beratung',
+        'homepage_industries' => 'Einsatzbereiche',
         'image_text' => 'Bild & Text',
         'faq' => 'FAQ',
         'cta' => 'Call-to-Action',
@@ -63,7 +64,7 @@ final class CmsBlockRendererRegistry
             'image_text', 'homepage_service' => ['text'],
             'category_slider', 'promise_bar' => ['items'],
             'homepage_promo' => ['headline', 'buttonLabel', 'buttonUrl'],
-            'faq', 'link_cards', 'features', 'stats', 'testimonials' => ['items'],
+            'faq', 'link_cards', 'features', 'stats', 'testimonials', 'homepage_industries' => ['items'],
             'cta' => ['headline', 'buttonLabel', 'buttonUrl'],
             'downloads' => [],
             'product_slider' => ['productCodes'],

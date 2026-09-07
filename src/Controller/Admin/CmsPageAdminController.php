@@ -203,7 +203,7 @@ final class CmsPageAdminController extends AbstractController
                     $form->get('image')->addError(new FormError($exception->getMessage()));
                 }
             }
-            if ($form->has('items') && $block->getType() === 'gallery') {
+            if ($form->has('items') && in_array($block->getType(), ['gallery', 'homepage_industries'], true)) {
                 $configuration['items'] = [];
                 foreach ($form->get('items') as $index => $itemForm) {
                     $itemData = is_array($itemForm->getData()) ? $itemForm->getData() : [];
@@ -218,11 +218,11 @@ final class CmsPageAdminController extends AbstractController
                             $itemForm->get('image')->addError(new FormError($exception->getMessage()));
                         }
                     }
-                    $configuration['items'][] = [
-                        'image' => $image,
-                        'alt' => is_string($itemData['alt'] ?? null) ? trim($itemData['alt']) : '',
-                        'caption' => is_string($itemData['caption'] ?? null) ? trim($itemData['caption']) : '',
-                    ];
+                    unset($itemData['existingImage'], $itemData['image']);
+                    $configuration['items'][] = ['image' => $image] + array_map(
+                        static fn (mixed $value): mixed => is_string($value) ? trim($value) : $value,
+                        $itemData,
+                    );
                 }
             }
             foreach ($this->blockRegistry->validate($block->getType(), $configuration) as $error) {

@@ -11,6 +11,8 @@ use App\Form\Cms\Block\FeatureItemType;
 use App\Form\Cms\Block\GalleryItemType;
 use App\Form\Cms\Block\LinkCardItemType;
 use App\Form\Cms\Block\HomepageCategoryItemType;
+use App\Form\Cms\Block\HomepageIndustryItemType;
+use App\Form\Cms\Block\HomepageServiceItemType;
 use App\Form\Cms\Block\PromiseItemType;
 use App\Form\Cms\Block\StatItemType;
 use App\Form\Cms\Block\TestimonialItemType;
@@ -62,7 +64,7 @@ final class CmsBlockType extends AbstractType
                     default => null,
                 } : null))));
                 $value = array_key_exists($name, $configuration) ? $configuration[$name] : $default;
-                if ($type === 'gallery' && $name === 'items' && is_array($value)) {
+                if (in_array($type, ['gallery', 'homepage_industries'], true) && $name === 'items' && is_array($value)) {
                     $value = array_map(static function (mixed $item): mixed {
                         if (is_array($item) && isset($item['image']) && is_string($item['image'])) {
                             $item['existingImage'] = $item['image'];
@@ -103,7 +105,8 @@ final class CmsBlockType extends AbstractType
             'rich_text' => ['headline' => $line('Überschrift'), 'content' => $text('Inhalt', true)],
             'hero' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text')] + $image + $button + ['button2Label' => $line('Button 2 – Text'), 'button2Url' => $line('Button 2 – URL')],
             'category_slider' => ['headline' => $line('Überschrift', true), 'items' => [CollectionType::class, ['label' => 'Kategorien (Reihenfolge per Drag/Eintragsreihenfolge)', 'entry_type' => HomepageCategoryItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]]],
-            'homepage_service' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text', true)] + $image + $button,
+            'homepage_service' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text', true)] + $image + $button + ['items' => [CollectionType::class, ['label' => 'Servicepunkte', 'entry_type' => HomepageServiceItemType::class, 'allow_add' => true, 'allow_delete' => true]]],
+            'homepage_industries' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Einleitung'), 'items' => [CollectionType::class, ['label' => 'Einsatzbereiche', 'entry_type' => HomepageIndustryItemType::class, 'allow_add' => true, 'allow_delete' => true]]],
             'image_text' => ['headline' => $line('Überschrift'), 'text' => $text('Text', true)] + $image + ['imagePosition' => [ChoiceType::class, ['label' => 'Bildposition', 'choices' => ['Links' => 'left', 'Rechts' => 'right']]]] + $button,
             'faq' => ['headline' => $line('Überschrift'), 'items' => [CollectionType::class, ['label' => 'FAQ-Einträge', 'entry_type' => FaqItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]]],
             'cta' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text')] + $image + $button,
@@ -122,6 +125,7 @@ final class CmsBlockType extends AbstractType
                 ]],
             ],
             'product_slider' => [
+                'kicker' => $line('Kicker'),
                 'headline' => $line('Überschrift'),
                 'text' => $text('Einleitung'),
                 'productCodes' => [CmsProductSelectionType::class, [
@@ -157,6 +161,7 @@ final class CmsBlockType extends AbstractType
                 'items' => [CollectionType::class, ['label' => 'Galeriebilder', 'entry_type' => GalleryItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]],
             ],
             'features' => [
+                'kicker' => $line('Kicker'),
                 'headline' => $line('Überschrift'),
                 'text' => $text('Einleitung'),
                 'columns' => [ChoiceType::class, ['label' => 'Spalten', 'choices' => ['2 Spalten' => 2, '3 Spalten' => 3, '4 Spalten' => 4], 'constraints' => [new Assert\Choice([2, 3, 4])]]],
