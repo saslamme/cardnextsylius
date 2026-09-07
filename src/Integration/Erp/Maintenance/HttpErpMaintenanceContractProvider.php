@@ -29,7 +29,9 @@ final readonly class HttpErpMaintenanceContractProvider implements ErpMaintenanc
             try {
                 if (!is_array($row)) {
                     throw new \UnexpectedValueException('Record is not an object.');
-                } yield $this->map($row);
+                }
+
+                yield $this->map($row);
             } catch (\Throwable $error) {
                 $this->logger->warning('Invalid ERP maintenance contract skipped.', ['recordOffset' => $offset, 'errorType' => $error::class]);
             }
@@ -42,7 +44,7 @@ final readonly class HttpErpMaintenanceContractProvider implements ErpMaintenanc
         $value = fn (string $name): mixed => $row[$this->fieldMap[$name] ?? ''] ?? null;
         $id = $this->requiredString($value('externalId'));
         $customer = $this->requiredString($value('erpCustomerNumber'));
-        $serial = $this->requiredString($value('serialNumber'));
+        $serialNumbers = $this->serialNumbers($value('serialNumbers'));
         $starts = $this->date($value('startsAt'));
         $ends = $this->date($value('endsAt'));
         if ($ends < $starts) {
@@ -51,7 +53,7 @@ final readonly class HttpErpMaintenanceContractProvider implements ErpMaintenanc
         $optional = static fn (mixed $v): ?string => is_scalar($v) && trim((string) $v) !== '' ? trim((string) $v) : null;
         $source = $optional($value('sourceUpdatedAt'));
 
-        return new ErpMaintenanceContractData($id, $customer, $serial, $starts, $ends, $optional($value('printerModel')), $optional($value('contractReference')), $source !== null ? new \DateTimeImmutable($source) : null);
+        return new ErpMaintenanceContractData($id, $customer, $serialNumbers, $starts, $ends, $optional($value('printerModel')), $optional($value('contractReference')), $source !== null ? new \DateTimeImmutable($source) : null);
     }
 
     private function date(mixed $value): \DateTimeImmutable
@@ -70,5 +72,31 @@ final readonly class HttpErpMaintenanceContractProvider implements ErpMaintenanc
         }
 
         return trim((string) $value);
+    }
+
+    /** @return list<string> */
+    private function serialNumbers(mixed $value): array
+    {
+        if (!is_array($value)) {
+            throw new \UnexpectedValueException('ERP serial numbers must be an array.');
+        }
+
+        $serialNumbers = [];
+        foreach ($value as $serialNumber) {
+            if (!is_scalar($serialNumber)) {
+                throw new \UnexpectedValueException('ERP serial number must be scalar.');
+            }
+
+            $serialNumber = trim((string) $serialNumber);
+            if ($serialNumber !== '' && !isset($serialNumbers[$serialNumber])) {
+                $serialNumbers[$serialNumber] = $serialNumber;
+            }
+        }
+
+        if ($serialNumbers === []) {
+            throw new \UnexpectedValueException('ERP contract requires at least one serial number.');
+        }
+
+        return array_values($serialNumbers);
     }
 }

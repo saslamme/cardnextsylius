@@ -20,6 +20,18 @@ final class MaintenanceContractRepository extends ServiceEntityRepository
     /** @return list<MaintenanceContract> */
     public function findForCustomer(Customer $customer): array
     {
-        return $this->findBy(['customer' => $customer], ['startsAt' => 'DESC', 'endsAt' => 'DESC']);
+        /** @var list<MaintenanceContract> $contracts */
+        $contracts = $this->createQueryBuilder('contract')
+            ->addSelect('devices')
+            ->leftJoin('contract.devices', 'devices')
+            ->andWhere('contract.customer = :customer')
+            ->setParameter('customer', $customer)
+            ->orderBy('contract.startsAt', 'DESC')
+            ->addOrderBy('contract.endsAt', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $contracts;
     }
 }

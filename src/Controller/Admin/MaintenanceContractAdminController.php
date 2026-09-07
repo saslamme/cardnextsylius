@@ -23,9 +23,9 @@ final class MaintenanceContractAdminController extends AbstractController
     public function index(Request $request, EntityManagerInterface $em, ClockInterface $clock): Response
     {
         $query = mb_strtolower(trim((string) $request->query->get('q', '')));
-        $qb = $em->createQueryBuilder()->select('contract', 'customer', 'profile')->from(MaintenanceContract::class, 'contract')->join('contract.customer', 'customer')->leftJoin('customer.b2bProfile', 'profile');
+        $qb = $em->createQueryBuilder()->select('DISTINCT contract', 'customer', 'profile', 'devices')->from(MaintenanceContract::class, 'contract')->join('contract.customer', 'customer')->leftJoin('customer.b2bProfile', 'profile')->leftJoin('contract.devices', 'devices');
         if ($query !== '') {
-            $qb->andWhere('LOWER(contract.serialNumber) LIKE :q OR LOWER(contract.erpCustomerNumber) LIKE :q OR LOWER(contract.contractReference) LIKE :q OR LOWER(customer.email) LIKE :q OR LOWER(profile.companyName) LIKE :q')->setParameter('q', '%' . $query . '%');
+            $qb->andWhere('LOWER(devices.serialNumber) LIKE :q OR LOWER(contract.erpCustomerNumber) LIKE :q OR LOWER(contract.contractReference) LIKE :q OR LOWER(customer.email) LIKE :q OR LOWER(profile.companyName) LIKE :q')->setParameter('q', '%' . $query . '%');
         }
         /** @var list<MaintenanceContract> $contracts */
         $contracts = $qb->orderBy('contract.endsAt', 'DESC')->getQuery()->getResult();

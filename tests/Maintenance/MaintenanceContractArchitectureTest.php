@@ -19,9 +19,16 @@ final class MaintenanceContractArchitectureTest extends TestCase
     public function testAdminHasNoCreateRouteAndSyncIsPostWithCsrf(): void
     {
         $controller = file_get_contents(__DIR__ . '/../../src/Controller/Admin/MaintenanceContractAdminController.php');
+        $template = file_get_contents(__DIR__ . '/../../templates/admin/cardnext/maintenance_contract/index.html.twig');
         self::assertIsString($controller);
+        self::assertIsString($template);
         self::assertStringNotContainsString('function create(', $controller);
         self::assertStringContainsString("methods: ['POST']", $controller);
         self::assertStringContainsString("isCsrfTokenValid('maintenance-contract-sync'", $controller);
+        self::assertStringContainsString("isCsrfTokenValid('maintenance-contract-note-'", $controller);
+        self::assertStringContainsString('DISTINCT contract', $controller);
+        self::assertStringContainsString("leftJoin('contract.devices', 'devices')", $controller);
+        self::assertStringContainsString('devices.serialNumber', $controller);
+        self::assertStringContainsString('deviceCount', $template);
     }
 }

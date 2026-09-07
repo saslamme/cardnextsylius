@@ -7,13 +7,14 @@ namespace App\Entity\Maintenance;
 use App\Entity\Customer\Customer;
 use App\Enum\Maintenance\MaintenanceContractStatus;
 use App\Repository\Maintenance\MaintenanceContractRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MaintenanceContractRepository::class)]
 #[ORM\Table(name: 'cardnext_maintenance_contract')]
 #[ORM\UniqueConstraint(name: 'UNIQ_CN_MAINTENANCE_ERP_ID', columns: ['erp_contract_id'])]
 #[ORM\Index(columns: ['erp_customer_number'], name: 'IDX_CN_MAINTENANCE_ERP_CUSTOMER')]
-#[ORM\Index(columns: ['serial_number'], name: 'IDX_CN_MAINTENANCE_SERIAL')]
 #[ORM\Index(columns: ['ends_at'], name: 'IDX_CN_MAINTENANCE_ENDS')]
 class MaintenanceContract
 {
@@ -32,8 +33,10 @@ class MaintenanceContract
     #[ORM\Column(name: 'erp_customer_number', length: 64)]
     private string $erpCustomerNumber;
 
-    #[ORM\Column(name: 'serial_number', length: 255)]
-    private string $serialNumber;
+    /** @var Collection<int, MaintenanceContractDevice> */
+    #[ORM\OneToMany(mappedBy: 'contract', targetEntity: MaintenanceContractDevice::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $devices;
 
     #[ORM\Column(name: 'printer_model', length: 255, nullable: true)]
     private ?string $printerModel = null;
@@ -62,19 +65,19 @@ class MaintenanceContract
     #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
     private \DateTimeImmutable $updatedAt;
 
-    public function __construct(string $erpContractId, Customer $customer, string $erpCustomerNumber, string $serialNumber, \DateTimeImmutable $startsAt, \DateTimeImmutable $endsAt, \DateTimeImmutable $syncedAt)
+    public function __construct(string $erpContractId, Customer $customer, string $erpCustomerNumber, \DateTimeImmutable $startsAt, \DateTimeImmutable $endsAt, \DateTimeImmutable $syncedAt)
     {
+        $this->devices = new ArrayCollection();
         $this->createdAt = $syncedAt;
-        $this->applyErpData($customer, $erpContractId, $erpCustomerNumber, $serialNumber, $startsAt, $endsAt, null, null, null, $syncedAt);
+        $this->applyErpData($customer, $erpContractId, $erpCustomerNumber, $startsAt, $endsAt, null, null, null, $syncedAt);
     }
 
-    public function applyErpData(Customer $customer, string $erpContractId, string $erpCustomerNumber, string $serialNumber, \DateTimeImmutable $startsAt, \DateTimeImmutable $endsAt, ?string $printerModel, ?string $contractReference, ?\DateTimeImmutable $sourceUpdatedAt, \DateTimeImmutable $syncedAt): void
+    public function applyErpData(Customer $customer, string $erpContractId, string $erpCustomerNumber, \DateTimeImmutable $startsAt, \DateTimeImmutable $endsAt, ?string $printerModel, ?string $contractReference, ?\DateTimeImmutable $sourceUpdatedAt, \DateTimeImmutable $syncedAt): void
     {
         $erpContractId = trim($erpContractId);
         $erpCustomerNumber = trim($erpCustomerNumber);
-        $serialNumber = trim($serialNumber);
-        if ($erpContractId === '' || $erpCustomerNumber === '' || $serialNumber === '') {
-            throw new \InvalidArgumentException('ERP identity, customer number and serial number are required.');
+        if ($erpContractId === '' || $erpCustomerNumber === '') {
+            throw new \InvalidArgumentException('ERP identity and customer number are required.');
         }
         if ($endsAt < $startsAt) {
             throw new \InvalidArgumentException('Maintenance contract end date must not precede its start date.');
@@ -82,7 +85,6 @@ class MaintenanceContract
         $this->customer = $customer;
         $this->erpContractId = $erpContractId;
         $this->erpCustomerNumber = $erpCustomerNumber;
-        $this->serialNumber = $serialNumber;
         $this->startsAt = $startsAt;
         $this->endsAt = $endsAt;
         $this->printerModel = self::optional($printerModel);
@@ -125,9 +127,40 @@ class MaintenanceContract
         return $this->erpCustomerNumber;
     }
 
-    public function getSerialNumber(): string
+    /** @return Collection<int, MaintenanceContractDevice> */
+    public function getDevices(): Collection
     {
-        return $this->serialNumber;
+        return $this->devices;
+    }
+
+    public function addDevice(MaintenanceContractDevice $device): void
+    {
+        if ($this->hasSerialNumber($device->getSerialNumber())) {
+            return;
+        }
+
+        $this->devices->add($device);
+        $device->assignTo($this);
+    }
+
+    public function removeDevice(MaintenanceContractDevice $device): void
+    {
+        if ($this->devices->removeElement($device)) {
+            $device->detachFrom($this);
+        }
+    }
+
+    /** @return list<string> */
+    public function getSerialNumbers(): array
+    {
+        return array_values($this->devices->map(static fn (MaintenanceContractDevice $device): string => $device->getSerialNumber())->toArray());
+    }
+
+    public function hasSerialNumber(string $serialNumber): bool
+    {
+        $serialNumber = trim($serialNumber);
+
+        return $serialNumber !== '' && $this->devices->exists(static fn (int $key, MaintenanceContractDevice $device): bool => $device->getSerialNumber() === $serialNumber);
     }
 
     public function getPrinterModel(): ?string
