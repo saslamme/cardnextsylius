@@ -8,16 +8,20 @@ use App\Entity\Cms\CmsDownload;
 
 final class CmsBlockRendererRegistry
 {
-    public const TYPES = ['rich_text', 'hero', 'image_text', 'faq', 'cta', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery', 'features', 'stats', 'testimonials'];
+    public const TYPES = ['rich_text', 'hero', 'category_slider', 'homepage_service', 'image_text', 'faq', 'cta', 'homepage_promo', 'promise_bar', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery', 'features', 'stats', 'testimonials'];
 
     public const FEATURE_ICONS = ['consulting', 'shipping', 'support', 'quality', 'business', 'security', 'stock', 'technology', 'service', 'warranty', 'international', 'sustainability'];
 
     public const TYPE_LABELS = [
         'rich_text' => 'Text',
         'hero' => 'Hero',
+        'category_slider' => 'Kategorien-Slider',
+        'homepage_service' => 'Service / Beratung',
         'image_text' => 'Bild & Text',
         'faq' => 'FAQ',
         'cta' => 'Call-to-Action',
+        'homepage_promo' => 'Homepage-Promo',
+        'promise_bar' => 'Promise-/USP-Leiste',
         'downloads' => 'Downloads',
         'link_cards' => 'Link-Karten',
         'product_slider' => 'Produktslider',
@@ -56,7 +60,9 @@ final class CmsBlockRendererRegistry
         $required = match ($type) {
             'rich_text' => ['content'],
             'hero' => ['headline'],
-            'image_text' => ['text'],
+            'image_text', 'homepage_service' => ['text'],
+            'category_slider', 'promise_bar' => ['items'],
+            'homepage_promo' => ['headline', 'buttonLabel', 'buttonUrl'],
             'faq', 'link_cards', 'features', 'stats', 'testimonials' => ['items'],
             'cta' => ['headline', 'buttonLabel', 'buttonUrl'],
             'downloads' => [],

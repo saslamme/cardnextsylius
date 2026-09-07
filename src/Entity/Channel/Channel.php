@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Channel;
 
+use App\Entity\Cms\CmsPage;
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Core\Model\Channel as BaseChannel;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -13,6 +14,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'sylius_channel')]
 class Channel extends BaseChannel
 {
+    /** The CMS page rendered at `/` for this sales channel. */
+    #[ORM\ManyToOne(inversedBy: 'homepageChannels')]
+    #[ORM\JoinColumn(name: 'homepage_cms_page_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?CmsPage $homepageCmsPage = null;
+
+    public function getHomepageCmsPage(): ?CmsPage { return $this->homepageCmsPage; }
+    public function setHomepageCmsPage(?CmsPage $page): void { $this->homepageCmsPage = $page; }
     #[ORM\Column(name: 'theme_key', length: 64, nullable: true)]
     #[Assert\Regex(pattern: '/^[a-z0-9][a-z0-9_-]*$/')]
     private ?string $themeKey = null;

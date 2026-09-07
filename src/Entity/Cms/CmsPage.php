@@ -39,6 +39,9 @@ class CmsPage
     #[ORM\InverseJoinColumn(name: 'channel_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[Assert\Count(min: 1, minMessage: 'Bitte mindestens einen Verkaufskanal auswählen.')]
     private Collection $channels;
+    /** @var Collection<int, Channel> */
+    #[ORM\OneToMany(mappedBy: 'homepageCmsPage', targetEntity: Channel::class)]
+    private Collection $homepageChannels;
     /** @var Collection<int, CmsPageTranslation> */
     #[ORM\OneToMany(mappedBy: 'page', targetEntity: CmsPageTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Assert\Count(min: 1, minMessage: 'Bitte mindestens eine Übersetzung ausfüllen.')]
@@ -46,7 +49,7 @@ class CmsPage
     /** @var Collection<int, CmsBlock> */
     #[ORM\OneToMany(mappedBy: 'page', targetEntity: CmsBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)] #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $blocks;
-    public function __construct() { $this->channels = new ArrayCollection(); $this->translations = new ArrayCollection(); $this->blocks = new ArrayCollection(); $this->createdAt = $this->updatedAt = new \DateTimeImmutable(); }
+    public function __construct() { $this->channels = new ArrayCollection(); $this->homepageChannels = new ArrayCollection(); $this->translations = new ArrayCollection(); $this->blocks = new ArrayCollection(); $this->createdAt = $this->updatedAt = new \DateTimeImmutable(); }
     public function getId(): ?int { return $this->id; } public function getCode(): string { return $this->code; } public function setCode(string $v): void { $this->code = strtolower(trim($v)); }
     public function getLayout(): ?CmsLayout { return $this->layout; } public function setLayout(?CmsLayout $v): void { $this->layout=$v; }
     public function getStatus(): string { return $this->status; } public function setStatus(string $v): void { $this->status=$v; }
@@ -54,6 +57,10 @@ class CmsPage
     public function getUnpublishAt(): ?\DateTimeImmutable { return $this->unpublishAt; } public function setUnpublishAt(?\DateTimeImmutable $v): void {$this->unpublishAt=$v;}
     public function isIncludeInSitemap(): bool{return $this->includeInSitemap;} public function setIncludeInSitemap(bool $v):void{$this->includeInSitemap=$v;}
     /** @return Collection<int, Channel> */ public function getChannels(): Collection{return $this->channels;} public function addChannel(Channel $v):void{if(!$this->channels->contains($v))$this->channels->add($v);} public function removeChannel(Channel $v):void{$this->channels->removeElement($v);}
+    /** @return Collection<int, Channel> */ public function getHomepageChannels(): Collection{return $this->homepageChannels;}
+    public function addHomepageChannel(Channel $channel):void { if(!$this->homepageChannels->contains($channel)){$this->homepageChannels->add($channel);$channel->setHomepageCmsPage($this);} }
+    public function removeHomepageChannel(Channel $channel):void { if($this->homepageChannels->removeElement($channel)&&$channel->getHomepageCmsPage()===$this){$channel->setHomepageCmsPage(null);} }
+    public function isHomepage():bool{return !$this->homepageChannels->isEmpty();}
     /** @return Collection<int, CmsPageTranslation> */ public function getTranslations():Collection{return $this->translations;} public function addTranslation(CmsPageTranslation $v):void{if(!$this->translations->contains($v)){ $this->translations->add($v);$v->setPage($this);}}
     public function removeTranslation(CmsPageTranslation $translation): void { $this->translations->removeElement($translation); }
     public function getTranslation(string $locale):?CmsPageTranslation { foreach($this->translations as $t) if($t->getLocale()===$locale)return $t; return null; }

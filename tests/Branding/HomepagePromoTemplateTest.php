@@ -10,7 +10,7 @@ final class HomepagePromoTemplateTest extends TestCase
 {
     public function testPromoSectionIsEditorialAndConfigurationDriven(): void
     {
-        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/index.html.twig');
+        $homepage = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/homepage/_legacy.html.twig');
         $promo = (string) file_get_contents(__DIR__ . '/../../templates/shop/homepage/_promos.html.twig');
         $stylesheet = (string) file_get_contents(__DIR__ . '/../../assets/shop/styles/cardnext.css');
 

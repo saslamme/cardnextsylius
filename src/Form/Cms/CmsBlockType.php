@@ -10,6 +10,8 @@ use App\Form\Cms\Block\FaqItemType;
 use App\Form\Cms\Block\FeatureItemType;
 use App\Form\Cms\Block\GalleryItemType;
 use App\Form\Cms\Block\LinkCardItemType;
+use App\Form\Cms\Block\HomepageCategoryItemType;
+use App\Form\Cms\Block\PromiseItemType;
 use App\Form\Cms\Block\StatItemType;
 use App\Form\Cms\Block\TestimonialItemType;
 use Symfony\Component\Form\AbstractType;
@@ -99,10 +101,14 @@ final class CmsBlockType extends AbstractType
 
         return match ($type) {
             'rich_text' => ['headline' => $line('Überschrift'), 'content' => $text('Inhalt', true)],
-            'hero' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text')] + $image + $button,
+            'hero' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text')] + $image + $button + ['button2Label' => $line('Button 2 – Text'), 'button2Url' => $line('Button 2 – URL')],
+            'category_slider' => ['headline' => $line('Überschrift', true), 'items' => [CollectionType::class, ['label' => 'Kategorien (Reihenfolge per Drag/Eintragsreihenfolge)', 'entry_type' => HomepageCategoryItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]]],
+            'homepage_service' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text', true)] + $image + $button,
             'image_text' => ['headline' => $line('Überschrift'), 'text' => $text('Text', true)] + $image + ['imagePosition' => [ChoiceType::class, ['label' => 'Bildposition', 'choices' => ['Links' => 'left', 'Rechts' => 'right']]]] + $button,
             'faq' => ['headline' => $line('Überschrift'), 'items' => [CollectionType::class, ['label' => 'FAQ-Einträge', 'entry_type' => FaqItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]]],
-            'cta' => ['headline' => $line('Überschrift', true), 'text' => $text('Text')] + $button,
+            'cta' => ['kicker' => $line('Kicker'), 'headline' => $line('Überschrift', true), 'text' => $text('Text')] + $image + $button,
+            'homepage_promo' => ['badge' => $line('Badge'), 'preheadline' => $line('Preheadline'), 'headline' => $line('Überschrift', true), 'text' => $text('Text')] + $image + $button,
+            'promise_bar' => ['items' => [CollectionType::class, ['label' => 'Versprechen / USPs', 'entry_type' => PromiseItemType::class, 'allow_add' => true, 'allow_delete' => true, 'by_reference' => false]]],
             'downloads' => ['headline' => $line('Überschrift'), 'text' => $text('Einleitung'), 'types' => [ChoiceType::class, ['label' => 'Downloadtypen', 'choices' => array_combine(\App\Entity\Cms\CmsDownload::TYPES, \App\Entity\Cms\CmsDownload::TYPES), 'multiple' => true, 'required' => false]], 'manufacturer' => $line('Hersteller'), 'limit' => [IntegerType::class, ['label' => 'Maximale Anzahl', 'required' => false]], 'showFilters' => [CheckboxType::class, ['label' => 'Filter anzeigen', 'required' => false]]],
             'link_cards' => [
                 'headline' => $line('Überschrift'),
