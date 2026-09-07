@@ -29,6 +29,7 @@ final class SupportCaseCreateType extends AbstractType
                 'choices' => SupportCaseType::cases(),
                 'choice_label' => static fn (SupportCaseType $type): string => 'cardnext.support.type.' . $type->value,
                 'choice_value' => static fn (?SupportCaseType $type): string => $type?->value ?? '',
+                'attr' => ['class' => 'form-select'],
             ])
             ->add('order', EntityType::class, [
                 'class' => Order::class,
@@ -37,6 +38,7 @@ final class SupportCaseCreateType extends AbstractType
                 'label' => 'cardnext.support.form.order',
                 'placeholder' => 'cardnext.support.form.none',
                 'required' => false,
+                'attr' => ['class' => 'form-select'],
             ])
             ->add('maintenanceContract', EntityType::class, [
                 'class' => MaintenanceContract::class,
@@ -51,12 +53,14 @@ final class SupportCaseCreateType extends AbstractType
                 'label' => 'cardnext.support.form.maintenance_contract',
                 'placeholder' => 'cardnext.support.form.none',
                 'required' => false,
+                'attr' => ['class' => 'form-select'],
             ])
             ->add('serialNumber', TextType::class, [
                 'label' => 'cardnext.support.form.serial_number',
                 'help' => 'cardnext.support.form.serial_number_help',
                 'required' => false,
                 'constraints' => [new Length(max: 255)],
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('product', EntityType::class, [
                 'class' => Product::class,
@@ -65,16 +69,23 @@ final class SupportCaseCreateType extends AbstractType
                 'label' => 'cardnext.support.form.product',
                 'placeholder' => 'cardnext.support.form.none',
                 'required' => false,
+                'attr' => ['class' => 'form-select'],
             ])
             ->add('subject', TextType::class, [
                 'label' => 'cardnext.support.form.subject',
-                'attr' => ['placeholder' => 'cardnext.support.form.subject_placeholder'],
-                'constraints' => [new NotBlank(), new Length(min: 3, max: 255)],
+                'attr' => ['class' => 'form-control', 'placeholder' => 'cardnext.support.form.subject_placeholder'],
+                'constraints' => [
+                    new NotBlank(message: 'cardnext.support.validation.subject_required'),
+                    new Length(min: 3, max: 255, minMessage: 'cardnext.support.validation.subject_short'),
+                ],
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'cardnext.support.form.description',
-                'attr' => ['rows' => 8, 'placeholder' => 'cardnext.support.form.description_placeholder'],
-                'constraints' => [new NotBlank(), new Length(min: 10, max: 10000)],
+                'attr' => ['class' => 'form-control', 'rows' => 8, 'placeholder' => 'cardnext.support.form.description_placeholder'],
+                'constraints' => [
+                    new NotBlank(message: 'cardnext.support.validation.description_required'),
+                    new Length(min: 10, max: 10000, minMessage: 'cardnext.support.validation.description_short'),
+                ],
             ]);
     }
 

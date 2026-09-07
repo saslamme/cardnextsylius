@@ -1,0 +1,17 @@
+{% set flash_types = {
+    success: { alert: 'alert-success', modifier: 'success', symbol: '✓' },
+    error: { alert: 'alert-danger', modifier: 'danger', symbol: '!' },
+    danger: { alert: 'alert-danger', modifier: 'danger', symbol: '!' },
+    warning: { alert: 'alert-warning', modifier: 'warning', symbol: '!' },
+    info: { alert: 'alert-info', modifier: 'info', symbol: 'i' }
+} %}
+<div class="cn-account-flashes" aria-live="polite">
+    {% for type, presentation in flash_types %}
+        {% for message in app.flashes(type) %}
+            <div class="alert {{ presentation.alert }} cn-account-flash cn-account-flash--{{ presentation.modifier }}" role="alert">
+                <span class="cn-account-flash__icon" aria-hidden="true">{{ presentation.symbol }}</span>
+                <span>{{ message|trans }}</span>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>

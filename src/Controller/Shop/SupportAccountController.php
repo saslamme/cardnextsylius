@@ -62,6 +62,9 @@ final class SupportAccountController extends AbstractController
         $form->handleRequest($request);
 
         $status = Response::HTTP_OK;
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $status = Response::HTTP_UNPROCESSABLE_ENTITY;
+        }
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var array<string, mixed> $values */
             $values = $form->getData();

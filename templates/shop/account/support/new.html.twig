@@ -1,21 +1,66 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% macro field(field) %}
+    <div class="cn-support-field{% if field.vars.errors|length %} cn-support-field--invalid{% endif %}">
+        {{ form_label(field, null, {label_attr: {class: 'form-label'}}) }}
+        {{ form_widget(field) }}
+        {% if field.vars.help %}{{ form_help(field, {help_attr: {class: 'form-text'}}) }}{% endif %}
+        {{ form_errors(field) }}
+    </div>
+{% endmacro %}
+
 {% block content %}
 {% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'cardnext.support.title'|trans, url: path('cardnext_shop_account_support_index') }, { label: 'cardnext.support.new'|trans }] } %}
 {% block account_content %}
-<section class="cn-account-panel">
-    <h1>{{ 'cardnext.support.new'|trans }}</h1>
-    {% if service_unavailable %}<div class="alert alert-danger" role="alert">{{ 'cardnext.support.error.unavailable'|trans }}</div>{% endif %}
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-    {{ form_row(form.type) }}
-    {{ form_row(form.order) }}
-    {{ form_row(form.maintenanceContract) }}
-    {{ form_row(form.serialNumber) }}
-    {{ form_row(form.product) }}
-    {{ form_row(form.subject) }}
-    {{ form_row(form.description) }}
-    <button class="btn btn-primary" type="submit">{{ 'cardnext.support.form.submit'|trans }}</button>
-    <a class="btn btn-link" href="{{ path('cardnext_shop_account_support_index') }}">{{ 'cardnext.support.form.cancel'|trans }}</a>
+{% import _self as support_form %}
+<section class="cn-account-panel cn-support">
+    <header class="cn-support__header">
+        <div class="cn-support__header-copy">
+            <span class="cn-support__kicker">{{ 'cardnext.support.kicker'|trans }}</span>
+            <h1>{{ 'cardnext.support.new'|trans }}</h1>
+            <p>{{ 'cardnext.support.new_intro'|trans }}</p>
+        </div>
+    </header>
+
+    {% if form.vars.submitted and not form.vars.valid %}
+        <div class="cn-account-flash cn-account-flash--danger" role="alert">
+            <span class="cn-account-flash__icon" aria-hidden="true">!</span>
+            <span>{{ 'cardnext.support.validation.summary'|trans }}</span>
+        </div>
+    {% endif %}
+    {% if service_unavailable %}
+        <div class="cn-account-flash cn-account-flash--danger" role="alert">
+            <span class="cn-account-flash__icon" aria-hidden="true">!</span>
+            <span>{{ 'cardnext.support.error.unavailable'|trans }}</span>
+        </div>
+    {% endif %}
+
+    {{ form_start(form, {attr: {class: 'cn-support__form'}}) }}
+        {{ form_errors(form) }}
+        <fieldset class="cn-support__section">
+            <legend class="cn-support__section-title">{{ 'cardnext.support.section.request'|trans }}</legend>
+            <div class="cn-support__grid">
+                {{ support_form.field(form.type) }}
+                {{ support_form.field(form.order) }}
+            </div>
+        </fieldset>
+        <fieldset class="cn-support__section">
+            <legend class="cn-support__section-title">{{ 'cardnext.support.section.device'|trans }}</legend>
+            <div class="cn-support__grid">
+                {{ support_form.field(form.maintenanceContract) }}
+                {{ support_form.field(form.serialNumber) }}
+                <div class="cn-support__grid-full">{{ support_form.field(form.product) }}</div>
+            </div>
+        </fieldset>
+        <fieldset class="cn-support__section">
+            <legend class="cn-support__section-title">{{ 'cardnext.support.section.message'|trans }}</legend>
+            {{ support_form.field(form.subject) }}
+            {{ support_form.field(form.description) }}
+        </fieldset>
+        <div class="cn-support__actions">
+            <button class="btn btn-primary" type="submit">{{ 'cardnext.support.form.submit'|trans }}</button>
+            <a class="btn btn-outline-primary" href="{{ path('cardnext_shop_account_support_index') }}">{{ 'cardnext.support.form.cancel'|trans }}</a>
+        </div>
     {{ form_end(form) }}
 </section>
 {% endblock %}

@@ -1,6 +1,11 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 {% block content %}
 {% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'cardnext.support.title'|trans, url: path('cardnext_shop_account_support_index') }, { label: '#' ~ case.freshdeskTicketId }] } %}
-{% block account_content %}<section class="cn-account-panel"><h1>{{ 'cardnext.support.title'|trans }}</h1><div class="alert alert-warning" role="alert">{{ 'cardnext.support.error.case_unavailable'|trans }}</div><a class="btn btn-outline-primary" href="{{ path('cardnext_shop_account_support_index') }}">{{ 'cardnext.support.back'|trans }}</a></section>{% endblock %}
+{% block account_content %}
+<section class="cn-account-panel cn-support">
+    <header class="cn-support__header"><div class="cn-support__header-copy"><span class="cn-support__kicker">{{ 'cardnext.support.kicker'|trans }}</span><h1>{{ 'cardnext.support.error.case_title'|trans }}</h1><p>{{ 'cardnext.support.error.case_unavailable'|trans }}</p></div></header>
+    <div class="cn-support__actions"><a class="btn btn-outline-primary" href="{{ path('cardnext_shop_account_support_index') }}">{{ 'cardnext.support.back'|trans }}</a></div>
+</section>
+{% endblock %}
 {% endembed %}
 {% endblock %}

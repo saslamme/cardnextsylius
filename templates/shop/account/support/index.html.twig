@@ -2,24 +2,25 @@
 {% block content %}
 {% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'cardnext.support.title'|trans }] } %}
 {% block account_content %}
-<section class="cn-account-panel">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-        <div><h1>{{ 'cardnext.support.title'|trans }}</h1><p class="text-muted mb-0">{{ 'cardnext.support.intro'|trans }}</p></div>
+<section class="cn-account-panel cn-support">
+    <header class="cn-support__header">
+        <div class="cn-support__header-copy"><span class="cn-support__kicker">{{ 'cardnext.support.kicker'|trans }}</span><h1>{{ 'cardnext.support.title'|trans }}</h1><p>{{ 'cardnext.support.intro'|trans }}</p></div>
         <a class="btn btn-primary" href="{{ path('cardnext_shop_account_support_new') }}">{{ 'cardnext.support.new'|trans }}</a>
-    </div>
+    </header>
     {% if cases is empty %}
-        <div class="cn-account-empty text-center py-5"><h2>{{ 'cardnext.support.empty'|trans }}</h2><a class="btn btn-primary mt-3" href="{{ path('cardnext_shop_account_support_new') }}">{{ 'cardnext.support.create'|trans }}</a></div>
+        <div class="cn-support-empty">
+            <span class="cn-support-empty__icon" aria-hidden="true">?</span>
+            <div><h2>{{ 'cardnext.support.empty'|trans }}</h2><p>{{ 'cardnext.support.empty_help'|trans }}</p></div>
+            <a class="btn btn-primary" href="{{ path('cardnext_shop_account_support_new') }}">{{ 'cardnext.support.create'|trans }}</a>
+        </div>
     {% else %}
-        <div class="cn-account-table-wrap table-responsive"><table class="cn-account-table">
+        <div class="cn-account-table-wrap"><table class="cn-account-table">
             <thead><tr><th>{{ 'cardnext.support.list.case'|trans }}</th><th>{{ 'cardnext.support.list.type'|trans }}</th><th>{{ 'cardnext.support.list.product'|trans }}</th><th>{{ 'cardnext.support.list.order'|trans }}</th><th>{{ 'cardnext.support.list.serial'|trans }}</th><th>{{ 'cardnext.support.list.created'|trans }}</th><th></th></tr></thead>
             <tbody>{% for supportCase in cases %}<tr>
-                <td><strong>#{{ supportCase.freshdeskTicketId }}</strong></td>
-                <td>{{ ('cardnext.support.type.' ~ supportCase.serviceType.value)|trans }}</td>
+                <td><strong>#{{ supportCase.freshdeskTicketId }}</strong></td><td>{{ ('cardnext.support.type.' ~ supportCase.serviceType.value)|trans }}</td>
                 <td>{{ supportCase.product ? (supportCase.product.name ?? supportCase.product.code) : (supportCase.maintenanceContract ? (supportCase.maintenanceContract.printerModel ?? '–') : '–') }}</td>
-                <td>{{ supportCase.order ? (supportCase.order.number ?? '–') : '–' }}</td>
-                <td>{{ supportCase.serialNumber ?? '–' }}</td>
-                <td>{{ supportCase.createdAt|format_datetime }}</td>
-                <td><a class="btn btn-sm btn-outline-primary" href="{{ path('cardnext_shop_account_support_show', {id: supportCase.id}) }}">{{ 'cardnext.support.show'|trans }}</a></td>
+                <td>{{ supportCase.order ? (supportCase.order.number ?? '–') : '–' }}</td><td>{{ supportCase.serialNumber ?? '–' }}</td><td>{{ supportCase.createdAt|format_datetime }}</td>
+                <td class="cn-account-table__action"><a class="btn btn-sm btn-outline-primary" href="{{ path('cardnext_shop_account_support_show', {id: supportCase.id}) }}">{{ 'cardnext.support.show'|trans }}</a></td>
             </tr>{% endfor %}</tbody>
         </table></div>
     {% endif %}
