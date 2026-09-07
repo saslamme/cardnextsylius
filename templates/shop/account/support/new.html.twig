@@ -1,0 +1,23 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% block content %}
+{% embed 'shop/account/_layout.html.twig' with { breadcrumbs: [{ label: 'cardnext.support.title'|trans, url: path('cardnext_shop_account_support_index') }, { label: 'cardnext.support.new'|trans }] } %}
+{% block account_content %}
+<section class="cn-account-panel">
+    <h1>{{ 'cardnext.support.new'|trans }}</h1>
+    {% if service_unavailable %}<div class="alert alert-danger" role="alert">{{ 'cardnext.support.error.unavailable'|trans }}</div>{% endif %}
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.type) }}
+    {{ form_row(form.order) }}
+    {{ form_row(form.maintenanceContract) }}
+    {{ form_row(form.serialNumber) }}
+    {{ form_row(form.product) }}
+    {{ form_row(form.subject) }}
+    {{ form_row(form.description) }}
+    <button class="btn btn-primary" type="submit">{{ 'cardnext.support.form.submit'|trans }}</button>
+    <a class="btn btn-link" href="{{ path('cardnext_shop_account_support_index') }}">{{ 'cardnext.support.form.cancel'|trans }}</a>
+    {{ form_end(form) }}
+</section>
+{% endblock %}
+{% endembed %}
+{% endblock %}
