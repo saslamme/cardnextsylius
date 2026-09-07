@@ -10,7 +10,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class HttpFreshdeskClient implements FreshdeskClientInterface
 {
     public function __construct(private HttpClientInterface $httpClient, private string $baseUri, private string $apiKey) {}
-    public function checkConnection(): void { $this->request('GET', '/api/v2/account', 'check connection'); }
+    public function checkConnection(): void { $this->request('GET', '/api/v2/tickets?per_page=1', 'check connection'); }
     public function createTicket(FreshdeskCreateTicketData $data): FreshdeskTicketData
     {
         return $this->ticket($this->request('POST', '/api/v2/tickets', 'create ticket', ['json' => ['email'=>$data->email,'name'=>$data->name,'subject'=>$data->subject,'description'=>$data->description,'status'=>2,'priority'=>1,'source'=>2]]), 'create ticket');

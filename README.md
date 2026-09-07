@@ -197,7 +197,7 @@ FRESHDESK_API_KEY=''
 
 Never commit the API key. The integration creates and reads tickets and reads conversations, but does not alter Freshdesk configuration or structure, synchronize contacts/companies, or use custom fields. When the ticket endpoint receives an unknown email address, Freshdesk may natively create its requester; Cardnext itself never invokes the Contact API.
 
-Test the production connection using the read-only account endpoint:
+Test the production connection using read-only access to one ticket (`GET /api/v2/tickets?per_page=1`):
 
 ```bash
 APP_ENV=prod php bin/console cardnext:freshdesk:check
