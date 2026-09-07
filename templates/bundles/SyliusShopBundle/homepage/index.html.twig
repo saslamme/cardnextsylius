@@ -23,8 +23,15 @@
 {% block content %}
 {% if cms %}
 <main id="main-content" class="cn-page cardnext-cms cardnext-cms--homepage cardnext-cms--{{ cms.page.layout.renderer }}">
-    {% for block in cms.page.blocks|filter(block => block.enabled and block.locale == cms.locale) %}
-        {% include cardnext_cms_block_template(block.type) with {config: block.configuration} only %}
+    {% set blocks = cms.page.blocks|filter(block => block.enabled and block.locale == cms.locale)|sort((a, b) => a.position <=> b.position) %}
+    {% set promoBlocks = blocks|filter(block => block.type == 'homepage_promo') %}
+    {% set promosRendered = false %}
+    {% for block in blocks %}
+        {% if block.type == 'homepage_promo' %}
+            {% if not promosRendered %}{% include 'shop/cms/block/_homepage_promos.html.twig' with {promoBlocks: promoBlocks} only %}{% set promosRendered = true %}{% endif %}
+        {% else %}
+            {% include cardnext_cms_block_template(block.type) with {config: block.configuration, homepage: true} only %}
+        {% endif %}
     {% endfor %}
 </main>
 {% else %}{{ parent() }}{% endif %}
