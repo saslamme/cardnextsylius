@@ -35,11 +35,14 @@ final class HomepageCategoryVisualTemplateTest extends TestCase
         $stylesheet = (string) file_get_contents(__DIR__ . '/../../assets/shop/styles/cardnext.css');
 
         self::assertMatchesRegularExpression('/\.cn-home-category__photo \{[^}]*object-fit: cover;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\.cn-home-category__icon \{[^}]*object-fit: contain;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__media--icon \.cn-home-category__icon \{[^}]*object-fit: contain;/s', $stylesheet);
         self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media--icon[^}]*object-fit: cover;/s', $stylesheet);
         self::assertDoesNotMatchRegularExpression('/\.cn-home-category__media img \{[^}]*object-fit: cover;/s', $stylesheet);
         self::assertMatchesRegularExpression('/\.cn-home-category__media--icon \{[^}]*display: flex;[^}]*align-items: center;[^}]*justify-content: center;[^}]*overflow: hidden;/s', $stylesheet);
-        self::assertMatchesRegularExpression('/\.cn-home-category__image,\s*\.cn-home-category__icon \{[^}]*max-width: min\(58%, 136px\);[^}]*max-height: 92px;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/\.cn-home-category__media--icon \.cn-home-category__image,\s*\.cn-home-category__media--icon \.cn-home-category__icon \{[^}]*width: 92px;[^}]*height: 64px;[^}]*max-width: 42%;[^}]*object-fit: contain;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/@media \(max-width: 991\.98px\) \{.*?\.cn-home-category__media--icon \.cn-home-category__image,\s*\.cn-home-category__media--icon \.cn-home-category__icon \{[^}]*width: 84px;[^}]*height: 60px;/s', $stylesheet);
+        self::assertMatchesRegularExpression('/@media \(max-width: 767\.98px\) \{.*?\.cn-home-category__media--icon \.cn-home-category__image,\s*\.cn-home-category__media--icon \.cn-home-category__icon \{[^}]*width: 76px;[^}]*height: 56px;[^}]*max-width: 56%;/s', $stylesheet);
+        self::assertDoesNotMatchRegularExpression('/\.cn-home-category__photo[^}]*width: (?:92|84|76)px;/s', $stylesheet);
     }
 
     public function testCmsCategorySliderUsesConstrainedIconMarkup(): void
