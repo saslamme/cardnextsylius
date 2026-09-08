@@ -16,6 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
+use App\Entity\Leasing\LeasingFactor;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 
 final class ProductTypeExtension extends AbstractTypeExtension
 {
@@ -87,6 +89,9 @@ final class ProductTypeExtension extends AbstractTypeExtension
             'required' => false,
             'label' => 'Kartendrucker-Berater',
         ]);
+        $builder->add('leasingEnabled', CheckboxType::class, ['required' => false, 'label' => 'cardnext.leasing.product_enabled'])
+            ->add('leasingCustomPrice', MoneyType::class, ['required' => false, 'currency' => 'EUR', 'divisor' => 100, 'label' => 'cardnext.leasing.custom_price', 'help' => 'cardnext.leasing.custom_price_help'])
+            ->add('leasingFactors', EntityType::class, ['class' => LeasingFactor::class, 'multiple' => true, 'expanded' => true, 'choice_label' => 'durationMonths', 'required' => false, 'label' => 'cardnext.leasing.allowed_durations', 'query_builder' => static fn (EntityRepository $r) => $r->createQueryBuilder('f')->andWhere('f.active = true')->orderBy('f.position', 'ASC')]);
     }
 
     public static function getExtendedTypes(): iterable

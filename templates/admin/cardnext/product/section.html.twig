@@ -12,6 +12,11 @@
 
     <div class="card mb-3"><div class="card-header"><h2 class="card-title">Shopdarstellung</h2></div><div class="card-body"><div class="row g-3"><div class="col-12 col-md-4">{{ form_row(product_form.homepageFeatured) }}</div><div class="col-12 col-md-4">{{ form_row(product_form.homepagePosition) }}</div><div class="col-12 col-md-4">{{ form_row(product_form.addonOnly) }}</div></div></div></div>
 
+    <div class="card mb-3"><div class="card-header"><h2 class="card-title">{{ 'cardnext.leasing.title'|trans }}</h2></div><div class="card-body">
+        {{ form_row(product_form.leasingEnabled) }}
+        <div class="row g-3"><div class="col-12 col-md-6">{{ form_row(product_form.leasingCustomPrice) }}</div><div class="col-12 col-md-6">{{ form_row(product_form.leasingFactors) }}</div></div>
+    </div></div>
+
     <div class="card mb-3"><div class="card-header"><div><h2 class="card-title mb-1">Produktfunktionen</h2><div class="text-secondary small">Weiterführende Produktdaten in eigenen Bereichen verwalten.</div></div></div><div class="card-body"><div class="row g-3">
         {% set management_cards = [
             {title: 'Dokumente', icon: 'tabler:file-description', count: resource.id ? resource.documents|length : null, description: 'Datenblätter, Handbücher und Zertifikate verwalten.', route: 'cardnext_admin_product_document_index', button: 'Dokumente verwalten'},

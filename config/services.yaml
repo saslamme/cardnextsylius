@@ -159,6 +159,10 @@ services:
         arguments:
             $recipient: '%cardnext.quote_recipient%'
 
+    App\Leasing\LeasingInquiryMailer:
+        arguments:
+            $defaultRecipient: '%cardnext.quote_recipient%'
+
     App\Integration\Freshdesk\FreshdeskClientInterface: '@App\Integration\Freshdesk\HttpFreshdeskClient'
     App\Integration\Freshdesk\HttpFreshdeskClient:
         arguments:
