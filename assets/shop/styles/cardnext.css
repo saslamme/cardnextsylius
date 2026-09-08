@@ -1085,6 +1085,137 @@ body.cn-nav-open { overflow: hidden; }
     *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 
+/* Homepage brand variants. Cardnext intentionally continues to use the default rules above. */
+.cardnext-cms--brand-identible .cn-hero { color: #fff; background: var(--cn-ink); border: 0; }
+.cardnext-cms--brand-identible .cn-hero__grid { min-height: 560px; grid-template-columns: minmax(0,3fr) minmax(390px,2fr); }
+.cardnext-cms--brand-identible .cn-hero__copy { padding: 76px clamp(48px,6vw,96px) 76px 0; }
+.cardnext-cms--brand-identible .cn-hero .cn-title { max-width: 780px; color: #fff; font-size: clamp(3rem,5vw,5.5rem); }
+.cardnext-cms--brand-identible .cn-hero .cn-kicker { color: var(--cn-primary); }
+.cardnext-cms--brand-identible .cn-hero .cn-lead { color: rgba(255,255,255,.76); font-size: 1.12rem; }
+.cardnext-cms--brand-identible .cn-hero .cn-btn--secondary { color: #fff; background: transparent; border-color: rgba(255,255,255,.62); }
+.cardnext-cms--brand-identible .cn-hero__visual { min-height: 560px; border-color: rgba(255,255,255,.12); }
+.cardnext-cms--brand-identible .cn-home-categories { padding-block: 76px; background: var(--cn-surface-soft); }
+.cardnext-cms--brand-identible .cn-home-categories__head h2 { font-size: clamp(1.6rem,2.5vw,2.35rem); }
+.cardnext-cms--brand-identible .cn-category-slider { --cn-category-slider-gap: 24px; }
+.cardnext-cms--brand-identible .cn-category-slider__slide { flex-basis: calc((100% - (2 * var(--cn-category-slider-gap))) / 3); }
+.cardnext-cms--brand-identible .cn-home-category { min-height: 340px; border: 0; border-radius: 2px; box-shadow: 0 18px 46px rgba(21,27,32,.08); }
+.cardnext-cms--brand-identible .cn-home-category__media { min-height: 250px; }
+.cardnext-cms--brand-identible .cn-home-category__media--icon .cn-home-category__image,
+.cardnext-cms--brand-identible .cn-home-category__media--icon .cn-home-category__icon { width: 132px; height: 100px; max-width: 58%; }
+.cardnext-cms--brand-identible .cn-home-category__label { min-height: 90px; padding-inline: 26px; }
+.cardnext-cms--brand-identible .cn-home-category__label strong { font-size: 1rem; }
+.cardnext-cms--brand-identible .cn-home-service { padding-block: 72px; color: #fff; background: var(--cn-ink); border: 0; }
+.cardnext-cms--brand-identible .cn-home-service__grid { grid-template-columns: minmax(0,1.35fr) minmax(320px,.65fr); gap: 56px; }
+.cardnext-cms--brand-identible .cn-home-service__feature { background: transparent; }
+.cardnext-cms--brand-identible .cn-home-service__copy { padding-block: 36px; }
+.cardnext-cms--brand-identible .cn-home-service .cn-title,
+.cardnext-cms--brand-identible .cn-home-service__item-copy strong { color: #fff; }
+.cardnext-cms--brand-identible .cn-home-service .cn-lead,
+.cardnext-cms--brand-identible .cn-home-service__item-copy > span { color: rgba(255,255,255,.7); }
+.cardnext-cms--brand-identible .cn-home-service__photo { min-height: 500px; }
+.cardnext-cms--brand-identible .cn-home-service__list { align-content: center; padding: 28px; background: rgba(255,255,255,.055); }
+.cardnext-cms--brand-identible .cn-home-service__item { border-color: rgba(255,255,255,.15); }
+.cardnext-cms--brand-identible .cn-product-slider { margin-block: 28px; padding-block: 88px; }
+.cardnext-cms--brand-identible .cn-product-slider > .cn-container { max-width: 1160px; }
+.cardnext-cms--brand-identible .cn-product-slider__slide > * { box-shadow: none; }
+.cardnext-cms--brand-identible #why-cardnext { background: var(--cn-surface-soft); }
+.cardnext-cms--brand-identible #why-cardnext .cn-grid--lined { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.cardnext-cms--brand-identible #why-cardnext .cn-feature { min-height: 220px; padding: 38px; background: #fff; border: 0; }
+.cardnext-cms--brand-identible .cn-home-promos { padding-block: 88px; }
+.cardnext-cms--brand-identible .cn-home-promos__grid { gap: 28px; }
+.cardnext-cms--brand-identible .cn-home-promo { grid-template-columns: minmax(0,1.45fr) minmax(180px,.55fr); color: #fff; background: var(--cn-ink); border: 0; border-radius: 2px; }
+.cardnext-cms--brand-identible .cn-home-promo h3 { color: #fff; font-size: clamp(1.65rem,2.4vw,2.5rem); }
+.cardnext-cms--brand-identible .cn-home-promo p { color: rgba(255,255,255,.72); }
+.cardnext-cms--brand-identible .cn-home-promo__media { min-height: 320px; }
+.cardnext-cms--brand-identible .cn-cta { background: var(--cn-ink); }
+.cardnext-cms--brand-identible .cn-cta__background { opacity: .2; }
+.cardnext-cms--brand-identible .cn-cta::before { background: linear-gradient(90deg,var(--cn-ink) 0%,var(--cn-ink) 68%,rgba(21,27,32,.6) 100%); }
+.cardnext-cms--brand-identible .cn-cta__inner { min-height: 230px; }
+
+.cardnext-cms--brand-inplastor { background: var(--cn-surface); }
+.cardnext-cms--brand-inplastor .cn-hero { border-block: 1px solid var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-hero__grid { min-height: 510px; grid-template-columns: minmax(0,9fr) minmax(480px,11fr); }
+.cardnext-cms--brand-inplastor .cn-hero__copy { padding: 62px clamp(36px,5vw,72px) 62px 0; }
+.cardnext-cms--brand-inplastor .cn-hero .cn-title { font-size: clamp(2.7rem,4vw,4.45rem); letter-spacing: -.045em; }
+.cardnext-cms--brand-inplastor .cn-hero__visual { min-height: 510px; border-left: 4px solid var(--cn-primary); }
+.cardnext-cms--brand-inplastor .cn-home-categories { padding-block: 58px 76px; border-bottom: 1px solid var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-home-categories__head h2 { font-size: clamp(1.55rem,2.4vw,2.2rem); text-transform: uppercase; }
+.cardnext-cms--brand-inplastor .cn-category-slider { --cn-category-slider-gap: 16px; }
+.cardnext-cms--brand-inplastor .cn-category-slider__slide { flex-basis: calc((100% - (2 * var(--cn-category-slider-gap))) / 3); }
+.cardnext-cms--brand-inplastor .cn-home-category { min-height: 370px; border-color: var(--cn-ink); border-radius: 0; box-shadow: none; }
+.cardnext-cms--brand-inplastor .cn-home-category__media { min-height: 290px; }
+.cardnext-cms--brand-inplastor .cn-home-category__media--icon .cn-home-category__image,
+.cardnext-cms--brand-inplastor .cn-home-category__media--icon .cn-home-category__icon { width: 160px; height: 124px; max-width: 65%; }
+.cardnext-cms--brand-inplastor .cn-home-category__label { min-height: 78px; padding-inline: 22px; border-top: 1px solid var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-home-category__label strong { font-size: .9rem; text-transform: uppercase; }
+.cardnext-cms--brand-inplastor .cn-home-service { border-block: 1px solid var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-home-service__grid { grid-template-columns: minmax(0,1.3fr) minmax(360px,.7fr); }
+.cardnext-cms--brand-inplastor .cn-home-service__feature { grid-template-columns: minmax(0,.85fr) minmax(360px,1.15fr); background: #fff; }
+.cardnext-cms--brand-inplastor .cn-home-service__photo { min-height: 520px; border-inline: 1px solid var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-home-service__list { padding: 18px 0 18px 32px; background: var(--cn-surface-soft); }
+.cardnext-cms--brand-inplastor .cn-home-service__item { grid-template-columns: 44px minmax(0,1fr) 20px; border-color: var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-product-slider { padding-block: 78px; border-bottom: 1px solid var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-product-slider__slide > * { border-color: var(--cn-ink); border-radius: 0; }
+.cardnext-cms--brand-inplastor .cn-home-industries { padding-block: 88px; background: var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-home-industries .cn-title,
+.cardnext-cms--brand-inplastor .cn-home-industries .cn-lead { color: #fff; }
+.cardnext-cms--brand-inplastor .cn-section--soft .cn-grid--3 { gap: 2px; grid-template-columns: repeat(3,minmax(0,1fr)); background: var(--cn-primary); }
+.cardnext-cms--brand-inplastor .cn-section--soft .cn-grid--3 .cn-card { border: 0; border-radius: 0; }
+.cardnext-cms--brand-inplastor .cn-section--soft .cn-card__media--photo { aspect-ratio: 4 / 3; }
+.cardnext-cms--brand-inplastor #why-cardnext .cn-grid--lined { border-top: 2px solid var(--cn-ink); }
+.cardnext-cms--brand-inplastor #why-cardnext .cn-feature { min-height: 150px; padding: 24px; border-color: var(--cn-ink); }
+.cardnext-cms--brand-inplastor #why-cardnext .cn-feature h3 { font-size: .86rem; letter-spacing: .04em; text-transform: uppercase; }
+.cardnext-cms--brand-inplastor .cn-home-promos__grid { gap: 2px; background: var(--cn-ink); }
+.cardnext-cms--brand-inplastor .cn-home-promo { grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); border: 0; border-radius: 0; }
+.cardnext-cms--brand-inplastor .cn-home-promo__media { min-height: 390px; order: -1; }
+.cardnext-cms--brand-inplastor .cn-cta { border-block: 4px solid var(--cn-primary); }
+.cardnext-cms--brand-inplastor .cn-cta__inner { min-height: 205px; }
+
+@media (max-width: 1199.98px) {
+    .cardnext-cms--brand-identible .cn-home-service__grid,
+    .cardnext-cms--brand-inplastor .cn-home-service__grid { grid-template-columns: 1fr; }
+    .cardnext-cms--brand-identible .cn-home-service__list,
+    .cardnext-cms--brand-inplastor .cn-home-service__list { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+
+@media (max-width: 991.98px) {
+    .cardnext-cms--brand-identible .cn-hero__grid,
+    .cardnext-cms--brand-inplastor .cn-hero__grid { grid-template-columns: 1fr; }
+    .cardnext-cms--brand-identible .cn-hero__copy,
+    .cardnext-cms--brand-inplastor .cn-hero__copy { padding: 54px 24px; }
+    .cardnext-cms--brand-identible .cn-category-slider__slide,
+    .cardnext-cms--brand-inplastor .cn-category-slider__slide { flex-basis: calc((100% - var(--cn-category-slider-gap)) / 2); }
+    .cardnext-cms--brand-inplastor .cn-section--soft .cn-grid--3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+
+@media (max-width: 767.98px) {
+    .cardnext-cms--brand-identible .cn-hero__grid,
+    .cardnext-cms--brand-inplastor .cn-hero__grid { min-height: 0; }
+    .cardnext-cms--brand-identible .cn-hero__copy,
+    .cardnext-cms--brand-inplastor .cn-hero__copy { padding: 44px 0; }
+    .cardnext-cms--brand-identible .cn-hero .cn-title,
+    .cardnext-cms--brand-inplastor .cn-hero .cn-title { font-size: clamp(2.35rem,11vw,3.2rem); }
+    .cardnext-cms--brand-identible .cn-hero__visual,
+    .cardnext-cms--brand-inplastor .cn-hero__visual { min-height: 300px; border-left: 0; }
+    .cardnext-cms--brand-identible .cn-category-slider__slide,
+    .cardnext-cms--brand-inplastor .cn-category-slider__slide { flex-basis: min(82%,320px); }
+    .cardnext-cms--brand-identible .cn-home-category,
+    .cardnext-cms--brand-inplastor .cn-home-category { min-height: 300px; }
+    .cardnext-cms--brand-identible .cn-home-category__media,
+    .cardnext-cms--brand-inplastor .cn-home-category__media { min-height: 220px; }
+    .cardnext-cms--brand-identible .cn-home-service__feature,
+    .cardnext-cms--brand-inplastor .cn-home-service__feature { grid-template-columns: 1fr; }
+    .cardnext-cms--brand-identible .cn-home-service__list,
+    .cardnext-cms--brand-inplastor .cn-home-service__list { grid-template-columns: 1fr; padding-inline: 0; }
+    .cardnext-cms--brand-inplastor .cn-home-service__photo { border-inline: 0; }
+    .cardnext-cms--brand-identible #why-cardnext .cn-grid--lined,
+    .cardnext-cms--brand-inplastor .cn-section--soft .cn-grid--3 { grid-template-columns: 1fr; }
+    .cardnext-cms--brand-identible .cn-home-promo,
+    .cardnext-cms--brand-inplastor .cn-home-promo { grid-template-columns: 1fr; }
+    .cardnext-cms--brand-identible .cn-home-promo__media,
+    .cardnext-cms--brand-inplastor .cn-home-promo__media { min-height: 260px; }
+}
+
 /* ==========================================================================
    Shared icon sizing
    ========================================================================== */
