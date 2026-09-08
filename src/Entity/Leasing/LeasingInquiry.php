@@ -8,19 +8,19 @@ class LeasingInquiry
 {
  #[ORM\Id,ORM\GeneratedValue,ORM\Column] private ?int $id=null;
  #[ORM\Column(name:'inquiry_number',length:20,unique:true)] private string $inquiryNumber='';
- #[ORM\ManyToOne(targetEntity:Product::class)] #[ORM\JoinColumn(nullable:true,onDelete:'SET NULL')] private ?Product $product=null;
- #[ORM\ManyToOne(targetEntity:ProductVariant::class)] #[ORM\JoinColumn(nullable:true,onDelete:'SET NULL')] private ?ProductVariant $productVariant=null;
- #[ORM\ManyToOne(targetEntity:Channel::class)] #[ORM\JoinColumn(nullable:true,onDelete:'SET NULL')] private ?Channel $channel=null;
- #[ORM\Column(length:255)] private string $productNameSnapshot=''; #[ORM\Column(length:255)] private string $productCodeSnapshot='';
- #[ORM\Column(length:3)] private string $currencyCode='EUR'; #[ORM\Column] private int $netPrice=0;
- #[ORM\Column(type:Types::DECIMAL,precision:12,scale:8)] private string $leasingFactorSnapshot='0'; #[ORM\Column] private int $durationMonths=0; #[ORM\Column] private int $calculatedMonthlyRate=0;
+ #[ORM\ManyToOne(targetEntity:Product::class)] #[ORM\JoinColumn(name:'product_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?Product $product=null;
+ #[ORM\ManyToOne(targetEntity:ProductVariant::class)] #[ORM\JoinColumn(name:'product_variant_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?ProductVariant $productVariant=null;
+ #[ORM\ManyToOne(targetEntity:Channel::class)] #[ORM\JoinColumn(name:'channel_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?Channel $channel=null;
+ #[ORM\Column(name:'product_name_snapshot',length:255)] private string $productNameSnapshot=''; #[ORM\Column(name:'product_code_snapshot',length:255)] private string $productCodeSnapshot='';
+ #[ORM\Column(name:'currency_code',length:3)] private string $currencyCode='EUR'; #[ORM\Column(name:'net_price')] private int $netPrice=0;
+ #[ORM\Column(name:'leasing_factor_snapshot',type:Types::DECIMAL,precision:12,scale:8)] private string $leasingFactorSnapshot='0'; #[ORM\Column(name:'duration_months')] private int $durationMonths=0; #[ORM\Column(name:'calculated_monthly_rate')] private int $calculatedMonthlyRate=0;
  #[Assert\NotBlank,Assert\Length(max:255)] #[ORM\Column(length:255)] private string $company='';
- #[Assert\NotBlank,Assert\Length(max:100)] #[ORM\Column(length:100)] private string $firstName=''; #[Assert\NotBlank,Assert\Length(max:100)] #[ORM\Column(length:100)] private string $lastName='';
+ #[Assert\NotBlank,Assert\Length(max:100)] #[ORM\Column(name:'first_name',length:100)] private string $firstName=''; #[Assert\NotBlank,Assert\Length(max:100)] #[ORM\Column(name:'last_name',length:100)] private string $lastName='';
  #[Assert\NotBlank,Assert\Email] #[ORM\Column(length:254)] private string $email=''; #[ORM\Column(length:64,nullable:true)] private ?string $phone=null;
- #[ORM\Column(length:255,nullable:true)] private ?string $street=null; #[ORM\Column(length:32,nullable:true)] private ?string $houseNumber=null;
- #[Assert\NotBlank] #[ORM\Column(length:32)] private string $postalCode=''; #[Assert\NotBlank] #[ORM\Column(length:128)] private string $city=''; #[Assert\Country] #[ORM\Column(length:2,nullable:true)] private ?string $countryCode=null;
+ #[ORM\Column(length:255,nullable:true)] private ?string $street=null; #[ORM\Column(name:'house_number',length:32,nullable:true)] private ?string $houseNumber=null;
+ #[Assert\NotBlank] #[ORM\Column(name:'postal_code',length:32)] private string $postalCode=''; #[Assert\NotBlank] #[ORM\Column(length:128)] private string $city=''; #[Assert\Country] #[ORM\Column(name:'country_code',length:2,nullable:true)] private ?string $countryCode=null;
  #[ORM\Column(type:Types::TEXT,nullable:true)] private ?string $message=null; #[ORM\Column(type:Types::STRING,length:32,enumType:LeasingInquiryStatus::class)] private LeasingInquiryStatus $status=LeasingInquiryStatus::New;
- #[ORM\Column(type:Types::TEXT,nullable:true)] private ?string $internalNote=null; #[ORM\Column(name:'created_at',type:Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $createdAt; #[ORM\Column(name:'updated_at',type:Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $updatedAt;
+ #[ORM\Column(name:'internal_note',type:Types::TEXT,nullable:true)] private ?string $internalNote=null; #[ORM\Column(name:'created_at',type:Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $createdAt; #[ORM\Column(name:'updated_at',type:Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $updatedAt;
  public function __construct(){ $this->createdAt=$this->updatedAt=new \DateTimeImmutable(); }
  public function getId():?int{return $this->id;} public function getInquiryNumber():string{return $this->inquiryNumber;} public function setInquiryNumber(string $v):void{$this->inquiryNumber=$v;}
  public function getProduct():?Product{return $this->product;} public function setProduct(?Product $v):void{$this->product=$v;} public function getProductVariant():?ProductVariant{return $this->productVariant;} public function setProductVariant(?ProductVariant $v):void{$this->productVariant=$v;} public function getChannel():?Channel{return $this->channel;} public function setChannel(?Channel $v):void{$this->channel=$v;}

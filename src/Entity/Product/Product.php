@@ -46,6 +46,8 @@ class Product extends BaseProduct implements ProductInterface
     /** @var Collection<int, \App\Entity\Leasing\LeasingFactor> */
     #[ORM\ManyToMany(targetEntity: \App\Entity\Leasing\LeasingFactor::class)]
     #[ORM\JoinTable(name: 'cardnext_product_leasing_factor')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'leasing_factor_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Collection $leasingFactors;
 
     #[ORM\OneToOne(mappedBy: 'product', targetEntity: PrinterAdvisorProfile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
