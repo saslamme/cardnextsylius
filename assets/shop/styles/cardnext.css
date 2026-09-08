@@ -828,6 +828,32 @@ body.cn-nav-open { overflow: hidden; }
 .cn-purchase__notes { display: grid; gap: 7px; margin-top: 17px; padding-top: 15px; border-top: 1px solid var(--cn-border); }
 .cn-summary__inner > :not(.cn-summary__header):not(.cn-summary__description):not(.cn-price-panel):not(.cn-purchase) { order: 35; }
 
+/* Leasing offer in the product buybox. */
+.cardnext-leasing { order: 50; width: 100%; margin-top: 20px; padding: 20px; color: var(--cn-text); background: linear-gradient(135deg,#fff 0%,var(--cn-surface-softer) 100%); border: 1px solid var(--cn-border); border-top: 3px solid var(--cn-primary); border-radius: var(--cn-radius); box-shadow: 0 8px 24px rgba(31,43,49,.06); }
+.cardnext-leasing__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.cardnext-leasing__title { margin: 0; color: var(--cn-ink); font-size: 1rem; font-weight: 800; line-height: 1.25; }
+.cardnext-leasing__eyebrow { margin: 3px 0 0; color: var(--cn-muted); font-size: .72rem; line-height: 1.35; }
+.cardnext-leasing__badge { padding: 4px 7px; color: var(--cn-primary-hover); background: var(--cn-primary-soft); border-radius: 999px; font-size: .65rem; font-weight: 800; letter-spacing: .08em; }
+.cardnext-leasing__price { display: grid; gap: 3px; margin-bottom: 16px; }
+.cardnext-leasing__price strong { color: var(--cn-primary-hover); font-size: clamp(1.35rem,2.2vw,1.7rem); font-weight: 850; letter-spacing: -.025em; line-height: 1.15; }
+.cardnext-leasing__price span { color: var(--cn-muted); font-size: .76rem; }
+.cardnext-leasing__terms { min-width: 0; margin: 0 0 16px; padding: 0; border: 0; }
+.cardnext-leasing__terms legend { margin-bottom: 8px; color: var(--cn-text); font-size: .72rem; font-weight: 700; }
+.cardnext-leasing__term-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.cardnext-leasing__term { position: relative; margin: 0; cursor: pointer; }
+.cardnext-leasing__term input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+.cardnext-leasing__term span { min-height: 34px; display: inline-flex; align-items: center; justify-content: center; padding: 7px 11px; color: var(--cn-text); background: #fff; border: 1px solid var(--cn-border); border-radius: 999px; font-size: .72rem; font-weight: 700; line-height: 1; transition: border-color .15s ease,background-color .15s ease,color .15s ease; }
+.cardnext-leasing__term input:checked + span { color: #fff; background: var(--cn-primary); border-color: var(--cn-primary); }
+.cardnext-leasing__term input:focus-visible + span { outline: 3px solid rgba(233,81,38,.24); outline-offset: 2px; }
+.cardnext-leasing__cta { width: 100%; min-height: 46px; display: inline-flex; align-items: center; justify-content: center; }
+.cardnext-leasing__notice { margin: 11px 0 0; color: var(--cn-muted); font-size: .68rem; line-height: 1.45; }
+
+@media (max-width: 480px) {
+    .cardnext-leasing { margin-top: 16px; padding: 17px; }
+    .cardnext-leasing__term-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .cardnext-leasing__term span { width: 100%; }
+}
+
 /* Product tabs – one implementation, replacing all old tab hotfixes */
 .cn-tabs { position: static; width: 100%; min-height: 60px; margin: 0; padding: 0; background: var(--cn-ink); }
 .cn-tabs__list { min-height: 60px; display: flex; flex-flow: row nowrap; align-items: stretch; justify-content: flex-start; gap: 0; overflow-x: auto; overflow-y: hidden; white-space: nowrap; scrollbar-width: none; }

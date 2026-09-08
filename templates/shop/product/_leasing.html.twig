@@ -1,9 +1,39 @@
 {% set product = hookable_metadata.context.product %}
 {% set offer = cardnext_leasing_offer(product) %}
-{% if offer %}{% set preferred = offer.rates[offer.preferredIndex] %}
-<section class="cardnext-leasing card border-primary-subtle mt-3" aria-label="{{ 'cardnext.leasing.title'|trans }}"><div class="card-body">
- <div class="text-secondary small">{{ 'cardnext.leasing.or'|trans }}</div><div class="h3 text-primary mb-0">{{ 'cardnext.leasing.from_rate'|trans({'%rate%': preferred.rate|sylius_format_money(offer.currencyCode)}) }}</div>
- <div class="small">{{ 'cardnext.leasing.at_duration'|trans({'%months%':preferred.factor.durationMonths}) }}</div>
- <details class="my-2"><summary class="link-primary">{{ 'cardnext.leasing.details'|trans }}</summary><div class="table-responsive"><table class="table table-sm mb-1"><tbody>{% for item in offer.rates %}<tr><td>{{ 'cardnext.leasing.months'|trans({'%months%':item.factor.durationMonths}) }}</td><td class="text-end">{{ item.rate|sylius_format_money(offer.currencyCode) }} / {{ 'cardnext.leasing.month'|trans }}</td></tr>{% endfor %}</tbody></table></div><p class="small text-secondary mb-0">* {{ offer.configuration.frontendNotice }}</p></details>
- <a class="btn btn-outline-primary" href="{{ path('cardnext_shop_leasing_inquiry',{code:product.code}) }}">{{ offer.configuration.ctaText }}</a>
-</div></section>{% endif %}
+
+{% if offer and offer.rates is not empty %}
+    {% set preferred = offer.rates[offer.preferredIndex] %}
+    {% set inquiry_url = path('cardnext_shop_leasing_inquiry', {code: product.code}) %}
+    <section class="cardnext-leasing" data-cn-leasing data-rate-label="{{ 'cardnext.leasing.from_rate'|trans({'%rate%': '__RATE__'}) }}" data-duration-label="{{ 'cardnext.leasing.at_duration'|trans({'%months%': '__MONTHS__'}) }}" aria-labelledby="cardnext-leasing-title">
+        <header class="cardnext-leasing__header">
+            <div>
+                <h2 class="cardnext-leasing__title" id="cardnext-leasing-title">{{ 'cardnext.leasing.title'|trans }}</h2>
+                <p class="cardnext-leasing__eyebrow">{{ 'cardnext.leasing.for_business_customers'|trans }}</p>
+            </div>
+            <span class="cardnext-leasing__badge" aria-hidden="true">B2B</span>
+        </header>
+
+        <div class="cardnext-leasing__price" aria-live="polite" aria-atomic="true">
+            <strong data-cn-leasing-rate>{{ 'cardnext.leasing.from_rate'|trans({'%rate%': preferred.rate|sylius_format_money(offer.currencyCode)}) }}</strong>
+            <span data-cn-leasing-duration>{{ 'cardnext.leasing.at_duration'|trans({'%months%': preferred.factor.durationMonths}) }}</span>
+        </div>
+
+        {% if offer.rates|length > 1 %}
+            <fieldset class="cardnext-leasing__terms">
+                <legend>{{ 'cardnext.leasing.choose_duration'|trans }}</legend>
+                <div class="cardnext-leasing__term-list">
+                    {% for item in offer.rates %}
+                        {% set is_preferred = loop.index0 == offer.preferredIndex %}
+                        <label class="cardnext-leasing__term">
+                            <input type="radio" name="cardnext-leasing-duration-{{ product.code }}" value="{{ item.factor.durationMonths }}" data-rate="{{ item.rate|sylius_format_money(offer.currencyCode) }}"{% if is_preferred %} checked{% endif %}>
+                            <span>{{ 'cardnext.leasing.months'|trans({'%months%': item.factor.durationMonths}) }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+        {% endif %}
+
+        <a class="cn-btn cn-btn--primary cardnext-leasing__cta" data-cn-leasing-cta data-base-url="{{ inquiry_url }}" href="{{ inquiry_url }}?duration={{ preferred.factor.durationMonths }}">{{ offer.configuration.ctaText }}</a>
+        <p class="cardnext-leasing__notice">{{ offer.configuration.frontendNotice }}</p>
+    </section>
+{% endif %}

@@ -129,6 +129,23 @@ document.addEventListener('click', (event) => {
 });
 
 document.addEventListener('change', (event) => {
+    const leasingTerm = event.target.closest('[data-cn-leasing] input[type="radio"]');
+    if (leasingTerm) {
+        const leasing = leasingTerm.closest('[data-cn-leasing]');
+        const rate = leasing?.querySelector('[data-cn-leasing-rate]');
+        const duration = leasing?.querySelector('[data-cn-leasing-duration]');
+        const cta = leasing?.querySelector('[data-cn-leasing-cta]');
+
+        if (rate) rate.textContent = leasing.dataset.rateLabel.replace('__RATE__', leasingTerm.dataset.rate);
+        if (duration) duration.textContent = leasing.dataset.durationLabel.replace('__MONTHS__', leasingTerm.value);
+        if (cta) {
+            const url = new URL(cta.dataset.baseUrl, window.location.origin);
+            url.searchParams.set('duration', leasingTerm.value);
+            cta.href = `${url.pathname}${url.search}`;
+        }
+        return;
+    }
+
     const input = event.target.closest('[data-configured-item-quantity]');
     if (!input || input.value === input.dataset.initialValue) return;
     submitConfiguredItemAction(input, 'quantity');
