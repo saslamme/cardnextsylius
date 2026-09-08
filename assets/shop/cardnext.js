@@ -129,6 +129,14 @@ document.addEventListener('click', (event) => {
 });
 
 document.addEventListener('change', (event) => {
+    const inquiryDuration = event.target.closest('[data-cn-inquiry-duration]');
+    if (inquiryDuration) {
+        const selectedOption = inquiryDuration.options[inquiryDuration.selectedIndex];
+        const summary = inquiryDuration.closest('[data-cn-leasing-inquiry]')?.querySelector('[data-cn-inquiry-rate]');
+        if (summary && selectedOption?.dataset.summary) summary.textContent = selectedOption.dataset.summary;
+        return;
+    }
+
     const leasingTerm = event.target.closest('[data-cn-leasing] input[type="radio"]');
     if (leasingTerm) {
         const leasing = leasingTerm.closest('[data-cn-leasing]');

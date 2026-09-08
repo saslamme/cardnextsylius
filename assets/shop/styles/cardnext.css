@@ -5781,3 +5781,77 @@ html { scroll-behavior: smooth; }
     .cn-stat + .cn-stat { border-left: 0; }
     .cn-testimonial { padding: 23px 20px 20px; }
 }
+
+/* Leasing inquiry */
+.cn-leasing-inquiry { padding-top: clamp(44px,6vw,76px); background: var(--cn-surface-softer); }
+.cn-leasing-inquiry__header { max-width: 780px; margin-bottom: clamp(28px,4vw,42px); }
+.cn-leasing-inquiry__header h1 { margin: 8px 0 15px; }
+.cn-leasing-inquiry__header p { max-width: 650px; margin: 0; color: var(--cn-muted); font-size: 1rem; }
+.cn-leasing-summary { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(300px,.75fr); gap: 32px; align-items: stretch; margin-bottom: 24px; overflow: hidden; background: var(--cn-surface); border: 1px solid var(--cn-border); border-radius: 8px; }
+.cn-leasing-summary__product { padding: clamp(25px,3vw,36px); }
+.cn-leasing-summary__label, .cn-leasing-summary__rate > span { display: block; margin-bottom: 8px; color: var(--cn-subtle); font-size: .7rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+.cn-leasing-summary h2 { margin: 0 0 20px; color: var(--cn-ink); font-size: clamp(1.35rem,2vw,1.85rem); font-weight: 800; letter-spacing: -.025em; line-height: 1.2; }
+.cn-leasing-summary__meta { display: flex; flex-wrap: wrap; gap: 14px 34px; margin: 0; }
+.cn-leasing-summary__meta div { min-width: 150px; }
+.cn-leasing-summary__meta dt { margin-bottom: 2px; color: var(--cn-subtle); font-size: .7rem; font-weight: 650; }
+.cn-leasing-summary__meta dd { margin: 0; color: var(--cn-text); font-size: .88rem; font-weight: 700; }
+.cn-leasing-summary__rate { display: flex; flex-direction: column; justify-content: center; padding: clamp(25px,3vw,36px); background: #eef0f1; border-left: 1px solid var(--cn-border); }
+.cn-leasing-summary__rate strong { color: var(--cn-ink); font-size: clamp(1.15rem,1.8vw,1.45rem); font-weight: 800; letter-spacing: -.025em; line-height: 1.35; }
+.cn-leasing-summary__rate strong i { padding-inline: 4px; color: var(--cn-primary); font-style: normal; }
+.cn-leasing-summary__rate small { max-width: 34ch; margin-top: 10px; color: var(--cn-muted); font-size: .7rem; line-height: 1.5; }
+.cn-leasing-form { margin-bottom: clamp(64px,8vw,96px); padding: clamp(26px,4vw,48px); background: var(--cn-surface); border: 1px solid var(--cn-border); border-radius: 8px; }
+.cn-leasing-form__intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 12px; padding-bottom: 25px; border-bottom: 1px solid var(--cn-border); }
+.cn-leasing-form__intro h2 { margin: 5px 0 0; color: var(--cn-ink); font-size: clamp(1.45rem,2.2vw,2rem); font-weight: 800; letter-spacing: -.03em; }
+.cn-leasing-form__intro p { flex: none; margin: 0; color: var(--cn-subtle); font-size: .72rem; }
+.cn-leasing-form label span, .cn-leasing-form__intro p span { color: var(--cn-primary-hover); }
+.cn-leasing-form__group { min-width: 0; margin: 0; padding: 30px 0 32px; border: 0; border-bottom: 1px solid var(--cn-border); }
+.cn-leasing-form__group legend { float: none; width: auto; margin: 0 0 18px; padding: 0; color: var(--cn-ink); font-size: .92rem; font-weight: 800; letter-spacing: -.01em; }
+.cn-leasing-form__grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px 24px; }
+.cn-leasing-form__field { min-width: 0; }
+.cn-leasing-form__field--wide { grid-column: 1 / -1; }
+.cn-leasing-form__field label { display: block; margin-bottom: 7px; color: var(--cn-text); font-size: .78rem; font-weight: 700; }
+.cn-leasing-form .form-control, .cn-leasing-form .form-select { min-height: 50px; color: var(--cn-ink); background-color: #fff; border: 1px solid var(--cn-border-strong); border-radius: var(--cn-radius); box-shadow: none; font-size: .88rem; }
+.cn-leasing-form textarea.form-control { min-height: 132px; padding-block: 13px; resize: vertical; }
+.cn-leasing-form .form-control::placeholder { color: var(--cn-subtle); opacity: 1; }
+.cn-leasing-form .form-control:hover, .cn-leasing-form .form-select:hover { border-color: var(--cn-muted); }
+.cn-leasing-form .form-control:focus, .cn-leasing-form .form-select:focus { border-color: var(--cn-primary); box-shadow: var(--cn-focus); }
+.cn-leasing-form__grid--address { grid-template-columns: minmax(0,2fr) minmax(115px,.65fr); }
+.cn-leasing-form__field--postal { grid-column: 1; max-width: 220px; }
+.cn-leasing-form__field--city { grid-column: 2; }
+.cn-leasing-form__field--country { grid-column: 1 / -1; max-width: calc(50% - 12px); }
+.cn-leasing-form__consent { display: grid; grid-template-columns: 20px minmax(0,1fr); gap: 12px; align-items: start; padding: 28px 0 22px; }
+.cn-leasing-form__consent input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--cn-primary); }
+.cn-leasing-form__consent label { display: block; color: var(--cn-ink); font-size: .82rem; font-weight: 700; cursor: pointer; }
+.cn-leasing-form__consent p { max-width: 720px; margin: 5px 0 0; color: var(--cn-muted); font-size: .72rem; line-height: 1.55; }
+.cn-leasing-form__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; }
+.cn-leasing-form__actions .btn { min-width: 190px; }
+.cn-leasing-form__actions span { color: var(--cn-subtle); font-size: .72rem; }
+.cn-leasing-process { padding: clamp(58px,7vw,84px) 0; background: #eef0f1; border-top: 1px solid var(--cn-border); }
+.cn-leasing-process__header { max-width: 760px; margin: 0 auto 45px; text-align: center; }
+.cn-leasing-process__header h2 { margin: 7px 0 12px; color: var(--cn-ink); font-size: clamp(2rem,3vw,3rem); font-weight: 800; letter-spacing: -.045em; line-height: 1.1; }
+.cn-leasing-process__header p { margin: 0; color: var(--cn-muted); font-size: .88rem; }
+.cn-leasing-process__steps { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: clamp(24px,3vw,42px); margin: 0; padding: 0; list-style: none; }
+.cn-leasing-process__step { min-width: 0; }
+.cn-leasing-process__icon { display: grid; width: 74px; height: 74px; margin-bottom: 22px; color: var(--cn-ink); background: var(--cn-surface); border: 1px solid var(--cn-border); border-radius: 50%; place-items: center; }
+.cn-leasing-process__icon svg { width: 38px; height: 38px; overflow: visible; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cn-leasing-process__copy > span { display: block; margin-bottom: 5px; color: var(--cn-primary-hover); font-size: .68rem; font-weight: 800; letter-spacing: .08em; }
+.cn-leasing-process__copy h3 { margin: 0 0 9px; color: var(--cn-ink); font-size: 1rem; font-weight: 800; line-height: 1.3; }
+.cn-leasing-process__copy p { margin: 0; color: var(--cn-muted); font-size: .8rem; line-height: 1.68; }
+@media (max-width: 900px) { .cn-leasing-summary { grid-template-columns: minmax(0,1fr); gap: 0; } .cn-leasing-summary__rate { border-top: 1px solid var(--cn-border); border-left: 0; } .cn-leasing-process__steps { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 38px; } }
+@media (max-width: 620px) {
+    .cn-leasing-inquiry { padding-top: 36px; }
+    .cn-leasing-inquiry .cn-title--page { font-size: clamp(2rem,10vw,2.65rem); }
+    .cn-leasing-summary__meta { display: grid; gap: 12px; }
+    .cn-leasing-form { padding: 24px 20px; }
+    .cn-leasing-form__intro { display: block; }
+    .cn-leasing-form__intro p { margin-top: 10px; }
+    .cn-leasing-form__grid, .cn-leasing-form__grid--address { grid-template-columns: minmax(0,1fr); }
+    .cn-leasing-form__field, .cn-leasing-form__field--postal, .cn-leasing-form__field--city, .cn-leasing-form__field--country { grid-column: 1; max-width: none; }
+    .cn-leasing-form__actions { align-items: stretch; flex-direction: column; }
+    .cn-leasing-form__actions .btn { width: 100%; }
+    .cn-leasing-process__header { margin-bottom: 36px; text-align: left; }
+    .cn-leasing-process__steps { grid-template-columns: minmax(0,1fr); gap: 30px; }
+    .cn-leasing-process__step { display: grid; grid-template-columns: 66px minmax(0,1fr); gap: 17px; align-items: start; }
+    .cn-leasing-process__icon { width: 62px; height: 62px; margin: 0; }
+    .cn-leasing-process__icon svg { width: 32px; height: 32px; }
+}
