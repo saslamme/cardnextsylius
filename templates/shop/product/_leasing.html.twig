@@ -6,11 +6,7 @@
     {% set inquiry_url = path('cardnext_shop_leasing_inquiry', {code: product.code}) %}
     <section class="cardnext-leasing" data-cn-leasing data-rate-label="{{ 'cardnext.leasing.from_rate'|trans({'%rate%': '__RATE__'}) }}" data-duration-label="{{ 'cardnext.leasing.at_duration'|trans({'%months%': '__MONTHS__'}) }}" aria-labelledby="cardnext-leasing-title">
         <header class="cardnext-leasing__header">
-            <div>
-                <h2 class="cardnext-leasing__title" id="cardnext-leasing-title">{{ 'cardnext.leasing.title'|trans }}</h2>
-                <p class="cardnext-leasing__eyebrow">{{ 'cardnext.leasing.for_business_customers'|trans }}</p>
-            </div>
-            <span class="cardnext-leasing__badge" aria-hidden="true">B2B</span>
+            <h2 class="cardnext-leasing__title" id="cardnext-leasing-title">{{ 'cardnext.leasing.for_business_customers'|trans }}</h2>
         </header>
 
         <div class="cardnext-leasing__price" aria-live="polite" aria-atomic="true">
@@ -33,7 +29,7 @@
             </fieldset>
         {% endif %}
 
-        <a class="cn-btn cn-btn--primary cardnext-leasing__cta" data-cn-leasing-cta data-base-url="{{ inquiry_url }}" href="{{ inquiry_url }}?duration={{ preferred.factor.durationMonths }}">{{ offer.configuration.ctaText }}</a>
+        <a class="cn-btn cn-btn--secondary cardnext-leasing__cta" data-cn-leasing-cta data-base-url="{{ inquiry_url }}" href="{{ inquiry_url }}?duration={{ preferred.factor.durationMonths }}">{{ offer.configuration.ctaText }}</a>
         <p class="cardnext-leasing__notice">{{ offer.configuration.frontendNotice }}</p>
     </section>
 {% endif %}
