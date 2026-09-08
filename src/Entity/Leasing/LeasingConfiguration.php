@@ -16,12 +16,14 @@ class LeasingConfiguration
     public const DEFAULT_NOTICE = 'Leasingangebot für Gewerbekunden. Vorbehaltlich Bonitätsprüfung und Vertragsannahme durch abcfinance GmbH. Die tatsächlichen Konditionen können abweichen.';
     #[ORM\Id, ORM\Column] private int $id = 1;
     #[ORM\Column] private bool $enabled = false;
-    #[Assert\NotBlank] #[ORM\Column(length: 255)] private string $providerName = 'abcfinance / Lease Seven';
+    #[Assert\NotBlank] #[ORM\Column(name: 'provider_name', length: 255)] private string $providerName = 'abcfinance / Lease Seven';
     #[Assert\PositiveOrZero] #[ORM\Column(name: 'minimum_net_amount')] private int $minimumNetAmount = 100000;
-    #[ORM\ManyToOne(targetEntity: LeasingFactor::class)] #[ORM\JoinColumn(onDelete: 'SET NULL')] private ?LeasingFactor $defaultFactor = null;
-    #[Assert\NotBlank] #[ORM\Column(type: Types::TEXT)] private string $frontendNotice = self::DEFAULT_NOTICE;
-    #[Assert\NotBlank] #[ORM\Column(length: 100)] private string $ctaText = 'Leasing anfragen';
-    #[Assert\Email] #[ORM\Column(length: 254, nullable: true)] private ?string $notificationEmail = null;
+    #[ORM\ManyToOne(targetEntity: LeasingFactor::class)]
+    #[ORM\JoinColumn(name: 'default_factor_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?LeasingFactor $defaultFactor = null;
+    #[Assert\NotBlank] #[ORM\Column(name: 'frontend_notice', type: Types::TEXT)] private string $frontendNotice = self::DEFAULT_NOTICE;
+    #[Assert\NotBlank] #[ORM\Column(name: 'cta_text', length: 100)] private string $ctaText = 'Leasing anfragen';
+    #[Assert\Email] #[ORM\Column(name: 'notification_email', length: 254, nullable: true)] private ?string $notificationEmail = null;
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $updatedAt;
     public function __construct() { $this->updatedAt = new \DateTimeImmutable(); }
     public function getId(): int { return $this->id; }
