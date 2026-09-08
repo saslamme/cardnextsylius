@@ -771,7 +771,7 @@ quote_mail:
 'cardnext.leasing.allowed_durations': 'Erlaubte Laufzeiten'
 'cardnext.leasing.saved': 'Leasingeinstellungen gespeichert.'
 'cardnext.leasing.or': 'oder'
-'cardnext.leasing.for_business_customers': 'Für Gewerbekunden'
+'cardnext.leasing.for_business_customers': 'Leasing für Gewerbekunden'
 'cardnext.leasing.choose_duration': 'Laufzeit wählen'
 'cardnext.leasing.from_rate': 'ab %rate% / Monat'
 'cardnext.leasing.at_duration': 'bei %months% Monaten Laufzeit'
