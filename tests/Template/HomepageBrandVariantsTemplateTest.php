@@ -42,6 +42,20 @@ final class HomepageBrandVariantsTemplateTest extends TestCase
         self::assertMatchesRegularExpression('/\.cardnext-cms--brand-inplastor \.cn-section--soft \.cn-card__media--photo \{ aspect-ratio: 16 \/ 9; \}/', $css);
     }
 
+    public function testIdentibleUsesLightSurfacesWithOnlyTheClosingCtaDark(): void
+    {
+        $css = $this->read('assets/shop/styles/cardnext.css');
+
+        self::assertMatchesRegularExpression('/\.cardnext-cms--brand-identible \.cn-hero \{[^}]*color: var\(--cn-ink\);[^}]*background: #f1f4f7;/', $css);
+        self::assertMatchesRegularExpression('/\.cardnext-cms--brand-identible \.cn-home-service \{[^}]*color: var\(--cn-ink\);[^}]*background: #f4f6f8;/', $css);
+        self::assertMatchesRegularExpression('/\.cardnext-cms--brand-identible \.cn-home-service__list \{[^}]*background: #fff;[^}]*border: 1px solid var\(--cn-border\);/', $css);
+        self::assertMatchesRegularExpression('/\.cardnext-cms--brand-identible \.cn-home-promo \{[^}]*color: var\(--cn-ink\);[^}]*background: #fff;[^}]*border: 1px solid var\(--cn-border\);/', $css);
+        self::assertMatchesRegularExpression('/\.cardnext-cms--brand-identible \.cn-cta \{ background: #151b20; \}/', $css);
+
+        self::assertStringNotContainsString('.cardnext-cms--brand-cardnext .cn-hero', $css);
+        self::assertMatchesRegularExpression('/\.cardnext-cms--brand-inplastor \.cn-hero \{ border-block: 1px solid var\(--cn-ink\); \}/', $css);
+    }
+
     private function read(string $path): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $path);

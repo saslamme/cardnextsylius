@@ -1086,19 +1086,20 @@ body.cn-nav-open { overflow: hidden; }
 }
 
 /* Homepage brand variants. Cardnext intentionally continues to use the default rules above. */
-.cardnext-cms--brand-identible .cn-hero { color: #fff; background: var(--cn-ink); border: 0; }
+.cardnext-cms--brand-identible .cn-hero { color: var(--cn-ink); background: #f1f4f7; border: 0; }
 .cardnext-cms--brand-identible .cn-hero__grid { min-height: clamp(460px,38vw,500px); grid-template-columns: minmax(0,3fr) minmax(360px,2fr); align-items: center; }
 .cardnext-cms--brand-identible .cn-hero__copy { padding: 64px clamp(48px,6vw,88px) 64px 0; }
 .cardnext-cms--brand-identible .cn-hero .cn-title {
     max-width: 720px;
-    color: #fff;
+    color: var(--cn-ink);
     font-size: clamp(2.35rem, 3.6vw, 3.8rem);
     line-height: 1.02;
 }
 .cardnext-cms--brand-identible .cn-hero .cn-kicker { color: var(--cn-primary); }
-.cardnext-cms--brand-identible .cn-hero .cn-lead { color: rgba(255,255,255,.76); font-size: 1.12rem; }
-.cardnext-cms--brand-identible .cn-hero .cn-btn--secondary { color: #fff; background: transparent; border-color: rgba(255,255,255,.62); }
-.cardnext-cms--brand-identible .cn-hero__visual { width: calc(100% - clamp(18px,2vw,32px)); max-height: 440px; min-height: 0; aspect-ratio: 4 / 3; justify-self: end; border: 1px solid rgba(255,255,255,.12); }
+.cardnext-cms--brand-identible .cn-hero .cn-lead { color: var(--cn-muted); font-size: 1.12rem; }
+.cardnext-cms--brand-identible .cn-hero .cn-btn--secondary { color: var(--cn-ink); background: rgba(255,255,255,.72); border-color: var(--cn-border-strong); }
+.cardnext-cms--brand-identible .cn-hero .cn-btn--secondary:hover { color: var(--cn-primary); background: #fff; border-color: var(--cn-primary); }
+.cardnext-cms--brand-identible .cn-hero__visual { width: calc(100% - clamp(18px,2vw,32px)); max-height: 440px; min-height: 0; aspect-ratio: 4 / 3; justify-self: end; overflow: hidden; background: #fff; border: 1px solid var(--cn-border); box-shadow: 0 12px 30px rgba(20,30,40,.06); }
 .cardnext-cms--brand-identible .cn-hero__photo { object-position: center; }
 .cardnext-cms--brand-identible .cn-home-categories { padding-block: 76px; background: var(--cn-surface-soft); }
 .cardnext-cms--brand-identible .cn-home-categories__head h2 { font-size: clamp(1.6rem,2.5vw,2.35rem); }
@@ -1110,35 +1111,42 @@ body.cn-nav-open { overflow: hidden; }
 .cardnext-cms--brand-identible .cn-home-category__media--icon .cn-home-category__icon { width: 132px; height: 100px; max-width: 58%; }
 .cardnext-cms--brand-identible .cn-home-category__label { min-height: 90px; padding-inline: 26px; }
 .cardnext-cms--brand-identible .cn-home-category__label strong { font-size: 1rem; }
-.cardnext-cms--brand-identible .cn-home-service { padding-block: 72px; color: #fff; background: var(--cn-ink); border: 0; }
+.cardnext-cms--brand-identible .cn-home-service { padding-block: 72px; color: var(--cn-ink); background: #f4f6f8; border-block: 1px solid #e6eaed; }
 .cardnext-cms--brand-identible .cn-home-service__grid { grid-template-columns: minmax(0,1.35fr) minmax(320px,.65fr); gap: 56px; }
 .cardnext-cms--brand-identible .cn-home-service__feature { background: transparent; }
 .cardnext-cms--brand-identible .cn-home-service__copy { padding-block: 36px; }
 .cardnext-cms--brand-identible .cn-home-service .cn-title,
-.cardnext-cms--brand-identible .cn-home-service__item-copy strong { color: #fff; }
+.cardnext-cms--brand-identible .cn-home-service__item-copy strong { color: var(--cn-ink); }
 .cardnext-cms--brand-identible .cn-home-service .cn-lead,
-.cardnext-cms--brand-identible .cn-home-service__item-copy > span { color: rgba(255,255,255,.7); }
-.cardnext-cms--brand-identible .cn-home-service__photo { min-height: 0; max-height: 440px; aspect-ratio: 4 / 5; align-self: center; }
+.cardnext-cms--brand-identible .cn-home-service__item-copy > span { color: var(--cn-muted); }
+.cardnext-cms--brand-identible .cn-home-service__photo { min-height: 0; max-height: 440px; aspect-ratio: 4 / 5; align-self: center; border: 1px solid var(--cn-border); }
 .cardnext-cms--brand-identible .cn-home-service__photo img { object-position: center 42%; }
-.cardnext-cms--brand-identible .cn-home-service__list { align-content: center; padding: 28px; background: rgba(255,255,255,.055); }
-.cardnext-cms--brand-identible .cn-home-service__item { border-color: rgba(255,255,255,.15); }
+.cardnext-cms--brand-identible .cn-home-service__list { align-content: center; padding: 12px 28px; background: #fff; border: 1px solid var(--cn-border); }
+.cardnext-cms--brand-identible .cn-home-service__item { padding-block: 21px; border-color: var(--cn-border); }
+.cardnext-cms--brand-identible .cn-home-service__item:hover,
+.cardnext-cms--brand-identible .cn-home-service__item:focus-visible { background: #fafbfc; }
+.cardnext-cms--brand-identible .cn-home-service__icon,
+.cardnext-cms--brand-identible .cn-home-service__arrow { color: var(--cn-primary); }
 .cardnext-cms--brand-identible .cn-product-slider { margin-block: 28px; padding-block: 88px; }
 .cardnext-cms--brand-identible .cn-product-slider > .cn-container { max-width: 1160px; }
 .cardnext-cms--brand-identible .cn-product-slider__slide > * { box-shadow: none; }
 .cardnext-cms--brand-identible #why-cardnext { background: var(--cn-surface-soft); }
 .cardnext-cms--brand-identible #why-cardnext .cn-grid--lined { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
-.cardnext-cms--brand-identible #why-cardnext .cn-feature { min-height: 220px; padding: 38px; background: #fff; border: 0; }
-.cardnext-cms--brand-identible .cn-home-promos { padding-block: 88px; }
+.cardnext-cms--brand-identible #why-cardnext .cn-feature { min-height: 220px; padding: 38px; background: #fff; border: 1px solid #e6eaed; }
+.cardnext-cms--brand-identible .cn-home-promos { padding-block: 88px; background: #fff; }
 .cardnext-cms--brand-identible .cn-home-promos__grid { gap: 28px; }
-.cardnext-cms--brand-identible .cn-home-promo { grid-template-columns: minmax(0,1.55fr) minmax(170px,.45fr); min-height: 280px; color: #fff; background: var(--cn-ink); border: 0; border-radius: 2px; }
-.cardnext-cms--brand-identible .cn-home-promo h3 { color: #fff; font-size: clamp(1.65rem,2.4vw,2.5rem); }
-.cardnext-cms--brand-identible .cn-home-promo p { color: rgba(255,255,255,.72); }
-.cardnext-cms--brand-identible .cn-home-promo__media { min-height: 0; max-height: 244px; aspect-ratio: 4 / 3; align-self: center; padding: 16px 16px 16px 0; }
+.cardnext-cms--brand-identible .cn-home-promo { grid-template-columns: minmax(0,1.55fr) minmax(170px,.45fr); min-height: 280px; color: var(--cn-ink); background: #fff; border: 1px solid var(--cn-border); border-radius: 2px; box-shadow: none; }
+.cardnext-cms--brand-identible .cn-home-promo:hover { background: #fafbfc; border-color: var(--cn-border-strong); }
+.cardnext-cms--brand-identible .cn-home-promo h3 { color: var(--cn-ink); font-size: clamp(1.65rem,2.4vw,2.5rem); }
+.cardnext-cms--brand-identible .cn-home-promo p { color: var(--cn-muted); }
+.cardnext-cms--brand-identible .cn-home-promo .cn-kicker { color: var(--cn-primary); }
+.cardnext-cms--brand-identible .cn-home-promo__benefit { color: var(--cn-muted); }
+.cardnext-cms--brand-identible .cn-home-promo__media { min-height: 0; max-height: 244px; aspect-ratio: 4 / 3; align-self: center; padding: 16px 16px 16px 0; background: #f7f8fa; }
 .cardnext-cms--brand-identible .cn-home-promo__image { max-height: 212px; }
 .cardnext-cms--brand-identible .cn-home-industries .cn-card__media--photo { aspect-ratio: 16 / 9; }
-.cardnext-cms--brand-identible .cn-cta { background: var(--cn-ink); }
-.cardnext-cms--brand-identible .cn-cta__background { opacity: .2; }
-.cardnext-cms--brand-identible .cn-cta::before { background: linear-gradient(90deg,var(--cn-ink) 0%,var(--cn-ink) 68%,rgba(21,27,32,.6) 100%); }
+.cardnext-cms--brand-identible .cn-cta { background: #151b20; }
+.cardnext-cms--brand-identible .cn-cta__background { opacity: .14; }
+.cardnext-cms--brand-identible .cn-cta::before { background: linear-gradient(90deg,#151b20 0%,#151b20 68%,rgba(21,27,32,.68) 100%); }
 .cardnext-cms--brand-identible .cn-cta__inner { min-height: 190px; }
 
 .cardnext-cms--brand-inplastor { background: var(--cn-surface); }
