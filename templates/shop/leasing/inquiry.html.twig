@@ -1,6 +1,159 @@
-{% extends '@SyliusShop/shared/layout/base.html.twig' %}{% block title %}{{ 'cardnext.leasing.inquiry_title'|trans }}{% endblock %}
-{% block content %}<div class="container py-5"><div class="row justify-content-center"><div class="col-12 col-lg-9"><h1>{{ 'cardnext.leasing.inquiry_title'|trans }}</h1><div class="card mb-4"><div class="card-body"><h2 class="h4">{{ product.name }}</h2><p>{{ offer.variant.code }} · {{ offer.netPrice|sylius_format_money(offer.currencyCode) }} {{ 'cardnext.leasing.net'|trans }}</p></div></div>
-<form method="post" class="card"><input type="hidden" name="_token" value="{{ csrf_token('leasing-'~product.code) }}"><div class="card-body"><div class="row g-3">
-{% for field,required in {company:true,firstName:true,lastName:true,email:true,phone:false,street:false,houseNumber:false,postalCode:true,city:true,countryCode:false} %}<div class="col-12 col-md-6"><label class="form-label" for="leasing_{{ field }}">{{ ('cardnext.leasing.field.'~field)|trans }}{% if required %} *{% endif %}</label><input class="form-control" id="leasing_{{ field }}" name="{{ field }}" {% if required %}required{% endif %} {% if field=='email' %}type="email"{% endif %}></div>{% endfor %}
-<div class="col-12"><label class="form-label" for="duration">{{ 'cardnext.leasing.duration'|trans }}</label><select class="form-select" name="duration" id="duration">{% for item in offer.rates %}<option value="{{ item.factor.durationMonths }}"{% if app.request.query.getInt('duration') == item.factor.durationMonths %} selected{% endif %}>{{ 'cardnext.leasing.duration_rate'|trans({'%months%':item.factor.durationMonths,'%rate%':item.rate|sylius_format_money(offer.currencyCode)}) }}</option>{% endfor %}</select></div>
-<div class="col-12"><label class="form-label" for="message">{{ 'cardnext.leasing.field.message'|trans }}</label><textarea class="form-control" name="message" id="message"></textarea></div><div class="col-12"><label><input type="checkbox" name="consent" required> {{ 'cardnext.leasing.consent'|trans }}</label></div></div></div><div class="card-footer"><button class="btn btn-primary">{{ offer.configuration.ctaText }}</button></div></form></div></div></div>{% endblock %}
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+
+{% block title %}{{ 'cardnext.leasing.inquiry_title'|trans }}{% endblock %}
+
+{% set requested_duration = app.request.request.getInt('duration') ?: app.request.query.getInt('duration') %}
+{% set selected_rate = offer.rates[offer.preferredIndex] %}
+{% for item in offer.rates %}
+    {% if item.factor.durationMonths == requested_duration %}{% set selected_rate = item %}{% endif %}
+{% endfor %}
+
+{% block content %}
+<main class="cn-leasing-inquiry" data-cn-leasing-inquiry>
+    <div class="cn-container cn-container--narrow">
+        <header class="cn-leasing-inquiry__header">
+            <span class="cn-kicker">Leasing für Unternehmen</span>
+            <h1 class="cn-title cn-title--page">{{ 'cardnext.leasing.inquiry_title'|trans }}</h1>
+            <p>Gerne erstellen wir Ihnen ein unverbindliches Leasingangebot für dieses Produkt.</p>
+        </header>
+
+        <section class="cn-leasing-summary" aria-labelledby="leasing-product-title">
+            <div class="cn-leasing-summary__product">
+                <span class="cn-leasing-summary__label">Ihr ausgewähltes Produkt</span>
+                <h2 id="leasing-product-title">{{ product.name }}</h2>
+                <dl class="cn-leasing-summary__meta">
+                    <div><dt>Produktcode</dt><dd>{{ offer.variant.code }}</dd></div>
+                    <div><dt>Netto-Preis</dt><dd>{{ offer.netPrice|sylius_format_money(offer.currencyCode) }} netto</dd></div>
+                </dl>
+            </div>
+            <div class="cn-leasing-summary__rate" aria-live="polite" aria-atomic="true">
+                <span>Ihr Leasingbeispiel</span>
+                <strong data-cn-inquiry-rate>{{ selected_rate.factor.durationMonths }} Monate <i aria-hidden="true">•</i> {{ selected_rate.rate|sylius_format_money(offer.currencyCode) }} / Monat</strong>
+                <small>Alle Angaben netto, vorbehaltlich Bonitätsprüfung.</small>
+            </div>
+        </section>
+
+        <form method="post" class="cn-leasing-form">
+            <input type="hidden" name="_token" value="{{ csrf_token('leasing-'~product.code) }}">
+            <div class="cn-leasing-form__intro">
+                <div>
+                    <span class="cn-kicker">Ihre Anfrage</span>
+                    <h2>Angaben zum Unternehmen</h2>
+                </div>
+                <p><span aria-hidden="true">*</span> Pflichtfelder</p>
+            </div>
+
+            <fieldset class="cn-leasing-form__group">
+                <legend>Unternehmensdaten</legend>
+                <div class="cn-leasing-form__grid">
+                    <div class="cn-leasing-form__field cn-leasing-form__field--wide">
+                        <label for="leasing_company">{{ 'cardnext.leasing.field.company'|trans }} <span aria-hidden="true">*</span></label>
+                        <input class="form-control" id="leasing_company" name="company" value="{{ app.request.request.get('company') }}" autocomplete="organization" required aria-required="true">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="cn-leasing-form__group">
+                <legend>Ansprechpartner</legend>
+                <div class="cn-leasing-form__grid">
+                    {% set contact_fields = {
+                        firstName: {required: true, autocomplete: 'given-name', type: 'text'},
+                        lastName: {required: true, autocomplete: 'family-name', type: 'text'},
+                        email: {required: true, autocomplete: 'email', type: 'email'},
+                        phone: {required: false, autocomplete: 'tel', type: 'tel'}
+                    } %}
+                    {% for field, options in contact_fields %}
+                        <div class="cn-leasing-form__field">
+                            <label for="leasing_{{ field }}">{{ ('cardnext.leasing.field.'~field)|trans }}{% if options.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                            <input class="form-control" id="leasing_{{ field }}" name="{{ field }}" type="{{ options.type }}" value="{{ app.request.request.get(field) }}" autocomplete="{{ options.autocomplete }}"{% if options.required %} required aria-required="true"{% endif %}>
+                        </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset class="cn-leasing-form__group">
+                <legend>Anschrift</legend>
+                <div class="cn-leasing-form__grid cn-leasing-form__grid--address">
+                    {% set address_fields = {
+                        street: {required: false, autocomplete: 'address-line1', class: 'cn-leasing-form__field--street'},
+                        houseNumber: {required: false, autocomplete: 'address-line2', class: 'cn-leasing-form__field--number'},
+                        postalCode: {required: true, autocomplete: 'postal-code', class: 'cn-leasing-form__field--postal'},
+                        city: {required: true, autocomplete: 'address-level2', class: 'cn-leasing-form__field--city'},
+                        countryCode: {required: false, autocomplete: 'country', class: 'cn-leasing-form__field--country'}
+                    } %}
+                    {% for field, options in address_fields %}
+                        <div class="cn-leasing-form__field {{ options.class }}">
+                            <label for="leasing_{{ field }}">{{ ('cardnext.leasing.field.'~field)|trans }}{% if options.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                            <input class="form-control" id="leasing_{{ field }}" name="{{ field }}" value="{{ app.request.request.get(field) }}" autocomplete="{{ options.autocomplete }}"{% if options.required %} required aria-required="true"{% endif %}>
+                        </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset class="cn-leasing-form__group">
+                <legend>Leasingdetails</legend>
+                <div class="cn-leasing-form__grid">
+                    <div class="cn-leasing-form__field cn-leasing-form__field--wide">
+                        <label for="duration">{{ 'cardnext.leasing.duration'|trans }}</label>
+                        <select class="form-select" name="duration" id="duration" data-cn-inquiry-duration>
+                            {% for item in offer.rates %}
+                                <option value="{{ item.factor.durationMonths }}" data-summary="{{ item.factor.durationMonths }} Monate • {{ item.rate|sylius_format_money(offer.currencyCode) }} / Monat"{% if item.factor.durationMonths == selected_rate.factor.durationMonths %} selected{% endif %}>{{ 'cardnext.leasing.duration_rate'|trans({'%months%': item.factor.durationMonths, '%rate%': item.rate|sylius_format_money(offer.currencyCode)}) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="cn-leasing-form__field cn-leasing-form__field--wide">
+                        <label for="message">{{ 'cardnext.leasing.field.message'|trans }}</label>
+                        <textarea class="form-control" name="message" id="message" rows="5" placeholder="Gibt es etwas, das wir bei Ihrem Angebot berücksichtigen dürfen?">{{ app.request.request.get('message') }}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="cn-leasing-form__consent">
+                <input id="leasing_consent" type="checkbox" name="consent" required aria-required="true">
+                <div>
+                    <label for="leasing_consent">{{ 'cardnext.leasing.consent'|trans }} <span aria-hidden="true">*</span></label>
+                    <p>Mit dem Absenden erklären Sie sich damit einverstanden, dass wir Ihre Angaben zur Bearbeitung Ihrer Anfrage verwenden.</p>
+                </div>
+            </div>
+
+            <div class="cn-leasing-form__actions">
+                <button class="btn btn-primary" type="submit">{{ offer.configuration.ctaText }}</button>
+                <span>Unverbindlich und ohne Abschlussverpflichtung</span>
+            </div>
+        </form>
+    </div>
+
+    <section class="cn-leasing-process" aria-labelledby="leasing-process-title">
+        <div class="cn-container cn-container--narrow">
+            <div class="cn-leasing-process__header">
+                <span class="cn-kicker">Einfach und transparent</span>
+                <h2 id="leasing-process-title">So funktioniert Leasing</h2>
+                <p>Ihre Vorteile: planbare Monatsraten, Liquidität schonen, moderne Technik nutzen und persönliche Beratung.</p>
+            </div>
+            <ol class="cn-leasing-process__steps">
+                {% set steps = [
+                    {title: 'Anfrage senden', text: 'Wählen Sie Ihre gewünschte Laufzeit und senden Sie Ihre Leasinganfrage bequem online.', icon: 'send'},
+                    {title: 'Angebot erhalten', text: 'Wir prüfen Ihre Anfrage und erstellen ein individuelles Leasingangebot für Ihr Unternehmen.', icon: 'offer'},
+                    {title: 'Prüfung & Vertragsabschluss', text: 'Nach positiver Rückmeldung erfolgen Bonitätsprüfung und Vertragsabwicklung mit dem Leasingpartner.', icon: 'check'},
+                    {title: 'Lieferung & Nutzung', text: 'Nach Freigabe liefern wir Ihr Gerät aus – Sie nutzen es planbar zu festen monatlichen Raten.', icon: 'delivery'}
+                ] %}
+                {% for step in steps %}
+                    <li class="cn-leasing-process__step">
+                        <div class="cn-leasing-process__icon" aria-hidden="true">
+                            {% if step.icon == 'send' %}<svg viewBox="0 0 48 48"><path d="M7 23.5 40 8 29 40l-7-13-15-3.5Z"/><path d="m22 27 18-19"/></svg>
+                            {% elseif step.icon == 'offer' %}<svg viewBox="0 0 48 48"><path d="M12 6h20l7 7v29H12z"/><path d="M32 6v8h7M18 22h15M18 29h15M18 36h9"/><circle cx="13" cy="11" r="6"/></svg>
+                            {% elseif step.icon == 'check' %}<svg viewBox="0 0 48 48"><path d="M24 5 40 11v11c0 10-6.8 17.7-16 21-9.2-3.3-16-11-16-21V11z"/><path d="m16 24 5 5 11-12"/></svg>
+                            {% else %}<svg viewBox="0 0 48 48"><path d="M5 12h25v24H5zM30 20h7l6 8v8H30z"/><path d="M10 12 18 6l8 6M9 36a5 5 0 1 0 10 0M32 36a5 5 0 1 0 10 0"/></svg>{% endif %}
+                        </div>
+                        <div class="cn-leasing-process__copy">
+                            <span>0{{ loop.index }}</span>
+                            <h3>{{ step.title }}</h3>
+                            <p>{{ step.text }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </section>
+</main>
+{% endblock %}
