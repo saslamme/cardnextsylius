@@ -1089,7 +1089,12 @@ body.cn-nav-open { overflow: hidden; }
 .cardnext-cms--brand-identible .cn-hero { color: #fff; background: var(--cn-ink); border: 0; }
 .cardnext-cms--brand-identible .cn-hero__grid { min-height: clamp(460px,38vw,500px); grid-template-columns: minmax(0,3fr) minmax(360px,2fr); align-items: center; }
 .cardnext-cms--brand-identible .cn-hero__copy { padding: 64px clamp(48px,6vw,88px) 64px 0; }
-.cardnext-cms--brand-identible .cn-hero .cn-title { max-width: 780px; color: #fff; font-size: clamp(3rem,5vw,5.5rem); }
+.cardnext-cms--brand-identible .cn-hero .cn-title {
+    max-width: 720px;
+    color: #fff;
+    font-size: clamp(2.35rem, 3.6vw, 3.8rem);
+    line-height: 1.02;
+}
 .cardnext-cms--brand-identible .cn-hero .cn-kicker { color: var(--cn-primary); }
 .cardnext-cms--brand-identible .cn-hero .cn-lead { color: rgba(255,255,255,.76); font-size: 1.12rem; }
 .cardnext-cms--brand-identible .cn-hero .cn-btn--secondary { color: #fff; background: transparent; border-color: rgba(255,255,255,.62); }
