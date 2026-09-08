@@ -74,10 +74,14 @@ final class CmsBlockType extends AbstractType
                         return $item;
                     }, $value);
                 }
-                $form->add($name, $fieldType, $fieldOptions + [
-                    'mapped' => false,
-                    'data' => $value,
-                ]);
+                $fieldOptions += ['mapped' => false];
+                if ($fieldType === FileType::class) {
+                    unset($fieldOptions['data']);
+                } else {
+                    $fieldOptions['data'] = $value;
+                }
+
+                $form->add($name, $fieldType, $fieldOptions);
             }
         };
         $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($configure): void {
