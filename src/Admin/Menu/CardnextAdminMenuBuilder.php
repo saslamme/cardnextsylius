@@ -13,9 +13,18 @@ final class CardnextAdminMenuBuilder
         $this->addSalesItems($menu);
         $this->addCatalogItems($menu);
         $this->addCustomerItems($menu);
+        $this->addLeasingItems($menu);
         $this->addContentMenu($menu);
         $this->addConfigurationItems($menu);
         $this->addToolsMenu($menu);
+    }
+
+    private function addLeasingItems(ItemInterface $menu): void
+    {
+        $leasing = $menu->addChild('cardnext_leasing')->setLabel('cardnext.leasing.title')->setLabelAttribute('icon', 'tabler:calendar-dollar')->setExtra('always_open', true);
+        $this->addChildIfMissing($leasing, 'cardnext_leasing_inquiries', 'cardnext.leasing.inquiries', 'tabler:mail', 'cardnext_admin_leasing_inquiry_index', ['cardnext_admin_leasing_inquiry_*']);
+        $this->addChildIfMissing($leasing, 'cardnext_leasing_factors', 'cardnext.leasing.factors', 'tabler:calculator', 'cardnext_admin_leasing_factor_index', ['cardnext_admin_leasing_factor_*']);
+        $this->addChildIfMissing($leasing, 'cardnext_leasing_settings', 'cardnext.leasing.settings', 'tabler:settings', 'cardnext_admin_leasing_settings');
     }
 
     private function addSalesItems(ItemInterface $menu): void

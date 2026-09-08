@@ -37,6 +37,17 @@ class Product extends BaseProduct implements ProductInterface
     #[ORM\Column(name: 'addon_only', options: ['default' => false])]
     private bool $addonOnly = false;
 
+    #[ORM\Column(name: 'leasing_enabled', options: ['default' => false])]
+    private bool $leasingEnabled = false;
+
+    #[ORM\Column(name: 'leasing_custom_price', nullable: true)]
+    private ?int $leasingCustomPrice = null;
+
+    /** @var Collection<int, \App\Entity\Leasing\LeasingFactor> */
+    #[ORM\ManyToMany(targetEntity: \App\Entity\Leasing\LeasingFactor::class)]
+    #[ORM\JoinTable(name: 'cardnext_product_leasing_factor')]
+    private Collection $leasingFactors;
+
     #[ORM\OneToOne(mappedBy: 'product', targetEntity: PrinterAdvisorProfile::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private ?PrinterAdvisorProfile $printerAdvisorProfile = null;
 
@@ -73,6 +84,7 @@ class Product extends BaseProduct implements ProductInterface
         $this->reverseCompatibilities = new ArrayCollection();
         $this->deviceCompatibilities = new ArrayCollection();
         $this->bundles = new ArrayCollection();
+        $this->leasingFactors = new ArrayCollection();
     }
 
     /** @return Collection<int, ProductBundle> */
@@ -155,6 +167,15 @@ class Product extends BaseProduct implements ProductInterface
             $this->homepageFeatured = false;
         }
     }
+
+    public function isLeasingEnabled(): bool { return $this->leasingEnabled; }
+    public function setLeasingEnabled(bool $value): void { $this->leasingEnabled = $value; }
+    public function getLeasingCustomPrice(): ?int { return $this->leasingCustomPrice; }
+    public function setLeasingCustomPrice(?int $value): void { $this->leasingCustomPrice = $value; }
+    /** @return Collection<int, \App\Entity\Leasing\LeasingFactor> */
+    public function getLeasingFactors(): Collection { return $this->leasingFactors; }
+    public function addLeasingFactor(\App\Entity\Leasing\LeasingFactor $factor): void { if (!$this->leasingFactors->contains($factor)) $this->leasingFactors->add($factor); }
+    public function removeLeasingFactor(\App\Entity\Leasing\LeasingFactor $factor): void { $this->leasingFactors->removeElement($factor); }
 
     public function getPrinterAdvisorProfile(): ?PrinterAdvisorProfile
     {
