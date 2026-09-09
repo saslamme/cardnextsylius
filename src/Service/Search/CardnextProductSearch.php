@@ -19,10 +19,14 @@ final class CardnextProductSearch
 
     private ?string $fuzzyVocabularyLocale = null;
 
+    private readonly SearchSynonymParser $synonymParser;
+
     public function __construct(
         private readonly Connection $connection,
         private readonly ChannelContextInterface $channelContext,
+        ?SearchSynonymParser $synonymParser = null,
     ) {
+        $this->synonymParser = $synonymParser ?? new SearchSynonymParser();
     }
 
     // @phpstan-ignore missingType.iterableValue
@@ -90,6 +94,8 @@ final class CardnextProductSearch
             'normalizedQuery' => $normalizedQuery,
             'normalizedPrefix' => $normalizedQuery . '%',
             'normalizedContains' => '%' . $normalizedQuery . '%',
+            'synonymExact' => '(^|[\\r\\n,;])[[:space:]]*' . preg_quote($lowerQuery, '/') . '[[:space:]]*([\\r\\n,;]|$)',
+            'synonymPrefix' => '(^|[\\r\\n,;])[[:space:]]*' . preg_quote($lowerQuery, '/'),
         ];
 
         $tokenConditions = [];
@@ -110,6 +116,7 @@ final class CardnextProductSearch
 
             $tokenConditions[] = sprintf(
                 "(LOWER(pt.name) LIKE :%1\$s
+                    OR LOWER(COALESCE(pt.search_synonyms, '')) LIKE :%1\$s
                     OR LOWER(p.code) LIKE :%1\$s
                     OR LOWER(COALESCE(pv.code, '')) LIKE :%1\$s
                     OR LOWER(COALESCE(m.name, '')) LIKE :%1\$s
@@ -126,7 +133,7 @@ final class CardnextProductSearch
         }
 
         $whereSearch = $tokenConditions !== []
-            ? implode(' AND ', $tokenConditions)
+            ? '(LOWER(COALESCE(pt.search_synonyms, \'\')) LIKE :contains OR (' . implode(' AND ', $tokenConditions) . '))'
             : '1 = 0';
 
         $productCodeNormalized = $this->sqlNormalized('p.code');
@@ -180,6 +187,8 @@ final class CardnextProductSearch
                     WHEN LOWER(COALESCE(m.name, '')) = :query THEN 105
                     WHEN LOWER(COALESCE(m.code, '')) = :query THEN 103
 
+                    WHEN LOWER(COALESCE(pt.search_synonyms, '')) REGEXP :synonymExact THEN 85
+
                     WHEN COALESCE(pv.manufacturer_part_number_normalized, '') LIKE :normalizedPrefix
                         AND :normalizedQuery <> '' THEN 102
 
@@ -197,6 +206,7 @@ final class CardnextProductSearch
 
                     WHEN LOWER(pt.name) LIKE :prefix THEN 86
                     WHEN LOWER(COALESCE(m.name, '')) LIKE :prefix THEN 80
+                    WHEN LOWER(COALESCE(pt.search_synonyms, '')) REGEXP :synonymPrefix THEN 75
 
                     WHEN COALESCE(pv.manufacturer_part_number_normalized, '') LIKE :normalizedContains
                         AND :normalizedQuery <> '' THEN 79
@@ -207,6 +217,7 @@ final class CardnextProductSearch
                     WHEN LOWER(p.code) LIKE :contains THEN 74
                     WHEN LOWER(COALESCE(pv.code, '')) LIKE :contains THEN 72
                     WHEN LOWER(pt.name) LIKE :contains THEN 66
+                    WHEN LOWER(COALESCE(pt.search_synonyms, '')) LIKE :contains THEN 60
                     WHEN LOWER(COALESCE(m.name, '')) LIKE :contains THEN 58
 
                     ELSE 40
@@ -784,6 +795,19 @@ final class CardnextProductSearch
 
                 UNION
 
+                SELECT DISTINCT pt.search_synonyms AS term
+                FROM sylius_product p
+                INNER JOIN sylius_product_translation pt
+                    ON pt.translatable_id = p.id
+                    AND pt.locale = :localeCode
+                INNER JOIN sylius_product_channels pc
+                    ON pc.product_id = p.id
+                    AND pc.channel_id = :channelId
+                WHERE p.enabled = 1
+                  AND pt.search_synonyms IS NOT NULL
+
+                UNION
+
                 SELECT DISTINCT m.name AS term
                 FROM cardnext_manufacturer m
                 INNER JOIN sylius_product p
@@ -826,8 +850,10 @@ final class CardnextProductSearch
                 continue;
             }
 
-            foreach ($this->fuzzyWordsFromText($term) as $word) {
-                $this->addFuzzyVocabularyEntry($word);
+            foreach ($this->synonymParser->parse($term) as $phrase) {
+                foreach ($this->fuzzyWordsFromText($phrase) as $word) {
+                    $this->addFuzzyVocabularyEntry($word);
+                }
             }
         }
 
