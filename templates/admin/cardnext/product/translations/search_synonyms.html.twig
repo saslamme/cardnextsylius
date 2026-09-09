@@ -1,0 +1,11 @@
+{% set form = hookable_metadata.context.form %}
+{% set locale = hookable_metadata.context.locale %}
+
+{% if form.searchSynonyms is defined %}
+    <div class="col-12">
+        {{ form_row(
+            form.searchSynonyms,
+            sylius_test_form_attribute('search-synonyms', locale)
+        ) }}
+    </div>
+{% endif %}

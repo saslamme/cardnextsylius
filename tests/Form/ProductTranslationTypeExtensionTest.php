@@ -18,7 +18,9 @@ final class ProductTranslationTypeExtensionTest extends TestCase
             'searchSynonyms',
             TextareaType::class,
             self::callback(static fn (array $options): bool => $options['required'] === false &&
+                $options['label'] === 'Suchsynonyme' &&
                 str_contains($options['help'], 'Komma/Semikolon') &&
+                $options['attr']['rows'] === 5 &&
                 str_contains($options['attr']['placeholder'], "\n")),
         )->willReturn($builder);
 

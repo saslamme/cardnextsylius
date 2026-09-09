@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Form\Extension;
 
 use Sylius\Bundle\ProductBundle\Form\Type\ProductTranslationType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+#[AutoconfigureTag('form.type_extension')]
 final class ProductTranslationTypeExtension extends AbstractTypeExtension
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
