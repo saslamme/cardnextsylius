@@ -13,7 +13,7 @@ use Sylius\Component\Core\Model\ProductTranslation as BaseProductTranslation;
 #[PublicSlugUnique]
 class ProductTranslation extends BaseProductTranslation
 {
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'search_synonyms', type: 'text', nullable: true)]
     private ?string $searchSynonyms = null;
 
     public function getSearchSynonyms(): ?string
