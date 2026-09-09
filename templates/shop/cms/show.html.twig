@@ -6,5 +6,9 @@
     <meta property="og:title" content="{{ translation.ogTitle ?: translation.metaTitle ?: translation.title }}">
     {% if translation.ogDescription ?: translation.metaDescription %}<meta property="og:description" content="{{ translation.ogDescription ?: translation.metaDescription }}">{% endif %}
     <link rel="canonical" href="{{ translation.canonicalUrl ?: absolute_url('/' ~ translation.slug) }}">
+    {% if not preview|default(false) %}{% set structured_data = cardnext_cms_breadcrumb_structured_data(translation.title, 'cardnext.storefront.common.home'|trans, translation.canonicalUrl) %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}{% endif %}
 {% endblock %}
-{% block content %}<main class="cn-container py-5 cardnext-cms cardnext-cms--{{ page.layout.renderer }}"><header class="mb-5"><h1>{{ translation.title }}</h1>{% if translation.lead %}<p class="lead">{{ translation.lead }}</p>{% endif %}</header>{% for block in page.blocks|filter(b => b.enabled and b.locale == locale) %}{% include cardnext_cms_block_template(block.type) with {config: block.configuration} only %}{% endfor %}</main>{% endblock %}
+{% block content %}
+{% include 'shop/_breadcrumb.html.twig' with {items: [{label: translation.title}]} only %}
+<main class="cn-container py-5 cardnext-cms cardnext-cms--{{ page.layout.renderer }}"><header class="mb-5"><h1>{{ translation.title }}</h1>{% if translation.lead %}<p class="lead">{{ translation.lead }}</p>{% endif %}</header>{% for block in page.blocks|filter(b => b.enabled and b.locale == locale) %}{% include cardnext_cms_block_template(block.type) with {config: block.configuration} only %}{% endfor %}</main>
+{% endblock %}

@@ -1,4 +1,7 @@
 cardnext:
+  storefront:
+    common:
+      home: Home
   market:
     select: Select country
   account:

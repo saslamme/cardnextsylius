@@ -1,0 +1,15 @@
+{# Shared storefront breadcrumb markup. Each item accepts a translated label and an optional URL. #}
+<nav class="cn-breadcrumbs" aria-label="Breadcrumb">
+    <div class="cn-container cn-breadcrumbs__inner">
+        <a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.storefront.common.home'|trans }}</a>
+        {% for item in items|default([]) %}
+            <span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>
+            {% set item_url = item.url|default(item.path|default(null)) %}
+            {% if item_url and not loop.last %}
+                <a href="{{ item_url }}">{{ item.label }}</a>
+            {% else %}
+                <span{% if loop.last %} aria-current="page"{% endif %}>{{ item.label }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+</nav>

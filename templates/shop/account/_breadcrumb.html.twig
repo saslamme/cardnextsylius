@@ -1,16 +1,6 @@
-{# Use the shop-wide breadcrumb component; account pages deliberately have no visual variant. #}
-<nav class="cn-breadcrumbs" aria-label="Breadcrumb">
-    <div class="cn-container cn-breadcrumbs__inner">
-        <a href="{{ path('sylius_shop_homepage') }}">{{ 'sylius.ui.home'|trans }}</a>
-        <span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>
-        {% if items|default([]) is not empty %}
-            <a href="{{ path('sylius_shop_account_dashboard') }}">{{ 'sylius.ui.my_account'|trans }}</a>
-            {% for item in items %}
-                <span class="cn-breadcrumbs__sep" aria-hidden="true">/</span>
-                {% if item.path is defined and not loop.last %}<a href="{{ item.path }}">{{ item.label }}</a>{% else %}<span{% if loop.last %} aria-current="page"{% endif %}>{{ item.label }}</span>{% endif %}
-            {% endfor %}
-        {% else %}
-            <span aria-current="page">{{ 'sylius.ui.my_account'|trans }}</span>
-        {% endif %}
-    </div>
-</nav>
+{# Account pages extend the shared storefront breadcrumb with their dashboard root. #}
+{% set account_items = items|default([]) is empty
+    ? [{label: 'sylius.ui.my_account'|trans}]
+    : [{label: 'sylius.ui.my_account'|trans, url: path('sylius_shop_account_dashboard')}]|merge(items)
+%}
+{% include 'shop/_breadcrumb.html.twig' with {items: account_items} only %}
