@@ -10,93 +10,50 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final readonly class HttpErpMaintenanceContractProvider implements ErpMaintenanceContractProviderInterface
 {
     /** @param array<string, string> $fieldMap */
-    public function __construct(private HttpClientInterface $httpClient, private LoggerInterface $logger, private string $baseUri, private string $endpoint, private string $authHeader, private string $authValue, private array $fieldMap)
+    public function __construct(private HttpClientInterface $httpClient, private LoggerInterface $logger, private string $url, private string $baseUri, private string $endpoint, private string $authHeader, private string $authValue, private array $fieldMap)
     {
     }
 
     public function fetchAll(): iterable
     {
-        if ($this->baseUri === '' || $this->endpoint === '' || $this->fieldMap === []) {
-            throw new \RuntimeException('Production ERP maintenance-contract endpoint and field mapping are not configured.');
+        $url = trim($this->url) !== '' ? trim($this->url) : ($this->baseUri !== '' && $this->endpoint !== '' ? rtrim($this->baseUri, '/') . '/' . ltrim($this->endpoint, '/') : '');
+        if ($url === '') {
+            throw new \RuntimeException('ERP maintenance-contract URL is not configured.');
         }
         $headers = $this->authHeader !== '' && $this->authValue !== '' ? [$this->authHeader => $this->authValue] : [];
-        $response = $this->httpClient->request('GET', rtrim($this->baseUri, '/') . '/' . ltrim($this->endpoint, '/'), ['headers' => $headers, 'timeout' => 30, 'max_duration' => 35]);
+        $response = $this->httpClient->request('GET', $url, ['headers' => $headers, 'timeout' => 30, 'max_duration' => 35]);
         $rows = $response->toArray();
-        if (!array_is_list($rows)) {
-            throw new \UnexpectedValueException('ERP response must be a JSON list.');
-        }
+        $rows = $this->extractRows($rows);
+        $normalizer = new IdbMasterMaintenanceContractNormalizer($this->fieldMap);
         foreach ($rows as $offset => $row) {
             try {
                 if (!is_array($row)) {
                     throw new \UnexpectedValueException('Record is not an object.');
                 }
 
-                yield $this->map($row);
+                yield $normalizer->normalize($row);
             } catch (\Throwable $error) {
-                $this->logger->warning('Invalid ERP maintenance contract skipped.', ['recordOffset' => $offset, 'errorType' => $error::class]);
+                $this->logger->warning('Invalid ERP maintenance contract skipped.', ['recordOffset' => $offset, 'reason' => $error->getMessage(), 'errorType' => $error::class]);
             }
         }
     }
 
-    /** @param array<mixed> $row */
-    private function map(array $row): ErpMaintenanceContractData
+    /**
+     * @param array<mixed> $payload
+     *
+     * @return list<mixed>
+     */
+    private function extractRows(array $payload): array
     {
-        $value = fn (string $name): mixed => $row[$this->fieldMap[$name] ?? ''] ?? null;
-        $id = $this->requiredString($value('externalId'));
-        $customer = $this->requiredString($value('erpCustomerNumber'));
-        $serialNumbers = $this->serialNumbers($value('serialNumbers'));
-        $starts = $this->date($value('startsAt'));
-        $ends = $this->date($value('endsAt'));
-        if ($ends < $starts) {
-            throw new \UnexpectedValueException('ERP contract date range is invalid.');
+        if (array_is_list($payload)) {
+            return $payload;
         }
-        $optional = static fn (mixed $v): ?string => is_scalar($v) && trim((string) $v) !== '' ? trim((string) $v) : null;
-        $source = $optional($value('sourceUpdatedAt'));
-
-        return new ErpMaintenanceContractData($id, $customer, $serialNumbers, $starts, $ends, $optional($value('printerModel')), $optional($value('contractReference')), $source !== null ? new \DateTimeImmutable($source) : null);
-    }
-
-    private function date(mixed $value): \DateTimeImmutable
-    {
-        if (!is_string($value) || trim($value) === '') {
-            throw new \UnexpectedValueException('Required ERP date is missing.');
-        }
-
-        return new \DateTimeImmutable($value);
-    }
-
-    private function requiredString(mixed $value): string
-    {
-        if (!is_scalar($value) || trim((string) $value) === '') {
-            throw new \UnexpectedValueException('Required ERP field is missing.');
-        }
-
-        return trim((string) $value);
-    }
-
-    /** @return list<string> */
-    private function serialNumbers(mixed $value): array
-    {
-        if (!is_array($value)) {
-            throw new \UnexpectedValueException('ERP serial numbers must be an array.');
-        }
-
-        $serialNumbers = [];
-        foreach ($value as $serialNumber) {
-            if (!is_scalar($serialNumber)) {
-                throw new \UnexpectedValueException('ERP serial number must be scalar.');
-            }
-
-            $serialNumber = trim((string) $serialNumber);
-            if ($serialNumber !== '' && !isset($serialNumbers[$serialNumber])) {
-                $serialNumbers[$serialNumber] = $serialNumber;
+        foreach (['contracts', 'data', 'service_contracts', 'service_contract'] as $wrapper) {
+            if (isset($payload[$wrapper]) && is_array($payload[$wrapper]) && array_is_list($payload[$wrapper])) {
+                return $payload[$wrapper];
             }
         }
 
-        if ($serialNumbers === []) {
-            throw new \UnexpectedValueException('ERP contract requires at least one serial number.');
-        }
-
-        return array_values($serialNumbers);
+        throw new \UnexpectedValueException('Unsupported idbMaster maintenance-contract response structure.');
     }
 }

@@ -207,6 +207,7 @@ services:
 
     App\Integration\Erp\Maintenance\HttpErpMaintenanceContractProvider:
         arguments:
+            $url: '%env(CARDNEXT_ERP_MAINTENANCE_CONTRACTS_URL)%'
             $baseUri: '%env(CARDNEXT_ERP_BASE_URI)%'
             $endpoint: '%env(CARDNEXT_ERP_MAINTENANCE_CONTRACTS_ENDPOINT)%'
             $authHeader: '%env(CARDNEXT_ERP_AUTH_HEADER)%'
