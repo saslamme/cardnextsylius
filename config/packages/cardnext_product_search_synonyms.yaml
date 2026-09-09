@@ -1,0 +1,11 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_admin.product.create.content.form.sections.translations':
+            cardnext_search_synonyms:
+                template: 'admin/cardnext/product/translations/search_synonyms.html.twig'
+                priority: -100
+
+        'sylius_admin.product.update.content.form.sections.translations':
+            cardnext_search_synonyms:
+                template: 'admin/cardnext/product/translations/search_synonyms.html.twig'
+                priority: -100
