@@ -22,8 +22,21 @@ final readonly class HttpErpMaintenanceContractProvider implements ErpMaintenanc
         }
         $headers = $this->authHeader !== '' && $this->authValue !== '' ? [$this->authHeader => $this->authValue] : [];
         $response = $this->httpClient->request('GET', $url, ['headers' => $headers, 'timeout' => 30, 'max_duration' => 35]);
-        $rows = $response->toArray();
-        $rows = $this->extractRows($rows);
+        $content = $response->getContent();
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        }
+
+        try {
+            $payload = json_decode($content, true, flags: \JSON_THROW_ON_ERROR);
+        } catch (\JsonException $error) {
+            throw new \UnexpectedValueException('Invalid JSON returned by the ERP maintenance-contract endpoint.', previous: $error);
+        }
+        if (!is_array($payload)) {
+            throw new \UnexpectedValueException('ERP maintenance-contract response must contain a JSON array or object.');
+        }
+
+        $rows = $this->extractRows($payload);
         $normalizer = new IdbMasterMaintenanceContractNormalizer($this->fieldMap);
         foreach ($rows as $offset => $row) {
             try {
