@@ -54,6 +54,7 @@ final readonly class StructuredDataBuilder
         foreach ($product->getEnabledVariants() as $candidate) {
             if ($candidate instanceof ProductVariant) {
                 $variant = $candidate;
+
                 break;
             }
         }
@@ -113,6 +114,24 @@ final readonly class StructuredDataBuilder
         return ['@context' => 'https://schema.org', '@graph' => [$this->breadcrumbs($request, $taxon, (string) $taxon->getName(), $url)]];
     }
 
+    /** @return array<string, mixed>|null */
+    public function cmsPage(Request $request, string $pageName, string $homeName, ?string $canonicalUrl = null): ?array
+    {
+        $pageUrl = $canonicalUrl ?: $this->canonicalUrlResolver->resolve($request);
+        $homeUrl = $this->homepageUrl($request);
+        if ($pageUrl === null || $homeUrl === '') {
+            return null;
+        }
+
+        return ['@context' => 'https://schema.org', '@graph' => [[
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => $homeName, 'item' => $homeUrl],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => $pageName, 'item' => $pageUrl],
+            ],
+        ]]];
+    }
+
     /** @return array<string, mixed> */
     private function organization(Request $request, ChannelInterface $channel, string $homepageUrl): array
     {
@@ -153,8 +172,16 @@ final readonly class StructuredDataBuilder
         return $this->canonicalUrlResolver->absoluteAsset($request, $path) ?? '';
     }
 
-    private function organizationId(string $url): string { return $this->origin($url) . '/#organization'; }
-    private function origin(string $url): string { return (string) parse_url($url, \PHP_URL_SCHEME) . '://' . (string) parse_url($url, \PHP_URL_HOST); }
+    private function organizationId(string $url): string
+    {
+        return $this->origin($url) . '/#organization';
+    }
+
+    private function origin(string $url): string
+    {
+        return (string) parse_url($url, \PHP_URL_SCHEME) . '://' . (string) parse_url($url, \PHP_URL_HOST);
+    }
+
     private function channel(): ?ChannelInterface
     {
         try {
