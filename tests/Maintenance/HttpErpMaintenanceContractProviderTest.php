@@ -13,6 +13,33 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class HttpErpMaintenanceContractProviderTest extends TestCase
 {
+    public function testValidJsonWithoutBomIsImported(): void
+    {
+        $rows = iterator_to_array($this->provider(new MockResponse($this->directListJson()))->fetchAll());
+
+        self::assertSame('1', $rows[0]->externalId);
+        self::assertSame('221291', $rows[0]->erpCustomerNumber);
+    }
+
+    public function testValidJsonWithBomIsImported(): void
+    {
+        $rows = iterator_to_array($this->provider(new MockResponse("\xEF\xBB\xBF" . $this->directListJson()))->fetchAll());
+
+        self::assertSame('1', $rows[0]->externalId);
+        self::assertSame('221291', $rows[0]->erpCustomerNumber);
+    }
+
+    public function testProductionStyleDirectListWithBomAndCrlfIsImported(): void
+    {
+        $json = str_replace("\n", "\r\n", $this->directListJson());
+        $rows = iterator_to_array($this->provider(new MockResponse("\xEF\xBB\xBF" . $json))->fetchAll());
+
+        self::assertCount(1, $rows);
+        self::assertSame('1', $rows[0]->externalId);
+        self::assertSame(['883023120019'], $rows[0]->serialNumbers);
+        self::assertSame('Identcover Premium', $rows[0]->printerModel);
+    }
+
     public function testMapsIdbMasterWrapperFixture(): void
     {
         $json = (string) file_get_contents(__DIR__ . '/Fixtures/idbmaster-service-contract.json');
@@ -89,6 +116,20 @@ final class HttpErpMaintenanceContractProviderTest extends TestCase
         iterator_to_array($this->provider(new MockResponse('{"result":{"items":[]}}'))->fetchAll());
     }
 
+    public function testInvalidJsonHasControlledErrorWithoutResponseContents(): void
+    {
+        $customerData = 'invalid-json-for-customer-221291';
+
+        try {
+            iterator_to_array($this->provider(new MockResponse($customerData))->fetchAll());
+            self::fail('Invalid JSON should throw an exception.');
+        } catch (\UnexpectedValueException $error) {
+            self::assertSame('Invalid JSON returned by the ERP maintenance-contract endpoint.', $error->getMessage());
+            self::assertStringNotContainsString($customerData, $error->getMessage());
+            self::assertInstanceOf(\JsonException::class, $error->getPrevious());
+        }
+    }
+
     public function testFullUrlTakesPrecedenceAndEmptyAuthAddsNoHeader(): void
     {
         $client = new MockHttpClient(function (string $method, string $url, array $options): MockResponse {
@@ -127,5 +168,21 @@ final class HttpErpMaintenanceContractProviderTest extends TestCase
     private function providerWithClient(HttpClientInterface $client, string $url = '', string $authHeader = '', string $authValue = '', array $fieldMap = []): HttpErpMaintenanceContractProvider
     {
         return new HttpErpMaintenanceContractProvider($client, new NullLogger(), $url, 'https://erp.invalid', '/configured', $authHeader, $authValue, $fieldMap);
+    }
+
+    private function directListJson(): string
+    {
+        return <<<'JSON'
+[
+  {
+    "contractId": 1,
+    "customerNumber": "221291",
+    "startsAt": "2026-01-01",
+    "endsAt": "2026-12-31",
+    "serialNumbers": ["883023120019"],
+    "printerModel": "Identcover Premium"
+  }
+]
+JSON;
     }
 }
