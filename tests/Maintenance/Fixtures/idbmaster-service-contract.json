@@ -1,0 +1,23 @@
+{
+  "service_contracts": [
+    {
+      "contract_id": 4711,
+      "customer_number": "221291",
+      "start_date": "18.08.2027",
+      "end_date": "2030-08-18",
+      "serial_number": " 883023120019,883023120019,883023120021 ",
+      "printer_model": "Identcover Premium",
+      "contract_number": "SA-1244",
+      "updated_at": "2026-09-08 14:30:00"
+    },
+    {
+      "contract_id": "4712",
+      "customer_number": "001",
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31",
+      "serial_number": "ABC-1",
+      "printer_model": "",
+      "contract_number": ""
+    }
+  ]
+}
