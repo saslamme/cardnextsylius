@@ -120,7 +120,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .cn-title { margin: 0; color: var(--cn-ink); font-weight: 800; letter-spacing: -.04em; line-height: 1.08; }
 .cn-title--hero { font-size: clamp(2.85rem,4.2vw,4.35rem); letter-spacing: -.055em; line-height: 1.01; }
 .cn-title--page { font-size: clamp(2.55rem,3.6vw,3.65rem); letter-spacing: -.05em; line-height: 1.02; }
-.cn-title--section { font-size: clamp(2rem, 2.2vw, 3.2rem); }
+.cn-title--section { font-size: clamp(2rem, 1.8vw, 3.2rem); }
 .cn-title--sm { font-size: 1.2rem; letter-spacing: -.02em; }
 .cn-lead { max-width: 760px; margin: 0; color: var(--cn-muted); font-size: 1rem; line-height: 1.72; }
 .cn-meta { color: var(--cn-subtle); font-size: .74rem; }
