@@ -13,10 +13,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class AddToCartTypeExtension extends AbstractTypeExtension
 {
-    public function __construct(private readonly ProductMaintenanceOfferResolver $resolver)
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $product = $options['product'] ?? null;
@@ -24,8 +20,18 @@ final class AddToCartTypeExtension extends AbstractTypeExtension
             return;
         }
         $choices = [];
-        foreach ($this->resolver->resolve($product) as $offer) {
-            $choices[(string) $offer->variant->getCode()] = (string) $offer->variant->getId();
+        foreach ($product->getAssociations() as $association) {
+            if ($association->getType()?->getCode() !== ProductMaintenanceOfferResolver::ASSOCIATION_TYPE) {
+                continue;
+            }
+            foreach ($association->getAssociatedProducts() as $addon) {
+                if (!$addon instanceof Product || !$addon->isAddonOnly() || !$addon->isEnabled()) {
+                    continue;
+                }
+                foreach ($addon->getEnabledVariants() as $variant) {
+                    $choices[(string) $variant->getCode()] = (string) $variant->getId();
+                }
+            }
         }
         if ($choices !== []) {
             $builder->add('maintenanceVariant', ChoiceType::class, [

@@ -13,12 +13,12 @@ final readonly class ProductMaintenanceOfferResolver
 {
     public const ASSOCIATION_TYPE = 'maintenance_contracts';
 
-    public function __construct(private ChannelContextInterface $channelContext)
+    public function __construct(private ChannelContextInterface $channelContext, private WertgarantieVariantResolver $wertgarantieResolver)
     {
     }
 
     /** @return list<MaintenanceOffer> */
-    public function resolve(Product $product): array
+    public function resolve(Product $product, ?ProductVariant $mainVariant = null): array
     {
         $channel = $this->channelContext->getChannel();
         if (!$channel instanceof ChannelInterface) {
@@ -31,6 +31,17 @@ final readonly class ProductMaintenanceOfferResolver
             }
             foreach ($association->getAssociatedProducts() as $associatedProduct) {
                 if (!$associatedProduct instanceof Product || !$associatedProduct->isAddonOnly() || !$associatedProduct->isEnabled() || !$associatedProduct->hasChannel($channel)) {
+                    continue;
+                }
+                if ($this->wertgarantieResolver->isWertgarantie($associatedProduct)) {
+                    if (!$mainVariant instanceof ProductVariant) {
+                        continue;
+                    }
+                    $variant = $this->wertgarantieResolver->resolve($associatedProduct, $mainVariant, $channel);
+                    if ($variant instanceof ProductVariant) {
+                        $offers[] = new MaintenanceOffer($associatedProduct, $variant, (int) $variant->getChannelPricingForChannel($channel)?->getPrice(), (string) $channel->getBaseCurrency()?->getCode());
+                    }
+
                     continue;
                 }
                 foreach ($associatedProduct->getVariants() as $variant) {
@@ -51,9 +62,9 @@ final readonly class ProductMaintenanceOfferResolver
         return $offers;
     }
 
-    public function findValidVariant(Product $mainProduct, int|string $variantId): ?ProductVariant
+    public function findValidVariant(Product $mainProduct, ProductVariant $mainVariant, int|string $variantId): ?ProductVariant
     {
-        foreach ($this->resolve($mainProduct) as $offer) {
+        foreach ($this->resolve($mainProduct, $mainVariant) as $offer) {
             if ((string) $offer->variant->getId() === (string) $variantId || $offer->variant->getCode() === (string) $variantId) {
                 return $offer->variant;
             }

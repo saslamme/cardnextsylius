@@ -13,6 +13,7 @@ use App\Entity\Product\ProductAssociation;
 use App\Entity\Product\ProductAssociationType;
 use App\Entity\Product\ProductVariant;
 use App\Maintenance\ProductMaintenanceOfferResolver;
+use App\Maintenance\WertgarantieVariantResolver;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 
@@ -46,7 +47,7 @@ final class MaintenanceFeatureTest extends TestCase
         $main->addAssociation($association);
         $context = $this->createMock(ChannelContextInterface::class);
         $context->method('getChannel')->willReturn($channel);
-        $offers = (new ProductMaintenanceOfferResolver($context))->resolve($main);
+        $offers = (new ProductMaintenanceOfferResolver($context, new WertgarantieVariantResolver()))->resolve($main);
         self::assertCount(1, $offers);
         self::assertSame(18900, $offers[0]->price);
         self::assertSame('EUR', $offers[0]->currencyCode);

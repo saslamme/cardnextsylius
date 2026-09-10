@@ -15,6 +15,7 @@ namespace App\Twig\Component\Product;
 
 use App\Entity\Order\OrderItem as CardnextOrderItem;
 use App\Entity\Product\Product as CardnextProduct;
+use App\Entity\Product\ProductVariant as CardnextProductVariant;
 use App\Maintenance\ProductMaintenanceOfferResolver;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Bundle\CoreBundle\Provider\FlashBagProvider;
@@ -123,7 +124,9 @@ class AddToCartFormComponent
     {
         $addToCartCommand = $this->getForm()->getData();
         Assert::isInstanceOf($addToCartCommand, AddToCartCommandInterface::class);
-        $newVariant = $addToCartCommand->getCartItem()->getVariant();
+        $cartItem = $addToCartCommand->getCartItem();
+        Assert::isInstanceOf($cartItem, OrderItem::class);
+        $newVariant = $cartItem->getVariant();
         if ($newVariant === $this->variant) {
             return;
         }
@@ -147,12 +150,16 @@ class AddToCartFormComponent
         $this->submitForm();
         $addToCartCommand = $this->getForm()->getData();
         Assert::isInstanceOf($addToCartCommand, AddToCartCommandInterface::class);
+        $mainCartItem = $addToCartCommand->getCartItem();
+        Assert::isInstanceOf($mainCartItem, OrderItem::class);
 
         $selected = $this->getForm()->has('maintenanceVariant') ? $this->getForm()->get('maintenanceVariant')->getData() : null;
         $variant = null;
         if ($selected !== null && $selected !== '') {
             $variant = $this->product instanceof CardnextProduct && (is_int($selected) || is_string($selected))
-                ? $this->maintenanceResolver->findValidVariant($this->product, $selected)
+                ? ($mainCartItem->getVariant() instanceof CardnextProductVariant
+                    ? $this->maintenanceResolver->findValidVariant($this->product, $mainCartItem->getVariant(), $selected)
+                    : null)
                 : null;
             if ($variant === null) {
                 throw new \DomainException('The selected maintenance contract is not available for this product.');
@@ -162,7 +169,7 @@ class AddToCartFormComponent
         $this->eventDispatcher->dispatch(new GenericEvent($addToCartCommand), SyliusCartEvents::CART_ITEM_ADD);
         $parent = null;
         foreach ($addToCartCommand->getCart()->getItems() as $item) {
-            if ($item instanceof CardnextOrderItem && $item->getVariant() === $addToCartCommand->getCartItem()->getVariant() && !$item->isMaintenanceAddon()) {
+            if ($item instanceof CardnextOrderItem && $item->getVariant() === $mainCartItem->getVariant() && !$item->isMaintenanceAddon()) {
                 $parent = $item;
             }
         }
