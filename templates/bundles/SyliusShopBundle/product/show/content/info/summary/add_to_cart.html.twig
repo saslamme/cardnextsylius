@@ -25,7 +25,7 @@
 
             {% hook 'add_to_cart' with { product, form } %}
 
-            {% set maintenance_offers = cardnext_maintenance_offers(product) %}
+            {% set maintenance_offers = cardnext_maintenance_offers(product, form.cartItem.vars.value.variant) %}
             {% if maintenance_offers is not empty and form.maintenanceVariant is defined %}
                 {% include 'shop/product/maintenance_offers.html.twig' with {offers: maintenance_offers, field: form.maintenanceVariant} only %}
             {% endif %}
