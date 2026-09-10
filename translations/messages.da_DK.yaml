@@ -83,6 +83,7 @@ cardnext:
         button: 'Få rådgivning'
       promises:
         shipping:
+      social_media: 'Social Media'
           title: 'Hurtig levering'
           text: 'På lagervarer'
         advice:

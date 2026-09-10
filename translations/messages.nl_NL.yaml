@@ -83,6 +83,7 @@ cardnext:
         button: Advies aanvragen
       promises:
         shipping:
+      social_media: 'Social Media'
           title: Snelle verzending
           text: Voor beschikbare voorraadartikelen
         advice:

@@ -83,6 +83,7 @@ cardnext:
         button: 'Jetzt beraten lassen'
       promises:
         shipping:
+      social_media: 'Social Media'
           title: 'Schneller Versand'
           text: 'Für verfügbare Lagerartikel'
         advice:

@@ -496,8 +496,14 @@ body.cn-nav-open { overflow: hidden; }
 .cn-footer__links li + li { margin-top: 8px; }
 .cn-footer__links a { color: rgba(255,255,255,.68); font-size: .8rem; text-decoration: none; }
 .cn-footer__links a:hover, .cn-footer__links a:focus-visible { color: #fff; }
-.cn-footer__commerce-meta { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; margin-top: 38px; }
-.cn-footer__shipping { text-align: right; }
+.cn-footer__commerce-meta { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: start; gap: 32px; margin-top: 38px; }
+.cn-footer__payments { grid-column: 1; }
+.cn-footer__social { grid-column: 2; text-align: center; }
+.cn-footer__shipping { grid-column: 3; text-align: right; }
+.cn-footer__social-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.cn-footer__social-link { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 50%; transition: background-color .2s ease, border-color .2s ease; }
+.cn-footer__social-link:hover, .cn-footer__social-link:focus-visible { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); }
+.cn-footer__social-link img { width: 20px; height: 20px; }
 .cn-footer__payment-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .cn-footer__payment-badge { display: inline-flex; min-height: 40px; max-width: 100%; align-items: center; justify-content: center; padding: 5px 10px; color: #1e293b; background: #fff; border: 1px solid rgba(148,163,184,.55); border-radius: 6px; font-size: .72rem; font-weight: 700; line-height: 1; white-space: nowrap; }
 .cn-footer__payment-badge img { display: block; width: auto; max-width: 96px; height: auto; max-height: 28px; }
@@ -979,7 +985,10 @@ body.cn-nav-open { overflow: hidden; }
     .cn-panel { padding: 26px 20px 24px; }
     .cn-footer__grid { grid-template-columns: 1fr; }
     .cn-footer__brand { grid-column: auto; }
-    .cn-footer__commerce-meta { flex-direction: column; gap: 28px; }
+    .cn-footer__commerce-meta { grid-template-columns: 1fr; gap: 28px; }
+    .cn-footer__payments, .cn-footer__social, .cn-footer__shipping { grid-column: auto; }
+    .cn-footer__social { text-align: left; }
+    .cn-footer__social-list { justify-content: flex-start; }
     .cn-footer__shipping { text-align: left; }
     .cn-footer__shipping-list { justify-content: flex-start; }
     .cn-footer__bottom { align-items: flex-start; flex-direction: column; }

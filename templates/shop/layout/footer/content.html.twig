@@ -3,6 +3,7 @@
 {% set homepage = cardnext_homepage_content() %}
 {% set footerPaymentMethods = cardnext_footer_payment_methods() %}
 {% set footerShippingCarriers = cardnext_footer_shipping_carriers() %}
+{% set footerSocialLinks = cardnext_footer_social_links() %}
 {% set footerTaxons = [
     {'code': 'card_printers'}, {'code': 'rfid_readers'}, {'code': 'plastic_cards'},
     {'code': 'id_accessories'}, {'code': 'barcode_scanners'}
@@ -40,6 +41,18 @@
                                     <span>{{ paymentMethod.label }}</span>
                                 {% endif %}
                             </span>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+            {% if footerSocialLinks is not empty %}
+                <section class="cn-footer__social" aria-labelledby="footer-social-title">
+                    <div id="footer-social-title" class="cn-footer__title">{{ 'cardnext.storefront.footer.social_media'|trans }}</div>
+                    <div class="cn-footer__social-list">
+                        {% for social in footerSocialLinks %}
+                            <a href="{{ social.url }}" class="cn-footer__social-link cn-footer__social-link--{{ social.code }}" target="_blank" rel="noopener noreferrer" aria-label="{{ social.label }}" title="{{ social.label }}">
+                                <img src="{{ asset(social.icon) }}" alt="" loading="lazy">
+                            </a>
                         {% endfor %}
                     </div>
                 </section>

@@ -19,14 +19,38 @@ class Channel extends BaseChannel
     #[ORM\JoinColumn(name: 'homepage_cms_page_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?CmsPage $homepageCmsPage = null;
 
-    public function getHomepageCmsPage(): ?CmsPage { return $this->homepageCmsPage; }
-    public function setHomepageCmsPage(?CmsPage $page): void { $this->homepageCmsPage = $page; }
+    public function getHomepageCmsPage(): ?CmsPage
+    {
+        return $this->homepageCmsPage;
+    }
+
+    public function setHomepageCmsPage(?CmsPage $page): void
+    {
+        $this->homepageCmsPage = $page;
+    }
+
     #[ORM\Column(name: 'theme_key', length: 64, nullable: true)]
     #[Assert\Regex(pattern: '/^[a-z0-9][a-z0-9_-]*$/')]
     private ?string $themeKey = null;
 
     #[ORM\Column(name: 'brand_name', length: 128, nullable: true)]
     private ?string $brandName = null;
+
+    #[ORM\Column(name: 'instagram_url', length: 512, nullable: true)]
+    #[Assert\Url(protocols: ['https'])]
+    private ?string $instagramUrl = null;
+
+    #[ORM\Column(name: 'facebook_url', length: 512, nullable: true)]
+    #[Assert\Url(protocols: ['https'])]
+    private ?string $facebookUrl = null;
+
+    #[ORM\Column(name: 'linkedin_url', length: 512, nullable: true)]
+    #[Assert\Url(protocols: ['https'])]
+    private ?string $linkedinUrl = null;
+
+    #[ORM\Column(name: 'youtube_url', length: 512, nullable: true)]
+    #[Assert\Url(protocols: ['https'])]
+    private ?string $youtubeUrl = null;
 
     #[ORM\Column(name: 'email_sender_name', length: 128, nullable: true)]
     #[Assert\Length(max: 128)]
@@ -109,6 +133,46 @@ class Channel extends BaseChannel
     public function setBrandName(?string $value): void
     {
         $this->brandName = $value ?: null;
+    }
+
+    public function getInstagramUrl(): ?string
+    {
+        return $this->instagramUrl;
+    }
+
+    public function setInstagramUrl(?string $value): void
+    {
+        $this->instagramUrl = self::trimmedOrNull($value);
+    }
+
+    public function getFacebookUrl(): ?string
+    {
+        return $this->facebookUrl;
+    }
+
+    public function setFacebookUrl(?string $value): void
+    {
+        $this->facebookUrl = self::trimmedOrNull($value);
+    }
+
+    public function getLinkedinUrl(): ?string
+    {
+        return $this->linkedinUrl;
+    }
+
+    public function setLinkedinUrl(?string $value): void
+    {
+        $this->linkedinUrl = self::trimmedOrNull($value);
+    }
+
+    public function getYoutubeUrl(): ?string
+    {
+        return $this->youtubeUrl;
+    }
+
+    public function setYoutubeUrl(?string $value): void
+    {
+        $this->youtubeUrl = self::trimmedOrNull($value);
     }
 
     public function getEmailSenderName(): ?string
