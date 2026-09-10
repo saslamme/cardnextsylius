@@ -75,11 +75,35 @@ final class FooterPaymentMethodProvider
     private function enabledMollieMethods(MollieGatewayInterface $gateway): array
     {
         try {
-            return array_values($this->mollieMethodRepository->findAllEnabledByGateway($gateway));
+            /** @var array<array-key, mixed> $rows */
+            $rows = $this->mollieMethodRepository->findAllEnabledByGateway($gateway);
         } catch (\Throwable) {
             // A partially configured gateway must not break every storefront page.
             return [];
         }
+
+        $methods = [];
+        foreach ($rows as $row) {
+            if ($row instanceof MollieGatewayConfigInterface) {
+                $methods[] = $row;
+
+                continue;
+            }
+
+            if (!is_array($row)) {
+                continue;
+            }
+
+            foreach ($row as $value) {
+                if ($value instanceof MollieGatewayConfigInterface) {
+                    $methods[] = $value;
+
+                    break;
+                }
+            }
+        }
+
+        return $methods;
     }
 
     /** @return list<array{code: string, label: string}> */

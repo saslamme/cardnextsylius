@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 use Sylius\MolliePlugin\Entity\MollieGatewayConfig;
-use Sylius\MolliePlugin\Entity\MollieGatewayConfigInterface;
 use Sylius\MolliePlugin\Repository\MollieGatewayConfigRepositoryInterface;
 
 final class FooterPaymentMethodProviderTest extends TestCase
@@ -40,6 +39,68 @@ final class FooterPaymentMethodProviderTest extends TestCase
     public function it_displays_enabled_mollie_paypal(): void
     {
         self::assertSame([['code' => 'paypal', 'label' => 'PayPal']], $this->provide([$this->mollieGateway()], [$this->mollieMethod('paypal')]));
+    }
+
+    #[Test]
+    public function it_normalises_doctrine_mixed_results(): void
+    {
+        $mollieMethod = $this->mollieMethod('ideal');
+
+        self::assertSame(
+            [['code' => 'ideal', 'label' => 'iDEAL']],
+            $this->provide([$this->mollieGateway()], [[
+                0 => $mollieMethod,
+                'minimumAmount' => null,
+                'maximumAmount' => null,
+            ]]),
+        );
+    }
+
+    #[Test]
+    public function it_ignores_a_mixed_result_without_a_mollie_method(): void
+    {
+        self::assertSame([], $this->provide([$this->mollieGateway()], [[
+            'minimumAmount' => 100,
+            'maximumAmount' => 1000,
+        ]]));
+    }
+
+    #[Test]
+    public function it_keeps_valid_methods_when_another_mixed_result_is_invalid(): void
+    {
+        self::assertSame(
+            [['code' => 'paypal', 'label' => 'PayPal']],
+            $this->provide([$this->mollieGateway()], [
+                ['minimumAmount' => null],
+                ['method' => $this->mollieMethod('paypal'), 'maximumAmount' => null],
+            ]),
+        );
+    }
+
+    #[Test]
+    public function it_expands_creditcard_from_a_mixed_result(): void
+    {
+        self::assertSame([
+            ['code' => 'visa', 'label' => 'Visa'],
+            ['code' => 'mastercard', 'label' => 'Mastercard'],
+        ], $this->provide([$this->mollieGateway()], [[
+            'minimumAmount' => null,
+            'method' => $this->mollieMethod('creditcard'),
+            'maximumAmount' => null,
+        ]]));
+    }
+
+    #[Test]
+    public function it_displays_paypal_from_a_mixed_result(): void
+    {
+        self::assertSame(
+            [['code' => 'paypal', 'label' => 'PayPal']],
+            $this->provide([$this->mollieGateway()], [[
+                'minimumAmount' => null,
+                1 => $this->mollieMethod('paypal'),
+                'maximumAmount' => null,
+            ]]),
+        );
     }
 
     #[Test]
@@ -98,7 +159,7 @@ final class FooterPaymentMethodProviderTest extends TestCase
 
     /**
      * @param list<PaymentMethod> $paymentMethods
-     * @param list<MollieGatewayConfigInterface> $mollieMethods
+     * @param array<array-key, mixed> $mollieMethods
      *
      * @return list<array{code: string, label: string}>
      */
