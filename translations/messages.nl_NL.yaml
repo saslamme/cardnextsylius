@@ -83,7 +83,6 @@ cardnext:
         button: Advies aanvragen
       promises:
         shipping:
-      social_media: 'Social Media'
           title: Snelle verzending
           text: Voor beschikbare voorraadartikelen
         advice:
@@ -117,6 +116,7 @@ cardnext:
     footer:
       payment_methods: 'Betaalmogelijkheden'
       shipping: 'Verzending'
+      social_media: 'Social Media'
       description: Professionele oplossingen voor kaartprinten, RFID, tijdregistratie, barcodesystemen en accessoires voor identificatiepassen.
       products: Producten
       solutions: Oplossingen

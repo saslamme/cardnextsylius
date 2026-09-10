@@ -83,7 +83,6 @@ cardnext:
         button: 'Få rådgivning'
       promises:
         shipping:
-      social_media: 'Social Media'
           title: 'Snabb leverans'
           text: 'För tillgängliga lagervaror'
         advice:
@@ -117,6 +116,7 @@ cardnext:
     footer:
       payment_methods: 'Betalningsalternativ'
       shipping: 'Frakt'
+      social_media: 'Social Media'
       description: 'Professionella lösningar för kortutskrift, RFID, tidrapportering, streckkodssystem och ID-tillbehör.'
       products: 'Produkter'
       solutions: 'Lösningar'
