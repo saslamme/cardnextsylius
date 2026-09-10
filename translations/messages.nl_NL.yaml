@@ -114,6 +114,7 @@ cardnext:
       downloads: Downloads
       contact: Contact
     footer:
+      payment_methods: 'Betaalmogelijkheden'
       description: Professionele oplossingen voor kaartprinten, RFID, tijdregistratie, barcodesystemen en accessoires voor identificatiepassen.
       products: Producten
       solutions: Oplossingen

@@ -205,6 +205,11 @@ services:
 
     App\Payment\AdyenExpressCheckoutAvailabilityInterface: '@App\Payment\AdyenExpressCheckoutAvailability'
 
+    App\Payment\FooterPaymentMethodProvider:
+        arguments:
+            $paymentMethodRepository: '@sylius.repository.payment_method'
+            $mollieMethodRepository: '@sylius_mollie.repository.mollie_gateway_config'
+
     App\Integration\Erp\Maintenance\HttpErpMaintenanceContractProvider:
         arguments:
             $url: '%env(CARDNEXT_ERP_MAINTENANCE_CONTRACTS_URL)%'

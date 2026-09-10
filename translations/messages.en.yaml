@@ -1,5 +1,7 @@
 cardnext:
   storefront:
+    footer:
+      payment_methods: 'Payment methods'
     common:
       home: Home
   market:

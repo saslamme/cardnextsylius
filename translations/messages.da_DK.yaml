@@ -114,6 +114,7 @@ cardnext:
       downloads: 'Downloads'
       contact: 'Kontakt'
     footer:
+      payment_methods: 'Betalingsmuligheder'
       description: 'Professionelle løsninger til kortprint, RFID, tidsregistrering, stregkodesystemer og ID-tilbehør.'
       products: 'Produkter'
       solutions: 'Løsninger'
