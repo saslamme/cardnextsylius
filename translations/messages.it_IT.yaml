@@ -689,3 +689,11 @@ quote_mail:
 "cardnext.maintenance.warranty_subtitle": "Protezione aggiuntiva per il dispositivo"
 "cardnext.maintenance.none_warranty": "Nessuna garanzia"
 "cardnext.storefront.product_card.from_price": "da"
+
+"cardnext.protection_popup.title": "Assistenza e garanzia per la stampante di carte"
+"cardnext.protection_popup.intro": "Aggiungi facoltativamente opzioni di assistenza o garanzia per %product%."
+"cardnext.protection_popup.service_heading": "Assistenza e manutenzione"
+"cardnext.protection_popup.warranty_heading": "Opzioni di garanzia"
+"cardnext.protection_popup.save": "Applica selezione"
+"cardnext.protection_popup.continue": "Continua senza servizi aggiuntivi"
+"cardnext.protection_popup.close": "Chiudi"

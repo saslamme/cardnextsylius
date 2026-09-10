@@ -689,3 +689,11 @@ quote_mail:
 "cardnext.maintenance.warranty_subtitle": "Ekstra beskyttelse til din enhed"
 "cardnext.maintenance.none_warranty": "Ingen garanti"
 "cardnext.storefront.product_card.from_price": "fra"
+
+"cardnext.protection_popup.title": "Service og garanti til din kortprinter"
+"cardnext.protection_popup.intro": "Tilføj eventuelt service- eller garantimuligheder til %product%."
+"cardnext.protection_popup.service_heading": "Service og vedligeholdelse"
+"cardnext.protection_popup.warranty_heading": "Garantimuligheder"
+"cardnext.protection_popup.save": "Anvend valg"
+"cardnext.protection_popup.continue": "Fortsæt uden ekstra ydelser"
+"cardnext.protection_popup.close": "Luk"

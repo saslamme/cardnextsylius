@@ -1,0 +1,45 @@
+<dialog class="cn-protection" data-cn-protection-dialog aria-labelledby="cn-protection-title">
+    <form method="post" action="{{ path('cardnext_shop_cart_protection_update', {id: parent.id}) }}" data-cn-protection-form>
+        <header class="cn-protection__header">
+            <div>
+                <h2 id="cn-protection-title">{{ 'cardnext.protection_popup.title'|trans }}</h2>
+                <p>{{ 'cardnext.protection_popup.intro'|trans({'%product%': product.name}) }}</p>
+            </div>
+            <button type="button" class="cn-protection__close" data-cn-protection-close aria-label="{{ 'cardnext.protection_popup.close'|trans }}">&times;</button>
+        </header>
+        <input type="hidden" name="_token" value="{{ csrf_token('cart_protection_' ~ parent.id) }}">
+
+        {% if serviceOffers is not empty %}
+            <fieldset class="cn-protection__group">
+                <legend>{{ 'cardnext.protection_popup.service_heading'|trans }}</legend>
+                <label class="cn-protection__option"><input type="radio" name="maintenanceVariant" value="" checked> <span>{{ 'cardnext.maintenance.none_service'|trans }}</span></label>
+                {% for offer in serviceOffers %}
+                    <label class="cn-protection__option">
+                        <input type="radio" name="maintenanceVariant" value="{{ offer.variant.id }}">
+                        <span><strong>{{ offer.product.name }}</strong>{% if offer.product.shortDescription %}<small>{{ offer.product.shortDescription }}</small>{% endif %}</span>
+                        <b>{{ offer.price|sylius_format_money(offer.currencyCode) }}</b>
+                    </label>
+                {% endfor %}
+            </fieldset>
+        {% endif %}
+
+        {% if warrantyOffers is not empty %}
+            <fieldset class="cn-protection__group">
+                <legend>{{ 'cardnext.protection_popup.warranty_heading'|trans }}</legend>
+                <label class="cn-protection__option"><input type="radio" name="warrantyVariant" value="" checked> <span>{{ 'cardnext.maintenance.none_warranty'|trans }}</span></label>
+                {% for offer in warrantyOffers %}
+                    <label class="cn-protection__option">
+                        <input type="radio" name="warrantyVariant" value="{{ offer.variant.id }}">
+                        <span><strong>{{ offer.product.name }}</strong>{% if offer.product.shortDescription %}<small>{{ offer.product.shortDescription }}</small>{% endif %}</span>
+                        <b>{{ offer.price|sylius_format_money(offer.currencyCode) }}</b>
+                    </label>
+                {% endfor %}
+            </fieldset>
+        {% endif %}
+
+        <footer class="cn-protection__actions">
+            <button class="btn btn-primary" type="submit">{{ 'cardnext.protection_popup.save'|trans }}</button>
+            <button class="btn btn-link" type="button" data-cn-protection-close>{{ 'cardnext.protection_popup.continue'|trans }}</button>
+        </footer>
+    </form>
+</dialog>

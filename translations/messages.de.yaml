@@ -836,3 +836,11 @@ quote_mail:
 'cardnext.leasing.email.internal_title': 'Neue Leasinganfrage'
 'cardnext.leasing.email.thanks': 'Wir haben Ihre unverbindliche Anfrage erhalten.'
 'cardnext.leasing.email.partner_notice': 'Die finale Prüfung und das Leasingangebot erfolgen über unseren Finanzierungspartner.'
+
+"cardnext.protection_popup.title": "Service & Garantie für Ihren Kartendrucker"
+"cardnext.protection_popup.intro": "Ergänzen Sie auf Wunsch Service- oder Garantieoptionen für %product%."
+"cardnext.protection_popup.service_heading": "Service & Wartung"
+"cardnext.protection_popup.warranty_heading": "Garantieoptionen"
+"cardnext.protection_popup.save": "Auswahl übernehmen"
+"cardnext.protection_popup.continue": "Ohne Zusatzleistung fortfahren"
+"cardnext.protection_popup.close": "Schließen"

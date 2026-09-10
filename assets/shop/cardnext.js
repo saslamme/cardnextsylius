@@ -381,29 +381,55 @@ document.addEventListener('keydown', (event) => {
 // CARDNEXT CART OFFCANVAS AFTER ADD:START
 const cnOpenCartAfterAdd = () => {
     const url = new URL(window.location.href);
-
-    if (url.searchParams.get('cnCart') !== 'open') {
+    const protectionItem = url.searchParams.get('cnProtectionItem');
+    const shouldOpenCart = url.searchParams.get('cnCart') === 'open';
+    if (!shouldOpenCart && !protectionItem) {
         return;
     }
 
     url.searchParams.delete('cnCart');
+    url.searchParams.delete('cnProtectionItem');
     window.history.replaceState(
         {},
         '',
         `${url.pathname}${url.search}${url.hash}`
     );
 
-    const cartTrigger = document.querySelector(
+    const openCart = () => document.querySelector(
         '[data-bs-toggle="offcanvas"][data-bs-target="#offcanvasCart"]'
-    );
+    )?.click();
 
-    if (!cartTrigger) {
+    if (protectionItem) {
+        fetch(`/cart/protection/${encodeURIComponent(protectionItem)}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then((response) => response.status === 204 ? '' : response.ok ? response.text() : Promise.reject(new Error(`Protection popup failed (${response.status})`)))
+            .then((html) => {
+                if (!html) {
+                    if (shouldOpenCart) openCart();
+                    return;
+                }
+                const host = document.createElement('div');
+                host.innerHTML = html;
+                const dialog = host.firstElementChild;
+                document.body.append(dialog);
+                const close = () => {
+                    dialog.close();
+                    dialog.remove();
+                    if (shouldOpenCart) window.setTimeout(openCart, 80);
+                };
+                dialog.querySelectorAll('[data-cn-protection-close]').forEach((button) => button.addEventListener('click', close));
+                dialog.addEventListener('cancel', (event) => { event.preventDefault(); close(); });
+                dialog.querySelector('[data-cn-protection-form]').addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const response = await fetch(event.currentTarget.action, { method: 'POST', body: new FormData(event.currentTarget), headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    if (response.ok) close();
+                });
+                dialog.showModal();
+            })
+            .catch((error) => { window.console.error(error); if (shouldOpenCart) openCart(); });
         return;
     }
 
-    window.setTimeout(() => {
-        cartTrigger.click();
-    }, 80);
+    window.setTimeout(openCart, 80);
 };
 
 if (document.readyState === 'loading') {

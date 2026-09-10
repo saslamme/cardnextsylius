@@ -689,3 +689,11 @@ quote_mail:
 "cardnext.maintenance.warranty_subtitle": "Extra bescherming voor uw apparaat"
 "cardnext.maintenance.none_warranty": "Geen garantie"
 "cardnext.storefront.product_card.from_price": "vanaf"
+
+"cardnext.protection_popup.title": "Service en garantie voor uw kaartprinter"
+"cardnext.protection_popup.intro": "Voeg optioneel service- of garantieopties toe voor %product%."
+"cardnext.protection_popup.service_heading": "Service en onderhoud"
+"cardnext.protection_popup.warranty_heading": "Garantieopties"
+"cardnext.protection_popup.save": "Selectie toepassen"
+"cardnext.protection_popup.continue": "Doorgaan zonder extra service"
+"cardnext.protection_popup.close": "Sluiten"
