@@ -700,3 +700,11 @@ quote_mail:
 "cardnext.maintenance.warranty_subtitle": "Zusätzlicher Schutz für Ihr Gerät"
 "cardnext.maintenance.none_warranty": "Ohne Garantie"
 "cardnext.storefront.product_card.from_price": "ab"
+
+"cardnext.protection_popup.title": "Service & Garantie für Ihren Kartendrucker"
+"cardnext.protection_popup.intro": "Ergänzen Sie auf Wunsch Service- oder Garantieoptionen für %product%."
+"cardnext.protection_popup.service_heading": "Service & Wartung"
+"cardnext.protection_popup.warranty_heading": "Garantieoptionen"
+"cardnext.protection_popup.save": "Auswahl übernehmen"
+"cardnext.protection_popup.continue": "Ohne Zusatzleistung fortfahren"
+"cardnext.protection_popup.close": "Schließen"

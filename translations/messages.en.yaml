@@ -531,3 +531,11 @@ cardnext.storefront.homepage.products.next: 'Next products'
 'cardnext.leasing.email.internal_title': 'New leasing inquiry'
 'cardnext.leasing.email.thanks': 'We have received your non-binding inquiry.'
 'cardnext.leasing.email.partner_notice': 'The final review and leasing quote will be provided by our financing partner.'
+
+"cardnext.protection_popup.title": "Service & warranty for your card printer"
+"cardnext.protection_popup.intro": "Optionally add service or warranty options for %product%."
+"cardnext.protection_popup.service_heading": "Service & maintenance"
+"cardnext.protection_popup.warranty_heading": "Warranty options"
+"cardnext.protection_popup.save": "Apply selection"
+"cardnext.protection_popup.continue": "Continue without add-ons"
+"cardnext.protection_popup.close": "Close"
