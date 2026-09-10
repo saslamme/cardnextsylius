@@ -83,6 +83,7 @@ cardnext:
         button: Solicitar asesoramiento
       promises:
         shipping:
+      social_media: 'Social Media'
           title: Envío rápido
           text: Para artículos disponibles en almacén
         advice:

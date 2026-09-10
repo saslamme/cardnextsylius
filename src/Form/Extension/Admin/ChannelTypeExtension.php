@@ -11,6 +11,7 @@ use Sylius\Bundle\ChannelBundle\Form\Type\ChannelType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -29,6 +30,10 @@ final class ChannelTypeExtension extends AbstractTypeExtension
             ->add('emailSenderName', TextType::class, ['required' => false, 'label' => 'Absendername', 'help' => 'Angezeigter Absendername für transaktionale E-Mails dieses Verkaufskanals.'])
             ->add('emailSenderAddress', TextType::class, ['required' => false, 'label' => 'Absender-E-Mail', 'help' => 'Technische Absenderadresse. Die Domain sollte für den verwendeten Mailserver freigegeben sein.'])
             ->add('emailReplyToAddress', TextType::class, ['required' => false, 'label' => 'Antwortadresse', 'help' => 'Optional. Antworten des Kunden werden an diese Adresse gesendet.'])
+            ->add('instagramUrl', UrlType::class, $this->socialUrl('Instagram', 'https://www.instagram.com/...'))
+            ->add('facebookUrl', UrlType::class, $this->socialUrl('Facebook', 'https://www.facebook.com/...'))
+            ->add('linkedinUrl', UrlType::class, $this->socialUrl('LinkedIn', 'https://www.linkedin.com/company/...'))
+            ->add('youtubeUrl', UrlType::class, $this->socialUrl('YouTube', 'https://www.youtube.com/@...'))
             ->add('logoFile', FileType::class, $this->upload('Logo', 'SVG, PNG, WebP oder JPEG; maximal 2 MB.'))
             ->add('logoDarkFile', FileType::class, $this->upload('Logo dunkel / Footer-Logo', 'SVG, PNG, WebP oder JPEG; maximal 2 MB.'))
             ->add('faviconFile', FileType::class, $this->upload('Favicon', 'SVG, PNG, WebP oder JPEG; maximal 512 KB.'))
@@ -66,6 +71,12 @@ final class ChannelTypeExtension extends AbstractTypeExtension
     private function color(string $label): array
     {
         return ['required' => false, 'label' => $label, 'help' => 'Optionales Hex-Format (#RGB oder #RRGGBB); leer verwendet den Cardnext-Standard.', 'attr' => ['placeholder' => '#123456', 'pattern' => '^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$']];
+    }
+
+    /** @return array<string, mixed> */
+    private function socialUrl(string $label, string $placeholder): array
+    {
+        return ['required' => false, 'label' => $label, 'default_protocol' => null, 'attr' => ['placeholder' => $placeholder]];
     }
 
     public static function getExtendedTypes(): iterable

@@ -28,5 +28,12 @@ final class ChannelBrandingAdminFormTest extends TestCase
             self::assertStringContainsString("->add('{$uploadField}'", $extension);
             self::assertStringContainsString("form.{$uploadField}", $template);
         }
+
+        foreach (['instagramUrl', 'facebookUrl', 'linkedinUrl', 'youtubeUrl'] as $socialField) {
+            self::assertStringContainsString("->add('{$socialField}'", $extension);
+            self::assertStringContainsString("form.{$socialField}", $template);
+        }
+
+        self::assertStringContainsString('channel-social-media-section', $template);
     }
 }

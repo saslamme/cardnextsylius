@@ -3,6 +3,7 @@ cardnext:
     footer:
       payment_methods: 'Payment methods'
       shipping: 'Shipping'
+      social_media: 'Social Media'
     common:
       home: Home
   market:
