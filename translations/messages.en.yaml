@@ -2,6 +2,7 @@ cardnext:
   storefront:
     footer:
       payment_methods: 'Payment methods'
+      shipping: 'Shipping'
     common:
       home: Home
   market:
