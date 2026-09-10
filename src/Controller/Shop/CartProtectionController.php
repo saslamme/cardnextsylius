@@ -30,7 +30,7 @@ final class CartProtectionController extends AbstractController
     ) {
     }
 
-    #[Route('/cart/protection/{id}', name: 'cardnext_shop_cart_protection_options', requirements: ['id' => '\\d+'], methods: ['GET'])]
+    #[Route('/cart/protection/{id}', name: 'cardnext_shop_cart_protection_options', requirements: ['id' => '\\d+'], methods: ['GET'], priority: 100)]
     public function options(int $id): Response
     {
         [$cart, $parent, $product, $variant] = $this->context($id);
@@ -50,7 +50,7 @@ final class CartProtectionController extends AbstractController
         ]);
     }
 
-    #[Route('/cart/protection/{id}', name: 'cardnext_shop_cart_protection_update', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    #[Route('/cart/protection/{id}', name: 'cardnext_shop_cart_protection_update', requirements: ['id' => '\\d+'], methods: ['POST'], priority: 100)]
     public function update(Request $request, int $id): Response
     {
         [$cart, $parent, $product, $mainVariant] = $this->context($id);
