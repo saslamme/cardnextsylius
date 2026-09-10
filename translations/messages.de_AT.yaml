@@ -690,4 +690,13 @@ quote_mail:
 "cardnext.maintenance.none": "Ohne Wartungsvertrag"
 "cardnext.maintenance.details": "Details anzeigen"
 "cardnext.maintenance.addon_label": "Wartung & Service"
+
+"cardnext.maintenance.service_heading": "Service & Wartung"
+"cardnext.maintenance.service_title": "Wartungsvertrag"
+"cardnext.maintenance.service_subtitle": "Optionaler Service für Ihren Kartendrucker"
+"cardnext.maintenance.none_service": "Ohne Wartungsvertrag"
+"cardnext.maintenance.warranty_heading": "Garantieoptionen"
+"cardnext.maintenance.warranty_title": "WERTGARANTIE Geräteschutz"
+"cardnext.maintenance.warranty_subtitle": "Zusätzlicher Schutz für Ihr Gerät"
+"cardnext.maintenance.none_warranty": "Ohne Garantie"
 "cardnext.storefront.product_card.from_price": "ab"

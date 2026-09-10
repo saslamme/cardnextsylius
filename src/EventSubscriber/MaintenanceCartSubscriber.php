@@ -29,7 +29,7 @@ final readonly class MaintenanceCartSubscriber implements EventSubscriberInterfa
             return;
         }
         foreach ($order->getItems() as $item) {
-            if (!$item instanceof OrderItem || !$item->isMaintenanceAddon()) {
+            if (!$item instanceof OrderItem || !$item->isAddon()) {
                 continue;
             }
             $parent = $item->getParentItem();
@@ -45,7 +45,7 @@ final readonly class MaintenanceCartSubscriber implements EventSubscriberInterfa
     public function removeChildren(GenericEvent $event): void
     {
         $parent = $event->getSubject();
-        if (!$parent instanceof OrderItem || $parent->isMaintenanceAddon() || ($order = $parent->getOrder()) === null) {
+        if (!$parent instanceof OrderItem || $parent->isAddon() || ($order = $parent->getOrder()) === null) {
             return;
         }
         foreach ($order->getItems() as $item) {

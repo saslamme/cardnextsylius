@@ -679,4 +679,13 @@ quote_mail:
 "cardnext.maintenance.none": "Ingen vedligeholdelsesaftale"
 "cardnext.maintenance.details": "Vis detaljer"
 "cardnext.maintenance.addon_label": "Vedligeholdelse og service"
+
+"cardnext.maintenance.service_heading": "Service og vedligeholdelse"
+"cardnext.maintenance.service_title": "Vedligeholdelsesaftale"
+"cardnext.maintenance.service_subtitle": "Valgfri service til din kortprinter"
+"cardnext.maintenance.none_service": "Ingen vedligeholdelsesaftale"
+"cardnext.maintenance.warranty_heading": "Garantimuligheder"
+"cardnext.maintenance.warranty_title": "WERTGARANTIE enhedsbeskyttelse"
+"cardnext.maintenance.warranty_subtitle": "Ekstra beskyttelse til din enhed"
+"cardnext.maintenance.none_warranty": "Ingen garanti"
 "cardnext.storefront.product_card.from_price": "fra"

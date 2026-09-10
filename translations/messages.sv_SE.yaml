@@ -679,4 +679,13 @@ quote_mail:
 "cardnext.maintenance.none": "Inget underhållsavtal"
 "cardnext.maintenance.details": "Visa detaljer"
 "cardnext.maintenance.addon_label": "Underhåll och service"
+
+"cardnext.maintenance.service_heading": "Service och underhåll"
+"cardnext.maintenance.service_title": "Underhållsavtal"
+"cardnext.maintenance.service_subtitle": "Valfri service för din kortskrivare"
+"cardnext.maintenance.none_service": "Inget underhållsavtal"
+"cardnext.maintenance.warranty_heading": "Garantialternativ"
+"cardnext.maintenance.warranty_title": "WERTGARANTIE enhetsskydd"
+"cardnext.maintenance.warranty_subtitle": "Extra skydd för din enhet"
+"cardnext.maintenance.none_warranty": "Ingen garanti"
 "cardnext.storefront.product_card.from_price": "från"

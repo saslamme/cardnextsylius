@@ -12,6 +12,7 @@ use App\Entity\Product\Product;
 use App\Entity\Product\ProductAssociation;
 use App\Entity\Product\ProductAssociationType;
 use App\Entity\Product\ProductVariant;
+use App\Maintenance\MaintenanceOffer;
 use App\Maintenance\ProductMaintenanceOfferResolver;
 use App\Maintenance\WertgarantieVariantResolver;
 use PHPUnit\Framework\TestCase;
@@ -51,6 +52,7 @@ final class MaintenanceFeatureTest extends TestCase
         self::assertCount(1, $offers);
         self::assertSame(18900, $offers[0]->price);
         self::assertSame('EUR', $offers[0]->currencyCode);
+        self::assertSame(MaintenanceOffer::CATEGORY_SERVICE, $offers[0]->category);
     }
 
     public function testMaintenanceOrderItemReferencesParentWithoutChangingParent(): void
@@ -61,7 +63,26 @@ final class MaintenanceFeatureTest extends TestCase
         $addon->setAddonType(OrderItem::ADDON_TYPE_MAINTENANCE);
         self::assertSame($parent, $addon->getParentItem());
         self::assertTrue($addon->isMaintenanceAddon());
+        self::assertTrue($addon->isAddon());
         self::assertNull($parent->getParentItem());
+    }
+
+    public function testWarrantyAndMaintenanceAreIndependentAddonTypes(): void
+    {
+        $parent = new OrderItem();
+        $maintenance = new OrderItem();
+        $maintenance->setParentItem($parent);
+        $maintenance->setAddonType(OrderItem::ADDON_TYPE_MAINTENANCE);
+        $warranty = new OrderItem();
+        $warranty->setParentItem($parent);
+        $warranty->setAddonType(OrderItem::ADDON_TYPE_WARRANTY);
+
+        self::assertTrue($maintenance->isMaintenanceAddon());
+        self::assertFalse($maintenance->isWarrantyAddon());
+        self::assertTrue($warranty->isWarrantyAddon());
+        self::assertFalse($warranty->isMaintenanceAddon());
+        self::assertSame($parent, $maintenance->getParentItem());
+        self::assertSame($parent, $warranty->getParentItem());
     }
 
     private function addon(Channel $channel, ?int $price): Product

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity\Order;
 
-use App\Entity\Product\ProductVariant;
 use App\Entity\Product\ProductBundle;
+use App\Entity\Product\ProductVariant;
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Core\Model\OrderItem as BaseOrderItem;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,7 +16,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class OrderItem extends BaseOrderItem
 {
     public const ADDON_TYPE_MAINTENANCE = 'maintenance';
+
+    public const ADDON_TYPE_WARRANTY = 'warranty';
+
     public const BUNDLE_ROLE_MAIN = 'MAIN';
+
     public const BUNDLE_ROLE_COMPONENT = 'COMPONENT';
 
     #[ORM\ManyToOne(targetEntity: self::class)]
@@ -62,18 +66,53 @@ class OrderItem extends BaseOrderItem
         return self::ADDON_TYPE_MAINTENANCE === $this->addonType;
     }
 
-    public function getBundle(): ?ProductBundle { return $this->bundle; }
-    public function setBundle(?ProductBundle $bundle): void { $this->bundle = $bundle; }
-    public function getBundleGroupKey(): ?string { return $this->bundleGroupKey; }
-    public function setBundleGroupKey(?string $key): void { $this->bundleGroupKey = $key; }
-    public function getBundleRole(): ?string { return $this->bundleRole; }
+    public function isWarrantyAddon(): bool
+    {
+        return self::ADDON_TYPE_WARRANTY === $this->addonType;
+    }
+
+    public function isAddon(): bool
+    {
+        return $this->parentItem !== null && $this->addonType !== null;
+    }
+
+    public function getBundle(): ?ProductBundle
+    {
+        return $this->bundle;
+    }
+
+    public function setBundle(?ProductBundle $bundle): void
+    {
+        $this->bundle = $bundle;
+    }
+
+    public function getBundleGroupKey(): ?string
+    {
+        return $this->bundleGroupKey;
+    }
+
+    public function setBundleGroupKey(?string $key): void
+    {
+        $this->bundleGroupKey = $key;
+    }
+
+    public function getBundleRole(): ?string
+    {
+        return $this->bundleRole;
+    }
+
     public function setBundleRole(?string $role): void
     {
-        if ($role !== null && !in_array($role, [self::BUNDLE_ROLE_MAIN, self::BUNDLE_ROLE_COMPONENT], true)) throw new \InvalidArgumentException('Invalid bundle role.');
+        if ($role !== null && !in_array($role, [self::BUNDLE_ROLE_MAIN, self::BUNDLE_ROLE_COMPONENT], true)) {
+            throw new \InvalidArgumentException('Invalid bundle role.');
+        }
         $this->bundleRole = $role;
     }
 
-    public function isBundleItem(): bool { return $this->bundle !== null && $this->bundleGroupKey !== null; }
+    public function isBundleItem(): bool
+    {
+        return $this->bundle !== null && $this->bundleGroupKey !== null;
+    }
 
     #[Assert\Callback]
     public function validateCardnextOrderQuantity(ExecutionContextInterface $context): void

@@ -26,8 +26,15 @@
             {% hook 'add_to_cart' with { product, form } %}
 
             {% set maintenance_offers = cardnext_maintenance_offers(product, form.cartItem.vars.value.variant) %}
-            {% if maintenance_offers is not empty and form.maintenanceVariant is defined %}
-                {% include 'shop/product/maintenance_offers.html.twig' with {offers: maintenance_offers, field: form.maintenanceVariant} only %}
+            {% set service_offers = maintenance_offers|filter(offer => offer.category == 'service') %}
+            {% set warranty_offers = maintenance_offers|filter(offer => offer.category == 'warranty') %}
+            {% if service_offers is not empty or warranty_offers is not empty %}
+                {% include 'shop/product/maintenance_offers.html.twig' with {
+                    serviceOffers: service_offers,
+                    warrantyOffers: warranty_offers,
+                    serviceField: form.maintenanceVariant is defined ? form.maintenanceVariant : null,
+                    warrantyField: form.warrantyVariant is defined ? form.warrantyVariant : null
+                } only %}
             {% endif %}
 
             {{ form_end(form, {'render_rest': false}) }}

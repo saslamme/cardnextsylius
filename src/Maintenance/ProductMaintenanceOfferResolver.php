@@ -39,7 +39,7 @@ final readonly class ProductMaintenanceOfferResolver
                     }
                     $variant = $this->wertgarantieResolver->resolve($associatedProduct, $mainVariant, $channel);
                     if ($variant instanceof ProductVariant) {
-                        $offers[] = new MaintenanceOffer($associatedProduct, $variant, (int) $variant->getChannelPricingForChannel($channel)?->getPrice(), (string) $channel->getBaseCurrency()?->getCode());
+                        $offers[] = new MaintenanceOffer($associatedProduct, $variant, (int) $variant->getChannelPricingForChannel($channel)?->getPrice(), (string) $channel->getBaseCurrency()?->getCode(), MaintenanceOffer::CATEGORY_WARRANTY);
                     }
 
                     continue;
@@ -52,7 +52,7 @@ final readonly class ProductMaintenanceOfferResolver
                     if ($pricing === null || $pricing->getPrice() === null) {
                         continue;
                     }
-                    $offers[] = new MaintenanceOffer($associatedProduct, $variant, $pricing->getPrice(), (string) $channel->getBaseCurrency()?->getCode());
+                    $offers[] = new MaintenanceOffer($associatedProduct, $variant, $pricing->getPrice(), (string) $channel->getBaseCurrency()?->getCode(), MaintenanceOffer::CATEGORY_SERVICE);
 
                     break;
                 }
@@ -62,11 +62,37 @@ final readonly class ProductMaintenanceOfferResolver
         return $offers;
     }
 
-    public function findValidVariant(Product $mainProduct, ProductVariant $mainVariant, int|string $variantId): ?ProductVariant
+    public function findValidVariant(Product $mainProduct, ProductVariant $mainVariant, int|string $variantId, string $category): ?ProductVariant
     {
-        foreach ($this->resolve($mainProduct, $mainVariant) as $offer) {
-            if ((string) $offer->variant->getId() === (string) $variantId || $offer->variant->getCode() === (string) $variantId) {
+        $offers = $this->resolve($mainProduct, $mainVariant);
+        foreach ($offers as $offer) {
+            if ($offer->category === $category && ((string) $offer->variant->getId() === (string) $variantId || $offer->variant->getCode() === (string) $variantId)) {
                 return $offer->variant;
+            }
+        }
+
+        // A LiveComponent variant switch may submit the previous price-tier ID.
+        // Retain the selected K3/K5 tariff, but always return its freshly resolved tier.
+        if ($category === MaintenanceOffer::CATEGORY_WARRANTY) {
+            foreach ($mainProduct->getAssociations() as $association) {
+                if ($association->getType()?->getCode() !== self::ASSOCIATION_TYPE) {
+                    continue;
+                }
+                foreach ($association->getAssociatedProducts() as $product) {
+                    if (!$product instanceof Product || !$this->wertgarantieResolver->isWertgarantie($product)) {
+                        continue;
+                    }
+                    foreach ($product->getVariants() as $oldTier) {
+                        if (!$oldTier instanceof ProductVariant || ((string) $oldTier->getId() !== (string) $variantId && $oldTier->getCode() !== (string) $variantId)) {
+                            continue;
+                        }
+                        foreach ($offers as $offer) {
+                            if ($offer->category === MaintenanceOffer::CATEGORY_WARRANTY && $offer->product === $product) {
+                                return $offer->variant;
+                            }
+                        }
+                    }
+                }
             }
         }
 
