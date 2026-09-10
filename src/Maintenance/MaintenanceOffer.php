@@ -9,7 +9,11 @@ use App\Entity\Product\ProductVariant;
 
 final readonly class MaintenanceOffer
 {
-    public function __construct(public Product $product, public ProductVariant $variant, public int $price, public string $currencyCode)
+    public const CATEGORY_SERVICE = 'service';
+
+    public const CATEGORY_WARRANTY = 'warranty';
+
+    public function __construct(public Product $product, public ProductVariant $variant, public int $price, public string $currencyCode, public string $category)
     {
     }
 }

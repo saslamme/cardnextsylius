@@ -679,4 +679,13 @@ quote_mail:
 "cardnext.maintenance.none": "Geen onderhoudscontract"
 "cardnext.maintenance.details": "Details tonen"
 "cardnext.maintenance.addon_label": "Onderhoud & service"
+
+"cardnext.maintenance.service_heading": "Service & onderhoud"
+"cardnext.maintenance.service_title": "Onderhoudscontract"
+"cardnext.maintenance.service_subtitle": "Optionele service voor uw kaartprinter"
+"cardnext.maintenance.none_service": "Geen onderhoudscontract"
+"cardnext.maintenance.warranty_heading": "Garantieopties"
+"cardnext.maintenance.warranty_title": "WERTGARANTIE apparaatbescherming"
+"cardnext.maintenance.warranty_subtitle": "Extra bescherming voor uw apparaat"
+"cardnext.maintenance.none_warranty": "Geen garantie"
 "cardnext.storefront.product_card.from_price": "vanaf"

@@ -16,6 +16,7 @@ namespace App\Twig\Component\Product;
 use App\Entity\Order\OrderItem as CardnextOrderItem;
 use App\Entity\Product\Product as CardnextProduct;
 use App\Entity\Product\ProductVariant as CardnextProductVariant;
+use App\Maintenance\MaintenanceOffer;
 use App\Maintenance\ProductMaintenanceOfferResolver;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Bundle\CoreBundle\Provider\FlashBagProvider;
@@ -153,42 +154,19 @@ class AddToCartFormComponent
         $mainCartItem = $addToCartCommand->getCartItem();
         Assert::isInstanceOf($mainCartItem, OrderItem::class);
 
-        $selected = $this->getForm()->has('maintenanceVariant') ? $this->getForm()->get('maintenanceVariant')->getData() : null;
-        $variant = null;
-        if ($selected !== null && $selected !== '') {
-            $variant = $this->product instanceof CardnextProduct && (is_int($selected) || is_string($selected))
-                ? ($mainCartItem->getVariant() instanceof CardnextProductVariant
-                    ? $this->maintenanceResolver->findValidVariant($this->product, $mainCartItem->getVariant(), $selected)
-                    : null)
-                : null;
-            if ($variant === null) {
-                throw new \DomainException('The selected maintenance contract is not available for this product.');
-            }
-        }
+        $maintenanceVariant = $this->resolveSelectedAddon($mainCartItem, 'maintenanceVariant', MaintenanceOffer::CATEGORY_SERVICE);
+        $warrantyVariant = $this->resolveSelectedAddon($mainCartItem, 'warrantyVariant', MaintenanceOffer::CATEGORY_WARRANTY);
 
         $this->eventDispatcher->dispatch(new GenericEvent($addToCartCommand), SyliusCartEvents::CART_ITEM_ADD);
         $parent = null;
         foreach ($addToCartCommand->getCart()->getItems() as $item) {
-            if ($item instanceof CardnextOrderItem && $item->getVariant() === $mainCartItem->getVariant() && !$item->isMaintenanceAddon()) {
+            if ($item instanceof CardnextOrderItem && $item->getVariant() === $mainCartItem->getVariant() && !$item->isAddon()) {
                 $parent = $item;
             }
         }
-        if ($variant !== null && $parent instanceof CardnextOrderItem) {
-            foreach ($addToCartCommand->getCart()->getItems() as $item) {
-                if ($item instanceof CardnextOrderItem && $item->getParentItem() === $parent && $item->isMaintenanceAddon()) {
-                    $addToCartCommand->getCart()->removeItem($item);
-                }
-            }
-            $addon = $this->cartItemFactory->createNew();
-            if (!$addon instanceof CardnextOrderItem) {
-                throw new \LogicException('The configured order item class must support maintenance add-ons.');
-            }
-            $addon->setVariant($variant);
-            $addon->setParentItem($parent);
-            $addon->setAddonType(CardnextOrderItem::ADDON_TYPE_MAINTENANCE);
-            $this->quantityModifier->modify($addon, $parent->getQuantity());
-            $addonCommand = $this->addToCartCommandFactory->createWithCartAndCartItem($addToCartCommand->getCart(), $addon);
-            $this->eventDispatcher->dispatch(new GenericEvent($addonCommand), SyliusCartEvents::CART_ITEM_ADD);
+        if ($parent instanceof CardnextOrderItem) {
+            $this->replaceAddon($addToCartCommand, $parent, $maintenanceVariant, CardnextOrderItem::ADDON_TYPE_MAINTENANCE);
+            $this->replaceAddon($addToCartCommand, $parent, $warrantyVariant, CardnextOrderItem::ADDON_TYPE_WARRANTY);
         }
 
         $this->manager->persist($addToCartCommand->getCart());
@@ -206,6 +184,44 @@ class AddToCartFormComponent
             $routeName ?? $this->routeName,
             array_merge($this->routeParameters, $routeParameters),
         ));
+    }
+
+    private function resolveSelectedAddon(OrderItem $mainCartItem, string $field, string $category): ?CardnextProductVariant
+    {
+        $selected = $this->getForm()->has($field) ? $this->getForm()->get($field)->getData() : null;
+        if ($selected === null || $selected === '') {
+            return null;
+        }
+        $variant = $this->product instanceof CardnextProduct && (is_int($selected) || is_string($selected)) && $mainCartItem->getVariant() instanceof CardnextProductVariant
+            ? $this->maintenanceResolver->findValidVariant($this->product, $mainCartItem->getVariant(), $selected, $category)
+            : null;
+        if (!$variant instanceof CardnextProductVariant) {
+            throw new \DomainException(sprintf('The selected %s add-on is not available for this product.', $category));
+        }
+
+        return $variant;
+    }
+
+    private function replaceAddon(AddToCartCommandInterface $command, CardnextOrderItem $parent, ?CardnextProductVariant $variant, string $addonType): void
+    {
+        if ($variant === null) {
+            return;
+        }
+        foreach ($command->getCart()->getItems() as $item) {
+            if ($item instanceof CardnextOrderItem && $item->getParentItem() === $parent && $item->getAddonType() === $addonType) {
+                $command->getCart()->removeItem($item);
+            }
+        }
+        $addon = $this->cartItemFactory->createNew();
+        if (!$addon instanceof CardnextOrderItem) {
+            throw new \LogicException('The configured order item class must support add-ons.');
+        }
+        $addon->setVariant($variant);
+        $addon->setParentItem($parent);
+        $addon->setAddonType($addonType);
+        $this->quantityModifier->modify($addon, $parent->getQuantity());
+        $addonCommand = $this->addToCartCommandFactory->createWithCartAndCartItem($command->getCart(), $addon);
+        $this->eventDispatcher->dispatch(new GenericEvent($addonCommand), SyliusCartEvents::CART_ITEM_ADD);
     }
 
     protected function instantiateForm(): FormInterface

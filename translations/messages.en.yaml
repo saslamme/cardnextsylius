@@ -370,6 +370,15 @@ cardnext.storefront.homepage.products.next: 'Next products'
 "cardnext.maintenance.none": "No maintenance contract"
 "cardnext.maintenance.details": "Show details"
 "cardnext.maintenance.addon_label": "Maintenance & service"
+
+"cardnext.maintenance.service_heading": "Service & maintenance"
+"cardnext.maintenance.service_title": "Maintenance contract"
+"cardnext.maintenance.service_subtitle": "Optional service for your card printer"
+"cardnext.maintenance.none_service": "No maintenance contract"
+"cardnext.maintenance.warranty_heading": "Warranty options"
+"cardnext.maintenance.warranty_title": "WERTGARANTIE device protection"
+"cardnext.maintenance.warranty_subtitle": "Additional protection for your device"
+"cardnext.maintenance.none_warranty": "No warranty"
 "cardnext.storefront.product_card.from_price": "from"
 
 "cardnext.storefront.product_detail.cms_downloads.version": 'Version'

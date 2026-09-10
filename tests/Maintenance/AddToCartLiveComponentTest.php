@@ -64,16 +64,16 @@ final class AddToCartLiveComponentTest extends TestCase
     {
         $template = (string) file_get_contents(__DIR__ . '/../../templates/bundles/SyliusShopBundle/product/show/content/info/summary/add_to_cart.html.twig');
 
-        self::assertStringContainsString('{% if maintenance_offers is not empty and form.maintenanceVariant is defined %}', $template);
+        self::assertStringContainsString("offer.category == 'service'", $template);
+        self::assertStringContainsString("offer.category == 'warranty'", $template);
     }
 
-    public function testSingleOfferUsesAnUnselectedCheckboxWithoutANoneRow(): void
+    public function testEachGroupUsesRadioButtonsAndItsOwnEmptyChoice(): void
     {
         $maintenance = (string) file_get_contents(__DIR__ . '/../../templates/shop/product/maintenance_offers.html.twig');
 
-        self::assertStringContainsString("type=\"{{ offers|length == 1 ? 'checkbox' : 'radio' }}\"", $maintenance);
-        self::assertStringContainsString('{% if offers|length > 1 %}', $maintenance);
-        self::assertStringNotContainsString('type="checkbox" checked', $maintenance);
+        self::assertStringNotContainsString('type="checkbox"', $maintenance);
+        self::assertStringContainsString("('cardnext.maintenance.none_' ~ group.category)|trans", $maintenance);
         self::assertStringContainsString('value="{{ offer.variant.id }}"', $maintenance);
     }
 
@@ -81,9 +81,8 @@ final class AddToCartLiveComponentTest extends TestCase
     {
         $maintenance = (string) file_get_contents(__DIR__ . '/../../templates/shop/product/maintenance_offers.html.twig');
 
-        self::assertStringContainsString('type="radio" name="{{ field.vars.full_name }}" value="" checked', $maintenance);
-        self::assertStringContainsString("type=\"{{ offers|length == 1 ? 'checkbox' : 'radio' }}\"", $maintenance);
-        self::assertSame(1, substr_count($maintenance, 'name="{{ field.vars.full_name }}" value=""'));
+        self::assertStringContainsString('type="radio" name="{{ group.field.vars.full_name }}" value=""', $maintenance);
+        self::assertStringContainsString('<details class="cn-maintenance__accordion"', $maintenance);
     }
 
     public function testMaintenancePriceUsesTheRequestLocaleWithSyliusMoneyFormatting(): void

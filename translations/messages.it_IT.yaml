@@ -679,4 +679,13 @@ quote_mail:
 "cardnext.maintenance.none": "Nessun contratto di manutenzione"
 "cardnext.maintenance.details": "Mostra dettagli"
 "cardnext.maintenance.addon_label": "Manutenzione e assistenza"
+
+"cardnext.maintenance.service_heading": "Assistenza e manutenzione"
+"cardnext.maintenance.service_title": "Contratto di manutenzione"
+"cardnext.maintenance.service_subtitle": "Servizio opzionale per la stampante di carte"
+"cardnext.maintenance.none_service": "Nessun contratto di manutenzione"
+"cardnext.maintenance.warranty_heading": "Opzioni di garanzia"
+"cardnext.maintenance.warranty_title": "Protezione dispositivo WERTGARANTIE"
+"cardnext.maintenance.warranty_subtitle": "Protezione aggiuntiva per il dispositivo"
+"cardnext.maintenance.none_warranty": "Nessuna garanzia"
 "cardnext.storefront.product_card.from_price": "da"
