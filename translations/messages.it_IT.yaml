@@ -83,7 +83,6 @@ cardnext:
         button: Richiedi una consulenza
       promises:
         shipping:
-      social_media: 'Social Media'
           title: Spedizione rapida
           text: Per gli articoli disponibili a magazzino
         advice:
@@ -117,6 +116,7 @@ cardnext:
     footer:
       payment_methods: 'Metodi di pagamento'
       shipping: 'Spedizione'
+      social_media: 'Social Media'
       description: Soluzioni professionali per stampa di tessere, RFID, rilevazione presenze, sistemi barcode e accessori per badge.
       products: Prodotti
       solutions: Soluzioni

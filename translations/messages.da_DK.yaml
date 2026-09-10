@@ -83,7 +83,6 @@ cardnext:
         button: 'Få rådgivning'
       promises:
         shipping:
-      social_media: 'Social Media'
           title: 'Hurtig levering'
           text: 'På lagervarer'
         advice:
@@ -117,6 +116,7 @@ cardnext:
     footer:
       payment_methods: 'Betalingsmuligheder'
       shipping: 'Forsendelse'
+      social_media: 'Social Media'
       description: 'Professionelle løsninger til kortprint, RFID, tidsregistrering, stregkodesystemer og ID-tilbehør.'
       products: 'Produkter'
       solutions: 'Løsninger'

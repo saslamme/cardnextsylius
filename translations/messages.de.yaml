@@ -83,7 +83,6 @@ cardnext:
         button: 'Jetzt beraten lassen'
       promises:
         shipping:
-      social_media: 'Social Media'
           title: 'Schneller Versand'
           text: 'Für verfügbare Lagerartikel'
         advice:
@@ -117,6 +116,7 @@ cardnext:
     footer:
       payment_methods: 'Zahlungsmöglichkeiten'
       shipping: 'Versand'
+      social_media: 'Social Media'
       description: 'Professionelle Lösungen für Kartendruck, RFID, Zeiterfassung, Barcode-Systeme und Ausweiszubehör.'
       products: 'Produkte'
       solutions: 'Lösungen'

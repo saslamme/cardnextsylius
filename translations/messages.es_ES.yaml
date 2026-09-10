@@ -83,7 +83,6 @@ cardnext:
         button: Solicitar asesoramiento
       promises:
         shipping:
-      social_media: 'Social Media'
           title: Envío rápido
           text: Para artículos disponibles en almacén
         advice:
@@ -117,6 +116,7 @@ cardnext:
     footer:
       payment_methods: 'Métodos de pago'
       shipping: 'Envío'
+      social_media: 'Social Media'
       description: Soluciones profesionales para impresión de tarjetas, RFID, control horario, sistemas de códigos de barras y accesorios de identificación.
       products: Productos
       solutions: Soluciones
