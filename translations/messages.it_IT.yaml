@@ -114,6 +114,7 @@ cardnext:
       downloads: Download
       contact: Contatti
     footer:
+      payment_methods: 'Metodi di pagamento'
       description: Soluzioni professionali per stampa di tessere, RFID, rilevazione presenze, sistemi barcode e accessori per badge.
       products: Prodotti
       solutions: Soluzioni

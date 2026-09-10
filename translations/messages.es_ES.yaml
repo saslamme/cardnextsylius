@@ -114,6 +114,7 @@ cardnext:
       downloads: Descargas
       contact: Contacto
     footer:
+      payment_methods: 'Métodos de pago'
       description: Soluciones profesionales para impresión de tarjetas, RFID, control horario, sistemas de códigos de barras y accesorios de identificación.
       products: Productos
       solutions: Soluciones

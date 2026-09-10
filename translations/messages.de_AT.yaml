@@ -114,6 +114,7 @@ cardnext:
       downloads: 'Downloads'
       contact: 'Kontakt'
     footer:
+      payment_methods: 'Zahlungsmöglichkeiten'
       description: 'Professionelle Lösungen für Kartendruck, RFID, Zeiterfassung, Barcode-Systeme und Ausweiszubehör.'
       products: 'Produkte'
       solutions: 'Lösungen'
