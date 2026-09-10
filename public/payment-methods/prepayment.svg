@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="112" height="28" viewBox="0 0 112 28" role="img" aria-labelledby="title">
+  <title id="title">Vorkasse</title>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#334155" d="m14 2 12 6v2H2V8zm-8 10h3v9H6zm7 0h3v9h-3zm7 0h3v9h-3zM3 23h22v3H3z"/>
+    <text x="33" y="18" fill="#1E293B" font-family="Arial, sans-serif" font-size="13" font-weight="700">Vorkasse</text>
+  </g>
+</svg>
