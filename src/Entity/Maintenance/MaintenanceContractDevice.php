@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'cardnext_maintenance_contract_device')]
 #[ORM\UniqueConstraint(name: 'UNIQ_CN_MAINTENANCE_DEVICE', columns: ['contract_id', 'serial_number'])]
 #[ORM\Index(columns: ['serial_number'], name: 'IDX_CN_MAINTENANCE_DEVICE_SERIAL')]
+#[ORM\Index(columns: ['contract_id'], name: 'idx_cn_maintenance_device_contract')]
 class MaintenanceContractDevice
 {
     #[ORM\Id]

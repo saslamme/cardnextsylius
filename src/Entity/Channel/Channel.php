@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'sylius_channel')]
+#[ORM\Index(name: 'idx_channel_homepage_cms_page', columns: ['homepage_cms_page_id'])]
 class Channel extends BaseChannel
 {
     /** The CMS page rendered at `/` for this sales channel. */

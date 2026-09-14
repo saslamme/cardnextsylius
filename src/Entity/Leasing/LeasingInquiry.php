@@ -4,6 +4,7 @@ namespace App\Entity\Leasing;
 use App\Entity\Channel\Channel; use App\Entity\Product\Product; use App\Entity\Product\ProductVariant; use App\Enum\Leasing\LeasingInquiryStatus;
 use Doctrine\DBAL\Types\Types; use Doctrine\ORM\Mapping as ORM; use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity] #[ORM\Table(name:'cardnext_leasing_inquiry')]
+#[ORM\UniqueConstraint(name:'uniq_leasing_number', columns:['inquiry_number'])]
 #[ORM\Index(name:'IDX_LEASING_INQUIRY_PRODUCT', columns:['product_id'])]
 #[ORM\Index(name:'IDX_LEASING_INQUIRY_VARIANT', columns:['product_variant_id'])]
 #[ORM\Index(name:'IDX_LEASING_INQUIRY_CHANNEL', columns:['channel_id'])]
@@ -11,7 +12,7 @@ use Doctrine\DBAL\Types\Types; use Doctrine\ORM\Mapping as ORM; use Symfony\Comp
 class LeasingInquiry
 {
  #[ORM\Id,ORM\GeneratedValue,ORM\Column] private ?int $id=null;
- #[ORM\Column(name:'inquiry_number',length:20,unique:true)] private string $inquiryNumber='';
+ #[ORM\Column(name:'inquiry_number',length:20)] private string $inquiryNumber='';
  #[ORM\ManyToOne(targetEntity:Product::class)] #[ORM\JoinColumn(name:'product_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?Product $product=null;
  #[ORM\ManyToOne(targetEntity:ProductVariant::class)] #[ORM\JoinColumn(name:'product_variant_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?ProductVariant $productVariant=null;
  #[ORM\ManyToOne(targetEntity:Channel::class)] #[ORM\JoinColumn(name:'channel_id',referencedColumnName:'id',nullable:true,onDelete:'SET NULL')] private ?Channel $channel=null;
