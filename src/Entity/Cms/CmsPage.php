@@ -17,6 +17,7 @@ use App\Validator\UniqueCmsPageSlugs;
 
 #[ORM\Entity(repositoryClass: CmsPageRepository::class)]
 #[ORM\Table(name: 'cardnext_cms_page')]
+#[ORM\Index(name: 'IDX_CMS_PUBLICATION', columns: ['status', 'publish_at', 'unpublish_at'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueCmsPageSlugs]
 #[UniqueEntity(fields: ['code'], message: 'Dieser CMS-Seitencode wird bereits verwendet.')]

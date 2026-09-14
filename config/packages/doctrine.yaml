@@ -9,8 +9,8 @@ doctrine:
     dbal:
         url: '%env(DATABASE_URL)%'
         use_savepoints: true
-        # Managed manually by QuoteNumberGenerator; exclude it from ORM schema comparisons.
-        schema_filter: '~^(?!cardnext_quote_sequence$)~'
+        # Manually managed sequence and historical backup tables are not ORM schema assets.
+        schema_filter: '~^(?!(?:cardnext_quote_sequence|cardnext_backup_print_resolution_20260814|cardnext_backup_single_select_20260814_1651)$)~'
     orm:
         auto_generate_proxy_classes: true
         auto_mapping: true

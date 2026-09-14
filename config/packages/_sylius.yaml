@@ -224,6 +224,12 @@ sylius_shipping:
         shipment:
             classes:
                 model: App\Entity\Shipping\Shipment
+        # In Sylius Core a shipment unit is the configured order item unit.
+        # Keep both resource aliases on the same concrete class, matching the
+        # CoreBundle's standard shipping configuration.
+        shipment_unit:
+            classes:
+                model: '%sylius.model.order_item_unit.class%'
         shipping_method:
             classes:
                 model: App\Entity\Shipping\ShippingMethod

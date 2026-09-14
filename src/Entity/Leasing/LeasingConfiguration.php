@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_leasing_configuration')]
+#[ORM\Index(name: 'IDX_LEASING_DEFAULT', columns: ['default_factor_id'])]
 #[ORM\HasLifecycleCallbacks]
 class LeasingConfiguration
 {

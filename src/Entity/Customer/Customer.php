@@ -10,6 +10,7 @@ use Sylius\Component\Core\Model\Customer as BaseCustomer;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'sylius_customer')]
+#[ORM\Index(name: 'IDX_CUSTOMER_SALES_CHANNEL', columns: ['sales_channel_id'])]
 class Customer extends BaseCustomer
 {
     #[ORM\ManyToOne(targetEntity: Channel::class)]
