@@ -17,6 +17,8 @@ use App\Validator\UniqueCmsPageSlugs;
 
 #[ORM\Entity(repositoryClass: CmsPageRepository::class)]
 #[ORM\Table(name: 'cardnext_cms_page')]
+#[ORM\UniqueConstraint(name: 'uniq_cms_page_code', columns: ['code'])]
+#[ORM\Index(name: 'idx_cms_page_layout', columns: ['layout_id'])]
 #[ORM\Index(name: 'IDX_CMS_PUBLICATION', columns: ['status', 'publish_at', 'unpublish_at'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueCmsPageSlugs]
@@ -25,7 +27,7 @@ class CmsPage
 {
     public const STATUS_DRAFT = 'draft'; public const STATUS_PUBLISHED = 'published'; public const STATUS_DISABLED = 'disabled';
     #[ORM\Id, ORM\GeneratedValue, ORM\Column] private ?int $id = null;
-    #[ORM\Column(length: 64, unique: true)] #[Assert\Regex('/^[a-z0-9_]+$/')] private string $code = '';
+    #[ORM\Column(length: 64)] #[Assert\Regex('/^[a-z0-9_]+$/')] private string $code = '';
     #[ORM\ManyToOne] #[ORM\JoinColumn(name: 'layout_id', referencedColumnName: 'id', nullable: false, onDelete: 'RESTRICT')] private ?CmsLayout $layout = null;
     #[ORM\Column(length: 16)] #[Assert\Choice([self::STATUS_DRAFT, self::STATUS_PUBLISHED, self::STATUS_DISABLED])] private string $status = self::STATUS_DRAFT;
     #[ORM\Column(name: 'publish_at', type: Types::DATETIME_IMMUTABLE, nullable: true)] private ?\DateTimeImmutable $publishAt = null;

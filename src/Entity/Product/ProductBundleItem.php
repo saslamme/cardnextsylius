@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_product_bundle_item')]
+#[ORM\Index(name: 'idx_cn_bundle_item_bundle', columns: ['bundle_id'])]
+#[ORM\Index(name: 'idx_cn_bundle_item_variant', columns: ['variant_id'])]
 class ProductBundleItem
 {
     #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column(type: 'integer')] private ?int $id = null;

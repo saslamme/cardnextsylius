@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 #[ORM\Table(name:'cardnext_cms_page_translation', uniqueConstraints:[new ORM\UniqueConstraint(name:'uniq_cms_page_locale', columns:['page_id','locale'])])]
 #[ORM\Index(name:'IDX_CMS_SLUG_LOCALE', columns:['slug', 'locale'])]
+#[ORM\Index(name:'idx_cms_translation_page', columns:['page_id'])]
 class CmsPageTranslation {
  #[ORM\Id,ORM\GeneratedValue,ORM\Column] private ?int $id=null;
  #[ORM\ManyToOne(inversedBy:'translations')] #[ORM\JoinColumn(name:'page_id',referencedColumnName:'id',nullable:false,onDelete:'CASCADE')] private ?CmsPage $page=null;

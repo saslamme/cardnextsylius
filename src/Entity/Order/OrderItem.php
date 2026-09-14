@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'sylius_order_item')]
+#[ORM\Index(name: 'idx_cn_order_item_parent', columns: ['parent_item_id'])]
 #[ORM\Index(name: 'IDX_CN_ORDER_ITEM_BUNDLE', columns: ['bundle_id'])]
 #[ORM\Index(name: 'IDX_CN_ORDER_ITEM_BUNDLE_GROUP', columns: ['bundle_group_key'])]
 class OrderItem extends BaseOrderItem

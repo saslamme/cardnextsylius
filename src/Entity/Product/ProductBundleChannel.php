@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_product_bundle_channel')]
 #[ORM\UniqueConstraint(name: 'UNIQ_CN_BUNDLE_CHANNEL', columns: ['bundle_id', 'channel_id'])]
+#[ORM\Index(name: 'idx_cn_bundle_channel_channel', columns: ['channel_id'])]
 class ProductBundleChannel
 {
     public const DISCOUNT_NONE = 'NONE';

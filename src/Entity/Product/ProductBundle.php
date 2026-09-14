@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_product_bundle')]
 #[ORM\UniqueConstraint(name: 'UNIQ_CN_BUNDLE_CODE', columns: ['code'])]
+#[ORM\Index(name: 'idx_cn_bundle_product', columns: ['main_product_id'])]
 #[UniqueEntity(fields: ['code'], message: 'Dieser Bundle-Code wird bereits verwendet.', errorPath: 'code')]
 class ProductBundle
 {

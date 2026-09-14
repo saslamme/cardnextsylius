@@ -12,13 +12,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CmsLayoutRepository::class)]
 #[ORM\Table(name: 'cardnext_cms_layout')]
+#[ORM\UniqueConstraint(name: 'uniq_cms_layout_code', columns: ['code'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['code'], message: 'Dieser Layout-Code wird bereits verwendet.')]
 class CmsLayout
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
     private ?int $id = null;
-    #[ORM\Column(length: 64, unique: true)]
+    #[ORM\Column(length: 64)]
     #[Assert\Regex('/^[a-z0-9_]+$/')]
     private string $code = '';
     #[ORM\Column(length: 255)] private string $name = '';

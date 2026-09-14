@@ -17,6 +17,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns:['channel_code'],name:'IDX_SUPPORT_CHANNEL')]
 #[ORM\Index(columns:['service_type'],name:'IDX_SUPPORT_TYPE')]
 #[ORM\Index(columns:['serial_number'],name:'IDX_SUPPORT_SERIAL')]
+#[ORM\Index(columns:['order_id'],name:'idx_support_order')]
+#[ORM\Index(columns:['product_id'],name:'idx_support_product')]
+#[ORM\Index(columns:['maintenance_contract_id'],name:'idx_support_maintenance')]
 class SupportCase
 {
  #[ORM\Id, ORM\GeneratedValue, ORM\Column(type:'integer')] private ?int $id=null;

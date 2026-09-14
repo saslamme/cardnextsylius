@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChannelHomepageContentRepository::class)]
 #[ORM\Table(name: 'cardnext_channel_homepage_content', uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_homepage_channel_locale', columns: ['channel_id', 'locale_code'])])]
+#[ORM\Index(name: 'idx_homepage_channel', columns: ['channel_id'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['channel', 'localeCode'], message: 'Für diesen Verkaufskanal und diese Sprache existieren bereits Homepage-Inhalte.', errorPath: 'localeCode')]
 class ChannelHomepageContent

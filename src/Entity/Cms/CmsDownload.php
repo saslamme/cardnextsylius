@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: CmsDownloadRepository::class)]
 #[ORM\Table(name: 'cardnext_cms_download')]
+#[ORM\UniqueConstraint(name: 'uniq_cms_download_code', columns: ['code'])]
 #[ORM\Index(columns: ['enabled'], name: 'idx_cms_download_enabled')]
 #[ORM\Index(columns: ['published_at'], name: 'idx_cms_download_published')]
 #[ORM\Index(columns: ['type'], name: 'idx_cms_download_type')]
@@ -29,7 +30,7 @@ class CmsDownload
     public const OPERATING_SYSTEMS = ['windows_11', 'windows_10', 'windows_server', 'macos', 'linux', 'other'];
 
     #[ORM\Id, ORM\GeneratedValue, ORM\Column] private ?int $id = null;
-    #[ORM\Column(length: 64, unique: true)] #[Assert\Regex('/^[a-z0-9_\-]+$/')] private string $code = '';
+    #[ORM\Column(length: 64)] #[Assert\Regex('/^[a-z0-9_\-]+$/')] private string $code = '';
     #[ORM\Column(length: 24)] #[Assert\Choice(choices: self::TYPES)] private string $type = 'manual';
     #[ORM\Column(length: 150)] #[Assert\NotBlank] private string $manufacturer = '';
     #[ORM\Column(name: 'product_family', length: 150, nullable: true)] private ?string $productFamily = null;
