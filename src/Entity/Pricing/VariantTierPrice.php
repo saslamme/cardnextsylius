@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: VariantTierPriceRepository::class)]
 #[ORM\Table(name: 'cardnext_variant_tier_price')]
 #[ORM\UniqueConstraint(name: 'UNIQ_CN_VARIANT_TIER', columns: ['variant_id', 'channel_code', 'min_quantity'])]
-#[ORM\Index(columns: ['variant_id', 'channel_code', 'min_quantity'], name: 'IDX_CN_VARIANT_TIER_LOOKUP')]
 class VariantTierPrice
 {
     #[ORM\Id]
