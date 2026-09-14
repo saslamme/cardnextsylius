@@ -6,7 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
-#[ORM\Table(name:'cardnext_cms_page_translation', uniqueConstraints:[new ORM\UniqueConstraint(name:'uniq_cms_page_locale', columns:['page_id','locale'])])]
+#[ORM\Table(name:'cardnext_cms_page_translation')]
+#[ORM\UniqueConstraint(name:'uniq_cms_page_locale', columns:['page_id','locale'])]
 #[ORM\Index(name:'IDX_CMS_SLUG_LOCALE', columns:['slug', 'locale'])]
 #[ORM\Index(name:'idx_cms_translation_page', columns:['page_id'])]
 class CmsPageTranslation {
