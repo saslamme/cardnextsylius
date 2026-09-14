@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Shop;
 
 use App\Cms\CmsStorefrontResolver;
+use App\Seo\SeoLandingPageStorefront;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Repository\ProductRepositoryInterface;
@@ -31,6 +32,7 @@ final readonly class PublicSlugController
         #[Autowire(service: 'sylius.controller.product')]
         private ResourceController $productController,
         private CmsStorefrontResolver $cmsStorefrontResolver,
+        private SeoLandingPageStorefront $seoLandingPages,
     ) {
     }
 
@@ -69,6 +71,11 @@ final readonly class PublicSlugController
             ]);
 
             return $this->productController->showAction($request);
+        }
+
+        $landingResponse = $this->seoLandingPages->resolve($request, $slug);
+        if ($landingResponse !== null) {
+            return $landingResponse;
         }
 
         $cmsResponse = $this->cmsStorefrontResolver->resolve($slug);

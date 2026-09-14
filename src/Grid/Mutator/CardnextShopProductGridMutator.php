@@ -40,15 +40,18 @@ final readonly class CardnextShopProductGridMutator implements GridMutatorInterf
         if ($request === null) {
             return;
         }
-        $slug = $request->attributes->get('slug');
+        $landingTaxon = $request->attributes->get('cardnext_seo_landing_page')?->getBaseTaxon();
+        if ($landingTaxon instanceof Taxon) {
+            $profileCode = $this->resolveProfileCode($landingTaxon);
+            if ($profileCode === null) return;
+            $resolved = [$landingTaxon, $profileCode];
+        } else {
+            $slug = $request->attributes->get('slug');
 
-        if (!is_string($slug) || $slug === '') {
-            return;
-        }
+            if (!is_string($slug) || $slug === '') return;
 
-        $resolved = $this->resolveTaxonAndProfile($slug, $request->getLocale());
-        if ($resolved === null) {
-            return;
+            $resolved = $this->resolveTaxonAndProfile($slug, $request->getLocale());
+            if ($resolved === null) return;
         }
         [$taxon, $profileCode] = $resolved;
 
