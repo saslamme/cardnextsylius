@@ -6,19 +6,21 @@
 {% set current_limit = app.request.query.get('limit', 9) %}
 {% set result_count = resources.data.nbResults %}
 {% set cardnext_taxon = app.request.attributes.get('cardnext_taxon') %}
+{% set seo_landing = app.request.attributes.get('cardnext_seo_landing_page') %}
 {% set branding = cardnext_channel_branding() %}
-{% block title %}{{ cardnext_taxon ? cardnext_taxon.name ~ ' | ' ~ branding.brandName : branding.brandName }}{% endblock %}
-{% block metatags %}{{ parent() }}{% if cardnext_taxon %}{% set structured_data = cardnext_taxon_structured_data(cardnext_taxon) %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}{% endif %}{% endblock %}
+{% block title %}{{ seo_landing ? seo_landing.metaTitle : (cardnext_taxon ? cardnext_taxon.name ~ ' | ' ~ branding.brandName : branding.brandName) }}{% endblock %}
+{% block metatags %}{{ parent() }}{% if seo_landing %}{% if seo_landing.metaDescription %}<meta name="description" content="{{ seo_landing.metaDescription }}">{% endif %}<meta name="robots" content="{{ seo_landing.robots }}">{% set canonical = seo_landing.canonicalUrl ?: absolute_url(seo_landing.path) %}{% if not seo_landing.canonicalUrl and app.request.query.getInt('page', 1) > 1 %}{% set canonical = canonical ~ '?page=' ~ app.request.query.getInt('page') %}{% endif %}<link rel="canonical" href="{{ canonical }}">{% elseif cardnext_taxon %}{% set structured_data = cardnext_taxon_structured_data(cardnext_taxon) %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}{% endif %}{% endblock %}
 {% block content %}
 <main class="cn-page" id="main-content">
+    {% if seo_landing %}<div class="cn-breadcrumbs"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep">/</span><a href="{{ path('sylius_shop_product_index', {slug: cardnext_taxon.slug}) }}">{{ cardnext_taxon.name }}</a><span class="cn-breadcrumbs__sep">/</span><span aria-current="page">{{ seo_landing.h1 }}</span></div></div><div class="cn-container"><h1>{{ seo_landing.h1 }}</h1>{% if seo_landing.topContent %}<div class="cn-rich-text">{{ seo_landing.topContent|raw }}</div>{% endif %}</div>{% else %}
     {{ component('sylius_shop:product:show:breadcrumbs', {template: 'shop/category/breadcrumbs.html.twig'}) }}
     {{ component('sylius_shop:product:show:header', {template: 'shop/category/hero.html.twig'}) }}
-    {{ component('sylius_shop:product:show:taxonomy', {template: 'shop/category/subcategories.html.twig'}) }}
+    {{ component('sylius_shop:product:show:taxonomy', {template: 'shop/category/subcategories.html.twig'}) }}{% endif %}
     <section class="cn-section cn-section--compact" aria-label="{{ 'cardnext.storefront.catalog.overview_aria'|trans }}">
         <div class="cn-container cn-catalog">
             <aside class="cn-sidebar" aria-label="{{ 'cardnext.storefront.catalog.filter_aria'|trans }}">
-                <div class="cn-sidebar__head"><h2>{{ 'cardnext.storefront.catalog.filters'|trans }}</h2>{% if app.request.query.has('criteria') %}<a href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">{{ 'cardnext.storefront.catalog.reset'|trans }}</a>{% endif %}</div>
-                <form class="cn-filter-form" method="get" action="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">
+                <div class="cn-sidebar__head"><h2>{{ 'cardnext.storefront.catalog.filters'|trans }}</h2>{% if app.request.query.has('criteria') and not seo_landing %}<a href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">{{ 'cardnext.storefront.catalog.reset'|trans }}</a>{% endif %}</div>
+                <form class="cn-filter-form" method="get" action="{{ seo_landing ? seo_landing.path : path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">
                     {% for key, value in current_sorting %}<input type="hidden" name="sorting[{{ key }}]" value="{{ value }}">{% endfor %}
                     <input type="hidden" name="limit" value="{{ current_limit }}"><input type="hidden" name="page" value="1">
                     {% for filter in products.definition.enabledFilters %}{% if filter.name != 'search' %}<div class="cn-filter">{{ sylius_grid_render_filter(products, filter) }}</div>{% endif %}{% endfor %}
@@ -62,7 +64,7 @@
                 {% endif %}
             </div>
         </div>
-        {{ component('sylius_shop:product:show:header', {template: 'shop/category/bottom_description.html.twig'}) }}
+        {% if seo_landing %}{% if seo_landing.bottomContent %}<div class="cn-container cn-rich-text mt-5">{{ seo_landing.bottomContent|raw }}</div>{% endif %}{% else %}{{ component('sylius_shop:product:show:header', {template: 'shop/category/bottom_description.html.twig'}) }}{% endif %}
     </section>
 </main>
 {% endblock %}

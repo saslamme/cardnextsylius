@@ -10,11 +10,12 @@ use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use App\Cms\CmsPagePublicationChecker;
 use App\Repository\Cms\CmsPageRepository;
+use App\Repository\Seo\SeoLandingPageRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class ChannelSitemapUrlProvider
 {
-    public function __construct(private RepositoryInterface $productRepository, private UrlGeneratorInterface $router, private CmsPageRepository $cmsPages, private CmsPagePublicationChecker $cmsPublication)
+    public function __construct(private RepositoryInterface $productRepository, private UrlGeneratorInterface $router, private CmsPageRepository $cmsPages, private CmsPagePublicationChecker $cmsPublication, private SeoLandingPageRepository $landingPages)
     {
     }
 
@@ -33,6 +34,11 @@ final readonly class ChannelSitemapUrlProvider
         foreach ($this->cmsPages->sitemapPages($channel, $locale) as $page) {
             if ($this->cmsPublication->isVisible($page, $channel, $locale)) {
                 $urls[] = $origin . '/' . $page->getTranslation($locale)?->getSlug();
+            }
+        }
+        if ($channel instanceof \App\Entity\Channel\Channel) {
+            foreach ($this->landingPages->sitemapPages($channel, $locale) as $landingPage) {
+                $urls[] = $origin . $landingPage->getPath();
             }
         }
 

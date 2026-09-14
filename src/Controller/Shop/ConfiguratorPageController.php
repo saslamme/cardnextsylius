@@ -7,6 +7,8 @@ namespace App\Controller\Shop;
 use App\Cms\CmsStorefrontResolver;
 use App\Entity\Channel\Channel;
 use App\Service\ConfiguratorPageResolver;
+use App\Seo\SeoLandingPageStorefront;
+use Symfony\Component\HttpFoundation\Request;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,11 +17,11 @@ use Twig\Environment;
 
 final readonly class ConfiguratorPageController
 {
-    public function __construct(private ConfiguratorPageResolver $resolver, private ChannelContextInterface $channelContext, private LocaleContextInterface $localeContext, private Environment $twig, private CmsStorefrontResolver $cmsStorefrontResolver)
+    public function __construct(private ConfiguratorPageResolver $resolver, private ChannelContextInterface $channelContext, private LocaleContextInterface $localeContext, private Environment $twig, private CmsStorefrontResolver $cmsStorefrontResolver, private SeoLandingPageStorefront $seoLandingPages)
     {
     }
 
-    public function __invoke(string $configuratorPath): Response
+    public function __invoke(Request $request, string $configuratorPath): Response
     {
         $channel = $this->channelContext->getChannel();
         if (!$channel instanceof Channel) {
@@ -27,7 +29,8 @@ final readonly class ConfiguratorPageController
         }
         $result = $this->resolver->resolve($configuratorPath, $this->localeContext->getLocaleCode(), $channel);
         if ($result === null) {
-            return $this->cmsStorefrontResolver->resolve($configuratorPath)
+            return $this->seoLandingPages->resolve($request, $configuratorPath)
+                ?? $this->cmsStorefrontResolver->resolve($configuratorPath)
                 ?? throw new NotFoundHttpException('No configurator or CMS page matches this localized path.');
         }
 

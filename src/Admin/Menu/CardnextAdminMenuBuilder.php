@@ -95,6 +95,7 @@ final class CardnextAdminMenuBuilder
             'cardnext_admin_cms_page_*',
             'cardnext_admin_cms_block_*',
         ]);
+        $this->addChildIfMissing($content, 'cardnext_seo_landing_pages', 'SEO-Landingpages', 'tabler:seo', 'cardnext_admin_seo_landing_page_index', ['cardnext_admin_seo_landing_page_*']);
         $this->addChildIfMissing($content, 'cardnext_cms_menus', 'Navigation', 'tabler:menu-2', 'cardnext_admin_cms_menus', [
             'cardnext_admin_cms_menu_*',
         ]);
