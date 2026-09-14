@@ -3,7 +3,11 @@ declare(strict_types=1);
 namespace App\Entity\Leasing;
 use App\Entity\Channel\Channel; use App\Entity\Product\Product; use App\Entity\Product\ProductVariant; use App\Enum\Leasing\LeasingInquiryStatus;
 use Doctrine\DBAL\Types\Types; use Doctrine\ORM\Mapping as ORM; use Symfony\Component\Validator\Constraints as Assert;
-#[ORM\Entity] #[ORM\Table(name:'cardnext_leasing_inquiry')] #[ORM\HasLifecycleCallbacks]
+#[ORM\Entity] #[ORM\Table(name:'cardnext_leasing_inquiry')]
+#[ORM\Index(name:'IDX_LEASING_INQUIRY_PRODUCT', columns:['product_id'])]
+#[ORM\Index(name:'IDX_LEASING_INQUIRY_VARIANT', columns:['product_variant_id'])]
+#[ORM\Index(name:'IDX_LEASING_INQUIRY_CHANNEL', columns:['channel_id'])]
+#[ORM\HasLifecycleCallbacks]
 class LeasingInquiry
 {
  #[ORM\Id,ORM\GeneratedValue,ORM\Column] private ?int $id=null;
