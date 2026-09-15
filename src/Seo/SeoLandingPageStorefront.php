@@ -37,7 +37,7 @@ final readonly class SeoLandingPageStorefront
         $criteria = $request->query->all('criteria');
         $definition = $page->getFilterDefinition();
         if (($definition['manufacturers'] ?? []) !== []) $criteria['manufacturer']['value'] = array_values($definition['manufacturers']);
-        $profile = $this->profile($taxon);
+        $profile = $this->facets->profileForTaxon($taxon);
         if ($profile !== null) foreach ($this->facets->forProfile($profile, $locale) as $facet) {
             $values = $definition['attributes'][$facet['attribute']] ?? [];
             if ($values !== []) $criteria[$facet['name']]['value'] = array_values($values);
@@ -60,9 +60,4 @@ final readonly class SeoLandingPageStorefront
         return new RedirectResponse($target, 301);
     }
 
-    private function profile(object $taxon): ?string
-    {
-        do { $code = $taxon->getCode(); if (is_string($code) && $this->facets->hasProfile($code)) return $code; $taxon = $taxon->getParent(); } while (is_object($taxon));
-        return null;
-    }
 }
