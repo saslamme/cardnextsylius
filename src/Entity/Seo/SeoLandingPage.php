@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SeoLandingPageRepository::class)]
 #[ORM\Table(name: 'cardnext_seo_landing_page')]
+#[ORM\Index(name: 'idx_seo_landing_channel', columns: ['channel_id'])]
+#[ORM\Index(name: 'idx_seo_landing_taxon', columns: ['base_taxon_id'])]
 #[ORM\UniqueConstraint(name: 'uniq_seo_landing_channel_locale_path', columns: ['channel_id', 'locale', 'path'])]
 #[UniqueEntity(fields: ['channel', 'locale', 'path'], message: 'Dieser Pfad ist in Verkaufskanal und Locale bereits vergeben.')]
 #[ORM\HasLifecycleCallbacks]
