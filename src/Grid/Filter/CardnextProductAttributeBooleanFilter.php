@@ -19,9 +19,12 @@ final class CardnextProductAttributeBooleanFilter implements FilterInterface
     /** @param array<string, mixed> $options */
     public function apply(DataSourceInterface $dataSource, string $name, $data, array $options): void
     {
-        if ($data === null || $data === '') {
+        $values = FilterDataNormalizer::values($data);
+        if ($values === []) {
             return;
         }
+
+        $value = $values[0];
 
         if (!$dataSource instanceof OrmDataSource) {
             throw new \InvalidArgumentException('The Cardnext boolean filter requires the Doctrine ORM grid driver.');
@@ -46,8 +49,7 @@ final class CardnextProductAttributeBooleanFilter implements FilterInterface
             ->andWhere($attributeAlias . '.code = :' . $codeParameter)
             ->andWhere($valueAlias . '.boolean = :' . $valueParameter)
             ->setParameter($codeParameter, $attributeCode)
-            // @phpstan-ignore cast.string
-            ->setParameter($valueParameter, in_array((string) $data, ['1', 'true', 'yes'], true))
+            ->setParameter($valueParameter, in_array(strtolower((string) $value), ['1', 'true', 'yes'], true))
             ->distinct()
         ;
     }

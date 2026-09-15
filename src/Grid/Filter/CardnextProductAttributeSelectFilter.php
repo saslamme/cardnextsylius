@@ -19,7 +19,8 @@ final class CardnextProductAttributeSelectFilter implements FilterInterface
     /** @param array<string, mixed> $options */
     public function apply(DataSourceInterface $dataSource, string $name, $data, array $options): void
     {
-        if ($data === null || $data === '' || $data === []) {
+        $values = FilterDataNormalizer::values($data);
+        if ($values === []) {
             return;
         }
 
@@ -30,11 +31,6 @@ final class CardnextProductAttributeSelectFilter implements FilterInterface
         $attributeCode = $options['attribute_code'] ?? null;
         if (!is_string($attributeCode) || $attributeCode === '') {
             throw new \InvalidArgumentException('The Cardnext attribute filter requires the "attribute_code" option.');
-        }
-
-        $values = is_array($data) ? array_values(array_filter($data, 'is_scalar')) : [$data];
-        if ($values === []) {
-            return;
         }
 
         $queryBuilder = $dataSource->getQueryBuilder();
