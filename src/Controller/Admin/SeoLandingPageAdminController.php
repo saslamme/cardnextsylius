@@ -8,7 +8,9 @@ use App\Entity\Channel\Channel;
 use App\Entity\Seo\SeoLandingPage;
 use App\Entity\Taxonomy\Taxon;
 use App\Form\Type\SeoLandingPageType;
+use App\Repository\Seo\SeoLandingPageRepository;
 use App\Seo\LandingPageContentSanitizer;
+use App\Seo\LandingPagePath;
 use App\Seo\LandingPageRouteValidator;
 use App\Service\ProductFacetDefinitionService;
 use App\Service\ProductFacetService;
@@ -59,6 +61,22 @@ final class SeoLandingPageAdminController extends AbstractController
         }
 
         return $this->json(['manufacturers' => $manufacturers, 'facets' => $result]);
+    }
+    #[Route('/seo-check', name: 'cardnext_admin_seo_landing_page_check', methods: ['GET'])]
+    public function seoCheck(Request $request, EntityManagerInterface $em, SeoLandingPageRepository $pages, LandingPageRouteValidator $routeValidator): JsonResponse
+    {
+        $channel = $em->find(Channel::class, $request->query->getInt('channel'));
+        $locale = (string) $request->query->get('locale');
+        if (!$channel instanceof Channel || !$channel->getLocales()->exists(fn (int $key, $item): bool => $item->getCode() === $locale)) {
+            return $this->json(['error' => 'Ungültige Kombination aus Verkaufskanal und Sprache.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        try {
+            $path = LandingPagePath::normalize((string) $request->query->get('path'));
+        } catch (\InvalidArgumentException) {
+            return $this->json(['pathValid' => false, 'pathUnique' => false, 'metaTitleUnique' => true, 'h1Unique' => true]);
+        }
+        $duplicates = $pages->findDuplicateFields($channel, $locale, $path, (string) $request->query->get('metaTitle'), (string) $request->query->get('h1'), $request->query->getInt('id') ?: null);
+        return $this->json(['pathValid' => $routeValidator->isAllowed($path), 'pathUnique' => !$duplicates['path'], 'metaTitleUnique' => !$duplicates['metaTitle'], 'h1Unique' => !$duplicates['h1']]);
     }
     #[Route('/{id}/edit', name: 'cardnext_admin_seo_landing_page_update', methods: ['GET', 'POST'])]
     public function update(SeoLandingPage $page, Request $request, EntityManagerInterface $em, LandingPageContentSanitizer $sanitizer, LandingPageRouteValidator $routeValidator): Response { return $this->form($page, $request, $em, $sanitizer, $routeValidator); }
