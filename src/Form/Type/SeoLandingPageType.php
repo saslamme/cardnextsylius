@@ -8,10 +8,12 @@ use App\Entity\Channel\Channel;
 use App\Entity\Seo\SeoLandingPage;
 use App\Entity\Taxonomy\Taxon;
 use App\Seo\SeoLandingPageFilterDefinition;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -19,11 +21,12 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class SeoLandingPageType extends AbstractType
 {
-    public function __construct(private readonly SeoLandingPageFilterDefinition $filterDefinition)
+    public function __construct(private readonly SeoLandingPageFilterDefinition $filterDefinition, private readonly ManagerRegistry $doctrine)
     {
     }
 
@@ -31,8 +34,16 @@ final class SeoLandingPageType extends AbstractType
     {
         $builder->add('internalName', TextType::class, ['label' => 'Interner Name'])
             ->add('enabled', CheckboxType::class, ['label' => 'Aktiv', 'required' => false])
-            ->add('channel', EntityType::class, ['class' => Channel::class, 'choice_label' => 'name', 'label' => 'Verkaufskanal', 'attr' => ['data-action' => 'change->seo-filter-builder#load']])
-            ->add('locale', TextType::class, ['label' => 'Locale', 'help' => 'Zum Beispiel de_DE', 'attr' => ['data-action' => 'change->seo-filter-builder#load']])
+            ->add('channel', EntityType::class, [
+                'class' => Channel::class,
+                'choice_label' => 'name',
+                'choice_attr' => static fn (Channel $channel): array => [
+                    'data-locales' => json_encode(array_map(static fn ($locale): array => ['code' => $locale->getCode(), 'label' => Locales::getName($locale->getCode(), 'de') ?? $locale->getCode()], $channel->getLocales()->toArray())) ?: '[]',
+                    'data-default-locale' => $channel->getDefaultLocale()?->getCode() ?? '',
+                ],
+                'label' => 'Verkaufskanal',
+                'attr' => ['data-action' => 'change->seo-locale#channelChanged change->seo-filter-builder#load'],
+            ])
             ->add('path', TextType::class, ['label' => 'URL / Path', 'help' => 'Beginnt mit /; Query-Strings und Fragmente sind nicht erlaubt.'])
             ->add('h1', TextType::class, ['label' => 'H1'])
             ->add('metaTitle', TextType::class, ['label' => 'Meta Title'])
@@ -44,6 +55,26 @@ final class SeoLandingPageType extends AbstractType
             ->add('canonicalUrl', UrlType::class, ['label' => 'Canonical Override', 'required' => false, 'default_protocol' => 'https'])
             ->add('baseTaxon', EntityType::class, ['class' => Taxon::class, 'choice_label' => 'name', 'label' => 'Basistaxon', 'attr' => ['data-seo-filter-builder-target' => 'taxon', 'data-action' => 'change->seo-filter-builder#taxonChanged']])
             ->add('filterDefinition', HiddenType::class, ['attr' => ['data-seo-filter-builder-target' => 'definition']]);
+        $addLocale = static function (FormBuilderInterface|\Symfony\Component\Form\FormInterface $form, ?Channel $channel): void {
+            $codes = $channel?->getLocales()->map(static fn ($locale): string => $locale->getCode())->toArray() ?? [];
+            $choices = [];
+            foreach ($codes as $code) {
+                $choices[Locales::getName($code, 'de') ?? $code] = $code;
+            }
+            $form->add('locale', ChoiceType::class, [
+                'label' => 'Sprache', 'choices' => $choices, 'placeholder' => $choices === [] ? 'Zuerst Verkaufskanal auswählen' : false,
+                'attr' => ['data-seo-locale-target' => 'locale', 'data-action' => 'change->seo-filter-builder#load'],
+            ]);
+        };
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($addLocale): void {
+            $page = $event->getData();
+            $addLocale($event->getForm(), $page instanceof SeoLandingPage ? $page->getChannel() : null);
+        });
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($addLocale): void {
+            $data = $event->getData();
+            $channel = is_array($data) ? $this->doctrine->getRepository(Channel::class)->find($data['channel'] ?? null) : null;
+            $addLocale($event->getForm(), $channel instanceof Channel ? $channel : null);
+        });
         $builder->get('filterDefinition')->addModelTransformer(new CallbackTransformer(
             static fn (array $value): string => json_encode($value, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES) ?: '{}',
             static function (?string $value): array { $decoded = json_decode((string) $value, true); return is_array($decoded) ? $decoded : []; },

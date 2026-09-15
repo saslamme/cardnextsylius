@@ -12,13 +12,14 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: SeoLandingPageRepository::class)]
 #[ORM\Table(name: 'cardnext_seo_landing_page')]
 #[ORM\Index(name: 'idx_seo_landing_channel', columns: ['channel_id'])]
 #[ORM\Index(name: 'idx_seo_landing_taxon', columns: ['base_taxon_id'])]
 #[ORM\UniqueConstraint(name: 'uniq_seo_landing_channel_locale_path', columns: ['channel_id', 'locale', 'path'])]
-#[UniqueEntity(fields: ['channel', 'locale', 'path'], message: 'Dieser Pfad ist in Verkaufskanal und Locale bereits vergeben.')]
+#[UniqueEntity(fields: ['channel', 'locale', 'path'], message: 'Dieser URL-Pfad wird für diesen Verkaufskanal und diese Sprache bereits verwendet.')]
 #[ORM\HasLifecycleCallbacks]
 class SeoLandingPage
 {
@@ -79,6 +80,13 @@ class SeoLandingPage
     public function setFilterDefinition(array $value): void { $this->filterDefinition = $value; }
     public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
+    #[Assert\Callback]
+    public function validateChannelLocale(ExecutionContextInterface $context): void
+    {
+        if ($this->channel !== null && !$this->channel->getLocales()->exists(fn (int $key, $locale): bool => $locale->getCode() === $this->locale)) {
+            $context->buildViolation('Die gewählte Sprache ist diesem Verkaufskanal nicht zugeordnet.')->atPath('locale')->addViolation();
+        }
+    }
     #[ORM\PreUpdate] public function touch(): void { $this->updatedAt = new \DateTimeImmutable(); }
     private static function nullable(?string $value): ?string { $value = trim((string) $value); return $value === '' ? null : $value; }
 }
