@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Channel\Channel;
 use App\Entity\Seo\SeoLandingPage;
+use App\Entity\Taxonomy\Taxon;
 use App\Form\Type\SeoLandingPageType;
 use App\Seo\LandingPageContentSanitizer;
+use App\Service\ProductFacetDefinitionService;
+use App\Service\ProductFacetService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,6 +29,37 @@ final class SeoLandingPageAdminController extends AbstractController
     public function index(EntityManagerInterface $em): Response { return $this->render('admin/cardnext/seo_landing_page/index.html.twig', ['pages' => $em->getRepository(SeoLandingPage::class)->findBy([], ['updatedAt' => 'DESC'])]); }
     #[Route('/new', name: 'cardnext_admin_seo_landing_page_create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $em, LandingPageContentSanitizer $sanitizer, RouterInterface $router): Response { return $this->form(new SeoLandingPage(), $request, $em, $sanitizer, $router); }
+    #[Route('/filters', name: 'cardnext_admin_seo_landing_page_filters', methods: ['GET'])]
+    public function filters(Request $request, EntityManagerInterface $em, ProductFacetDefinitionService $definitions, ProductFacetService $facets): JsonResponse
+    {
+        $taxon = $em->find(Taxon::class, $request->query->getInt('taxon'));
+        $channel = $em->find(Channel::class, $request->query->getInt('channel'));
+        if (!$taxon instanceof Taxon || !$channel instanceof Channel || null === $profile = $definitions->profileForTaxon($taxon)) {
+            return $this->json(['manufacturers' => [], 'facets' => []]);
+        }
+
+        $locale = (string) $request->query->get('locale', 'de_DE');
+        $request->setLocale($locale);
+        $available = $facets->getFacets($taxon, $channel, $request, $profile);
+        $result = [];
+        foreach ($definitions->forProfile($profile, $locale) as $definition) {
+            $choices = [];
+            foreach ($definition['choices'] as $label => $value) {
+                if (isset($available['attributes'][$definition['attribute']][(string) $value])) {
+                    $choices[] = ['value' => $value, 'label' => $label];
+                }
+            }
+            if ($choices !== []) {
+                $result[] = ['attribute' => $definition['attribute'], 'label' => $definition['label'], 'type' => $definition['type'], 'choices' => $choices];
+            }
+        }
+        $manufacturers = [];
+        foreach ($available['manufacturer'] as $code => $manufacturer) {
+            $manufacturers[] = ['value' => $code, 'label' => $manufacturer['label']];
+        }
+
+        return $this->json(['manufacturers' => $manufacturers, 'facets' => $result]);
+    }
     #[Route('/{id}/edit', name: 'cardnext_admin_seo_landing_page_update', methods: ['GET', 'POST'])]
     public function update(SeoLandingPage $page, Request $request, EntityManagerInterface $em, LandingPageContentSanitizer $sanitizer, RouterInterface $router): Response { return $this->form($page, $request, $em, $sanitizer, $router); }
     #[Route('/{id}/delete', name: 'cardnext_admin_seo_landing_page_delete', methods: ['POST'])]

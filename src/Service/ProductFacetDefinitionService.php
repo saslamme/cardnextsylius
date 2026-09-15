@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Taxonomy\Taxon;
 use Sylius\Component\Attribute\AttributeType\CheckboxAttributeType;
 
 /**
@@ -43,5 +44,18 @@ final readonly class ProductFacetDefinitionService
     public function hasProfile(string $profileCode): bool
     {
         return $this->profiles->getFilterableDefinitionsForProfile($profileCode, 'de_DE') !== [];
+    }
+
+    public function profileForTaxon(Taxon $taxon): ?string
+    {
+        do {
+            $code = $taxon->getCode();
+            if (is_string($code) && $this->hasProfile($code)) {
+                return $code;
+            }
+            $taxon = $taxon->getParent();
+        } while ($taxon instanceof Taxon);
+
+        return null;
     }
 }
