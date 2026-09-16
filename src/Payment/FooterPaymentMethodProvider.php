@@ -60,12 +60,16 @@ final class FooterPaymentMethodProvider
                 continue;
             }
 
-            $code = $this->normaliseCode($paymentMethod->getCode() ?? $paymentMethod->getName() ?? '');
+            $name = $paymentMethod->getName();
+            $code = $this->normaliseCode($paymentMethod->getCode() ?? $name ?? '');
+            if ($name !== null && $this->normaliseCode($name) === 'billie') {
+                $code = 'billie';
+            }
             if ($code === '') {
                 continue;
             }
 
-            $items[$code] ??= ['code' => $code, 'label' => $paymentMethod->getName() ?? $paymentMethod->getCode() ?? $code];
+            $items[$code] ??= ['code' => $code, 'label' => $name ?? $paymentMethod->getCode() ?? $code];
         }
 
         return $this->requestCache[$cacheKey] = array_values($items);
@@ -127,6 +131,9 @@ final class FooterPaymentMethodProvider
             MolliePaymentMethod::IDEAL => 'iDEAL',
             MolliePaymentMethod::BANCONTACT => 'Bancontact',
             MolliePaymentMethod::EPS => 'EPS',
+            'blik' => 'BLIK',
+            'swish' => 'Swish',
+            'billie' => 'Billie',
         ];
         if (str_starts_with($methodId, 'klarna')) {
             return [['code' => 'klarna', 'label' => 'Klarna']];
@@ -144,6 +151,10 @@ final class FooterPaymentMethodProvider
     private function normaliseCode(string $value): string
     {
         $code = strtolower((string) preg_replace('/[^a-z0-9]+/i', '', $value));
+
+        if (str_contains($code, 'billie')) {
+            return 'billie';
+        }
 
         return match ($code) {
             'rechnung', 'purchaseonaccount' => 'invoice',

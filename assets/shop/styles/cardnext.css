@@ -522,8 +522,9 @@ body.cn-nav-open { overflow: hidden; }
 .cn-footer__social-link:hover, .cn-footer__social-link:focus-visible { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); }
 .cn-footer__social-link img { width: 20px; height: 20px; }
 .cn-footer__payment-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.cn-footer__payment-badge { display: inline-flex; min-height: 40px; max-width: 100%; align-items: center; justify-content: center; padding: 5px 10px; color: #1e293b; background: #fff; border: 1px solid rgba(148,163,184,.55); border-radius: 6px; font-size: .72rem; font-weight: 700; line-height: 1; white-space: nowrap; }
-.cn-footer__payment-badge img { display: block; width: auto; max-width: 96px; height: auto; max-height: 28px; }
+.cn-footer__payment-badge { display: inline-flex; height: 40px; max-width: 100%; align-items: center; justify-content: center; padding: 5px 10px; color: #1e293b; background: #fff; border: 1px solid rgba(148,163,184,.55); border-radius: 6px; font-size: .72rem; font-weight: 700; line-height: 1; white-space: nowrap; }
+.cn-footer__payment-badge img { display: block; width: auto; max-width: 96px; height: auto; max-height: 28px; object-fit: contain; }
+.cn-footer__payment-badge--billie img { max-width: 116px; }
 .cn-footer__payment-badge--invoice img, .cn-footer__payment-badge--prepayment img { max-width: 116px; }
 .cn-footer__shipping-list { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .cn-footer__shipping-badge { width: 72px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 5px 10px; background: #fff; border: 1px solid rgba(148,163,184,.55); border-radius: 6px; }

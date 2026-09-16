@@ -8,6 +8,7 @@ use App\Entity\Channel\Channel;
 use App\Entity\Payment\GatewayConfig;
 use App\Entity\Payment\PaymentMethod;
 use App\Payment\FooterPaymentMethodProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
@@ -125,6 +126,43 @@ final class FooterPaymentMethodProviderTest extends TestCase
             [$this->mollieGateway()],
             [$this->mollieMethod('paypal'), $this->mollieMethod('applepay'), $this->mollieMethod('ideal'), $this->mollieMethod('eps')],
         ), 'code'));
+    }
+
+    #[Test]
+    #[DataProvider('mollieBrandMethods')]
+    public function it_normalises_mollie_brand_methods(string $methodId, string $expectedCode): void
+    {
+        self::assertSame(
+            $expectedCode,
+            $this->provide([$this->mollieGateway()], [$this->mollieMethod($methodId)])[0]['code'],
+        );
+    }
+
+    /** @return iterable<string, array{string, string}> */
+    public static function mollieBrandMethods(): iterable
+    {
+        yield 'EPS' => ['EPS', 'eps'];
+        yield 'BLIK' => ['BLIK', 'blik'];
+        yield 'Swish' => ['Swish', 'swish'];
+    }
+
+    #[Test]
+    #[DataProvider('billieMethods')]
+    public function it_normalises_billie_from_a_code_or_name(string $code, string $name): void
+    {
+        self::assertSame(
+            [['code' => 'billie', 'label' => $name]],
+            $this->provide([$this->regular($code, $name)]),
+        );
+    }
+
+    /** @return iterable<string, array{string, string}> */
+    public static function billieMethods(): iterable
+    {
+        yield 'canonical code' => ['billie', 'Billie'];
+        yield 'technical code' => ['billieinvoice', 'Billie Invoice'];
+        yield 'normalised descriptive code' => ['paybyinvoiceforbusinessesbillie', 'Pay by Invoice for Businesses - Billie'];
+        yield 'descriptive name' => ['invoice_for_businesses', 'Pay by Invoice for Businesses - Billie'];
     }
 
     #[Test]
