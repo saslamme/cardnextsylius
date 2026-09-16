@@ -521,11 +521,12 @@ body.cn-nav-open { overflow: hidden; }
 .cn-footer__social-link { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 50%; transition: background-color .2s ease, border-color .2s ease; }
 .cn-footer__social-link:hover, .cn-footer__social-link:focus-visible { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); }
 .cn-footer__social-link img { width: 20px; height: 20px; }
-.cn-footer__payment-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.cn-footer__payment-badge { display: inline-flex; height: 40px; max-width: 100%; align-items: center; justify-content: center; padding: 5px 10px; color: #1e293b; background: #fff; border: 1px solid rgba(148,163,184,.55); border-radius: 6px; font-size: .72rem; font-weight: 700; line-height: 1; white-space: nowrap; }
-.cn-footer__payment-badge img { display: block; width: auto; max-width: 96px; height: auto; max-height: 28px; object-fit: contain; }
-.cn-footer__payment-badge--billie img { max-width: 116px; }
-.cn-footer__payment-badge--invoice img, .cn-footer__payment-badge--prepayment img { max-width: 116px; }
+.cn-footer__payment-list { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; }
+.cn-footer__payment-badge { width: 84px; height: 44px; max-width: 100%; flex: 0 0 84px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 7px 10px; overflow: hidden; color: #1e293b; background: #fff; border: 1px solid rgba(148,163,184,.55); border-radius: 8px; font-size: .72rem; font-weight: 700; line-height: 1; white-space: nowrap; }
+.cn-footer__payment-icon { display: block; width: auto; max-width: 62px; height: auto; max-height: 28px; object-fit: contain; }
+.cn-footer__payment-badge--invoice, .cn-footer__payment-badge--prepayment { width: 132px; flex-basis: 132px; }
+.cn-footer__payment-icon--invoice, .cn-footer__payment-icon--prepayment { max-width: 110px; }
+.cn-footer__payment-badge--text { width: auto; min-width: 84px; flex-basis: auto; padding-inline: 14px; }
 .cn-footer__shipping-list { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .cn-footer__shipping-badge { width: 72px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; padding: 5px 10px; background: #fff; border: 1px solid rgba(148,163,184,.55); border-radius: 6px; }
 .cn-footer__shipping-badge img { display: block; width: auto; max-width: 52px; height: auto; max-height: 28px; }

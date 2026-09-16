@@ -34,9 +34,17 @@
                     <div id="footer-payment-methods-title" class="cn-footer__title">{{ 'cardnext.storefront.footer.payment_methods'|trans }}</div>
                     <div class="cn-footer__payment-list">
                         {% for paymentMethod in footerPaymentMethods %}
-                            <span class="cn-footer__payment-badge cn-footer__payment-badge--{{ paymentMethod.code }}">
+                            <span
+                                class="cn-footer__payment-badge cn-footer__payment-badge--{{ paymentMethod.code }}{% if not paymentMethod.icon %} cn-footer__payment-badge--text{% endif %}"
+                                data-code="{{ paymentMethod.code }}"
+                            >
                                 {% if paymentMethod.icon %}
-                                    <img src="{{ asset(paymentMethod.icon) }}" alt="{{ paymentMethod.label }}" loading="lazy">
+                                    <img
+                                        class="cn-footer__payment-icon cn-footer__payment-icon--{{ paymentMethod.code }}"
+                                        src="{{ asset(paymentMethod.icon) }}"
+                                        alt="{{ paymentMethod.label }}"
+                                        loading="lazy"
+                                    >
                                 {% else %}
                                     <span>{{ paymentMethod.label }}</span>
                                 {% endif %}
