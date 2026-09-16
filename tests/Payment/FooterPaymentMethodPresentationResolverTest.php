@@ -20,6 +20,7 @@ final class FooterPaymentMethodPresentationResolverTest extends TestCase
         self::assertSame($code, $presentation['code']);
         self::assertSame('Label', $presentation['label']);
         self::assertSame(sprintf('payment-methods/%s.svg', $code), $presentation['icon']);
+        self::assertFileExists(dirname(__DIR__, 2).'/public/'.$presentation['icon']);
     }
 
     /**
@@ -34,6 +35,10 @@ final class FooterPaymentMethodPresentationResolverTest extends TestCase
         yield 'Klarna' => ['klarna'];
         yield 'iDEAL' => ['ideal'];
         yield 'Bancontact' => ['bancontact'];
+        yield 'EPS' => ['eps'];
+        yield 'BLIK' => ['blik'];
+        yield 'Swish' => ['swish'];
+        yield 'Billie' => ['billie'];
         yield 'invoice' => ['invoice'];
         yield 'prepayment' => ['prepayment'];
     }

@@ -14,6 +14,10 @@ final class FooterPaymentMethodPresentationResolver
         'klarna' => 'payment-methods/klarna.svg',
         'ideal' => 'payment-methods/ideal.svg',
         'bancontact' => 'payment-methods/bancontact.svg',
+        'eps' => 'payment-methods/eps.svg',
+        'blik' => 'payment-methods/blik.svg',
+        'swish' => 'payment-methods/swish.svg',
+        'billie' => 'payment-methods/billie.svg',
         'invoice' => 'payment-methods/invoice.svg',
         'prepayment' => 'payment-methods/prepayment.svg',
     ];
