@@ -52,11 +52,9 @@ final class ProductExpertAssortmentController extends AbstractController
             ->andWhere('product.enabled = :enabled')
             ->andWhere('channel = :channel')
             ->andWhere('LOWER(translation.name) LIKE :query OR LOWER(product.code) LIKE :query OR LOWER(variant.code) LIKE :query OR LOWER(manufacturer.name) LIKE :query')
-            ->setParameters([
-                'enabled' => true,
-                'channel' => $expert->getChannel(),
-                'query' => '%' . $query . '%',
-            ])
+            ->setParameter('enabled', true)
+            ->setParameter('channel', $expert->getChannel())
+            ->setParameter('query', '%' . $query . '%')
             ->orderBy('product.code', 'ASC')
             ->setMaxResults(20)
             ->getQuery()

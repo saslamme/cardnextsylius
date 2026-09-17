@@ -50,11 +50,20 @@ final class ProductExpertArchitectureTest extends TestCase
         self::assertStringContainsString('LOWER(product.code) LIKE :query', $controller);
         self::assertStringContainsString('LOWER(variant.code) LIKE :query', $controller);
         self::assertStringContainsString('LOWER(manufacturer.name) LIKE :query', $controller);
-        self::assertStringContainsString("'enabled' => true", $controller);
-        self::assertStringContainsString("'channel' => \$expert->getChannel()", $controller);
+        self::assertStringContainsString("->setParameter('enabled', true)", $controller);
+        self::assertStringContainsString("->setParameter('channel', \$expert->getChannel())", $controller);
+        self::assertStringContainsString("->setParameter('query', '%' . \$query . '%')", $controller);
         self::assertStringContainsString('->setMaxResults(20)', $controller);
         self::assertStringContainsString("'alreadySelected' => \$alreadySelected", $controller);
         self::assertStringContainsString("'image' =>", $controller);
+    }
+
+    public function testAssortmentSearchDoesNotPassAnArrayToSetParameters(): void
+    {
+        $controller = file_get_contents(__DIR__ . '/../../src/Controller/Admin/ProductExpertAssortmentController.php');
+
+        self::assertIsString($controller);
+        self::assertDoesNotMatchRegularExpression('/->setParameters\s*\(\s*\[/', $controller);
     }
 
     public function testProductExpertMappingsUseTheProductionColumnNames(): void
