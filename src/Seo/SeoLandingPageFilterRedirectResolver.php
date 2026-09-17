@@ -77,7 +77,9 @@ final readonly class SeoLandingPageFilterRedirectResolver
         if (($query['limit'] ?? null) === '9' || ($query['limit'] ?? null) === 9) unset($query['limit']);
         $suffix = $query === [] ? '' : '?' . http_build_query($query, '', '&', \PHP_QUERY_RFC3986);
 
-        return '/' . $matches[0]->getPath() . $suffix;
+        $path = LandingPagePath::normalize($matches[0]->getPath());
+
+        return $path . $suffix;
     }
 
     /**
