@@ -12,11 +12,19 @@
 {% block metatags %}{{ parent() }}{% if seo_landing %}{% if seo_landing.metaDescription %}<meta name="description" content="{{ seo_landing.metaDescription }}">{% endif %}<meta name="robots" content="{{ seo_landing.robots }}">{% set canonical = seo_landing.canonicalUrl ?: absolute_url(seo_landing.path) %}{% if not seo_landing.canonicalUrl and app.request.query.getInt('page', 1) > 1 %}{% set canonical = canonical ~ '?page=' ~ app.request.query.getInt('page') %}{% endif %}<link rel="canonical" href="{{ canonical }}">{% elseif cardnext_taxon %}{% set structured_data = cardnext_taxon_structured_data(cardnext_taxon) %}{% if structured_data %}<script type="application/ld+json">{{ structured_data|raw }}</script>{% endif %}{% endif %}{% endblock %}
 {% block content %}
 <main class="cn-page" id="main-content">
-    {% if seo_landing %}<div class="cn-breadcrumbs"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep">/</span><a href="{{ path('sylius_shop_product_index', {slug: cardnext_taxon.slug}) }}">{{ cardnext_taxon.name }}</a><span class="cn-breadcrumbs__sep">/</span><span aria-current="page">{{ seo_landing.h1 }}</span></div></div><div class="cn-container"><h1>{{ seo_landing.h1 }}</h1>{% if seo_landing.topContent %}<div class="cn-rich-text">{{ seo_landing.topContent|raw }}</div>{% endif %}</div>{% else %}
+    {% if seo_landing %}
+        <div class="cn-breadcrumbs"><div class="cn-container cn-breadcrumbs__inner"><a href="{{ path('sylius_shop_homepage') }}">{{ 'cardnext.storefront.common.home'|trans }}</a><span class="cn-breadcrumbs__sep">/</span><a href="{{ path('sylius_shop_product_index', {slug: cardnext_taxon.slug}) }}">{{ cardnext_taxon.name }}</a><span class="cn-breadcrumbs__sep">/</span><span aria-current="page">{{ seo_landing.h1 }}</span></div></div>
+        <header class="cn-seo-landing__header">
+            <div class="cn-container">
+                <h1 class="cn-title cn-title--page cn-seo-landing__title">{{ seo_landing.h1 }}</h1>
+                {% if seo_landing.topContent %}<div class="cn-rich-text cn-seo-landing__intro">{{ seo_landing.topContent|raw }}</div>{% endif %}
+            </div>
+        </header>
+    {% else %}
     {{ component('sylius_shop:product:show:breadcrumbs', {template: 'shop/category/breadcrumbs.html.twig'}) }}
     {{ component('sylius_shop:product:show:header', {template: 'shop/category/hero.html.twig'}) }}
     {{ component('sylius_shop:product:show:taxonomy', {template: 'shop/category/subcategories.html.twig'}) }}{% endif %}
-    <section class="cn-section cn-section--compact" aria-label="{{ 'cardnext.storefront.catalog.overview_aria'|trans }}">
+    <section class="cn-section cn-section--compact{% if seo_landing %} cn-section--seo-catalog{% endif %}" aria-label="{{ 'cardnext.storefront.catalog.overview_aria'|trans }}">
         <div class="cn-container cn-catalog">
             <aside class="cn-sidebar" aria-label="{{ 'cardnext.storefront.catalog.filter_aria'|trans }}">
                 <div class="cn-sidebar__head"><h2>{{ 'cardnext.storefront.catalog.filters'|trans }}</h2>{% if app.request.query.has('criteria') and not seo_landing %}<a href="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">{{ 'cardnext.storefront.catalog.reset'|trans }}</a>{% endif %}</div>
