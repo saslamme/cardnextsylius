@@ -8,12 +8,16 @@ use App\Entity\Channel\Channel;
 use App\Entity\User\AdminUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'cardnext_product_expert', uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_product_expert_channel_slug', columns: ['channel_id', 'slug'])])]
+#[ORM\Table(name: 'cardnext_product_expert')]
+#[ORM\UniqueConstraint(name: 'UNIQ_EXPERT_ADMIN', columns: ['admin_user_id'])]
+#[ORM\UniqueConstraint(name: 'uniq_product_expert_channel_slug', columns: ['channel_id', 'slug'])]
+#[ORM\Index(name: 'idx_expert_channel', columns: ['channel_id'])]
 #[UniqueEntity(fields: ['adminUser'])]
 #[UniqueEntity(fields: ['channel', 'slug'])]
 #[ORM\HasLifecycleCallbacks]
@@ -23,14 +27,14 @@ class ProductExpert
     private ?int $id = null;
 
     #[ORM\OneToOne(targetEntity: AdminUser::class)]
-    #[ORM\JoinColumn(nullable: false, unique: true, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'admin_user_id', referencedColumnName: 'id', nullable: false, unique: true, onDelete: 'CASCADE')]
     private ?AdminUser $adminUser = null;
 
     #[ORM\ManyToOne(targetEntity: Channel::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'channel_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private ?Channel $channel = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'display_name', length: 255)]
     #[Assert\NotBlank]
     private string $displayName = '';
 
@@ -38,16 +42,16 @@ class ProductExpert
     #[Assert\Regex(pattern: '/^(?!(?:admin|api|login|logout)$)[a-z0-9]+(?:-[a-z0-9]+)*$/D', message: 'Bitte einen URL-tauglichen, nicht reservierten Slug verwenden.')]
     private string $slug = '';
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(name: 'intro_text', type: Types::TEXT, nullable: true)]
     private ?string $introText = null;
 
     #[ORM\Column(options: ['default' => true])]
     private bool $enabled = true;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $updatedAt;
 
     /** @var Collection<int, ProductExpertProduct> */
