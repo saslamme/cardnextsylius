@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 final class ProductExpertController extends AbstractController
 {
-    #[Route('/experte/{slug}', name: 'cardnext_shop_product_expert_show', methods: ['GET'])]
+    #[Route('/experte/{slug}', name: 'cardnext_shop_product_expert_show', methods: ['GET'], priority: 120)]
     public function __invoke(string $slug, ChannelContextInterface $channels, EntityManagerInterface $em): Response
     {
         $expert = $em->getRepository(ProductExpert::class)->findOneBy(['channel' => $channels->getChannel(), 'slug' => $slug, 'enabled' => true]);
