@@ -1,0 +1,9 @@
+{% extends '@SyliusShop/shared/layout/base.html.twig' %}
+{% set branding = cardnext_channel_branding() %}
+{% block title %}Produktempfehlungen von {{ expert.displayName }} | {{ branding.brandName }}{% endblock %}
+{% block metatags %}{{ parent() }}<meta name="robots" content="index, follow">{% if expert.introText %}<meta name="description" content="{{ expert.introText|striptags|u.truncate(155, '…') }}">{% endif %}<link rel="canonical" href="{{ absolute_url(path('cardnext_shop_product_expert_show', {slug: expert.slug})) }}">{% endblock %}
+{% block content %}
+<main class="cn-expert"><div class="cn-breadcrumbs"><nav class="cn-container cn-breadcrumbs__inner" aria-label="Breadcrumb"><a href="{{ path('sylius_shop_homepage') }}">Startseite</a><span>/</span><span>Produktexperten</span><span>/</span><span aria-current="page">{{ expert.displayName }}</span></nav></div>
+<div class="cn-container"><header><span class="cn-kicker">Persönliche Auswahl</span><h1 class="cn-title cn-title--section">Produktempfehlungen von {{ expert.displayName }}</h1>{% if expert.introText %}<p>{{ expert.introText|nl2br }}</p>{% endif %}</header>
+<div class="cn-product-grid cn-product-grid--lined">{% for product in products %}{{ component('cardnext:product:card', {product: product}) }}{% else %}<p>Aktuell sind keine Produkte in diesem Sortiment verfügbar.</p>{% endfor %}</div></div></main>
+{% endblock %}

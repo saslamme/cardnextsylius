@@ -5,11 +5,25 @@ declare(strict_types=1);
 namespace App\Admin\Menu;
 
 use Knp\Menu\ItemInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class CardnextAdminMenuBuilder
 {
+    public function __construct(private readonly ?Security $security = null)
+    {
+    }
+
     public function build(ItemInterface $menu): void
     {
+        if ($this->security?->isGranted('ROLE_PRODUCT_EXPERT') && !$this->security->isGranted('ROLE_ADMINISTRATION_ACCESS')) {
+            foreach (array_keys($menu->getChildren()) as $child) {
+                $menu->removeChild($child);
+            }
+            $sales = $menu->addChild('cardnext_expert_sales')->setLabel('VERTRIEB')->setLabelAttribute('icon', 'tabler:user-star');
+            $this->addChildIfMissing($sales, 'cardnext_my_assortment', 'Mein Sortiment', 'tabler:shopping-bag', 'cardnext_admin_product_expert_assortment');
+
+            return;
+        }
         $this->addSalesItems($menu);
         $this->addCatalogItems($menu);
         $this->addCustomerItems($menu);
@@ -36,6 +50,9 @@ final class CardnextAdminMenuBuilder
 
         $this->addChildIfMissing($sales, 'cardnext_quotes', 'Angebote', 'tabler:file-description', 'cardnext_admin_quote_index', [
             'cardnext_admin_quote_*',
+        ]);
+        $this->addChildIfMissing($sales, 'cardnext_product_experts', 'Produktexperten', 'tabler:user-star', 'cardnext_admin_product_expert_index', [
+            'cardnext_admin_product_expert_*',
         ]);
     }
 
