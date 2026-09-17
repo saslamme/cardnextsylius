@@ -25,6 +25,38 @@ final class ProductExpertArchitectureTest extends TestCase
         self::assertStringContainsString('Sortiment verwalten', $twig);
     }
 
+    public function testAssortmentUsesStimulusWithoutInlineJavaScript(): void
+    {
+        $twig = file_get_contents(__DIR__ . '/../../templates/admin/product_expert/assortment.html.twig');
+        $controller = file_get_contents(__DIR__ . '/../../assets/admin/controllers/product_expert_assortment_controller.js');
+
+        self::assertIsString($twig);
+        self::assertIsString($controller);
+        self::assertStringNotContainsString('<script', $twig);
+        self::assertStringContainsString('data-controller="product-expert-assortment"', $twig);
+        self::assertStringContainsString('data-product-expert-assortment-target="results"', $twig);
+        self::assertStringContainsString('data-product-expert-assortment-target="empty"', $twig);
+        self::assertStringContainsString('data-product-expert-assortment-target="status"', $twig);
+        self::assertStringContainsString('response.ok', $controller);
+        self::assertStringContainsString('console.error', $controller);
+    }
+
+    public function testAssortmentSearchKeepsAllRequiredProductFiltersAndPayloadFields(): void
+    {
+        $controller = file_get_contents(__DIR__ . '/../../src/Controller/Admin/ProductExpertAssortmentController.php');
+
+        self::assertIsString($controller);
+        self::assertStringContainsString('LOWER(translation.name) LIKE :query', $controller);
+        self::assertStringContainsString('LOWER(product.code) LIKE :query', $controller);
+        self::assertStringContainsString('LOWER(variant.code) LIKE :query', $controller);
+        self::assertStringContainsString('LOWER(manufacturer.name) LIKE :query', $controller);
+        self::assertStringContainsString("'enabled' => true", $controller);
+        self::assertStringContainsString("'channel' => \$expert->getChannel()", $controller);
+        self::assertStringContainsString('->setMaxResults(20)', $controller);
+        self::assertStringContainsString("'alreadySelected' => \$alreadySelected", $controller);
+        self::assertStringContainsString("'image' =>", $controller);
+    }
+
     public function testProductExpertMappingsUseTheProductionColumnNames(): void
     {
         self::assertSame('admin_user_id', $this->attributeArguments(ProductExpert::class, 'adminUser', ORM\JoinColumn::class)['name']);
