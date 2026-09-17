@@ -1,20 +1,164 @@
 {% extends 'admin/cardnext/layout.html.twig' %}
-{% block title %}Mein Sortiment{% endblock %}
+
+{% set page_title = 'Mein Sortiment' %}
+{% set public_path = path('cardnext_shop_product_expert_show', {slug: expert.slug}) %}
+
 {% block cardnext_content %}
-<div class="container-xl" data-assortment data-expert="{{ expert.id }}" data-token="{{ csrf_token('product_expert_assortment') }}">
- <h1>Mein Sortiment</h1><p>Öffentliche Seite: <code>{{ absolute_url(path('cardnext_shop_product_expert_show', {slug: expert.slug})) }}</code> <a class="btn btn-outline-primary" target="_blank" href="{{ path('cardnext_shop_product_expert_show', {slug: expert.slug}) }}">Seite ansehen</a></p>
- <section class="card mb-4"><div class="card-body"><h2>Produkte hinzufügen</h2><label for="expert-search">Produktname, Artikelnummer, Variantencode oder Hersteller</label><input class="form-control" id="expert-search" autocomplete="off"><div id="expert-results" class="list-group mt-2"></div></div></section>
- <section><h2>Mein Sortiment <small id="expert-count">{{ expert.products|length }} Produkte</small></h2><div id="expert-products">
- {% for item in expert.products %}<div class="card mb-2" draggable="true" data-item="{{ item.id }}"><div class="card-body d-flex gap-3 align-items-center"><span title="Ziehen">☰</span><strong>{{ item.product.name }}</strong><span>{{ item.product.manufacturer ? item.product.manufacturer.name : '' }}</span><code>{{ item.product.code }}</code><button class="btn btn-sm btn-outline-danger ms-auto" data-remove>Entfernen</button></div></div>{% endfor %}
- </div></section>
-</div>
-<script>
-(()=>{const root=document.querySelector('[data-assortment]');if(!root)return;const id=root.dataset.expert,token=root.dataset.token,list=document.querySelector('#expert-products'),results=document.querySelector('#expert-results'),input=document.querySelector('#expert-search');let timer,drag;
-const request=(url,options={})=>fetch(url,{...options,headers:{'X-CSRF-TOKEN':token,'Content-Type':'application/json',...(options.headers||{})}});
-input.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(async()=>{if(input.value.trim().length<2){results.innerHTML='';return}const data=await fetch(`{{ path('cardnext_admin_product_expert_product_search') }}?q=${encodeURIComponent(input.value)}&expert=${id}`).then(r=>r.json());results.innerHTML=data.map(p=>`<button class="list-group-item list-group-item-action" data-add="${p.id}"><strong>${p.name}</strong> · ${p.manufacturer||''} · ${p.code}</button>`).join('')},300)});
-results.addEventListener('click',async e=>{const b=e.target.closest('[data-add]');if(!b)return;const body=new URLSearchParams({product:b.dataset.add,_token:token});const r=await fetch(`{{ path('cardnext_admin_product_expert_assortment_add', {id: expert.id}) }}`,{method:'POST',body});if(r.ok)location.reload()});
-list.addEventListener('click',async e=>{const b=e.target.closest('[data-remove]');if(!b)return;const row=b.closest('[data-item]'),url=`{{ path('cardnext_admin_product_expert_assortment_remove', {id: expert.id, item: 999999}) }}`.replace('999999',row.dataset.item);const body=new URLSearchParams({_token:token});if((await fetch(url,{method:'POST',body})).ok){row.remove();document.querySelector('#expert-count').textContent=`${list.children.length} Produkte`}});
-list.addEventListener('dragstart',e=>{drag=e.target.closest('[data-item]')});list.addEventListener('dragover',e=>{e.preventDefault();const over=e.target.closest('[data-item]');if(over&&over!==drag)list.insertBefore(drag,over)});list.addEventListener('drop',async e=>{e.preventDefault();await request(`{{ path('cardnext_admin_product_expert_assortment_sort', {id: expert.id}) }}`,{method:'POST',body:JSON.stringify({items:[...list.children].map(x=>x.dataset.item)})})});
-})();
-</script>
+    <div
+        class="container-xl px-0"
+        data-controller="product-expert-assortment"
+        data-product-expert-assortment-expert-id-value="{{ expert.id }}"
+        data-product-expert-assortment-search-url-value="{{ path('cardnext_admin_product_expert_product_search') }}"
+        data-product-expert-assortment-add-url-value="{{ path('cardnext_admin_product_expert_assortment_add', {id: expert.id}) }}"
+        data-product-expert-assortment-remove-url-value="{{ path('cardnext_admin_product_expert_assortment_remove', {id: expert.id, item: '__ITEM__'}) }}"
+        data-product-expert-assortment-sort-url-value="{{ path('cardnext_admin_product_expert_assortment_sort', {id: expert.id}) }}"
+        data-product-expert-assortment-csrf-token-value="{{ csrf_token('product_expert_assortment') }}"
+    >
+        <nav aria-label="Breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item">Vertrieb</li>
+                <li class="breadcrumb-item"><a href="{{ path('cardnext_admin_product_expert_index') }}">Produktexperten</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Sortiment</li>
+            </ol>
+        </nav>
+
+        <div class="page-header mb-4">
+            <div class="row align-items-center g-3">
+                <div class="col">
+                    <div class="page-pretitle">Vertrieb / Produktexperten</div>
+                    <h2 class="page-title">Mein Sortiment</h2>
+                    <div class="text-secondary mt-1">Stellen Sie hier Ihre persönliche Produktauswahl für Ihre öffentliche Expertenseite zusammen.</div>
+                    <div class="small text-secondary mt-2">
+                        <span class="fw-semibold">Öffentliche URL</span>
+                        <code class="ms-1">{{ public_path }}</code>
+                    </div>
+                </div>
+                <div class="col-auto ms-auto">
+                    <a class="btn btn-outline-primary" target="_blank" rel="noopener" href="{{ public_path }}">
+                        {{ ux_icon('tabler:external-link') }} Öffentliche Seite ansehen
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="visually-hidden" role="status" aria-live="polite" data-product-expert-assortment-target="status"></div>
+
+        <section class="card mb-4" aria-labelledby="product-search-heading">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title" id="product-search-heading">Produkte hinzufügen</h3>
+                    <div class="card-subtitle">Durchsuchen Sie die verfügbaren Produkte dieses Verkaufskanals.</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <label class="form-label" for="product-expert-search">Produktsuche</label>
+                <div class="input-icon">
+                    <span class="input-icon-addon" aria-hidden="true">{{ ux_icon('tabler:search') }}</span>
+                    <input
+                        class="form-control"
+                        id="product-expert-search"
+                        type="search"
+                        autocomplete="off"
+                        placeholder="Produktname, Artikelnummer oder Hersteller suchen …"
+                        data-product-expert-assortment-target="search"
+                        data-action="input->product-expert-assortment#scheduleSearch"
+                    >
+                </div>
+                <div class="form-hint">Mindestens 2 Zeichen eingeben.</div>
+                <div class="mt-3" aria-live="polite" data-product-expert-assortment-target="results"></div>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="assortment-heading">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title" id="assortment-heading">Mein Sortiment</h3>
+                    <div class="card-subtitle">Die Reihenfolge wird auch auf der öffentlichen Expertenseite verwendet.</div>
+                </div>
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <span class="badge bg-primary-lt" data-product-expert-assortment-target="count">
+                        {{ expert.products|length }} {{ expert.products|length == 1 ? 'Produkt' : 'Produkte' }}
+                    </span>
+                    <small class="text-secondary" aria-live="polite" data-product-expert-assortment-target="sortStatus"></small>
+                </div>
+            </div>
+            <div
+                class="list-group list-group-flush"
+                data-product-expert-assortment-target="products"
+                data-action="click->product-expert-assortment#remove dragstart->product-expert-assortment#dragStart dragover->product-expert-assortment#dragOver drop->product-expert-assortment#drop dragend->product-expert-assortment#dragEnd"
+            >
+                {% for item in expert.products %}
+                    {% set product = item.product %}
+                    {% set image = product.images|first %}
+                    <div class="list-group-item" draggable="false" data-assortment-item data-item-id="{{ item.id }}" data-product-id="{{ product.id }}">
+                        <div class="d-flex align-items-center gap-3">
+                            <button
+                                class="btn btn-icon btn-ghost-secondary flex-shrink-0"
+                                type="button"
+                                title="Produkt per Drag & Drop verschieben"
+                                aria-label="{{ product.name }} verschieben"
+                                data-drag-handle
+                                data-action="mousedown->product-expert-assortment#enableDrag"
+                            >{{ ux_icon('tabler:grip-vertical') }}</button>
+                            {% if image %}
+                                <img class="avatar avatar-md object-fit-contain bg-white" src="{{ image.path|imagine_filter('sylius_shop_product_small_thumbnail') }}" alt="" loading="lazy">
+                            {% else %}
+                                <span class="avatar avatar-md bg-secondary-lt text-secondary" aria-hidden="true">{{ ux_icon('tabler:photo') }}</span>
+                            {% endif %}
+                            <div class="min-w-0 flex-fill">
+                                <div class="fw-semibold text-truncate" data-product-name>{{ product.name }}</div>
+                                <div class="small text-secondary text-truncate" data-product-meta>{{ product.manufacturer ? product.manufacturer.name : 'Hersteller nicht angegeben' }} · {{ product.code }}</div>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm flex-shrink-0" type="button" data-remove>
+                                {{ ux_icon('tabler:trash') }} Entfernen
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="card-body text-center py-5 {{ expert.products|length > 0 ? 'd-none' }}" data-product-expert-assortment-target="empty">
+                <div class="text-secondary mb-2" aria-hidden="true">{{ ux_icon('tabler:shopping-bag') }}</div>
+                <h3 class="h4 mb-1">Noch keine Produkte ausgewählt.</h3>
+                <p class="text-secondary mb-0">Nutzen Sie die Suche oben, um Ihr persönliches Sortiment zusammenzustellen.</p>
+            </div>
+        </section>
+
+        <template data-product-expert-assortment-target="resultTemplate">
+            <div class="list-group-item" data-search-result>
+                <div class="d-flex align-items-center gap-3">
+                    <span data-result-media></span>
+                    <div class="min-w-0 flex-fill">
+                        <div class="fw-semibold text-truncate" data-result-name></div>
+                        <div class="small text-secondary text-truncate" data-result-meta></div>
+                    </div>
+                    <button class="btn btn-primary btn-sm flex-shrink-0" type="button" data-add data-action="product-expert-assortment#add">
+                        {{ ux_icon('tabler:plus') }} <span data-button-label>Hinzufügen</span>
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        <template data-product-expert-assortment-target="productTemplate">
+            <div class="list-group-item" draggable="false" data-assortment-item>
+                <div class="d-flex align-items-center gap-3">
+                    <button
+                        class="btn btn-icon btn-ghost-secondary flex-shrink-0"
+                        type="button"
+                        title="Produkt per Drag & Drop verschieben"
+                        aria-label="Produkt verschieben"
+                        data-drag-handle
+                        data-action="mousedown->product-expert-assortment#enableDrag"
+                    >{{ ux_icon('tabler:grip-vertical') }}</button>
+                    <span data-product-media></span>
+                    <div class="min-w-0 flex-fill">
+                        <div class="fw-semibold text-truncate" data-product-name></div>
+                        <div class="small text-secondary text-truncate" data-product-meta></div>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm flex-shrink-0" type="button" data-remove>
+                        {{ ux_icon('tabler:trash') }} Entfernen
+                    </button>
+                </div>
+            </div>
+        </template>
+    </div>
 {% endblock %}
