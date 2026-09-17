@@ -141,6 +141,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .cn-title--sm { font-size: 1.2rem; letter-spacing: -.02em; }
 .cn-lead { max-width: 760px; margin: 0; color: var(--cn-muted); font-size: 1rem; line-height: 1.72; }
 .cn-meta { color: var(--cn-subtle); font-size: .74rem; }
+.cn-seo-landing__header { padding-top: 40px; }
+.cn-seo-landing__title { margin: 0; }
+.cn-seo-landing__intro { max-width: 820px; margin-top: 12px; color: var(--cn-muted); }
+.cn-seo-landing__intro > :first-child { margin-top: 0; }
+.cn-seo-landing__intro > :last-child { margin-bottom: 0; }
+.cn-section--seo-catalog { padding-top: 34px; }
+@media (max-width: 1024px) {
+    .cn-seo-landing__header { padding-top: 32px; }
+    .cn-section--seo-catalog { padding-top: 29px; }
+}
+@media (max-width: 640px) {
+    .cn-seo-landing__header { padding-top: 26px; }
+    .cn-seo-landing__intro { margin-top: 10px; }
+    .cn-section--seo-catalog { padding-top: 26px; }
+}
 .cn-prose { color: var(--cn-text); font-size: .94rem; line-height: 1.78; }
 .cn-prose > :first-child { margin-top: 0; }
 .cn-prose > :last-child { margin-bottom: 0; }
