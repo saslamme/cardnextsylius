@@ -1,1 +1,142 @@
-{% extends 'admin/cardnext/layout.html.twig' %}{% block title %}Produktexperte{% endblock %}{% block cardnext_content %}<div class="container-xl"><h1>Produktexperte</h1>{{ form_start(form) }}{{ form_widget(form) }}<button class="btn btn-primary">Speichern</button>{{ form_end(form) }}</div><script>(()=>{const name=document.querySelector('#product_expert_displayName'),slug=document.querySelector('#product_expert_slug');if(!name||!slug)return;name.addEventListener('input',()=>{if(slug.dataset.edited)return;slug.value=name.value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')});slug.addEventListener('input',()=>slug.dataset.edited='1')})()</script>{% endblock %}
+{% extends 'admin/cardnext/layout.html.twig' %}
+{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+
+{% set is_new = expert.id is null %}
+{% set page_title = is_new ? 'Produktexperte anlegen' : 'Produktexperte bearbeiten' %}
+
+{% block cardnext_content %}
+    <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item">Vertrieb</li>
+            <li class="breadcrumb-item"><a href="{{ path('cardnext_admin_product_expert_index') }}">Produktexperten</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ is_new ? 'Anlegen' : 'Bearbeiten' }}</li>
+        </ol>
+    </nav>
+
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Vertrieb / Produktexperten</div>
+                <h2 class="page-title">{{ page_title }}</h2>
+                <div class="text-secondary mt-1">
+                    {{ is_new
+                        ? 'Legen Sie ein öffentliches Expertenprofil für einen Admin-Benutzer an.'
+                        : 'Bearbeiten Sie Profildaten und Sichtbarkeit von ' ~ expert.displayName ~ '.' }}
+                </div>
+            </div>
+            <div class="col-auto ms-auto d-flex gap-2">
+                <a class="btn" href="{{ path('cardnext_admin_product_expert_index') }}">
+                    {{ ux_icon('tabler:x') }} Abbrechen
+                </a>
+                <button class="btn btn-primary" type="submit" form="product-expert-form">
+                    {{ ux_icon('tabler:device-floppy') }} Speichern
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{ form_start(form, {attr: {id: 'product-expert-form', novalidate: 'novalidate', 'data-product-expert-form': ''}}) }}
+        {% if form.vars.submitted and not form.vars.valid %}
+            <div class="alert alert-danger" role="alert">
+                <div class="d-flex">
+                    <div class="me-2">{{ ux_icon('tabler:alert-circle') }}</div>
+                    <div>
+                        <h3 class="alert-title">Der Produktexperte konnte nicht gespeichert werden.</h3>
+                        <div class="text-secondary">Bitte prüfen Sie die markierten Felder.</div>
+                        {{ form_errors(form) }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {{ form_errors(form) }}
+        {% endif %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Allgemein</h3>
+                    <div class="card-subtitle">Zuordnung, öffentliche Adresse und Sichtbarkeit des Profils</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-12 col-lg-6">{{ form_row(form.adminUser) }}</div>
+                    <div class="col-12 col-lg-6">{{ form_row(form.channel) }}</div>
+                    <div class="col-12 col-lg-6">{{ form_row(form.displayName, {attr: {'data-product-expert-name': ''}}) }}</div>
+                    <div class="col-12 col-lg-6">{{ form_row(form.slug, {attr: {'data-product-expert-slug': ''}}) }}</div>
+                    <div class="col-12">
+                        <div class="border rounded p-3 bg-light-lt">
+                            {{ form_row(form.enabled, {row_attr: {class: 'mb-0'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Inhalt</h3>
+                    <div class="card-subtitle">Einleitung der öffentlichen Expertenseite</div>
+                </div>
+            </div>
+            <div class="card-body">
+                {{ form_row(form.introText, {attr: {rows: 8}}) }}
+            </div>
+        </div>
+
+        {% if not is_new %}
+            <div class="card mb-4">
+                <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3">
+                    <div class="flex-fill">
+                        <h3 class="card-title mb-1">Sortiment</h3>
+                        <div class="text-secondary">{{ expert.products|length }} {{ expert.products|length == 1 ? 'Produkt ist' : 'Produkte sind' }} diesem Experten zugeordnet.</div>
+                    </div>
+                    <a class="btn btn-outline-primary" href="{{ path('cardnext_admin_product_expert_assortment', {id: expert.id}) }}">
+                        {{ ux_icon('tabler:shopping-bag') }} Sortiment verwalten
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-body d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+                <span class="text-secondary">{{ is_new ? 'Neues Expertenprofil erstellen' : 'Änderungen am Expertenprofil speichern' }}</span>
+                <div class="d-flex justify-content-end gap-2">
+                    <a class="btn" href="{{ path('cardnext_admin_product_expert_index') }}">Abbrechen</a>
+                    <button class="btn btn-primary" type="submit">{{ ux_icon('tabler:device-floppy') }} Speichern</button>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+
+    <script>
+        (function () {
+            var form = document.querySelector('[data-product-expert-form]');
+            if (!form) return;
+
+            var name = form.querySelector('[data-product-expert-name]');
+            var slug = form.querySelector('[data-product-expert-slug]');
+            if (!name || !slug) return;
+
+            var slugify = function (value) {
+                return value
+                    .replace(/ß/g, 'ss')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+            };
+            var generatedSlug = slugify(name.value);
+            var manuallyEdited = slug.value !== '' && slug.value !== generatedSlug;
+
+            name.addEventListener('input', function () {
+                if (!manuallyEdited) slug.value = slugify(name.value);
+            });
+            slug.addEventListener('input', function () {
+                manuallyEdited = slug.value !== '' && slug.value !== slugify(name.value);
+            });
+        }());
+    </script>
+{% endblock %}

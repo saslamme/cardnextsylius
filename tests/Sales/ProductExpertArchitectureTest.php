@@ -12,6 +12,19 @@ final class ProductExpertArchitectureTest extends TestCase
     public function testPublicPageReusesTheCardnextProductCard(): void
     { $twig = file_get_contents(__DIR__.'/../../templates/shop/product_expert/show.html.twig'); self::assertIsString($twig); self::assertStringContainsString("component('cardnext:product:card'", $twig); self::assertStringContainsString('rel="canonical"', $twig); }
 
+    public function testAdminFormUsesTheSyliusFormThemeAndStructuredCards(): void
+    {
+        $twig = file_get_contents(__DIR__.'/../../templates/admin/product_expert/form.html.twig');
+
+        self::assertIsString($twig);
+        self::assertStringContainsString("{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}", $twig);
+        self::assertStringContainsString('<h3 class="card-title">Allgemein</h3>', $twig);
+        self::assertStringContainsString('<h3 class="card-title">Inhalt</h3>', $twig);
+        self::assertStringContainsString("'data-product-expert-name': ''", $twig);
+        self::assertStringContainsString("'data-product-expert-slug': ''", $twig);
+        self::assertStringContainsString('Sortiment verwalten', $twig);
+    }
+
     public function testProductExpertMappingsUseTheProductionColumnNames(): void
     {
         self::assertSame('admin_user_id', $this->attributeArguments(ProductExpert::class, 'adminUser', ORM\JoinColumn::class)['name']);
