@@ -27,6 +27,7 @@ security:
             provider: sylius_admin_user_provider
             user_checker: security.user_checker.chain.admin
             form_login:
+                success_handler: App\Security\ProductExpertLoginSuccessHandler
                 provider: sylius_admin_user_provider
                 login_path: sylius_admin_login
                 check_path: sylius_admin_login_check
@@ -121,6 +122,7 @@ security:
     access_control:
         - { path: "%sylius.security.admin_regex%/forgotten-password", role: PUBLIC_ACCESS }
         - { path: "%sylius.security.admin_regex%/login", role: PUBLIC_ACCESS }
+        - { path: ^/admin/vertrieb(?:/|$), role: [ROLE_PRODUCT_EXPERT, ROLE_ADMINISTRATION_ACCESS] }
         - { path: "%sylius.security.shop_regex%/login", role: PUBLIC_ACCESS }
         - { path: "%sylius.security.shop_regex%/register", role: PUBLIC_ACCESS }
         - { path: "%sylius.security.shop_regex%/verify", role: PUBLIC_ACCESS }
