@@ -67,8 +67,8 @@ class CmsPage
     /** @return Collection<int, CmsPageTranslation> */ public function getTranslations():Collection{return $this->translations;} public function addTranslation(CmsPageTranslation $v):void{if(!$this->translations->contains($v)){ $this->translations->add($v);$v->setPage($this);}}
     public function removeTranslation(CmsPageTranslation $translation): void { $this->translations->removeElement($translation); }
     public function getTranslation(string $locale):?CmsPageTranslation { foreach($this->translations as $t) if($t->getLocale()===$locale)return $t; return null; }
-    /** @return Collection<int, CmsBlock> */ public function getBlocks():Collection{return $this->blocks;} public function addBlock(CmsBlock $v):void{if(!$this->blocks->contains($v)){ $this->blocks->add($v);$v->setPage($this);}}
-    public function removeBlock(CmsBlock $block): void { $this->blocks->removeElement($block); }
+    /** @return Collection<int, CmsBlock> */ public function getBlocks():Collection{return $this->blocks;} public function addBlock(CmsBlock $v):void{if(!$this->blocks->contains($v)){ $this->blocks->add($v);$v->setSeoLandingPage(null);$v->setPage($this);}}
+    public function removeBlock(CmsBlock $block): void { if ($this->blocks->removeElement($block) && $block->getPage() === $this) { $block->setPage(null); } }
     public function getUpdatedAt():\DateTimeImmutable{return $this->updatedAt;} #[ORM\PreUpdate] public function touch():void{$this->updatedAt=new \DateTimeImmutable();}
 
     #[Assert\Callback]

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Cms\CmsBlockRendererRegistry;
-use App\Cms\CmsImageUploader;
+use App\Cms\Admin\CmsBlockFormHandler;
 use App\Entity\Channel\Channel;
 use App\Entity\Cms\CmsBlock;
 use App\Entity\Cms\CmsMenuItem;
@@ -18,8 +17,6 @@ use App\Form\Cms\CmsPageType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,8 +27,7 @@ final class CmsPageAdminController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly CmsBlockRendererRegistry $blockRegistry,
-        private readonly CmsImageUploader $imageUploader,
+        private readonly CmsBlockFormHandler $blockHandler,
     ) {
     }
 
@@ -87,9 +83,7 @@ final class CmsPageAdminController extends AbstractController
             $this->addFlash('error', sprintf('Diese Seite wird noch von %d Navigationseinträgen und %d Weiterleitungen verwendet.', $menus, $redirects));
         } else {
             foreach ($page->getBlocks() as $block) {
-                foreach ($this->configurationImages($block->getConfiguration()) as $image) {
-                    $this->imageUploader->delete($image);
-                }
+                $this->blockHandler->deleteBlockImages($block);
             }
             $this->entityManager->remove($page);
             $this->entityManager->flush();
@@ -138,9 +132,7 @@ final class CmsPageAdminController extends AbstractController
         if ($block->getPage() !== $page || !$this->isCsrfTokenValid('delete-cms-block-' . $block->getId(), $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException();
         }
-        foreach ($this->configurationImages($block->getConfiguration()) as $image) {
-            $this->imageUploader->delete($image);
-        }
+        $this->blockHandler->deleteBlockImages($block);
         $this->entityManager->remove($block);
         $this->entityManager->flush();
         $this->addFlash('success', 'Block wurde gelöscht.');
@@ -180,80 +172,9 @@ final class CmsPageAdminController extends AbstractController
     private function blockForm(CmsPage $page, CmsBlock $block, Request $request, bool $new): Response
     {
         $form = $this->createForm(CmsBlockType::class, $block, ['locale_choices' => $this->localeChoices()])->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $oldConfiguration = $block->getConfiguration();
-            $oldImages = $this->configurationImages($oldConfiguration);
-            $uploadedImages = [];
-            $configuration = [];
-            foreach ($form as $name => $field) {
-                if (in_array($name, ['locale', 'type', 'position', 'enabled', 'image'], true)) {
-                    continue;
-                }
-                $configuration[$name] = $field->getData();
-            }
-            $upload = $form->has('image') ? $form->get('image')->getData() : null;
-            if ($form->has('image') && isset($oldConfiguration['image'])) {
-                $configuration['image'] = $oldConfiguration['image'];
-            }
-            if ($upload instanceof UploadedFile) {
-                try {
-                    $configuration['image'] = $this->imageUploader->upload($upload);
-                    $uploadedImages[] = $configuration['image'];
-                } catch (\InvalidArgumentException|\RuntimeException $exception) {
-                    $form->get('image')->addError(new FormError($exception->getMessage()));
-                }
-            }
-            if ($form->has('items') && in_array($block->getType(), ['gallery', 'homepage_industries'], true)) {
-                $configuration['items'] = [];
-                foreach ($form->get('items') as $index => $itemForm) {
-                    $itemData = is_array($itemForm->getData()) ? $itemForm->getData() : [];
-                    $existing = $itemData['existingImage'] ?? null;
-                    $image = is_string($existing) && in_array($existing, $oldImages, true) ? $existing : null;
-                    $itemUpload = $itemForm->get('image')->getData();
-                    if ($itemUpload instanceof UploadedFile) {
-                        try {
-                            $image = $this->imageUploader->upload($itemUpload);
-                            $uploadedImages[] = $image;
-                        } catch (\InvalidArgumentException|\RuntimeException $exception) {
-                            $itemForm->get('image')->addError(new FormError($exception->getMessage()));
-                        }
-                    }
-                    unset($itemData['existingImage'], $itemData['image']);
-                    $configuration['items'][] = ['image' => $image] + array_map(
-                        static fn (mixed $value): mixed => is_string($value) ? trim($value) : $value,
-                        $itemData,
-                    );
-                }
-            }
-            foreach ($this->blockRegistry->validate($block->getType(), $configuration) as $error) {
-                $form->addError(new FormError($error));
-            }
-            if ($form->isValid()) {
-                $block->setConfiguration($configuration);
-
-                try {
-                    if ($new) {
-                        $this->entityManager->persist($block);
-                    }
-                    $this->entityManager->flush();
-                } catch (\Throwable $exception) {
-                    foreach ($uploadedImages as $image) {
-                        $this->imageUploader->delete($image);
-                    }
-
-                    throw $exception;
-                }
-                $usedImages = $this->configurationImages($configuration);
-                foreach (array_diff($oldImages, $usedImages) as $image) {
-                    $this->imageUploader->delete($image);
-                }
-                $this->addFlash('success', 'Block wurde gespeichert.');
-
-                return $this->redirectToRoute('cardnext_admin_cms_page_edit', ['id' => $page->getId()]);
-            }
-            foreach ($uploadedImages as $image) {
-                $this->imageUploader->delete($image);
-            }
+        if ($this->blockHandler->save($form, $block, $new)) {
+            $this->addFlash('success', 'Block wurde gespeichert.');
+            return $this->redirectToRoute('cardnext_admin_cms_page_edit', ['id' => $page->getId()]);
         }
 
         return $this->render('admin/cardnext/cms/block/form.html.twig', ['form' => $form, 'page' => $page, 'block' => $block]);
@@ -296,32 +217,4 @@ final class CmsPageAdminController extends AbstractController
         return $names;
     }
 
-    /** @param array<string, mixed> $configuration */
-    private function configurationImage(array $configuration): ?string
-    {
-        return isset($configuration['image']) && is_string($configuration['image']) ? $configuration['image'] : null;
-    }
-
-    /**
-     * @param array<string, mixed> $configuration
-     *
-     * @return list<string>
-     */
-    private function configurationImages(array $configuration): array
-    {
-        $images = [];
-        if (($image = $this->configurationImage($configuration)) !== null) {
-            $images[] = $image;
-        }
-        $items = $configuration['items'] ?? null;
-        if (is_array($items)) {
-            foreach ($items as $item) {
-                if (is_array($item) && isset($item['image']) && is_string($item['image'])) {
-                    $images[] = $item['image'];
-                }
-            }
-        }
-
-        return array_values(array_unique($images));
-    }
 }

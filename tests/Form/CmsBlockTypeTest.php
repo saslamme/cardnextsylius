@@ -85,6 +85,21 @@ final class CmsBlockTypeTest extends TestCase
         self::assertSame($configuration, $block->getConfiguration());
     }
 
+    public function testSeoOptionsFixLocaleRestrictTypesAndExposePlacement(): void
+    {
+        $block = $this->block('rich_text', ['content' => 'Text']);
+        $form = $this->formFactory->create(CmsBlockType::class, $block, [
+            'fixed_locale' => 'en_US',
+            'allowed_types' => ['rich_text', 'faq'],
+            'placement_choices' => ['Before' => CmsBlock::PLACEMENT_BEFORE_CATALOG],
+        ]);
+        self::assertFalse($form->has('locale'));
+        self::assertTrue($form->has('placement'));
+        self::assertSame(['rich_text', 'faq'], array_values($form->get('type')->getConfig()->getOption('choices')));
+        $form->submit(['type' => 'rich_text', 'placement' => CmsBlock::PLACEMENT_BEFORE_CATALOG, 'position' => 10, 'enabled' => '1', 'headline' => '', 'content' => 'Text']);
+        self::assertSame('en_US', $block->getLocale());
+    }
+
     /** @param array<string, mixed> $configuration */
     private function block(string $type, array $configuration): CmsBlock
     {

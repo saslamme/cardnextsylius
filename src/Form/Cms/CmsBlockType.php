@@ -35,11 +35,31 @@ final class CmsBlockType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $choices = array_flip(CmsBlockRendererRegistry::TYPE_LABELS);
-        $builder->add('locale', ChoiceType::class, ['label' => 'Sprache', 'choices' => $options['locale_choices']])
-            ->add('type', ChoiceType::class, ['label' => 'Blocktyp', 'choices' => $choices])
+        $choices = [];
+        foreach ($options['allowed_types'] as $type) {
+            if (isset(CmsBlockRendererRegistry::TYPE_LABELS[$type])) {
+                $choices[CmsBlockRendererRegistry::TYPE_LABELS[$type]] = $type;
+            }
+        }
+        if ($options['fixed_locale'] === null) {
+            $builder->add('locale', ChoiceType::class, ['label' => 'Sprache', 'choices' => $options['locale_choices']]);
+        }
+        $builder->add('type', ChoiceType::class, ['label' => 'Blocktyp', 'choices' => $choices])
             ->add('position', IntegerType::class, ['label' => 'Position'])
             ->add('enabled', CheckboxType::class, ['label' => 'Aktiv', 'required' => false]);
+        if ($options['placement_choices'] !== []) {
+            $builder->add('placement', ChoiceType::class, ['label' => 'Inhaltsbereich', 'choices' => $options['placement_choices']]);
+        }
+
+        if ($options['fixed_locale'] !== null) {
+            $fixedLocale = $options['fixed_locale'];
+            $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) use ($fixedLocale): void {
+                $block = $event->getData();
+                if ($block instanceof CmsBlock) {
+                    $block->setLocale($fixedLocale);
+                }
+            });
+        }
 
         $configure = function ($form, string $type, array $configuration, bool $useDefaults): void {
             foreach ($this->fields($type) as $name => [$fieldType, $fieldOptions]) {
@@ -189,7 +209,16 @@ final class CmsBlockType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => CmsBlock::class, 'locale_choices' => []]);
+        $resolver->setDefaults([
+            'data_class' => CmsBlock::class,
+            'locale_choices' => [],
+            'allowed_types' => CmsBlockRendererRegistry::TYPES,
+            'fixed_locale' => null,
+            'placement_choices' => [],
+        ]);
         $resolver->setAllowedTypes('locale_choices', 'array');
+        $resolver->setAllowedTypes('allowed_types', 'array');
+        $resolver->setAllowedTypes('fixed_locale', ['null', 'string']);
+        $resolver->setAllowedTypes('placement_choices', 'array');
     }
 }
