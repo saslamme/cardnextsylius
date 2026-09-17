@@ -50,7 +50,7 @@ final class CmsDoctrineMappingTest extends TestCase
         $expected = [
             CmsPage::class => ['layout' => 'layout_id'],
             CmsPageTranslation::class => ['page' => 'page_id'],
-            CmsBlock::class => ['page' => 'page_id'],
+            CmsBlock::class => ['page' => 'page_id', 'seoLandingPage' => 'seo_landing_page_id'],
             CmsMenuItem::class => [
                 'menu' => 'menu_id',
                 'channel' => 'channel_id',

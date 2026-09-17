@@ -725,6 +725,8 @@ body.cn-nav-open { overflow: hidden; }
 .cn-toolbar__count strong { color: var(--cn-ink); font-weight: 750; }
 .cn-toolbar__actions { display: flex; align-items: center; gap: 9px; }
 .cn-catalog { display: grid; grid-template-columns: 240px minmax(0,1fr); gap: 48px; align-items: start; }
+.cn-seo-landing__blocks--before { margin-bottom: 48px; }
+.cn-seo-landing__blocks--after { margin-top: 48px; }
 .cn-sidebar { min-width: 0; align-self: start; }
 .cn-sidebar__head { min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding-bottom: 13px; border-bottom: 1px solid var(--cn-border); }
 .cn-sidebar__head h2 { margin: 0; color: var(--cn-ink); font-size: 1.55rem; font-weight: 800; line-height: 1; }

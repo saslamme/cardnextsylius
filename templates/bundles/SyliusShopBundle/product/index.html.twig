@@ -20,6 +20,8 @@
                 {% if seo_landing.topContent %}<div class="cn-rich-text cn-seo-landing__intro">{{ seo_landing.topContent|raw }}</div>{% endif %}
             </div>
         </header>
+        {% set before_blocks = seo_landing.blocks|filter(block => block.enabled and block.placement == 'before_catalog') %}
+        {% if before_blocks|length %}<div class="cn-container cardnext-cms cn-seo-landing__blocks cn-seo-landing__blocks--before">{% for block in before_blocks %}{% include cardnext_cms_block_template(block.type) with {config: block.configuration} only %}{% endfor %}</div>{% endif %}
     {% else %}
     {{ component('sylius_shop:product:show:breadcrumbs', {template: 'shop/category/breadcrumbs.html.twig'}) }}
     {{ component('sylius_shop:product:show:header', {template: 'shop/category/hero.html.twig'}) }}
@@ -74,5 +76,6 @@
         </div>
         {% if seo_landing %}{% if seo_landing.bottomContent %}<div class="cn-container cn-rich-text mt-5">{{ seo_landing.bottomContent|raw }}</div>{% endif %}{% else %}{{ component('sylius_shop:product:show:header', {template: 'shop/category/bottom_description.html.twig'}) }}{% endif %}
     </section>
+    {% if seo_landing %}{% set after_blocks = seo_landing.blocks|filter(block => block.enabled and block.placement == 'after_catalog') %}{% if after_blocks|length %}<div class="cn-container cardnext-cms cn-seo-landing__blocks cn-seo-landing__blocks--after">{% for block in after_blocks %}{% include cardnext_cms_block_template(block.type) with {config: block.configuration} only %}{% endfor %}</div>{% endif %}{% endif %}
 </main>
 {% endblock %}

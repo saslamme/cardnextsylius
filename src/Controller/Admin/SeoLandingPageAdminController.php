@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Cms\Admin\CmsBlockFormHandler;
+use App\Cms\CmsBlockRendererRegistry;
 use App\Entity\Channel\Channel;
+use App\Entity\Cms\CmsBlock;
 use App\Entity\Seo\SeoLandingPage;
 use App\Entity\Taxonomy\Taxon;
 use App\Form\Type\SeoLandingPageType;
+use App\Form\Cms\CmsBlockType;
 use App\Repository\Seo\SeoLandingPageRepository;
 use App\Seo\LandingPageContentSanitizer;
 use App\Seo\LandingPagePath;
@@ -81,7 +85,35 @@ final class SeoLandingPageAdminController extends AbstractController
     #[Route('/{id}/edit', name: 'cardnext_admin_seo_landing_page_update', methods: ['GET', 'POST'])]
     public function update(SeoLandingPage $page, Request $request, EntityManagerInterface $em, LandingPageContentSanitizer $sanitizer, LandingPageRouteValidator $routeValidator): Response { return $this->form($page, $request, $em, $sanitizer, $routeValidator); }
     #[Route('/{id}/delete', name: 'cardnext_admin_seo_landing_page_delete', methods: ['POST'])]
-    public function delete(SeoLandingPage $page, Request $request, EntityManagerInterface $em): Response { if (!$this->isCsrfTokenValid('delete-seo-'.$page->getId(), (string) $request->request->get('_token'))) throw $this->createAccessDeniedException(); $em->remove($page); $em->flush(); return $this->redirectToRoute('cardnext_admin_seo_landing_page_index'); }
+    public function delete(SeoLandingPage $page, Request $request, EntityManagerInterface $em, CmsBlockFormHandler $blockHandler): Response { if (!$this->isCsrfTokenValid('delete-seo-'.$page->getId(), (string) $request->request->get('_token'))) throw $this->createAccessDeniedException(); foreach ($page->getBlocks() as $block) $blockHandler->deleteBlockImages($block); $em->remove($page); $em->flush(); return $this->redirectToRoute('cardnext_admin_seo_landing_page_index'); }
+
+    #[Route('/{id}/blocks/new', name: 'cardnext_admin_seo_landing_page_block_new', methods: ['GET', 'POST'])]
+    public function createBlock(SeoLandingPage $page, Request $request, CmsBlockFormHandler $handler): Response
+    {
+        $block = new CmsBlock();
+        $placement = $request->query->getString('placement');
+        $block->setPlacement(in_array($placement, [CmsBlock::PLACEMENT_BEFORE_CATALOG, CmsBlock::PLACEMENT_AFTER_CATALOG], true) ? $placement : CmsBlock::PLACEMENT_BEFORE_CATALOG);
+        $positions = array_map(static fn (CmsBlock $item): int => $item->getPlacement() === $block->getPlacement() ? $item->getPosition() : 0, $page->getBlocks()->toArray());
+        $block->setPosition(($positions === [] ? 0 : max($positions)) + 10);
+        $page->addBlock($block);
+        return $this->blockForm($page, $block, $request, $handler, true);
+    }
+
+    #[Route('/{id}/blocks/{block}/edit', name: 'cardnext_admin_seo_landing_page_block_edit', methods: ['GET', 'POST'])]
+    public function editBlock(SeoLandingPage $page, CmsBlock $block, Request $request, CmsBlockFormHandler $handler): Response
+    {
+        if ($block->getSeoLandingPage() !== $page) throw $this->createNotFoundException();
+        return $this->blockForm($page, $block, $request, $handler, false);
+    }
+
+    #[Route('/{id}/blocks/{block}/delete', name: 'cardnext_admin_seo_landing_page_block_delete', methods: ['POST'])]
+    public function deleteBlock(SeoLandingPage $page, CmsBlock $block, Request $request, EntityManagerInterface $em, CmsBlockFormHandler $handler): Response
+    {
+        if ($block->getSeoLandingPage() !== $page || !$this->isCsrfTokenValid('delete-cms-block-'.$block->getId(), $request->request->getString('_token'))) throw $this->createAccessDeniedException();
+        $handler->deleteBlockImages($block); $em->remove($block); $em->flush();
+        $this->addFlash('success', 'Inhaltselement wurde gelöscht.');
+        return $this->redirectToRoute('cardnext_admin_seo_landing_page_update', ['id' => $page->getId()]);
+    }
     private function form(SeoLandingPage $page, Request $request, EntityManagerInterface $em, LandingPageContentSanitizer $sanitizer, LandingPageRouteValidator $routeValidator): Response
     {
         $form = $this->createForm(SeoLandingPageType::class, $page); $form->handleRequest($request);
@@ -90,9 +122,28 @@ final class SeoLandingPageAdminController extends AbstractController
                 $this->addFlash('error', 'Der gewählte URL-Pfad kann nicht als SEO-Landingpage verwendet werden.');
             } else {
                 $page->setTopContent($sanitizer->sanitize($page->getTopContent())); $page->setBottomContent($sanitizer->sanitize($page->getBottomContent()));
-                $em->persist($page); $em->flush(); $this->addFlash('success', 'SEO-Landingpage wurde gespeichert.'); return $this->redirectToRoute('cardnext_admin_seo_landing_page_index');
+                $em->persist($page); $em->flush(); $this->addFlash('success', 'SEO-Landingpage wurde gespeichert.'); return $this->redirectToRoute('cardnext_admin_seo_landing_page_update', ['id' => $page->getId()]);
             }
         }
         return $this->render('admin/cardnext/seo_landing_page/form.html.twig', ['form' => $form, 'page' => $page]);
+    }
+
+    private function blockForm(SeoLandingPage $page, CmsBlock $block, Request $request, CmsBlockFormHandler $handler, bool $new): Response
+    {
+        $form = $this->createForm(CmsBlockType::class, $block, [
+            'allowed_types' => CmsBlockRendererRegistry::SEO_LANDING_PAGE_TYPES,
+            'fixed_locale' => $page->getLocale(),
+            'placement_choices' => ['Oberhalb der Produktliste' => CmsBlock::PLACEMENT_BEFORE_CATALOG, 'Unterhalb der Produktliste' => CmsBlock::PLACEMENT_AFTER_CATALOG],
+        ])->handleRequest($request);
+        if ($handler->save($form, $block, $new)) {
+            $this->addFlash('success', 'Inhaltselement wurde gespeichert.');
+            return $this->redirectToRoute('cardnext_admin_seo_landing_page_update', ['id' => $page->getId()]);
+        }
+        return $this->render('admin/cardnext/cms/block/form.html.twig', [
+            'form' => $form, 'block' => $block, 'page' => $page,
+            'context_label' => 'Inhalte / SEO-Landingpages / '.$page->getInternalName(),
+            'title' => 'Inhaltselement bearbeiten',
+            'back_url' => $this->generateUrl('cardnext_admin_seo_landing_page_update', ['id' => $page->getId()]),
+        ]);
     }
 }

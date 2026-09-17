@@ -10,6 +10,8 @@ final class CmsBlockRendererRegistry
 {
     public const TYPES = ['rich_text', 'hero', 'category_slider', 'homepage_service', 'homepage_industries', 'image_text', 'faq', 'cta', 'homepage_promo', 'promise_bar', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery', 'features', 'stats', 'testimonials'];
 
+    public const SEO_LANDING_PAGE_TYPES = ['rich_text', 'image_text', 'faq', 'cta', 'promise_bar', 'downloads', 'link_cards', 'product_slider', 'video', 'manufacturer_slider', 'gallery', 'features', 'stats', 'testimonials'];
+
     public const FEATURE_ICONS = ['consulting', 'shipping', 'support', 'quality', 'business', 'security', 'stock', 'technology', 'service', 'warranty', 'international', 'sustainability'];
 
     public const TYPE_LABELS = [

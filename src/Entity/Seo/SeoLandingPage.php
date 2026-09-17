@@ -9,7 +9,10 @@ use App\Entity\Taxonomy\Taxon;
 use App\Repository\Seo\SeoLandingPageRepository;
 use App\Seo\LandingPagePath;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Cms\CmsBlock;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -42,8 +45,12 @@ class SeoLandingPage
     #[ORM\Column(name: 'filter_definition', type: Types::JSON)] private array $filterDefinition = [];
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $createdAt;
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)] private \DateTimeImmutable $updatedAt;
+    /** @var Collection<int, CmsBlock> */
+    #[ORM\OneToMany(mappedBy: 'seoLandingPage', targetEntity: CmsBlock::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $blocks;
 
-    public function __construct() { $this->createdAt = $this->updatedAt = new \DateTimeImmutable(); }
+    public function __construct() { $this->blocks = new ArrayCollection(); $this->createdAt = $this->updatedAt = new \DateTimeImmutable(); }
     public function getId(): ?int { return $this->id; }
     public function getInternalName(): string { return $this->internalName; }
     public function setInternalName(string $value): void { $this->internalName = trim($value); }
@@ -80,6 +87,9 @@ class SeoLandingPage
     public function setFilterDefinition(array $value): void { $this->filterDefinition = $value; }
     public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
+    /** @return Collection<int, CmsBlock> */ public function getBlocks(): Collection { return $this->blocks; }
+    public function addBlock(CmsBlock $block): void { if (!$this->blocks->contains($block)) { $this->blocks->add($block); $block->setPage(null); $block->setSeoLandingPage($this); } }
+    public function removeBlock(CmsBlock $block): void { if ($this->blocks->removeElement($block) && $block->getSeoLandingPage() === $this) { $block->setSeoLandingPage(null); } }
     #[Assert\Callback]
     public function validateChannelLocale(ExecutionContextInterface $context): void
     {
