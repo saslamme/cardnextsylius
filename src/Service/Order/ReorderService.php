@@ -11,6 +11,7 @@ use App\Entity\Order\Order;
 use App\Entity\Order\OrderItem;
 use App\Entity\Product\Product;
 use App\Entity\Product\ProductBundle;
+use App\Entity\Product\ProductBundleItem;
 use App\Entity\Product\ProductVariant;
 use App\Exception\Configurator\InvalidConfigurationException;
 use App\Service\Configurator\ConfiguredCartItemFactory;
@@ -48,6 +49,17 @@ final readonly class ReorderService
         $regular = [];
         $bundleGroups = [];
         $skipped = $skippedBundles = $protection = 0;
+        /** @var array<int, int> $plannedQuantities */
+        $plannedQuantities = [];
+        foreach ($cart->getItems() as $cartItem) {
+            if (!$cartItem instanceof OrderItem || $cartItem->isAddon() || $cartItem->getBundleGroupKey() !== null) {
+                continue;
+            }
+            $variant = $cartItem->getVariant();
+            if ($variant instanceof ProductVariant) {
+                $plannedQuantities[spl_object_id($variant)] = ($plannedQuantities[spl_object_id($variant)] ?? 0) + $cartItem->getQuantity();
+            }
+        }
         foreach ($source->getItems() as $oldItem) {
             if (!$oldItem instanceof OrderItem) {
                 continue;
@@ -56,12 +68,18 @@ final readonly class ReorderService
                 ++$protection;
                 continue;
             }
-            if ($oldItem->isBundleItem()) {
+            // The bundle relation may have been set to null when a bundle was deleted,
+            // while the durable group marker remains on historical order items.
+            if ($oldItem->getBundleGroupKey() !== null) {
                 $bundleGroups[(string) $oldItem->getBundleGroupKey()][] = $oldItem;
                 continue;
             }
-            if ($this->isAvailable($oldItem->getVariant(), $oldItem->getQuantity(), $channel)) {
+            $variant = $oldItem->getVariant();
+            $variantKey = $variant instanceof ProductVariant ? spl_object_id($variant) : null;
+            $quantity = $oldItem->getQuantity() + ($variantKey !== null ? ($plannedQuantities[$variantKey] ?? 0) : 0);
+            if ($variantKey !== null && $this->isAvailable($variant, $quantity, $channel)) {
                 $regular[] = $oldItem;
+                $plannedQuantities[$variantKey] = $quantity;
             } else {
                 ++$skipped;
             }
@@ -121,7 +139,7 @@ final readonly class ReorderService
     private function addRegularItem(Order $cart, OrderItem $oldItem): void
     {
         foreach ($cart->getItems() as $existing) {
-            if ($existing instanceof OrderItem && !$existing->isBundleItem() && !$existing->isAddon() && $existing->getVariant() === $oldItem->getVariant()) {
+            if ($existing instanceof OrderItem && $existing->getBundleGroupKey() === null && !$existing->isAddon() && $existing->getVariant() === $oldItem->getVariant()) {
                 $this->quantityModifier->modify($existing, $existing->getQuantity() + $oldItem->getQuantity());
                 return;
             }
@@ -168,10 +186,47 @@ final readonly class ReorderService
         if ($configuration === null || !$configuration->isEnabled()) {
             return false;
         }
+
+        $mainItems = array_values(array_filter($items, static fn (OrderItem $item): bool => $item->getBundleRole() === OrderItem::BUNDLE_ROLE_MAIN));
+        if (count($mainItems) !== 1) {
+            return false;
+        }
+        $main = $mainItems[0];
+        $mainVariant = $main->getVariant();
+        $mainProduct = $bundle->getMainProduct();
+        $bundleQuantity = $main->getQuantity();
+        if (!$mainProduct->isEnabled() || !$mainProduct->getChannels()->contains($channel) || !$mainVariant instanceof ProductVariant || $mainVariant->getProduct() !== $mainProduct || !$this->isAvailable($mainVariant, $bundleQuantity, $channel)) {
+            return false;
+        }
+
+        /** @var array<int, ProductBundleItem> $definitions */
+        $definitions = [];
+        foreach ($bundle->getItems() as $definition) {
+            if ($definition->isEnabled()) {
+                $definitions[spl_object_id($definition->getVariant())] = $definition;
+            }
+        }
+        $selected = [];
         foreach ($items as $item) {
-            if (!$this->isAvailable($item->getVariant(), $item->getQuantity(), $channel)) {
+            if ($item->getBundle() !== $bundle) {
                 return false;
             }
+            if ($item === $main) {
+                continue;
+            }
+            if ($item->getBundleRole() !== OrderItem::BUNDLE_ROLE_COMPONENT) {
+                return false;
+            }
+            $variant = $item->getVariant();
+            if (!$variant instanceof ProductVariant) {
+                return false;
+            }
+            $key = spl_object_id($variant);
+            $definition = $definitions[$key] ?? null;
+            if (!$definition instanceof ProductBundleItem || isset($selected[$key]) || $item->getQuantity() !== $definition->getQuantity() * $bundleQuantity || !$this->isAvailable($variant, $item->getQuantity(), $channel)) {
+                return false;
+            }
+            $selected[$key] = true;
         }
 
         return true;

@@ -40,6 +40,34 @@ final class ReorderArchitectureTest extends TestCase
         self::assertStringNotContainsString('function calculateItem', $controller);
     }
 
+    public function testReorderPlansCombinedRegularQuantitiesBeforeMutatingTheCart(): void
+    {
+        $service = file_get_contents(__DIR__.'/../../src/Service/Order/ReorderService.php');
+
+        self::assertIsString($service);
+        self::assertStringContainsString('$plannedQuantities', $service);
+        self::assertStringContainsString('$oldItem->getQuantity() +', $service);
+        self::assertStringContainsString('$plannedQuantities[$variantKey] = $quantity', $service);
+        self::assertLessThan(strpos($service, '$this->addRegularItem($cart, $oldItem)'), strpos($service, '$validBundles = []'));
+    }
+
+    public function testHistoricalBundleMarkersAndCurrentDefinitionsAreValidated(): void
+    {
+        $service = file_get_contents(__DIR__.'/../../src/Service/Order/ReorderService.php');
+        $services = Yaml::parseFile(__DIR__.'/../../config/services.yaml');
+
+        self::assertIsString($service);
+        self::assertStringContainsString('if ($oldItem->getBundleGroupKey() !== null)', $service);
+        self::assertStringContainsString('count($mainItems) !== 1', $service);
+        self::assertStringContainsString('$mainVariant->getProduct() !== $mainProduct', $service);
+        self::assertStringContainsString('$definition->getQuantity() * $bundleQuantity', $service);
+        self::assertStringContainsString('$definition->isEnabled()', $service);
+        self::assertSame(
+            '@sylius.custom_factory.order_item',
+            $services['services']['App\\Service\\Order\\ReorderService']['arguments']['$cartItemFactory'] ?? null,
+        );
+    }
+
     public function testReorderTranslationKeysStayAtTheExpectedPathInEveryShopLocale(): void
     {
         foreach (['de', 'de_AT', 'en', 'da_DK', 'es_ES', 'it_IT', 'nl_NL', 'sv_SE'] as $locale) {

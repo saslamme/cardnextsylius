@@ -165,6 +165,10 @@ services:
         arguments:
             $cartItemFactory: '@sylius.custom_factory.order_item'
 
+    App\Service\Order\ReorderService:
+        arguments:
+            $cartItemFactory: '@sylius.custom_factory.order_item'
+
     App\Service\Quote\QuoteRequestMailer:
         arguments:
             $recipient: '%cardnext.quote_recipient%'
