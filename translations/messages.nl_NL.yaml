@@ -179,17 +179,6 @@ cardnext:
       default_brand: '%brand%-assortiment'
       product_code: 'Productcode'
       add_to_cart: 'In winkelwagen'
-    saved:
-      save: Configuratie opslaan
-      success: Configuratie opgeslagen
-      copy_link: Link kopiëren
-      link_copied: Link gekopieerd
-      changed: Configuratie gewijzigd
-      loaded: Opgeslagen configuratie geladen.
-      rechecking: Prijzen en beschikbaarheid worden opnieuw gecontroleerd.
-      unavailable: Sommige opgeslagen opties zijn niet meer beschikbaar. Controleer de configuratie.
-      error: Fout bij opslaan
-      share_url: Deellink
       add_to_compare: 'Toevoegen aan vergelijking'
       pricing:
         your_price: 'Uw prijs'
@@ -294,6 +283,17 @@ cardnext:
       variant: Variantproduct
       configuration: Configuratieproduct
   configurator:
+    saved:
+      save: Configuratie opslaan
+      success: Configuratie opgeslagen
+      copy_link: Link kopiëren
+      link_copied: Link gekopieerd
+      changed: Configuratie gewijzigd
+      loaded: Opgeslagen configuratie geladen.
+      rechecking: Prijzen en beschikbaarheid worden opnieuw gecontroleerd.
+      unavailable: Sommige opgeslagen opties zijn niet meer beschikbaar. Controleer de configuratie.
+      error: Fout bij opslaan
+      share_url: Deellink
     lead_time:
       preselected: Voorgeselecteerd
       preselected_help: Deze levertijd wordt automatisch geselecteerd bij het openen van de configurator.

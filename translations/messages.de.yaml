@@ -179,17 +179,6 @@ cardnext:
       default_brand: '%brand% Sortiment'
       product_code: 'Produktcode'
       add_to_cart: 'In den Warenkorb'
-    saved:
-      save: Konfiguration speichern
-      success: Konfiguration gespeichert
-      copy_link: Link kopieren
-      link_copied: Link kopiert
-      changed: Konfiguration geändert
-      loaded: Gespeicherte Konfiguration geladen.
-      rechecking: Preise und Verfügbarkeit werden aktuell neu geprüft.
-      unavailable: Einzelne gespeicherte Optionen sind nicht mehr verfügbar. Bitte prüfen Sie die Konfiguration.
-      error: Fehler beim Speichern
-      share_url: Freigabelink
       add_to_compare: 'Zum Vergleich hinzufügen'
       pricing:
         your_price: 'Ihr Preis'
@@ -305,6 +294,17 @@ cardnext:
       variant: Variantenprodukt
       configuration: Konfigurationsprodukt
   configurator:
+    saved:
+      save: Konfiguration speichern
+      success: Konfiguration gespeichert
+      copy_link: Link kopieren
+      link_copied: Link kopiert
+      changed: Konfiguration geändert
+      loaded: Gespeicherte Konfiguration geladen.
+      rechecking: Preise und Verfügbarkeit werden aktuell neu geprüft.
+      unavailable: Einzelne gespeicherte Optionen sind nicht mehr verfügbar. Bitte prüfen Sie die Konfiguration.
+      error: Fehler beim Speichern
+      share_url: Freigabelink
     lead_time:
       preselected: Vorausgewählt
       preselected_help: Diese Lieferzeit ist beim Öffnen des Konfigurators automatisch ausgewählt.
