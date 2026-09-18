@@ -68,6 +68,8 @@ final class QuoteRevisionFactory
             $item->setDiscountAmount($old->getDiscountAmount());
             $item->setTaxRate($old->getTaxRate());
             $item->setItemType($old->getItemType());
+            $item->setConfiguredSnapshot($old->getConfiguredSnapshot());
+            $item->setConfiguredLineTotal($old->getConfiguredLineTotal());
             $q->addItem($item);
         }
         $this->calculator->calculate($q);

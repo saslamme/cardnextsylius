@@ -22,16 +22,17 @@ final class QuoteCartService
         private EntityManagerInterface $em,
         private B2BPriceResolver $priceResolver,
         private CustomerContextInterface $customerContext,
+        private ConfiguredQuoteSnapshotFactory $configuredSnapshots,
     )
     {
     }
 
-    /** @return array{channel:string,items:array<string,int>} */
+    /** @return array{channel:string,items:array<string,int>,configuredItems:array<string,array{snapshot:array<string,mixed>}>} */
     public function cart(ChannelInterface $channel): array
     {
         $s = $this->requests->getSession();
         $stored = $s->get(self::SESSION_KEY);
-        $cart = ['channel' => (string) $channel->getCode(), 'items' => []];
+        $cart = ['channel' => (string) $channel->getCode(), 'items' => [], 'configuredItems' => []];
         if (is_array($stored) && isset($stored['channel'],$stored['items']) && is_string($stored['channel']) && is_array($stored['items'])) {
             $cart['channel'] = $stored['channel'];
             foreach ($stored['items'] as $code => $quantity) {
@@ -39,8 +40,13 @@ final class QuoteCartService
                     $cart['items'][$code] = $quantity;
                 }
             }
+            if (isset($stored['configuredItems']) && is_array($stored['configuredItems'])) {
+                foreach ($stored['configuredItems'] as $key => $row) {
+                    if (is_string($key) && is_array($row) && isset($row['snapshot']) && is_array($row['snapshot'])) { $cart['configuredItems'][$key] = ['snapshot' => $row['snapshot']]; }
+                }
+            }
         }if ($cart['channel'] !== $channel->getCode()) {
-            $cart = ['channel' => (string) $channel->getCode(), 'items' => []];
+            $cart = ['channel' => (string) $channel->getCode(), 'items' => [], 'configuredItems' => []];
             $s->set(self::SESSION_KEY, $cart);
         }
 
@@ -85,7 +91,30 @@ final class QuoteCartService
 
     public function count(ChannelInterface $channel): int
     {
-        return count($this->cart($channel)['items']);
+        $cart = $this->cart($channel);
+        return count($cart['items']) + count($cart['configuredItems']);
+    }
+
+    public function addConfigured(\App\Entity\Order\ConfiguredOrderItem $item, ChannelInterface $channel): string
+    {
+        if ($item->getChannelCode() !== $channel->getCode()) { throw new \DomainException('Configured item channel does not match quote cart channel.'); }
+        $cart = $this->cart($channel); $key = 'cfg:' . $item->getConfigurationHash();
+        $cart['configuredItems'][$key] = ['snapshot' => $this->configuredSnapshots->createSnapshot($item)];
+        $this->requests->getSession()->set(self::SESSION_KEY, $cart);
+        return $key;
+    }
+
+    public function removeConfigured(string $key, ChannelInterface $channel): void
+    {
+        $cart = $this->cart($channel); unset($cart['configuredItems'][$key]); $this->requests->getSession()->set(self::SESSION_KEY, $cart);
+    }
+
+    /** @param array<string,mixed> $snapshot */
+    public function replaceConfigured(string $oldKey, array $snapshot, ChannelInterface $channel): void
+    {
+        $cart = $this->cart($channel); if (!isset($cart['configuredItems'][$oldKey])) { throw new \DomainException('Configured quote cart item not found.'); }
+        unset($cart['configuredItems'][$oldKey]); $cart['configuredItems']['cfg:' . (string) $snapshot['configurationHash']] = ['snapshot' => $snapshot];
+        $this->requests->getSession()->set(self::SESSION_KEY, $cart);
     }
 
     /** @return list<array{variant:ProductVariant,quantity:int,unitPrice:int,lineTotal:int}> */
@@ -107,11 +136,15 @@ final class QuoteCartService
                 $changed = true;
 
                 continue;
-            }$out[] = ['variant' => $variant, 'quantity' => $quantity, 'unitPrice' => $price, 'lineTotal' => $price * $quantity];
+            }$out[] = ['type' => \App\Enum\Quote\QuoteItemType::Product, 'key' => $code, 'variant' => $variant, 'configuredSnapshot' => null, 'name' => (string) $variant->getProduct()?->getName(), 'quantity' => $quantity, 'unitPrice' => $price, 'lineTotal' => $price * $quantity];
         }if ($changed) {
             $this->requests->getSession()->set(self::SESSION_KEY, $cart);
         }
 
+        foreach ($cart['configuredItems'] as $key => $row) {
+            $snapshot = $row['snapshot'];
+            $out[] = ['type' => \App\Enum\Quote\QuoteItemType::Configured, 'key' => $key, 'variant' => null, 'configuredSnapshot' => $snapshot, 'name' => (string) ($snapshot['configuratorName'] ?? ''), 'quantity' => (int) ($snapshot['quantity'] ?? 0), 'unitPrice' => (int) ($snapshot['unitAmount'] ?? 0), 'lineTotal' => (int) ($snapshot['total'] ?? 0)];
+        }
         return $out;
     }
 

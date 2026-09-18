@@ -42,6 +42,10 @@ cardnext:
       variant: Variant product
       configuration: Configuration product
   configurator:
+    quote:
+      request: 'Request a quote'
+      adding: 'Adding…'
+      error: 'Configuration could not be added to the quote cart.'
     lead_time:
       preselected: Preselected
       preselected_help: This production time is automatically selected when the configurator is opened.
@@ -159,6 +163,11 @@ cardnext:
         description: After production and quality control, your cards will be shipped securely.
     content: { kicker: Product information }
   quote:
+    configured_product: 'Configured product'
+    configuration: 'Configuration'
+    production_time: 'Production time'
+    update_configuration_quantity: 'Update quantity'
+    configuration_update_error: 'The configuration could not be recalculated for this quantity.'
         cart: Quote cart
         request: Quote request
         intro: Collect the products you need. We will review prices, availability and your project requirements and prepare an individual quote.

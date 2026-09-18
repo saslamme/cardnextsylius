@@ -283,6 +283,10 @@ cardnext:
       variant: Variantproduct
       configuration: Configuratieproduct
   configurator:
+    quote:
+      request: 'Request a quote'
+      adding: 'Adding…'
+      error: 'Configuration could not be added to the quote cart.'
     saved:
       save: Configuratie opslaan
       success: Configuratie opgeslagen
@@ -442,6 +446,11 @@ cardnext:
     content:
       kicker: Productinformatie
   quote:
+    configured_product: 'Configured product'
+    configuration: 'Configuration'
+    production_time: 'Production time'
+    update_configuration_quantity: 'Update quantity'
+    configuration_update_error: 'The configuration could not be recalculated for this quantity.'
     cart: Offerte mand
     request: Offerteaanvraag
     intro: Stel uw gewenste producten samen. Wij controleren prijzen, beschikbaarheid en projectvereisten en maken vervolgens een individuele offerte voor u op.

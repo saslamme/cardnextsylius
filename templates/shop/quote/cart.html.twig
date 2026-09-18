@@ -1,5 +1,6 @@
 {% extends '@SyliusShop/shared/layout/base.html.twig' %}
 {% form_theme form '@SyliusShop/form/theme.html.twig' %}
+{% import 'shared/order/_configured_item_snapshot.html.twig' as configured %}
 
 {% block content %}
     <main class="cn-page cn-quote">
@@ -33,6 +34,21 @@
                         <div class="cn-quote__main">
                             <div class="cn-quote__items" role="list">
                                 {% for row in items %}
+                                    {% if row.type.value == 'configured' %}
+                                        {% set snapshot = row.configuredSnapshot %}
+                                        <article class="cn-quote-item" role="listitem">
+                                            <div class="cn-quote-item__info"><span class="cn-kicker">{{ 'cardnext.quote.configured_product'|trans }}</span><h2 class="cn-title cn-title--sm">{{ row.name }}</h2>
+                                                {{ configured.render(snapshot.selectionsSnapshot, 'shop') }}
+                                                {% if snapshot.leadTimeName %}<p><strong>{{ 'cardnext.quote.production_time'|trans }}:</strong> {{ snapshot.leadTimeName }}{% if snapshot.workingDays %} · ca. {{ snapshot.workingDays }} Arbeitstage{% endif %}</p>{% endif %}
+                                                <p>{{ row.unitPrice|sylius_format_money(currency, app.request.locale) }} / {{ 'cardnext.quote.unit'|trans }}</p>
+                                            </div>
+                                            <div class="cn-quote-item__actions">
+                                                <form method="post" action="{{ path('cardnext_shop_quote_configured_update', {key: row.key}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quote_configured_' ~ row.key) }}"><input class="form-control" type="number" name="quantity" min="1" max="100000" value="{{ row.quantity }}"><button class="cn-btn cn-btn--secondary cn-btn--small">{{ 'cardnext.quote.update_configuration_quantity'|trans }}</button></form>
+                                                <div class="cn-quote-item__total"><span>{{ 'cardnext.quote.total'|trans }}</span><strong>{{ row.lineTotal|sylius_format_money(currency, app.request.locale) }}</strong></div>
+                                                <form method="post" action="{{ path('cardnext_shop_quote_configured_remove', {key: row.key}) }}"><input type="hidden" name="_token" value="{{ csrf_token('quote_configured_' ~ row.key) }}"><button class="cn-link cn-link--small">{{ 'cardnext.quote.remove'|trans }}</button></form>
+                                            </div>
+                                        </article>
+                                    {% else %}
                                     {% set variant = row.variant %}
                                     <article class="cn-quote-item" role="listitem">
                                         <a class="cn-quote-item__media" href="{{ cardnext_product_url(variant.product) }}" tabindex="-1" aria-hidden="true">
@@ -71,6 +87,7 @@
                                             </form>
                                         </div>
                                     </article>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                             <p class="cn-quote__price-note">{{ 'cardnext.quote.price_note'|trans }}</p>

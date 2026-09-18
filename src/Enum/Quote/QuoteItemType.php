@@ -10,4 +10,5 @@ enum QuoteItemType: string
     case Service = 'service';
     case Shipping = 'shipping';
     case Custom = 'custom';
+    case Configured = 'configured';
 }

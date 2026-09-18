@@ -2,7 +2,7 @@
     {% set restoring = initialConfiguration is not null %}
     {% set restoredSelections = restoring ? initialConfiguration.selections : {} %}
     {% if restoring and computed.unavailableSavedOptions %}<div class="cn-configurator-saved-notice cn-configurator-saved-notice--warning" role="alert">{{ 'cardnext.configurator.saved.unavailable'|trans }}</div>{% endif %}
-    <section class="cn-configurator" data-configurator data-dependencies="{{ computed.dependencies|json_encode|e('html_attr') }}" data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" data-cart-endpoint="{{ path('cardnext_shop_configurator_cart_add', {configuratorCode: configurator.code}) }}" data-cart-token="{{ csrf_token('configured_cart_add_' ~ configurator.code) }}" data-save-endpoint="{{ path('cardnext_shop_configurator_save', {configuratorCode: configurator.code}) }}" data-save-token="{{ csrf_token('saved_configurator_' ~ configurator.code) }}" data-label-save-error="{{ 'cardnext.configurator.saved.error'|trans|e('html_attr') }}" data-label-changed="{{ 'cardnext.configurator.saved.changed'|trans|e('html_attr') }}" data-label-copied="{{ 'cardnext.configurator.saved.link_copied'|trans|e('html_attr') }}" aria-labelledby="configurator-title-{{ configurator.code }}">
+    <section class="cn-configurator" data-configurator data-dependencies="{{ computed.dependencies|json_encode|e('html_attr') }}" data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" data-cart-endpoint="{{ path('cardnext_shop_configurator_cart_add', {configuratorCode: configurator.code}) }}" data-cart-token="{{ csrf_token('configured_cart_add_' ~ configurator.code) }}" data-quote-endpoint="{{ path('cardnext_shop_configurator_quote_add', {configuratorCode: configurator.code}) }}" data-quote-token="{{ csrf_token('configured_quote_add_' ~ configurator.code) }}" data-save-endpoint="{{ path('cardnext_shop_configurator_save', {configuratorCode: configurator.code}) }}" data-save-token="{{ csrf_token('saved_configurator_' ~ configurator.code) }}" data-label-save-error="{{ 'cardnext.configurator.saved.error'|trans|e('html_attr') }}" data-label-changed="{{ 'cardnext.configurator.saved.changed'|trans|e('html_attr') }}" data-label-copied="{{ 'cardnext.configurator.saved.link_copied'|trans|e('html_attr') }}" aria-labelledby="configurator-title-{{ configurator.code }}">
         <div class="cn-configurator__intro">
             <h2 id="configurator-title-{{ configurator.code }}">{{ 'cardnext.configurator.form.title'|trans }}</h2>
             <p>{{ 'cardnext.configurator.form.intro'|trans }}</p>
@@ -107,6 +107,7 @@
                         <p class="cn-configurator__shipping">{{ 'cardnext.configurator.shipping_note'|trans }}</p>
                         <div class="cn-configurator__delivery d-none" data-configurator-lead-time-result><span>✓</span><p><strong></strong><small></small></p></div>
                         <button class="cn-configurator__add" type="button" data-configurator-add disabled>{{ 'cardnext.configurator.add_to_cart'|trans }}</button>
+                        <button class="cn-configurator__save" type="button" data-configurator-quote disabled>{{ 'cardnext.configurator.quote.request'|trans }}</button>
                         <button class="cn-configurator__save" type="button" data-configurator-save disabled>{{ 'cardnext.configurator.saved.save'|trans }}</button>
                         <div class="cn-configurator__changed d-none" data-configurator-share-changed role="status">{{ 'cardnext.configurator.saved.changed'|trans }}</div>
                         <div class="cn-configurator__share d-none" data-configurator-share role="status">
@@ -119,6 +120,6 @@
                 </div>
             </aside>
         </div>
-        <div class="cn-configurator__buybar"><div><strong data-configurator-mobile-total>–</strong><small data-configurator-mobile-unit>{{ 'cardnext.configurator.awaiting_price'|trans }}</small></div><button type="button" data-configurator-mobile-add disabled>{{ 'cardnext.configurator.add_to_cart'|trans }}</button></div>
+        <div class="cn-configurator__buybar"><div><strong data-configurator-mobile-total>–</strong><small data-configurator-mobile-unit>{{ 'cardnext.configurator.awaiting_price'|trans }}</small></div><button type="button" data-configurator-mobile-quote disabled>{{ 'cardnext.configurator.quote.request'|trans }}</button><button type="button" data-configurator-mobile-add disabled>{{ 'cardnext.configurator.add_to_cart'|trans }}</button></div>
     </section>
 {% endif %}

@@ -28,6 +28,7 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
     const price = root.querySelector('.cn-configurator__price');
     const addButtons = [...root.querySelectorAll('[data-configurator-add], [data-configurator-mobile-add]')];
     const saveButtons = [...root.querySelectorAll('[data-configurator-save]')];
+    const quoteButtons = [...root.querySelectorAll('[data-configurator-quote], [data-configurator-mobile-quote]')];
     const shareBox = root.querySelector('[data-configurator-share]');
     const shareInput = root.querySelector('[data-configurator-share-url]');
     const dependencies = JSON.parse(root.dataset.dependencies || '[]').sort((a, b) => a.priority - b.priority);
@@ -141,6 +142,7 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         calculatedPayload = undefined; requestVersion += 1; controller?.abort(); controller = undefined;
         addButtons.forEach((button) => { button.disabled = true; });
         saveButtons.forEach((button) => { button.disabled = true; });
+        quoteButtons.forEach((button) => { button.disabled = true; });
         root.querySelector('[data-configurator-state]').textContent = 'Unvollständig';
         root.querySelector('[data-configurator-placeholder]')?.classList.remove('d-none');
         root.querySelector('[data-configurator-result]')?.classList.add('d-none');
@@ -174,7 +176,7 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
             const lead = root.querySelector('[data-configurator-lead-time-result]');
             if (data.leadTimeCode) { lead.querySelector('strong').textContent = data.leadTimeName; lead.querySelector('small').textContent = `ca. ${data.workingDays} Arbeitstage`; lead.classList.remove('d-none'); }
             root.querySelector('[data-configurator-placeholder]').classList.add('d-none'); root.querySelector('[data-configurator-result]').classList.remove('d-none');
-            root.querySelector('[data-configurator-state]').textContent = 'Aktuell'; calculatedPayload = payload; addButtons.forEach((button) => { button.disabled = false; }); saveButtons.forEach((button) => { button.disabled = false; });
+            root.querySelector('[data-configurator-state]').textContent = 'Aktuell'; calculatedPayload = payload; addButtons.forEach((button) => { button.disabled = false; }); saveButtons.forEach((button) => { button.disabled = false; }); quoteButtons.forEach((button) => { button.disabled = false; });
         } catch (error) { if (error.name !== 'AbortError') showErrors([{field: null, message: 'Der Preisservice ist derzeit nicht erreichbar.'}]); }
         finally { if (version === requestVersion) price.setAttribute('aria-busy', 'false'); }
     };
@@ -196,6 +198,18 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         else { showErrors([{field: null, message: data.message || 'Der Artikel konnte nicht hinzugefügt werden.'}]); addButtons.forEach((button) => { button.disabled = false; }); }
     };
     addButtons.forEach((button) => button.addEventListener('click', addToCart));
+    const addToQuoteCart = async () => {
+        if (!calculatedPayload) return;
+        quoteButtons.forEach((button) => { button.disabled = true; });
+        try {
+            const response = await fetch(root.dataset.quoteEndpoint, {method: 'POST', headers: {'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': root.dataset.quoteToken}, body: JSON.stringify(calculatedPayload)});
+            const data = await response.json();
+            if (response.ok && data.ok) window.location.assign(data.quoteCartUrl);
+            else showErrors([{field: null, message: data.message || 'Konfiguration konnte nicht zum Angebotskorb hinzugefügt werden.'}]);
+        } catch (error) { showErrors([{field: null, message: 'Konfiguration konnte nicht zum Angebotskorb hinzugefügt werden.'}]); }
+        finally { quoteButtons.forEach((button) => { button.disabled = !calculatedPayload; }); }
+    };
+    quoteButtons.forEach((button) => button.addEventListener('click', addToQuoteCart));
     const saveConfiguration = async () => {
         if (!calculatedPayload) return;
         saveButtons.forEach((button) => { button.disabled = true; });
