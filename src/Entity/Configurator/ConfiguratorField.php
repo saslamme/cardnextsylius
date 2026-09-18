@@ -56,6 +56,9 @@ class ConfiguratorField
     #[ORM\Column(name:'step', type:'string', length:64, nullable:true)]
     private ?string $step = null;
 
+    #[ORM\Column(name:'default_value', type:'string', length:64, nullable:true)]
+    private ?string $defaultValue = null;
+
 /** @var Collection<int,ConfiguratorValue> */ #[ORM\OneToMany(mappedBy:'field', targetEntity:ConfiguratorValue::class, cascade:['persist'], orphanRemoval:true),ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
     private Collection $values;
 
@@ -154,7 +157,7 @@ class ConfiguratorField
     public function setType(FieldType $type): void
     {
         if (!in_array($type, [FieldType::INTEGER, FieldType::QUANTITY, FieldType::DECIMAL], true) &&
-            ($this->minimumValue !== null || $this->maximumValue !== null || $this->step !== null)) {
+            ($this->minimumValue !== null || $this->maximumValue !== null || $this->step !== null || $this->defaultValue !== null)) {
             throw new \DomainException('Clear numeric constraints before changing to a non-numeric field type.');
         }
         $this->type = $type;
@@ -187,7 +190,7 @@ class ConfiguratorField
 
     public function setMinimumValue(?string $v): void
     {
-        $this->setNumericConfiguration($v, $this->maximumValue, $this->step);
+        $this->setNumericConfiguration($v, $this->maximumValue, $this->step, $this->defaultValue);
     }
 
     public function getMaximumValue(): ?string
@@ -197,7 +200,7 @@ class ConfiguratorField
 
     public function setMaximumValue(?string $v): void
     {
-        $this->setNumericConfiguration($this->minimumValue, $v, $this->step);
+        $this->setNumericConfiguration($this->minimumValue, $v, $this->step, $this->defaultValue);
     }
 
     public function getStep(): ?string
@@ -207,7 +210,17 @@ class ConfiguratorField
 
     public function setStep(?string $v): void
     {
-        $this->setNumericConfiguration($this->minimumValue, $this->maximumValue, $v);
+        $this->setNumericConfiguration($this->minimumValue, $this->maximumValue, $v, $this->defaultValue);
+    }
+
+    public function getDefaultValue(): ?string
+    {
+        return $this->defaultValue;
+    }
+
+    public function setDefaultValue(?string $value): void
+    {
+        $this->setNumericConfiguration($this->minimumValue, $this->maximumValue, $this->step, $value);
     }
 
     public function setPosition(int $v): void
@@ -245,15 +258,15 @@ class ConfiguratorField
         }
     }
 
-    private function setNumericConfiguration(?string $minimum, ?string $maximum, ?string $step): void
+    private function setNumericConfiguration(?string $minimum, ?string $maximum, ?string $step, ?string $default): void
     {
         if (!in_array($this->type, [FieldType::INTEGER, FieldType::QUANTITY, FieldType::DECIMAL], true)) {
-            if ($minimum !== null || $maximum !== null || $step !== null) {
+            if ($minimum !== null || $maximum !== null || $step !== null || $default !== null) {
                 throw new \DomainException('Numeric constraints are only valid for numeric fields.');
             }
         }
         $integer = in_array($this->type, [FieldType::INTEGER, FieldType::QUANTITY], true);
-        foreach (['minimum' => $minimum, 'maximum' => $maximum, 'step' => $step] as $name => $value) {
+        foreach (['minimum' => $minimum, 'maximum' => $maximum, 'step' => $step, 'default value' => $default] as $name => $value) {
             if ($value !== null && ($integer ? preg_match('/^-?(?:0|[1-9][0-9]*)$/D', $value) !== 1 : !is_numeric($value))) {
                 throw new \DomainException(sprintf('%s must be a valid %s number.', ucfirst($name), $integer ? 'integer' : 'decimal'));
             }
@@ -264,9 +277,24 @@ class ConfiguratorField
         if ($minimum !== null && $maximum !== null && (float) $maximum < (float) $minimum) {
             throw new \DomainException('Maximum must be greater than or equal to minimum.');
         }
+        if ($default !== null && $minimum !== null && (float) $default < (float) $minimum) {
+            throw new \DomainException('Default value must be greater than or equal to minimum.');
+        }
+        if ($default !== null && $maximum !== null && (float) $default > (float) $maximum) {
+            throw new \DomainException('Default value must be less than or equal to maximum.');
+        }
+        if ($default !== null && $step !== null) {
+            $offset = (float) $default - (float) ($minimum ?? '0');
+            $remainder = fmod(abs($offset), (float) $step);
+            $tolerance = max(1.0, abs($offset)) * 1.0E-10;
+            if ($remainder > $tolerance && abs((float) $step - $remainder) > $tolerance) {
+                throw new \DomainException('Default value must conform to the configured step.');
+            }
+        }
         $this->minimumValue = $minimum;
         $this->maximumValue = $maximum;
         $this->step = $step;
+        $this->defaultValue = $default;
     }
 
     /** @return Collection<int, ConfiguratorFieldTranslation> */

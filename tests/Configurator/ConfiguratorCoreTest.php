@@ -524,6 +524,76 @@ final class ConfiguratorCoreTest extends TestCase
         $field->setStep('0');
     }
 
+    /** @dataProvider validNumericDefaultValues */
+    public function testNumericFieldsAcceptValidDefaultValues(FieldType $type, string $default): void
+    {
+        $field = new ConfiguratorField('number', 'Number', $type);
+        $field->setDefaultValue($default);
+
+        self::assertSame($default, $field->getDefaultValue());
+    }
+
+    /** @return iterable<string, array{FieldType, string}> */
+    public static function validNumericDefaultValues(): iterable
+    {
+        yield 'integer' => [FieldType::INTEGER, '1'];
+        yield 'quantity' => [FieldType::QUANTITY, '1'];
+        yield 'decimal' => [FieldType::DECIMAL, '1.5'];
+    }
+
+    public function testIntegerFieldRejectsDecimalDefaultValue(): void
+    {
+        $field = new ConfiguratorField('number', 'Number', FieldType::INTEGER);
+
+        $this->expectException(\DomainException::class);
+        $field->setDefaultValue('1.5');
+    }
+
+    /** @dataProvider outOfRangeDefaultValues */
+    public function testNumericDefaultMustBeWithinConfiguredBounds(string $default): void
+    {
+        $field = new ConfiguratorField('number', 'Number', FieldType::INTEGER);
+        $field->setMinimumValue('2');
+        $field->setMaximumValue('4');
+
+        $this->expectException(\DomainException::class);
+        $field->setDefaultValue($default);
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function outOfRangeDefaultValues(): iterable
+    {
+        yield 'below minimum' => ['1'];
+        yield 'above maximum' => ['5'];
+    }
+
+    public function testNumericDefaultMustConformToStep(): void
+    {
+        $field = new ConfiguratorField('number', 'Number', FieldType::DECIMAL);
+        $field->setMinimumValue('1.0');
+        $field->setStep('0.5');
+
+        $this->expectException(\DomainException::class);
+        $field->setDefaultValue('1.2');
+    }
+
+    public function testNonNumericFieldRejectsDefaultValue(): void
+    {
+        $field = new ConfiguratorField('text', 'Text', FieldType::TEXT);
+
+        $this->expectException(\DomainException::class);
+        $field->setDefaultValue('1');
+    }
+
+    public function testFieldWithDefaultCannotChangeToNonNumericType(): void
+    {
+        $field = new ConfiguratorField('number', 'Number', FieldType::INTEGER);
+        $field->setDefaultValue('1');
+
+        $this->expectException(\DomainException::class);
+        $field->setType(FieldType::TEXT);
+    }
+
     public function testDependencyExpectedValuesAndAbsentSourceAreSafe(): void
     {
         [$model, $source] = $this->model();
