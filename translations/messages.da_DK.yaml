@@ -708,3 +708,11 @@ quote_mail:
 "cardnext.protection_popup.save": "Anvend valg"
 "cardnext.protection_popup.continue": "Fortsæt uden ekstra ydelser"
 "cardnext.protection_popup.close": "Luk"
+
+'cardnext.reorder.button': 'Bestil igen'
+'cardnext.reorder.success': 'Ordren blev lagt i kurven. Priser og tilgængelighed er blevet genberegnet.'
+'cardnext.reorder.partial': '%added% varer blev tilføjet. %skipped% varer kunne ikke genbestilles.'
+'cardnext.reorder.none': 'Ingen varer fra denne ordre kan genbestilles i øjeblikket.'
+'cardnext.reorder.protection_notice': 'Service- og garantimuligheder skal vælges igen.'
+'cardnext.reorder.configured_unavailable': 'En tidligere produktkonfiguration er ikke længere fuldt tilgængelig og skal konfigureres igen.'
+'cardnext.reorder.bundle_unavailable': 'En tidligere produktpakke er ikke længere fuldt tilgængelig og blev ikke tilføjet.'

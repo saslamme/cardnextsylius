@@ -708,3 +708,11 @@ quote_mail:
 "cardnext.protection_popup.save": "Aplicar selección"
 "cardnext.protection_popup.continue": "Continuar sin servicios adicionales"
 "cardnext.protection_popup.close": "Cerrar"
+
+'cardnext.reorder.button': 'Volver a pedir'
+'cardnext.reorder.success': 'El pedido se añadió al carrito. Los precios y la disponibilidad se han recalculado.'
+'cardnext.reorder.partial': 'Se añadieron %added% artículos. No se pudieron volver a pedir %skipped% artículos.'
+'cardnext.reorder.none': 'Actualmente no se puede volver a pedir ningún artículo de este pedido.'
+'cardnext.reorder.protection_notice': 'Las opciones de servicio y garantía deben seleccionarse de nuevo.'
+'cardnext.reorder.configured_unavailable': 'Una configuración anterior ya no está completamente disponible y debe configurarse de nuevo.'
+'cardnext.reorder.bundle_unavailable': 'Un paquete de productos anterior ya no está completamente disponible y no se añadió.'

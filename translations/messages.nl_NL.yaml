@@ -708,3 +708,11 @@ quote_mail:
 "cardnext.protection_popup.save": "Selectie toepassen"
 "cardnext.protection_popup.continue": "Doorgaan zonder extra service"
 "cardnext.protection_popup.close": "Sluiten"
+
+'cardnext.reorder.button': 'Opnieuw bestellen'
+'cardnext.reorder.success': 'De bestelling is aan de winkelwagen toegevoegd. Prijzen en beschikbaarheid zijn opnieuw berekend.'
+'cardnext.reorder.partial': '%added% artikelen zijn toegevoegd. %skipped% artikelen konden niet opnieuw worden besteld.'
+'cardnext.reorder.none': 'Geen artikelen uit deze bestelling kunnen momenteel opnieuw worden besteld.'
+'cardnext.reorder.protection_notice': 'Service- en garantieopties moeten opnieuw worden geselecteerd.'
+'cardnext.reorder.configured_unavailable': 'Een eerdere productconfiguratie is niet meer volledig beschikbaar en moet opnieuw worden geconfigureerd.'
+'cardnext.reorder.bundle_unavailable': 'Een eerdere productbundel is niet meer volledig beschikbaar en is niet toegevoegd.'

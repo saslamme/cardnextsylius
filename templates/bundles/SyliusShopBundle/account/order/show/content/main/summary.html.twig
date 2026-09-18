@@ -21,6 +21,10 @@
         {% if order.paymentState == constant('Sylius\\Component\\Core\\OrderPaymentStates::STATE_AWAITING_PAYMENT') %}
             <a class="btn btn-primary" href="{{ path('sylius_shop_order_show', { tokenValue: order.tokenValue }) }}">{{ 'sylius.ui.pay'|trans }}</a>
         {% endif %}
+        <form method="post" action="{{ path('cardnext_shop_account_order_reorder', {number: order.number}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('reorder_' ~ order.id) }}">
+            <button class="btn btn-primary" type="submit">{{ 'cardnext.reorder.button'|trans }}</button>
+        </form>
     </div>
 </section>
 
