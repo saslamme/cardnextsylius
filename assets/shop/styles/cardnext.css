@@ -5432,6 +5432,14 @@ tbody td:nth-child(2) {
 .cn-configurator-page .cn-configurator__add,
 .cn-configurator-page .cn-configurator__buybar button { min-height: 52px; color: #fff; background: var(--cn-primary); border: 1px solid var(--cn-primary); border-radius: 8px; font-size: .82rem; font-weight: 800; }
 .cn-configurator-page .cn-configurator__add { width: 100%; margin-top: 16px; box-shadow: 0 8px 18px rgba(233,81,38,.16); }
+.cn-configurator-page .cn-configurator__save { width: 100%; min-height: 46px; margin-top: 9px; color: var(--cn-primary); background: #fff; border: 1px solid var(--cn-primary); border-radius: 8px; font-size: .78rem; font-weight: 800; }
+.cn-configurator-page .cn-configurator__save:disabled { opacity: .55; }
+.cn-configurator-page .cn-configurator__share { display: grid; gap: 9px; margin-top: 12px; padding: 12px; color: var(--cn-success); background: #f2faf5; border: 1px solid #cce8d5; border-radius: 8px; font-size: .7rem; }
+.cn-configurator-page .cn-configurator__share.d-none { display: none; }
+.cn-configurator-page .cn-configurator__share > div { display: flex; gap: 6px; }
+.cn-configurator-page .cn-configurator__share input { min-width: 0; flex: 1; padding: 7px; color: var(--cn-ink); background: #fff; border: 1px solid var(--cn-border); border-radius: 5px; font-size: .65rem; }
+.cn-configurator-page .cn-configurator__share button { padding: 7px 9px; color: #fff; background: var(--cn-success); border: 0; border-radius: 5px; font-weight: 700; }
+.cn-configurator-saved-notice { margin-top: 24px; padding: 12px 15px; color: var(--cn-ink); background: var(--cn-surface-softer); border-left: 3px solid var(--cn-primary); border-radius: 6px; font-size: .76rem; }
 .cn-configurator-page .cn-configurator__add:hover:not(:disabled) { background: var(--cn-primary-hover); transform: translateY(-1px); }
 .cn-configurator-page .cn-configurator__add:disabled,
 .cn-configurator-page .cn-configurator__buybar button:disabled { opacity: .55; }
@@ -5939,3 +5947,5 @@ html { scroll-behavior: smooth; }
     .cn-leasing-process__icon { width: 62px; height: 62px; margin: 0; }
     .cn-leasing-process__icon svg { width: 32px; height: 32px; }
 }
+.cn-configurator-page .cn-configurator__changed { margin-top: 10px; color: var(--cn-muted); font-size: .7rem; }
+.cn-configurator-page .cn-configurator__changed.d-none { display: none; }

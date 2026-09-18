@@ -179,6 +179,17 @@ cardnext:
       default_brand: 'Gamma %brand%'
       product_code: 'Codice prodotto'
       add_to_cart: 'Aggiungi al carrello'
+    saved:
+      save: Salva configurazione
+      success: Configurazione salvata
+      copy_link: Copia link
+      link_copied: Link copiato
+      changed: Configurazione modificata
+      loaded: Configurazione salvata caricata.
+      rechecking: Prezzi e disponibilità vengono verificati nuovamente.
+      unavailable: Alcune opzioni salvate non sono più disponibili. Controlla la configurazione.
+      error: Errore durante il salvataggio
+      share_url: Link di condivisione
       add_to_compare: 'Aggiungi al confronto'
       pricing:
         your_price: 'Il tuo prezzo'

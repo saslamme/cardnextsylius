@@ -1,5 +1,8 @@
 {% if configurator %}
-    <section class="cn-configurator" data-configurator data-dependencies="{{ computed.dependencies|json_encode|e('html_attr') }}" data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" data-cart-endpoint="{{ path('cardnext_shop_configurator_cart_add', {configuratorCode: configurator.code}) }}" data-cart-token="{{ csrf_token('configured_cart_add_' ~ configurator.code) }}" aria-labelledby="configurator-title-{{ configurator.code }}">
+    {% set restoring = initialConfiguration is not null %}
+    {% set restoredSelections = restoring ? initialConfiguration.selections : {} %}
+    {% if restoring and computed.unavailableSavedOptions %}<div class="cn-configurator-saved-notice cn-configurator-saved-notice--warning" role="alert">{{ 'cardnext.configurator.saved.unavailable'|trans }}</div>{% endif %}
+    <section class="cn-configurator" data-configurator data-dependencies="{{ computed.dependencies|json_encode|e('html_attr') }}" data-endpoint="{{ path('cardnext_shop_configurator_calculate', {configuratorCode: configurator.code}) }}" data-cart-endpoint="{{ path('cardnext_shop_configurator_cart_add', {configuratorCode: configurator.code}) }}" data-cart-token="{{ csrf_token('configured_cart_add_' ~ configurator.code) }}" data-save-endpoint="{{ path('cardnext_shop_configurator_save', {configuratorCode: configurator.code}) }}" data-save-token="{{ csrf_token('saved_configurator_' ~ configurator.code) }}" data-label-save-error="{{ 'cardnext.configurator.saved.error'|trans|e('html_attr') }}" data-label-changed="{{ 'cardnext.configurator.saved.changed'|trans|e('html_attr') }}" data-label-copied="{{ 'cardnext.configurator.saved.link_copied'|trans|e('html_attr') }}" aria-labelledby="configurator-title-{{ configurator.code }}">
         <div class="cn-configurator__intro">
             <h2 id="configurator-title-{{ configurator.code }}">{{ 'cardnext.configurator.form.title'|trans }}</h2>
             <p>{{ 'cardnext.configurator.form.intro'|trans }}</p>
@@ -12,7 +15,7 @@
                         <div class="cn-configurator__field cn-configurator__field--quantity">
                             <label class="cn-configurator__label" for="configurator-quantity-{{ configurator.code }}">{{ 'cardnext.configurator.quantity'|trans }} <span aria-hidden="true">*</span></label>
                             <div class="cn-configurator__control-wrap">
-                                <input class="cn-configurator__control" id="configurator-quantity-{{ configurator.code }}" name="quantity" type="number" inputmode="numeric" min="1" step="1" value="1" required data-configurator-quantity aria-describedby="configurator-quantity-error-{{ configurator.code }}">
+                                <input class="cn-configurator__control" id="configurator-quantity-{{ configurator.code }}" name="quantity" type="number" inputmode="numeric" min="1" step="1" value="{{ restoring ? initialConfiguration.quantity : 1 }}" required data-configurator-quantity aria-describedby="configurator-quantity-error-{{ configurator.code }}">
                                 <div class="cn-configurator__error" id="configurator-quantity-error-{{ configurator.code }}" data-field-error="quantity"></div>
                             </div>
                         </div>
@@ -33,6 +36,8 @@
                                     {% set visualValues = activeValues|filter(value => value.imagePath or value.colorHex or value.icon) %}
                                     {% set segmented = field.type.value == 'single_choice' and activeValues|length == 2 and visualValues|length == 0 %}
                                     {% set selectChoice = field.type.value == 'single_choice' and not segmented and visualValues|length == 0 %}
+                                    {% set hasRestoredValue = restoring and restoredSelections[field.code] is defined %}
+                                    {% set restoredValue = hasRestoredValue ? restoredSelections[field.code] : null %}
                                     <div class="cn-configurator__field" data-configurator-field="{{ field.code }}" data-field-type="{{ field.type.value }}">
                                         {% if field.type.value in ['single_choice', 'multiple_choice'] and not selectChoice %}
                                             <div class="cn-configurator__label" id="configurator-label-{{ configurator.code }}-{{ field.code }}">{{ configurator_text(field, 'name') }}{% if field.required %} <span aria-hidden="true">*</span>{% endif %}{% if configurator_text(field, 'description') %}<span class="cn-configurator__hint">{{ configurator_text(field, 'description') }}</span>{% endif %}</div>
@@ -43,26 +48,26 @@
                                             {% if selectChoice %}
                                                 <select class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]"{% if field.required %} required{% endif %}>
                                                     <option value="">{{ 'cardnext.configurator.choose'|trans }}</option>
-                                                    {% for value in activeValues %}<option value="{{ value.code }}" data-configurator-value="{{ value.code }}"{% if value.preselected %} selected{% endif %}>{{ configurator_text(value, 'name') }}</option>{% endfor %}
+                                                    {% for value in activeValues %}<option value="{{ value.code }}" data-configurator-value="{{ value.code }}"{% if (hasRestoredValue and restoredValue == value.code) or (not restoring and value.preselected) %} selected{% endif %}>{{ configurator_text(value, 'name') }}</option>{% endfor %}
                                                 </select>
                                             {% elseif field.type.value in ['single_choice', 'multiple_choice'] %}
                                                 <div class="{{ segmented ? 'cn-configurator__segmented' : 'cn-configurator__choices' }}"{% if field.type.value == 'single_choice' %} role="radiogroup" aria-labelledby="configurator-label-{{ configurator.code }}-{{ field.code }}"{% endif %}>
                                                     {% for value in activeValues %}
                                                         <label class="cn-configurator__choice" data-configurator-value="{{ value.code }}" for="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}">
-                                                            <input id="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}" name="selection[{{ field.code }}]{{ field.type.value == 'multiple_choice' ? '[]' : '' }}" value="{{ value.code }}" type="{{ field.type.value == 'single_choice' ? 'radio' : 'checkbox' }}"{% if value.preselected %} checked{% endif %}{% if field.required and field.type.value == 'single_choice' %} required{% endif %}>
+                                                            <input id="configurator-{{ configurator.code }}-{{ field.code }}-{{ value.code }}" name="selection[{{ field.code }}]{{ field.type.value == 'multiple_choice' ? '[]' : '' }}" value="{{ value.code }}" type="{{ field.type.value == 'single_choice' ? 'radio' : 'checkbox' }}"{% if (hasRestoredValue and (field.type.value == 'multiple_choice' ? value.code in restoredValue : restoredValue == value.code)) or (not restoring and value.preselected) %} checked{% endif %}{% if field.required and field.type.value == 'single_choice' %} required{% endif %}>
                                                             {% if value.imagePath %}<img src="{{ asset(value.imagePath) }}" alt="" loading="lazy">{% endif %}
                                                             <span class="cn-configurator__choice-copy"><strong>{% if value.colorHex %}<i class="cn-configurator__swatch" style="--choice-color: {{ value.colorHex }}"></i>{% endif %}{% if value.icon %}<span class="cn-configurator__icon" aria-hidden="true">{{ value.icon }}</span>{% endif %}{{ configurator_text(value, 'name') }}</strong>{% if configurator_text(value, 'description') %}<small>{{ configurator_text(value, 'description') }}</small>{% endif %}</span>
                                                         </label>
                                                     {% endfor %}
                                                 </div>
                                             {% elseif field.type.value == 'boolean' %}
-                                                <label class="cn-configurator__switch"><input id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="checkbox" role="switch"><span>{{ 'cardnext.configurator.yes'|trans }}</span></label>
+                                                <label class="cn-configurator__switch"><input id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="checkbox" role="switch"{% if hasRestoredValue and restoredValue == true %} checked{% endif %}><span>{{ 'cardnext.configurator.yes'|trans }}</span></label>
                                             {% elseif field.type.value in ['integer', 'quantity', 'decimal'] %}
                                                 {% set fixedNumericValue = field.minimumValue is not null and field.maximumValue is not null and field.minimumValue == field.maximumValue %}
-                                                {% set initialNumericValue = fixedNumericValue ? field.minimumValue : field.defaultValue %}
+                                                {% set initialNumericValue = hasRestoredValue ? restoredValue : (restoring ? null : (fixedNumericValue ? field.minimumValue : field.defaultValue)) %}
                                                 <input class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="number"{% if field.minimumValue is not null %} min="{{ field.minimumValue }}"{% endif %}{% if field.maximumValue is not null %} max="{{ field.maximumValue }}"{% endif %} step="{{ field.step ?? (field.type.value == 'decimal' ? 'any' : '1') }}"{% if initialNumericValue is not null %} value="{{ initialNumericValue }}"{% endif %}{% if fixedNumericValue %} readonly{% endif %}{% if field.required %} required{% endif %}>
                                             {% elseif field.type.value == 'text' %}
-                                                <input class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="text"{% if field.required %} required{% endif %}>
+                                                <input class="cn-configurator__control" id="configurator-{{ configurator.code }}-{{ field.code }}" name="selection[{{ field.code }}]" type="text"{% if hasRestoredValue %} value="{{ restoredValue }}"{% endif %}{% if field.required %} required{% endif %}>
                                             {% elseif field.type.value == 'upload' %}
                                                 <div class="cn-configurator__upload">{{ 'cardnext.configurator.upload_later'|trans }}</div>
                                             {% endif %}
@@ -83,7 +88,7 @@
                         <div class="cn-configurator__section-head"><legend>{{ 'cardnext.configurator.production_time'|trans }}</legend></div>
                         <div class="cn-configurator__lead-times">
                             {% for leadTime in activeLeadTimes %}
-                                <div class="cn-configurator__lead-time"><input id="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}" name="leadTimeCode" value="{{ leadTime.code }}" type="radio"{% if leadTime.preselected %} checked{% endif %} required><label for="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}"><i aria-hidden="true"></i><span><strong>{{ configurator_text(leadTime, 'name') }}</strong>{% if configurator_text(leadTime, 'description') %}<small>{{ configurator_text(leadTime, 'description') }}</small>{% endif %}</span><b>{{ leadTime.workingDays }} {{ 'cardnext.configurator.working_days'|trans }}</b></label></div>
+                                <div class="cn-configurator__lead-time"><input id="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}" name="leadTimeCode" value="{{ leadTime.code }}" type="radio"{% if (restoring and initialConfiguration.leadTimeCode == leadTime.code) or (not restoring and leadTime.preselected) %} checked{% endif %} required><label for="configurator-{{ configurator.code }}-lead-time-{{ leadTime.code }}"><i aria-hidden="true"></i><span><strong>{{ configurator_text(leadTime, 'name') }}</strong>{% if configurator_text(leadTime, 'description') %}<small>{{ configurator_text(leadTime, 'description') }}</small>{% endif %}</span><b>{{ leadTime.workingDays }} {{ 'cardnext.configurator.working_days'|trans }}</b></label></div>
                             {% endfor %}
                         </div>
                         <div class="cn-configurator__error" data-field-error="leadTime"></div>
@@ -102,6 +107,12 @@
                         <p class="cn-configurator__shipping">{{ 'cardnext.configurator.shipping_note'|trans }}</p>
                         <div class="cn-configurator__delivery d-none" data-configurator-lead-time-result><span>✓</span><p><strong></strong><small></small></p></div>
                         <button class="cn-configurator__add" type="button" data-configurator-add disabled>{{ 'cardnext.configurator.add_to_cart'|trans }}</button>
+                        <button class="cn-configurator__save" type="button" data-configurator-save disabled>{{ 'cardnext.configurator.saved.save'|trans }}</button>
+                        <div class="cn-configurator__changed d-none" data-configurator-share-changed role="status">{{ 'cardnext.configurator.saved.changed'|trans }}</div>
+                        <div class="cn-configurator__share d-none" data-configurator-share role="status">
+                            <strong>✓ {{ 'cardnext.configurator.saved.success'|trans }}</strong>
+                            <div><input type="url" readonly data-configurator-share-url aria-label="{{ 'cardnext.configurator.saved.share_url'|trans }}"><button type="button" data-configurator-copy>{{ 'cardnext.configurator.saved.copy_link'|trans }}</button></div>
+                        </div>
                         <details class="cn-configurator__details"><summary>{{ 'cardnext.configurator.price_details'|trans }}</summary><div data-configurator-breakdown></div></details>
                         <div class="cn-configurator__assurance"><span>✓ {{ 'cardnext.configurator.assurance.calculation'|trans }}</span><span>✓ {{ 'cardnext.configurator.assurance.checkout'|trans }}</span></div>
                     </div>

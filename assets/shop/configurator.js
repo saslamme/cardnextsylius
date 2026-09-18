@@ -27,6 +27,9 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
     const form = root.querySelector('[data-configurator-form]');
     const price = root.querySelector('.cn-configurator__price');
     const addButtons = [...root.querySelectorAll('[data-configurator-add], [data-configurator-mobile-add]')];
+    const saveButtons = [...root.querySelectorAll('[data-configurator-save]')];
+    const shareBox = root.querySelector('[data-configurator-share]');
+    const shareInput = root.querySelector('[data-configurator-share-url]');
     const dependencies = JSON.parse(root.dataset.dependencies || '[]').sort((a, b) => a.priority - b.priority);
     let controller;
     let calculatedPayload;
@@ -137,6 +140,7 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
     const invalidateResult = () => {
         calculatedPayload = undefined; requestVersion += 1; controller?.abort(); controller = undefined;
         addButtons.forEach((button) => { button.disabled = true; });
+        saveButtons.forEach((button) => { button.disabled = true; });
         root.querySelector('[data-configurator-state]').textContent = 'Unvollständig';
         root.querySelector('[data-configurator-placeholder]')?.classList.remove('d-none');
         root.querySelector('[data-configurator-result]')?.classList.add('d-none');
@@ -170,12 +174,18 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
             const lead = root.querySelector('[data-configurator-lead-time-result]');
             if (data.leadTimeCode) { lead.querySelector('strong').textContent = data.leadTimeName; lead.querySelector('small').textContent = `ca. ${data.workingDays} Arbeitstage`; lead.classList.remove('d-none'); }
             root.querySelector('[data-configurator-placeholder]').classList.add('d-none'); root.querySelector('[data-configurator-result]').classList.remove('d-none');
-            root.querySelector('[data-configurator-state]').textContent = 'Aktuell'; calculatedPayload = payload; addButtons.forEach((button) => { button.disabled = false; });
+            root.querySelector('[data-configurator-state]').textContent = 'Aktuell'; calculatedPayload = payload; addButtons.forEach((button) => { button.disabled = false; }); saveButtons.forEach((button) => { button.disabled = false; });
         } catch (error) { if (error.name !== 'AbortError') showErrors([{field: null, message: 'Der Preisservice ist derzeit nicht erreichbar.'}]); }
         finally { if (version === requestVersion) price.setAttribute('aria-busy', 'false'); }
     };
     const debouncedCalculate = debounce(calculate, 450);
-    const configurationChanged = () => { applyDependencies(); updateSelectionSummary(); clearErrors(); invalidateResult(); debouncedCalculate(); };
+    const configurationChanged = () => {
+        if (shareBox && !shareBox.classList.contains('d-none')) {
+            shareBox.classList.add('d-none');
+            root.querySelector('[data-configurator-share-changed]')?.classList.remove('d-none');
+        }
+        applyDependencies(); updateSelectionSummary(); clearErrors(); invalidateResult(); debouncedCalculate();
+    };
     form.addEventListener('change', configurationChanged); form.addEventListener('input', configurationChanged);
     const addToCart = async () => {
         if (!calculatedPayload) return;
@@ -186,5 +196,33 @@ document.querySelectorAll('[data-configurator]').forEach((root) => {
         else { showErrors([{field: null, message: data.message || 'Der Artikel konnte nicht hinzugefügt werden.'}]); addButtons.forEach((button) => { button.disabled = false; }); }
     };
     addButtons.forEach((button) => button.addEventListener('click', addToCart));
+    const saveConfiguration = async () => {
+        if (!calculatedPayload) return;
+        saveButtons.forEach((button) => { button.disabled = true; });
+        try {
+            const response = await fetch(root.dataset.saveEndpoint, {method: 'POST', headers: {'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': root.dataset.saveToken}, body: JSON.stringify(calculatedPayload)});
+            const data = await response.json();
+            if (!response.ok || !data.ok) throw new Error('save failed');
+            const shareUrl = new URL(window.location.href);
+            shareUrl.search = '';
+            shareUrl.hash = '';
+            shareUrl.searchParams.set('config', data.token);
+            shareInput.value = shareUrl.toString();
+            shareBox.classList.remove('d-none');
+            root.querySelector('[data-configurator-share-changed]')?.classList.add('d-none');
+        } catch (error) {
+            showErrors([{field: null, message: root.dataset.labelSaveError}]);
+        } finally {
+            saveButtons.forEach((button) => { button.disabled = !calculatedPayload; });
+        }
+    };
+    const copyShareLink = async () => {
+        if (!shareInput?.value) return;
+        if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(shareInput.value);
+        else { shareInput.select(); document.execCommand('copy'); shareInput.setSelectionRange(0, 0); }
+        root.querySelector('[data-configurator-copy]').textContent = root.dataset.labelCopied;
+    };
+    saveButtons.forEach((button) => button.addEventListener('click', saveConfiguration));
+    root.querySelector('[data-configurator-copy]')?.addEventListener('click', copyShareLink);
     updateSelectionSummary(); debouncedCalculate();
 });

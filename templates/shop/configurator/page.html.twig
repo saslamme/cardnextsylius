@@ -5,7 +5,7 @@
 {% block metatags %}
     {{ parent() }}
     {% if translation.metaDescription %}<meta name="description" content="{{ translation.metaDescription }}">{% endif %}
-    <meta name="robots" content="index,follow">
+    <meta name="robots" content="{{ initial_configuration is not null ? 'noindex,follow' : 'index,follow' }}">
     <link rel="canonical" href="{{ absolute_url(path('cardnext_shop_configurator_page', {configuratorPath: translation.path})) }}">
 {% endblock %}
 
@@ -27,7 +27,8 @@
             </div>
         </section>
         <section class="cn-configurator-stage" aria-label="{{ 'cardnext.configurator_page.stage.title'|trans }}">
-            {{ component('cardnext:configurator', {configurator: configurator}) }}
+            {% if initial_configuration is not null %}<div class="cn-configurator-saved-notice" role="status"><strong>{{ 'cardnext.configurator.saved.loaded'|trans }}</strong><br>{{ 'cardnext.configurator.saved.rechecking'|trans }}</div>{% endif %}
+            {{ component('cardnext:configurator', {configurator: configurator, initialConfiguration: initial_configuration}) }}
         </section>
     </div>
 
