@@ -36,7 +36,7 @@ final class ConfiguratorDoctrineMappingTest extends TestCase
                 'id' => 'id', 'code' => 'code', 'name' => 'name', 'description' => 'description',
                 'helpText' => 'help_text', 'type' => 'type', 'required' => 'required', 'position' => 'position',
                 'enabled' => 'enabled', 'minimumValue' => 'minimum_value', 'maximumValue' => 'maximum_value',
-                'step' => 'step',
+                'step' => 'step', 'defaultValue' => 'default_value',
             ],
             ConfiguratorValue::class => [
                 'id' => 'id', 'code' => 'code', 'name' => 'name', 'description' => 'description',

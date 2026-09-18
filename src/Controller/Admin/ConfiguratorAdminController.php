@@ -753,6 +753,7 @@ final class ConfiguratorAdminController extends AbstractController
         $f->setMinimumValue($this->nullable($r, 'minimum_value'));
         $f->setMaximumValue($this->nullable($r, 'maximum_value'));
         $f->setStep($this->nullable($r, 'step'));
+        $f->setDefaultValue($this->nullable($r, 'default_value'));
     }
 
     private function applyValue(ConfiguratorValue $v, Request $r): void

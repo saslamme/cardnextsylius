@@ -145,6 +145,19 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringNotContainsString('ConfiguratorPriceCalculator', $javascript);
     }
 
+    public function testNumericDefaultsAreRenderedAndReadForInitialPricing(): void
+    {
+        $template = $this->readProjectFile('templates/shop/configurator/product.html.twig');
+        $javascript = $this->readProjectFile('assets/shop/configurator.js');
+
+        self::assertStringContainsString('fixedNumericValue ? field.minimumValue : field.defaultValue', $template);
+        self::assertStringContainsString('{% if initialNumericValue is not null %} value="{{ initialNumericValue }}"{% endif %}', $template);
+        self::assertStringContainsString('{% if fixedNumericValue %} readonly{% endif %}', $template);
+        self::assertStringContainsString('const value = controls[0]?.value', $javascript);
+        self::assertStringContainsString('selections[field.dataset.configuratorField] = value', $javascript);
+        self::assertStringContainsString('updateSelectionSummary(); debouncedCalculate();', $javascript);
+    }
+
     public function testConfiguratorHeroWithoutImageUsesOneColumn(): void
     {
         $template = $this->readProjectFile('templates/shop/configurator/page.html.twig');
@@ -197,7 +210,8 @@ final class StorefrontRegressionTest extends TestCase
         self::assertStringContainsString('{% if leadTime.preselected %} checked{% endif %}', $template);
         self::assertStringNotContainsString('activeLeadTimes|first', $template);
         self::assertStringContainsString('field.minimumValue == field.maximumValue', $template);
-        self::assertStringContainsString('value="{{ field.minimumValue }}" readonly', $template);
+        self::assertStringContainsString('fixedNumericValue ? field.minimumValue : field.defaultValue', $template);
+        self::assertStringContainsString('{% if fixedNumericValue %} readonly{% endif %}', $template);
         self::assertStringNotContainsString('value="{{ field.minimumValue }}" disabled', $template);
         self::assertStringContainsString("root.querySelector('input[name=\"leadTimeCode\"]:checked')?.value", $javascript);
         self::assertStringContainsString('selections[field.dataset.configuratorField] = value', $javascript);
@@ -207,7 +221,8 @@ final class StorefrontRegressionTest extends TestCase
     {
         $template = $this->readProjectFile('templates/shop/configurator/product.html.twig');
 
-        self::assertStringContainsString('{% if fixedNumericValue %} value="{{ field.minimumValue }}" readonly{% endif %}', $template);
+        self::assertStringContainsString('{% if initialNumericValue is not null %} value="{{ initialNumericValue }}"{% endif %}', $template);
+        self::assertStringContainsString('{% if fixedNumericValue %} readonly{% endif %}', $template);
         self::assertStringNotContainsString('readonly{% endif %} disabled', $template);
     }
 
