@@ -62,6 +62,17 @@ cardnext:
     per_piece: per piece
     shipping_note: Shipping and applicable taxes are added separately.
     add_to_cart: Add to cart
+    saved:
+      save: Save configuration
+      success: Configuration saved
+      copy_link: Copy link
+      link_copied: Link copied
+      changed: Configuration changed
+      loaded: Saved configuration loaded.
+      rechecking: Prices and availability are being checked again.
+      unavailable: Some saved options are no longer available. Please review the configuration.
+      error: Could not save configuration
+      share_url: Share link
     price_details: Price details
     awaiting_price: Calculating price
     assurance: { calculation: Authoritative server-side calculation, checkout: Secure checkout }

@@ -179,6 +179,17 @@ cardnext:
       default_brand: '%brand%-sortiment'
       product_code: 'Produktkod'
       add_to_cart: 'Lägg i varukorgen'
+    saved:
+      save: Spara konfiguration
+      success: Konfiguration sparad
+      copy_link: Kopiera länk
+      link_copied: Länk kopierad
+      changed: Konfiguration ändrad
+      loaded: Sparad konfiguration inläst.
+      rechecking: Priser och tillgänglighet kontrolleras igen.
+      unavailable: Vissa sparade alternativ är inte längre tillgängliga. Kontrollera konfigurationen.
+      error: Det gick inte att spara
+      share_url: Delningslänk
       add_to_compare: 'Lägg till i jämförelse'
       pricing:
         your_price: 'Ditt pris'
