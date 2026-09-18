@@ -708,3 +708,11 @@ quote_mail:
 "cardnext.protection_popup.save": "Applica selezione"
 "cardnext.protection_popup.continue": "Continua senza servizi aggiuntivi"
 "cardnext.protection_popup.close": "Chiudi"
+
+'cardnext.reorder.button': 'Riordina'
+'cardnext.reorder.success': 'L’ordine è stato aggiunto al carrello. Prezzi e disponibilità sono stati ricalcolati.'
+'cardnext.reorder.partial': 'Sono stati aggiunti %added% articoli. Non è stato possibile riordinare %skipped% articoli.'
+'cardnext.reorder.none': 'Al momento non è possibile riordinare alcun articolo di questo ordine.'
+'cardnext.reorder.protection_notice': 'Le opzioni di assistenza e garanzia devono essere selezionate nuovamente.'
+'cardnext.reorder.configured_unavailable': 'Una configurazione precedente non è più completamente disponibile e deve essere riconfigurata.'
+'cardnext.reorder.bundle_unavailable': 'Un bundle precedente non è più completamente disponibile e non è stato aggiunto.'

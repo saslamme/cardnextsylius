@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Shop;
 
-use App\Dto\Configurator\ConfiguratorConfiguration;
 use App\Entity\Order\ConfiguredOrderItem;
 use App\Entity\Order\Order;
 use App\Exception\Configurator\InvalidConfigurationException;
-use App\Repository\Configurator\ConfiguratorRepository;
-use App\Service\Configurator\ConfiguratorPriceCalculator;
-use App\Service\Configurator\ConfiguredOrderItemSnapshotFactory;
+use App\Service\Configurator\ConfiguredCartItemFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Sylius\Component\Channel\Context\ChannelContextInterface;
-use Sylius\Component\Currency\Context\CurrencyContextInterface;
-use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ConfiguredCartController extends AbstractController
 {
-    public function __construct(private readonly ConfiguratorRepository $configurators, private readonly ConfiguratorPriceCalculator $calculator, private readonly ConfiguredOrderItemSnapshotFactory $factory, private readonly CartContextInterface $cartContext, private readonly ChannelContextInterface $channelContext, private readonly CurrencyContextInterface $currencyContext, private readonly LocaleContextInterface $localeContext, private readonly EntityManagerInterface $em, private readonly OrderProcessorInterface $orderProcessor)
+    public function __construct(private readonly ConfiguredCartItemFactory $itemFactory, private readonly CartContextInterface $cartContext, private readonly EntityManagerInterface $em, private readonly OrderProcessorInterface $orderProcessor)
     {
     }
 
@@ -41,9 +35,10 @@ final class ConfiguredCartController extends AbstractController
         } catch (\Throwable) {
             return $this->json(['ok' => false], 400);
         }
-        $item = $this->calculateItem($configuratorCode, $payload);
-        if ($item instanceof JsonResponse) {
-            return $item;
+        try {
+            $item = $this->itemFactory->create($configuratorCode, $payload);
+        } catch (InvalidConfigurationException|\DomainException) {
+            return $this->json(['ok' => false, 'message' => 'Die Konfiguration konnte nicht berechnet werden.'], 422);
         }
         $cart = $this->cartContext->getCart();
         if (!$cart instanceof Order) {
@@ -66,14 +61,15 @@ final class ConfiguredCartController extends AbstractController
         }
         $canonical = $item->getCanonicalConfiguration();
         $canonical['quantity'] = $request->request->getInt('quantity');
-        $fresh = $this->calculateItem($item->getConfiguratorCode(), $canonical);
-        if ($fresh instanceof JsonResponse) {
+        try {
+            $fresh = $this->itemFactory->create($item->getConfiguratorCode(), $canonical);
+        } catch (InvalidConfigurationException|\DomainException) {
             $this->addFlash('error', 'Die Konfiguration kann für diese Menge derzeit nicht berechnet werden.');
-        } else {
-            $item->replacePricing($fresh);
-            $this->orderProcessor->process($item->getOrder());
-            $this->em->flush();
+            return $this->redirectToRoute('sylius_shop_cart_summary');
         }
+        $item->replacePricing($fresh);
+        $this->orderProcessor->process($item->getOrder());
+        $this->em->flush();
 
         return $this->redirectToRoute('sylius_shop_cart_summary');
     }
@@ -91,30 +87,6 @@ final class ConfiguredCartController extends AbstractController
         $this->em->flush();
 
         return $this->redirectToRoute('sylius_shop_cart_summary');
-    }
-
-    /** @param array<string,mixed> $payload */
-    private function calculateItem(string $code, array $payload): ConfiguredOrderItem|JsonResponse
-    {
-        $configurator = $this->configurators->findEnabledByCode($code);
-        $quantity = $payload['quantity'] ?? null;
-        $selections = $payload['selections'] ?? null;
-        $lead = $payload['leadTimeCode'] ?? null;
-        $channel = $this->channelContext->getChannel();
-        $channelCode = $channel->getCode();
-        if ($configurator === null || !$channel instanceof \App\Entity\Channel\Channel || !$configurator->hasChannel($channel) || !is_int($quantity) || $quantity < 1 || !is_array($selections) || $channelCode === null || ($lead !== null && !is_string($lead))) {
-            return $this->json(['ok' => false, 'message' => 'Ungültige Konfiguration.'], 422);
-        }
-        // @phpstan-ignore argument.type
-        $configuration = new ConfiguratorConfiguration($code, $quantity, $this->currencyContext->getCurrencyCode(), $channelCode, $selections, [], $lead);
-
-        try {
-            $price = $this->calculator->calculate($configuration, $channel, $configuration->currencyCode);
-        } catch (InvalidConfigurationException|\DomainException) {
-            return $this->json(['ok' => false, 'message' => 'Die Konfiguration konnte nicht berechnet werden.'], 422);
-        }
-
-        return $this->factory->create($configurator, $configuration, $price, $this->localeContext->getLocaleCode());
     }
 
     private function assertOwned(ConfiguredOrderItem $item): void

@@ -550,3 +550,11 @@ cardnext.storefront.homepage.products.next: 'Next products'
 "cardnext.protection_popup.save": "Apply selection"
 "cardnext.protection_popup.continue": "Continue without add-ons"
 "cardnext.protection_popup.close": "Close"
+
+'cardnext.reorder.button': 'Reorder'
+'cardnext.reorder.success': 'The order was added to your cart. Prices and availability have been recalculated.'
+'cardnext.reorder.partial': '%added% items were added. %skipped% items could not be reordered.'
+'cardnext.reorder.none': 'No items from this order can currently be reordered.'
+'cardnext.reorder.protection_notice': 'Service and warranty options must be selected again.'
+'cardnext.reorder.configured_unavailable': 'A previous product configuration is no longer fully available and must be configured again.'
+'cardnext.reorder.bundle_unavailable': 'A previous product bundle is no longer fully available and was not added.'

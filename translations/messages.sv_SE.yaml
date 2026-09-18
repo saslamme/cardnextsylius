@@ -708,3 +708,11 @@ quote_mail:
 "cardnext.protection_popup.save": "Använd val"
 "cardnext.protection_popup.continue": "Fortsätt utan tilläggstjänst"
 "cardnext.protection_popup.close": "Stäng"
+
+'cardnext.reorder.button': 'Beställ igen'
+'cardnext.reorder.success': 'Beställningen lades i varukorgen. Priser och tillgänglighet har beräknats på nytt.'
+'cardnext.reorder.partial': '%added% artiklar lades till. %skipped% artiklar kunde inte beställas igen.'
+'cardnext.reorder.none': 'Inga artiklar från beställningen kan beställas igen just nu.'
+'cardnext.reorder.protection_notice': 'Service- och garantialternativ måste väljas igen.'
+'cardnext.reorder.configured_unavailable': 'En tidigare produktkonfiguration är inte längre fullständigt tillgänglig och måste konfigureras igen.'
+'cardnext.reorder.bundle_unavailable': 'Ett tidigare produktpaket är inte längre fullständigt tillgängligt och lades inte till.'

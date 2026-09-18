@@ -719,3 +719,11 @@ quote_mail:
 "cardnext.protection_popup.save": "Auswahl übernehmen"
 "cardnext.protection_popup.continue": "Ohne Zusatzleistung fortfahren"
 "cardnext.protection_popup.close": "Schließen"
+
+'cardnext.reorder.button': 'Erneut bestellen'
+'cardnext.reorder.success': 'Die Bestellung wurde in den Warenkorb übernommen. Preise und Verfügbarkeit wurden aktuell neu berechnet.'
+'cardnext.reorder.partial': '%added% Positionen wurden übernommen. %skipped% Positionen konnten nicht erneut bestellt werden.'
+'cardnext.reorder.none': 'Aus dieser Bestellung konnten aktuell keine Positionen erneut bestellt werden.'
+'cardnext.reorder.protection_notice': 'Service- und Garantieoptionen müssen erneut ausgewählt werden.'
+'cardnext.reorder.configured_unavailable': 'Eine frühere Produktkonfiguration ist nicht mehr vollständig verfügbar und muss neu konfiguriert werden.'
+'cardnext.reorder.bundle_unavailable': 'Ein früheres Produkt-Bundle ist nicht mehr vollständig verfügbar und konnte nicht übernommen werden.'
