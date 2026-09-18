@@ -179,17 +179,6 @@ cardnext:
       default_brand: 'Gama %brand%'
       product_code: 'Código de producto'
       add_to_cart: 'Añadir al carrito'
-    saved:
-      save: Guardar configuración
-      success: Configuración guardada
-      copy_link: Copiar enlace
-      link_copied: Enlace copiado
-      changed: Configuración modificada
-      loaded: Configuración guardada cargada.
-      rechecking: Se están comprobando los precios y la disponibilidad actuales.
-      unavailable: Algunas opciones guardadas ya no están disponibles. Revise la configuración.
-      error: Error al guardar la configuración
-      share_url: Enlace para compartir
       add_to_compare: 'Añadir a la comparación'
       pricing:
         your_price: 'Su precio'
@@ -294,6 +283,17 @@ cardnext:
       variant: Producto variante
       configuration: Producto de configuración
   configurator:
+    saved:
+      save: Guardar configuración
+      success: Configuración guardada
+      copy_link: Copiar enlace
+      link_copied: Enlace copiado
+      changed: Configuración modificada
+      loaded: Configuración guardada cargada.
+      rechecking: Se están comprobando los precios y la disponibilidad actuales.
+      unavailable: Algunas opciones guardadas ya no están disponibles. Revise la configuración.
+      error: Error al guardar la configuración
+      share_url: Enlace para compartir
     lead_time:
       preselected: Preseleccionado
       preselected_help: Este plazo de entrega se selecciona automáticamente al abrir el configurador.

@@ -179,17 +179,6 @@ cardnext:
       default_brand: '%brand%-sortiment'
       product_code: 'Produktkode'
       add_to_cart: 'Læg i kurv'
-    saved:
-      save: Gem konfiguration
-      success: Konfiguration gemt
-      copy_link: Kopiér link
-      link_copied: Link kopieret
-      changed: Konfiguration ændret
-      loaded: Gemt konfiguration indlæst.
-      rechecking: Priser og tilgængelighed kontrolleres igen.
-      unavailable: Nogle gemte valg er ikke længere tilgængelige. Kontrollér konfigurationen.
-      error: Konfigurationen kunne ikke gemmes
-      share_url: Delingslink
       add_to_compare: 'Føj til sammenligning'
       pricing:
         your_price: 'Din pris'
@@ -294,6 +283,17 @@ cardnext:
       variant: Variant produkt
       configuration: Konfigurationsprodukt
   configurator:
+    saved:
+      save: Gem konfiguration
+      success: Konfiguration gemt
+      copy_link: Kopiér link
+      link_copied: Link kopieret
+      changed: Konfiguration ændret
+      loaded: Gemt konfiguration indlæst.
+      rechecking: Priser og tilgængelighed kontrolleres igen.
+      unavailable: Nogle gemte valg er ikke længere tilgængelige. Kontrollér konfigurationen.
+      error: Konfigurationen kunne ikke gemmes
+      share_url: Delingslink
     lead_time:
       preselected: Forudvalgt
       preselected_help: Denne leveringstid vælges automatisk, når konfiguratoren åbnes.

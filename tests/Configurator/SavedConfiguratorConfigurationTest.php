@@ -8,9 +8,31 @@ use App\Entity\Channel\Channel;
 use App\Entity\Configurator\Configurator;
 use App\Entity\Configurator\SavedConfiguratorConfiguration;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Yaml;
 
 final class SavedConfiguratorConfigurationTest extends TestCase
 {
+    public function testSavedConfigurationTranslationsUseTheConfiguratorNamespace(): void
+    {
+        $translationsDirectory = dirname(__DIR__, 2).'/translations';
+        $germanCatalogue = Yaml::parseFile($translationsDirectory.'/messages.de.yaml');
+
+        self::assertSame('Konfiguration speichern', $germanCatalogue['cardnext']['configurator']['saved']['save'] ?? null);
+        self::assertSame('Konfiguration gespeichert', $germanCatalogue['cardnext']['configurator']['saved']['success'] ?? null);
+        self::assertSame('Link kopieren', $germanCatalogue['cardnext']['configurator']['saved']['copy_link'] ?? null);
+        self::assertSame('Link kopiert', $germanCatalogue['cardnext']['configurator']['saved']['link_copied'] ?? null);
+        self::assertSame('Zum Vergleich hinzufügen', $germanCatalogue['cardnext']['storefront']['product_detail']['add_to_compare'] ?? null);
+        self::assertSame('Ihr Preis', $germanCatalogue['cardnext']['storefront']['product_detail']['pricing']['your_price'] ?? null);
+        self::assertArrayNotHasKey('saved', $germanCatalogue['cardnext']['storefront']);
+
+        foreach (['da_DK', 'de_AT', 'es_ES', 'it_IT', 'nl_NL', 'sv_SE'] as $locale) {
+            $catalogue = Yaml::parseFile(sprintf('%s/messages.%s.yaml', $translationsDirectory, $locale));
+
+            self::assertNotEmpty($catalogue['cardnext']['configurator']['saved']['save'] ?? null, sprintf('Missing saved configuration translation for %s.', $locale));
+            self::assertArrayNotHasKey('saved', $catalogue['cardnext']['storefront'], sprintf('Unexpected storefront.saved namespace for %s.', $locale));
+        }
+    }
+
     public function testEntityCanBeProxiedByDoctrine(): void
     {
         $reflection = new \ReflectionClass(SavedConfiguratorConfiguration::class);
