@@ -283,6 +283,10 @@ cardnext:
       variant: Variant produkt
       configuration: Konfigurationsprodukt
   configurator:
+    quote:
+      request: 'Request a quote'
+      adding: 'Adding…'
+      error: 'Configuration could not be added to the quote cart.'
     saved:
       save: Spara konfiguration
       success: Konfiguration sparad
@@ -442,6 +446,11 @@ cardnext:
     content:
       kicker: Produktinformation
   quote:
+    configured_product: 'Configured product'
+    configuration: 'Configuration'
+    production_time: 'Production time'
+    update_configuration_quantity: 'Update quantity'
+    configuration_update_error: 'The configuration could not be recalculated for this quantity.'
     cart: Offertkorg
     request: Begäran om offert
     intro: Sätt ihop dina önskade produkter. Vi kontrollerar priser, tillgänglighet och projektkrav och skapar sedan ett individuellt offert åt dig.

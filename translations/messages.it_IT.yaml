@@ -283,6 +283,10 @@ cardnext:
       variant: Prodotto variante
       configuration: Prodotto di configurazione
   configurator:
+    quote:
+      request: 'Request a quote'
+      adding: 'Adding…'
+      error: 'Configuration could not be added to the quote cart.'
     saved:
       save: Salva configurazione
       success: Configurazione salvata
@@ -442,6 +446,11 @@ cardnext:
     content:
       kicker: Informazioni sul prodotto
   quote:
+    configured_product: 'Configured product'
+    configuration: 'Configuration'
+    production_time: 'Production time'
+    update_configuration_quantity: 'Update quantity'
+    configuration_update_error: 'The configuration could not be recalculated for this quantity.'
     cart: Cestino dell'offerta
     request: Richiesta di preventivo
     intro: Metti insieme i prodotti desiderati. Controlliamo prezzi, disponibilità e requisiti del progetto e poi creiamo un'offerta individuale per te.

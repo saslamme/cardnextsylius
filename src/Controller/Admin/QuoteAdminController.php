@@ -110,6 +110,12 @@ final class QuoteAdminController extends AbstractController
                 $position = $values['position'] ?? null;
                 $quantity = $values['quantity'] ?? null;
                 $unitPrice = $values['unitPrice'] ?? null;
+                if ($item->getItemType() === \App\Enum\Quote\QuoteItemType::Configured) {
+                    $configuredTotal = $values['configuredLineTotal'] ?? null;
+                    if (!is_scalar($position) || !is_scalar($configuredTotal)) { throw new \InvalidArgumentException('Ungültige Positionsdaten.'); }
+                    $item->setPosition(max(1, (int) $position)); $item->setConfiguredLineTotal($money->parse((string) $configuredTotal));
+                    continue;
+                }
                 if (!is_scalar($position) || !is_scalar($quantity) || !is_scalar($unitPrice)) {
                     throw new \InvalidArgumentException('Ungültige Positionsdaten.');
                 }

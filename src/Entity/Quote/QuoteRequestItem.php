@@ -7,6 +7,8 @@ namespace App\Entity\Quote;
 use App\Entity\Product\Product;
 use App\Entity\Product\ProductVariant;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+use App\Enum\Quote\QuoteItemType;
 
 #[ORM\Entity] #[ORM\Table(name:'cardnext_quote_request_item')]
 class QuoteRequestItem
@@ -28,11 +30,18 @@ class QuoteRequestItem
     #[ORM\ManyToOne(targetEntity:ProductVariant::class),ORM\JoinColumn(nullable:true, onDelete:'SET NULL')]
     private ?ProductVariant $variant = null;
 
-    #[ORM\Column(name:'product_code', length:64)]
-    private string $productCode = '';
+    #[ORM\Column(name:'product_code', length:64, nullable:true)]
+    private ?string $productCode = null;
 
-    #[ORM\Column(name:'variant_code', length:64)]
-    private string $variantCode = '';
+    #[ORM\Column(name:'variant_code', length:64, nullable:true)]
+    private ?string $variantCode = null;
+
+    #[ORM\Column(name: 'item_type', length: 16, enumType: QuoteItemType::class, options: ['default' => 'product'])]
+    private QuoteItemType $itemType = QuoteItemType::Product;
+
+    /** @var array<string, mixed>|null */
+    #[ORM\Column(name: 'configured_snapshot', type: Types::JSON, nullable: true)]
+    private ?array $configuredSnapshot = null;
 
     #[ORM\Column(name:'product_name', length:255)]
     private string $productName = '';
@@ -86,22 +95,22 @@ class QuoteRequestItem
         $this->quoteRequest = $v;
     }
 
-    public function getProductCode(): string
+    public function getProductCode(): ?string
     {
         return $this->productCode;
     }
 
-    public function setProductCode(string $v): void
+    public function setProductCode(?string $v): void
     {
         $this->productCode = $v;
     }
 
-    public function getVariantCode(): string
+    public function getVariantCode(): ?string
     {
         return $this->variantCode;
     }
 
-    public function setVariantCode(string $v): void
+    public function setVariantCode(?string $v): void
     {
         $this->variantCode = $v;
     }
@@ -205,4 +214,11 @@ class QuoteRequestItem
     {
         $this->variant = $v;
     }
+
+    public function getItemType(): QuoteItemType { return $this->itemType; }
+    public function setItemType(QuoteItemType $value): void { $this->itemType = $value; }
+    /** @return array<string, mixed>|null */
+    public function getConfiguredSnapshot(): ?array { return $this->configuredSnapshot; }
+    /** @param array<string, mixed>|null $value */
+    public function setConfiguredSnapshot(?array $value): void { $this->configuredSnapshot = $value; }
 }

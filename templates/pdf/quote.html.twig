@@ -1,3 +1,4 @@
+{% import 'shared/order/_configured_item_snapshot.html.twig' as configured %}
 <!doctype html>
 <html lang="{{ quote.localeCode|replace({'_':'-'}) }}">
 <head>
@@ -93,7 +94,7 @@
             <td class="description">
                 <strong>{{ item.name }}</strong>
                 {% if item.productCode or item.variantCode %}<div class="article-meta">{% if item.productCode %}Art.-Nr. {{ item.productCode }}{% endif %}{% if item.productCode and item.variantCode %} · {% endif %}{% if item.variantCode %}<span class="variant">Variante&nbsp;{{ item.variantCode }}</span>{% endif %}</div>{% endif %}
-                {% if item.description %}<div>{{ item.description|nl2br }}</div>{% endif %}
+                {% if item.description %}<div>{{ item.description|nl2br }}</div>{% endif %}{% if item.itemType.value == 'configured' %}<div><strong>{{ 'cardnext.quote.configured_product'|trans }}</strong></div>{{ configured.render(item.configuredSnapshot.selectionsSnapshot, 'shop') }}{% if item.configuredSnapshot.leadTimeName %}<div><strong>{{ 'cardnext.quote.production_time'|trans }}:</strong> {{ item.configuredSnapshot.leadTimeName }}{% if item.configuredSnapshot.workingDays %} · ca. {{ item.configuredSnapshot.workingDays }} Arbeitstage{% endif %}</div>{% endif %}{% endif %}
             </td>
             <td class="quantity">{{ item.quantity }}</td>
             <td class="price">{{ (item.unitPrice / 100)|format_currency(quote.currencyCode, locale=quote.localeCode) }}</td>

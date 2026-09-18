@@ -6,6 +6,7 @@ namespace App\Service\Quote;
 
 use App\Entity\Quote\Quote;
 use App\Entity\Quote\QuoteItem;
+use App\Enum\Quote\QuoteItemType;
 
 final class QuoteCalculator
 {
@@ -36,6 +37,14 @@ final class QuoteCalculator
 
     public function calculateItem(QuoteItem $item): void
     {
+        if ($item->getItemType() === QuoteItemType::Configured) {
+            $subtotal = (int) ($item->getConfiguredSnapshot()['total'] ?? 0);
+            $total = $item->getConfiguredLineTotal() ?? $subtotal;
+            $discount = max(0, $subtotal - $total);
+            $item->setLineSubtotal($subtotal); $item->setLineTotal($total); $item->setLineDiscount($discount); $item->setDiscountAmount($discount);
+            $item->setDiscountPercent($subtotal > 0 ? intdiv($discount * 10000 + intdiv($subtotal, 2), $subtotal) : null);
+            return;
+        }
         $lineTotal = $item->getUnitPrice() * $item->getQuantity();
         $original = $item->getOriginalUnitPrice();
         $lineSubtotal = ($original ?? $item->getUnitPrice()) * $item->getQuantity();

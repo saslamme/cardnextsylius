@@ -14,6 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 final class QuoteCalculatorTest extends TestCase
 {
+    public function testConfiguredItemUsesAuthoritativeLineTotalInsteadOfUnitPriceTimesQuantity(): void
+    {
+        $item = new QuoteItem(); $item->setName('Printed cards'); $item->setItemType(QuoteItemType::Configured);
+        $item->setQuantity(500); $item->setUnitPrice(250); $item->setConfiguredSnapshot(['total' => 124800]); $item->setConfiguredLineTotal(115000);
+        (new QuoteCalculator())->calculateItem($item);
+        self::assertSame(124800, $item->getLineSubtotal()); self::assertSame(115000, $item->getLineTotal()); self::assertSame(9800, $item->getLineDiscount());
+    }
+
     public function testPriceQuantityDiscountShippingAndServiceUseMinorUnits(): void
     {
         $quote = new Quote();

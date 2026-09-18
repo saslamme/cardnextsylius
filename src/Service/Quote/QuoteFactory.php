@@ -61,6 +61,12 @@ final class QuoteFactory
             $item->setOriginalUnitPrice($source->getUnitPrice());
             $item->setUnitPrice($source->getUnitPrice());
             $item->setItemType(QuoteItemType::Product);
+            if ($source->getItemType() === QuoteItemType::Configured) {
+                $item->setItemType(QuoteItemType::Configured);
+                $item->setConfiguredSnapshot($source->getConfiguredSnapshot());
+                $item->setConfiguredLineTotal($source->getLineTotal());
+                $item->setName($source->getProductName());
+            }
             $quote->addItem($item);
         }
 

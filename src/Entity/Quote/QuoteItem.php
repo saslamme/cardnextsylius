@@ -8,6 +8,7 @@ use App\Entity\Product\Product;
 use App\Entity\Product\ProductVariant;
 use App\Enum\Quote\QuoteItemType;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'cardnext_quote_item')]
@@ -70,6 +71,13 @@ class QuoteItem
 
     #[ORM\Column(name: 'item_type', length: 16, enumType: QuoteItemType::class)]
     private QuoteItemType $itemType = QuoteItemType::Custom;
+
+    /** @var array<string, mixed>|null */
+    #[ORM\Column(name: 'configured_snapshot', type: Types::JSON, nullable: true)]
+    private ?array $configuredSnapshot = null;
+
+    #[ORM\Column(name: 'configured_line_total', nullable: true)]
+    private ?int $configuredLineTotal = null;
 
     public function getId(): ?int
     {
@@ -258,5 +266,16 @@ class QuoteItem
     public function setItemType(QuoteItemType $value): void
     {
         $this->itemType = $value;
+    }
+
+    /** @return array<string, mixed>|null */
+    public function getConfiguredSnapshot(): ?array { return $this->configuredSnapshot; }
+    /** @param array<string, mixed>|null $value */
+    public function setConfiguredSnapshot(?array $value): void { $this->configuredSnapshot = $value; }
+    public function getConfiguredLineTotal(): ?int { return $this->configuredLineTotal; }
+    public function setConfiguredLineTotal(?int $value): void
+    {
+        if ($value !== null && $value < 0) { throw new \InvalidArgumentException('Configured line total cannot be negative.'); }
+        $this->configuredLineTotal = $value;
     }
 }

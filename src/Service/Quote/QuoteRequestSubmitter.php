@@ -11,6 +11,7 @@ use App\Entity\Quote\QuoteRequestHistory;
 use App\Entity\Quote\QuoteRequestItem;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
+use App\Enum\Quote\QuoteItemType;
 
 final class QuoteRequestSubmitter
 {
@@ -38,9 +39,20 @@ final class QuoteRequestSubmitter
             $subtotal = 0;
 
             foreach ($items as $position => $row) {
+                if (($row['type'] ?? QuoteItemType::Product) === QuoteItemType::Configured) {
+                    $snapshot = $row['configuredSnapshot'];
+                    $item = new QuoteRequestItem();
+                    $item->setItemType(QuoteItemType::Configured); $item->setConfiguredSnapshot($snapshot);
+                    $item->setProductName((string) $snapshot['configuratorName']); $item->setQuantity((int) $snapshot['quantity']);
+                    $item->setUnitPrice((int) $snapshot['unitAmount']); $item->setLineTotal((int) $snapshot['total']);
+                    $item->setCurrencyCode((string) $snapshot['currencyCode']); $item->setPosition($position); $quote->addItem($item);
+                    $subtotal += (int) $snapshot['total'];
+                    continue;
+                }
                 $variant = $row['variant'];
                 $product = $variant->getProduct();
                 $item = new QuoteRequestItem();
+                $item->setItemType(QuoteItemType::Product);
                 if ($product instanceof Product) {
                     $item->setProduct($product);
                 }

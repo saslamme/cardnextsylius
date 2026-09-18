@@ -16,6 +16,7 @@ use App\Entity\User\AdminUser;
 use App\Enum\Quote\QuoteItemType;
 use App\Enum\Quote\QuoteRequestStatus;
 use App\Enum\Quote\QuoteStatus;
+use App\OrderProcessing\ConfiguredItemsOrderProcessor;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
@@ -48,6 +49,8 @@ final readonly class QuoteOrderConverter
         private ObjectRepository $channelRepository,
         private OrderNumberAssignerInterface $numberAssigner,
         private QuoteOrderDataValidator $orderDataValidator,
+        private ConfiguredQuoteSnapshotFactory $configuredSnapshots,
+        private ConfiguredItemsOrderProcessor $configuredItemsOrderProcessor,
     ) {
     }
 
@@ -96,6 +99,7 @@ final readonly class QuoteOrderConverter
             foreach ($quote->getItems() as $quoteItem) {
                 $this->addQuoteItem($order, $quoteItem, $quote);
             }
+            $this->configuredItemsOrderProcessor->process($order);
             $this->addAdjustment($order, 'cardnext_quote_service', 'Service', $quote->getServiceTotal());
             $this->addAdjustment($order, 'cardnext_quote_shipping', 'Versand laut Angebot – Versandmethode noch nicht zugeordnet', $quote->getShippingTotal());
             $this->addAdjustment($order, CoreAdjustmentInterface::TAX_ADJUSTMENT, 'MwSt. laut Angebot ' . $quote->getNumber(), $quote->getTaxTotal());
@@ -143,6 +147,7 @@ final readonly class QuoteOrderConverter
             match ($item->getItemType()) {
                 QuoteItemType::Product => $this->validateProductItem($item),
                 QuoteItemType::Custom => null,
+                QuoteItemType::Configured => $this->validateConfiguredItem($item),
                 QuoteItemType::Service, QuoteItemType::Shipping => throw $this->unsupportedItemType($item),
             };
         }
@@ -153,6 +158,7 @@ final readonly class QuoteOrderConverter
         match ($quoteItem->getItemType()) {
             QuoteItemType::Product => $this->addProductItem($order, $quoteItem, $quote),
             QuoteItemType::Custom => $this->addCustomItem($order, $quoteItem),
+            QuoteItemType::Configured => $order->addConfiguredItem($this->configuredSnapshots->restore($quoteItem->getConfiguredSnapshot() ?? [], $quoteItem->getLineTotal())),
             QuoteItemType::Service, QuoteItemType::Shipping => throw $this->unsupportedItemType($quoteItem),
         };
     }
@@ -162,6 +168,11 @@ final readonly class QuoteOrderConverter
         if ($item->getVariant() === null) {
             throw new \DomainException(sprintf('Die Produktvariante der Position „%s“ existiert nicht mehr.', $item->getName()));
         }
+    }
+
+    private function validateConfiguredItem(QuoteItem $item): void
+    {
+        if ($item->getConfiguredSnapshot() === null || $item->getConfiguredLineTotal() === null) { throw new \DomainException(sprintf('Der Konfigurations-Snapshot der Position „%s“ fehlt.', $item->getName())); }
     }
 
     private function addProductItem(Order $order, QuoteItem $quoteItem, Quote $quote): void
@@ -186,7 +197,7 @@ final readonly class QuoteOrderConverter
         $message = match ($item->getItemType()) {
             QuoteItemType::Service => 'Serviceleistungen werden über den Servicebetrag des Angebots abgebildet und dürfen nicht zusätzlich als Angebotsposition vorhanden sein.',
             QuoteItemType::Shipping => 'Versandkosten werden über den Versandbetrag des Angebots abgebildet und dürfen nicht zusätzlich als Angebotsposition vorhanden sein.',
-            QuoteItemType::Product, QuoteItemType::Custom => sprintf('Die Angebotsposition „%s“ kann nicht in eine Bestellung übernommen werden.', $item->getName()),
+            QuoteItemType::Product, QuoteItemType::Custom, QuoteItemType::Configured => sprintf('Die Angebotsposition „%s“ kann nicht in eine Bestellung übernommen werden.', $item->getName()),
         };
 
         return new \DomainException(sprintf('%s Betroffene Position: „%s“.', $message, $item->getName()));
