@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'IDX_CN_SAVED_CONFIGURATOR', columns: ['configurator_id'])]
 #[ORM\Index(name: 'IDX_CN_SAVED_CHANNEL', columns: ['channel_id'])]
 #[ORM\Index(name: 'IDX_CN_SAVED_CREATED_AT', columns: ['created_at'])]
-final class SavedConfiguratorConfiguration
+class SavedConfiguratorConfiguration
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(name: 'id')]
     private ?int $id = null;

@@ -11,6 +11,13 @@ use PHPUnit\Framework\TestCase;
 
 final class SavedConfiguratorConfigurationTest extends TestCase
 {
+    public function testEntityCanBeProxiedByDoctrine(): void
+    {
+        $reflection = new \ReflectionClass(SavedConfiguratorConfiguration::class);
+
+        self::assertFalse($reflection->isFinal());
+    }
+
     public function testSnapshotIsImmutableAndTokenHasAtLeast128BitsOfEntropy(): void
     {
         $tokens = [];
